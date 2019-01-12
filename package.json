@@ -1,0 +1,36 @@
+{
+  "name": "demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack -d --watch --colors",
+    "build": "webpack -p --progress --colors"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^4.0.0",
+    "choices.js": "^3.0.2",
+    "feather-icons": "^4.10.0",
+    "jquery": "^3.3.1",
+    "open-iconic": "^1.1.1",
+    "popper.js": "^1.12.9"
+  },
+  "devDependencies": {
+    "css-loader": "^0.28.9",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "node-sass": "^4.7.2",
+    "postcss-loader": "^2.0.10",
+    "precss": "^3.1.0",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.19.1",
+    "terser-webpack-plugin": "^1.2.1",
+    "uglifyjs-webpack-plugin": "^2.1.1",
+    "url-loader": "^0.6.2",
+    "webpack": "^4.28.4",
+    "webpack-cli": "^3.2.1"
+  }
+}
