@@ -1,7 +1,7 @@
-Prognosport-Webpack
+Prognosports-Webpack
 =================
 
-Archivos de Sass y Js para la web front-end de Prognosport, empaquetados con [https://webpack.js.org/](Webpack)
+Archivos de Sass y Js para la web front-end de Prognosports, empaquetados con [Webpack](https://webpack.js.org/)
 
 
 Compilación
