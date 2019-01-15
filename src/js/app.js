@@ -11,6 +11,8 @@ $(function () {
 import feather from 'feather-icons';
 feather.replace();
 
+global.$ = require('jquery')
+
 import './util/polyfills';
 import './components/tables';
 import './components/sidebar';
