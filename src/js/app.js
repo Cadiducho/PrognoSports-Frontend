@@ -1,5 +1,6 @@
 import 'bootstrap';
 import 'choices.js'
+import ApexCharts from 'apexcharts'
 
 $(function () {
   $("button[data-toggle='popover']").popover({
@@ -10,8 +11,6 @@ $(function () {
 // feather icons
 import feather from 'feather-icons';
 feather.replace();
-
-global.$ = require('jquery')
 
 import './components/tables';
 import './components/sidebar';

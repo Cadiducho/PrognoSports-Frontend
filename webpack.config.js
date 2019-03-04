@@ -21,6 +21,7 @@ module.exports = [
         $: "jquery",
         'window.jQuery': 'jquery',
         Popper: ['popper.js', 'default'],
+		ApexCharts: 'apexcharts',
     })
   ],
   optimization: {

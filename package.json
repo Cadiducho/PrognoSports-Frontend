@@ -12,12 +12,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bootstrap": "^4.0.0",
+    "apexcharts": "^3.5.1",
+    "bootstrap": "^4.3.1",
     "choices.js": "^3.0.2",
     "feather-icons": "^4.10.0",
     "jquery": "^3.3.1",
     "open-iconic": "^1.1.1",
-    "popper.js": "^1.12.9"
+    "popper.js": "^1.14.7"
   },
   "devDependencies": {
     "css-loader": "^0.28.9",
