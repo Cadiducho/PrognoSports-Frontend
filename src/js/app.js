@@ -13,7 +13,6 @@ feather.replace();
 
 global.$ = require('jquery')
 
-import './util/polyfills';
 import './components/tables';
 import './components/sidebar';
 import './components/notifications';

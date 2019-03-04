@@ -3,7 +3,6 @@ import { removeClass, addClass } from '../util/utilities';
 class NotificationHandler {
   getDefaultOptions() {
     return {
-      notificationSound: '../dist/media/notification.mp3',
       volume: 1,
       notification: {
         autoHide: false,
@@ -46,21 +45,6 @@ class NotificationHandler {
       this.getElementFromString(`<div id="${randomBottomContainerID}" class="notifications notifications-position-bottom"></div>`)
     );
     this.container.bottom = document.getElementById(randomBottomContainerID);
-
-    // random id for player
-    const randomAudioID = this.randomID();
-    document.body.appendChild(
-      this.getElementFromString(
-        `<audio preload="auto" volume="${this.options.volume}" id="${randomAudioID}">
-          <source src=${this.options.notificationSound} type="audio/mpeg" />
-          <embed hidden="true" loop="false" src="${this.options.notificationSound}" />
-        </audio>`
-      )
-    );
-
-    this.player = document.getElementById(randomAudioID);
-    this.player.load();
-    this.player.volume = this.options.volume;
   }
 
   generateNotificationCode(text, style) {
