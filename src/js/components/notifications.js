@@ -5,9 +5,8 @@ class NotificationHandler {
     return {
       volume: 1,
       notification: {
-        autoHide: false,
-        playSound: true,
-        duration: 5000,
+        autoHide: true,
+        duration: 2000,
         style: 'default',
         position: 'top',
       },
@@ -64,12 +63,6 @@ class NotificationHandler {
   fire(text, forceOptions) {
     const options = Object.assign({}, this.options.notification, forceOptions);
 
-    // Play Notification sound
-    if (options.playSound === true) {
-      this.player.pause();
-      this.player.currentTime = 0;
-      this.player.play();
-    }
 
     const notification = this.container[options.position].appendChild(
       this.getElementFromString(
