@@ -1,6 +1,8 @@
+import $ from 'jquery';
 import 'bootstrap';
-import 'choices.js'
-import ApexCharts from 'apexcharts'
+import ApexCharts from 'apexcharts/dist/apexcharts.common.js'
+
+import '../scss/app.scss';
 
 $(function () {
   $("button[data-toggle='popover']").popover({
@@ -12,6 +14,16 @@ $(function () {
 import feather from 'feather-icons';
 feather.replace();
 
+// moment.js
+const moment = require('moment');
+require('moment/locale/es');
+
+moment.locale('es');
+
 import './components/tables';
 import './components/sidebar';
 import './components/notifications';
+
+require("expose-loader?$!jquery");
+require("expose-loader?ApexCharts!apexcharts/dist/apexcharts.common.js");
+require("expose-loader?moment!moment");

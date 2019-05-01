@@ -1,87 +1,121 @@
 const path = require('path');
 const webpack = require('webpack');
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const extractSass = new ExtractTextPlugin("prognosport.css");
-const TerserPlugin = require('terser-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const PreloadWebpackPlugin = require('preload-webpack-plugin');
+const CssUrlRelativePlugin = require('css-url-relative-plugin');
 
-module.exports = [
-{
-  entry: {
-    main: "./src/js/app.js"
-  },
+const IS_DEV = process.env.NODE_ENV === 'dev';
+
+const config = {
+  mode: IS_DEV ? 'development' : 'production',
+  devtool: IS_DEV ? 'eval' : 'source-map',
+  entry: './src/js/app.js',
   output: {
-    path: path.resolve(__dirname, "dist/js"),
-    publicPath: '/js/',
-    filename: "prognosport.js"
-  },
-  plugins: [
-    /* use jQuery as Global */
-    new webpack.ProvidePlugin({
-        jQuery: "jquery",
-        $: "jquery",
-        'window.jQuery': 'jquery',
-        Popper: ['popper.js', 'default'],
-		ApexCharts: 'apexcharts',
-    })
-  ],
-  optimization: {
-    minimizer: [
-      new TerserPlugin({
-        cache: true,
-      }),
-    ],
-  },
-  resolve: {
-    extensions: ['.js']
-  }
-},
-{
-  entry: {
-    main: "./src/scss/app.scss"
-  },
-  output: {
-    path: path.resolve(__dirname, "dist/css"),
-    publicPath: '/css/',
-    filename: "prognosport.css"
+    filename: 'js/[name].[hash].js',
+    path: path.resolve(__dirname, 'dist'),
   },
   module: {
     rules: [
       {
-        test: /\.(png|woff|woff2|eot|ttf|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        use: [
-          {
-            loader: 'url-loader'
-          }
-        ]
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader',
       },
       {
         test: /\.scss$/,
-        exclude: /node_modules/,
-        use: extractSass.extract({
-          fallback: "style-loader",
-          use: [
-            "css-loader",
-            {
-              loader: "postcss-loader",
-              options: {
-                plugins: function () {
-                  return [
-                    require('precss'),
-                    require('autoprefixer')
-                  ];
-                }
-              }
+        use: [
+          IS_DEV ? 'style-loader' : MiniCssExtractPlugin.loader,
+          'css-loader',
+          'sass-loader',
+        ],
+      },
+      {
+        test: /\.(gif|png|jpe?g|svg)$/i,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 8192,
+              name: '[name].[ext]',
+              fallback: 'file-loader',
+              outputPath: 'public/images',
             },
-            "sass-loader"]
-        })
-      }
-    ]
+          },
+          {
+            loader: 'image-webpack-loader',
+            options: {
+              mozjpeg: {
+                mozjpeg: {
+                  progressive: true,
+                  quality: 65,
+                },
+                pngquant: {
+                  quality: '65-90',
+                  speed: 4,
+                },
+                gifsicle: {
+                  interlaced: false,
+                },
+                webp: {
+                  quality: 75,
+                },
+              },
+            },
+          },
+        ],
+      },
+    ],
   },
   plugins: [
-    extractSass,
+    new CleanWebpackPlugin(),
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+      'windows.jQuery': 'jquery',
+	  Popper: ['popper.js', 'default'],
+	  ApexCharts: 'apexcharts',
+    }),
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    new MiniCssExtractPlugin({
+      filename: IS_DEV ? 'css/[name].css' : 'css/[name].[contenthash].css',
+      chunkFilename: 'css/[name].[contenthash].css',
+    }),
+    new webpack.HashedModuleIdsPlugin(),
+    new PreloadWebpackPlugin({
+      include: 'initial',
+    }),
+    new CssUrlRelativePlugin(),
   ],
-  resolve: {
-    extensions: ['.css', '.js']
+  devServer: {
+    contentBase: path.join(__dirname, 'src'),
   },
+  optimization: {
+    runtimeChunk: 'single',
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /node_modules/,
+          chunks: 'initial',
+          name: 'vendor',
+          priority: 10,
+          enforce: true,
+        },
+      },
+    },
+    minimizer: [],
+  },
+};
+
+if (!IS_DEV) {
+  const TerserPlugin = require('terser-webpack-plugin');
+  const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+
+  config.optimization.minimizer.push(
+    new TerserPlugin(),
+    new OptimizeCSSAssetsPlugin({})
+  );
 }
-];
+
+module.exports = config;
