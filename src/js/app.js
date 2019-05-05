@@ -8,7 +8,23 @@ $(function () {
   $("button[data-toggle='popover']").popover({
     container: 'body'
   })
-})
+});
+
+$.fn.getFormObject = function() {
+	return $(this).serializeArray().reduce(function (obj, item) {
+		let name = item.name.replace("[]", "");
+        if (typeof obj[name] !== "undefined") {
+			if (!Array.isArray(obj[name])) {
+				obj[name] = [obj[name], item.value];
+			} else {
+				obj[name].push(item.value);
+			}
+		} else {
+			obj[name] = item.value;
+		}
+        return obj;
+	}, {});
+};
 
 // feather icons
 import feather from 'feather-icons';
