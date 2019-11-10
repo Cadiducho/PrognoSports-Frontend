@@ -1,4 +1,4 @@
-import { hasClass, removeClass, addClass } from '../util/utilities';
+import { hasClass, removeClass, addClass } from './utilities';
 
 document.addEventListener("DOMContentLoaded", function() {
   // Sidebar toggle

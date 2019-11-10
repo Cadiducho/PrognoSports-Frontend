@@ -1,4 +1,4 @@
-import { removeClass, addClass } from '../util/utilities';
+import { removeClass, addClass } from './utilities';
 
 class NotificationHandler {
   getDefaultOptions() {
