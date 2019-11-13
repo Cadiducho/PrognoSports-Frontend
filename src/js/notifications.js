@@ -101,4 +101,4 @@ class NotificationHandler {
   }
 }
 
-window.notifications = NotificationHandler;
+export const notifications = new NotificationHandler();

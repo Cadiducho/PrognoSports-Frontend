@@ -1,8 +1,10 @@
 import Vue from 'vue'
-import vueHeadful from 'vue-headful';
 import App from './App.vue'
-import { router } from './_helpers/router'
-import { store } from './_store';
+import { router, authHeader } from './_helpers'
+import store from './_store';
+
+import VueHeadful from 'vue-headful';
+import Loading from './components/lib/loading'
 
 import './scss/app.scss';
 
@@ -13,7 +15,6 @@ moment.locale('es');
 
 import './js/tables';
 import './js/sidebar';
-import './js/notifications';
 
 import axios from 'axios';
 import VueAxios from 'vue-axios';
@@ -21,10 +22,15 @@ import VueAxios from 'vue-axios';
 Vue.use(VueAxios, axios); 
 
 axios.defaults.baseURL = 'http://localhost:8000/api/v2';
-
 axios.interceptors.request.use(function (config) {
- 
-  config.metadata = { startTime: new Date()}
+  const token = authHeader();
+  config.headers.Authorization =  token;
+
+  return config;
+});
+axios.interceptors.request.use(function (config) {
+
+  config.metadata = { startTime: new Date()};
   return config;
 }, function (error) {
   return Promise.reject(error);
@@ -57,7 +63,8 @@ axios.interceptors.response.use(function (response) {
 Vue.config.productionTip = false
 
 
-Vue.component('vue-headful', vueHeadful);
+Vue.component('vue-headful', VueHeadful);
+Vue.component("loading", Loading);
 
 new Vue({
   router,
