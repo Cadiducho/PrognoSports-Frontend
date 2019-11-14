@@ -29,7 +29,7 @@ const actions = {
                     reject(error);
                 }
             );
-        })
+        });
     },
     [AUTH_LOGOUT]: ({commit, dispatch}) => {
         return new Promise((resolve, reject) => {

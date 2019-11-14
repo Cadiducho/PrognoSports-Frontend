@@ -12,17 +12,7 @@
               <label for="username" class="col-sm-4 col-form-label text-md-right">Usuario</label>
 
               <div class="col-md-6">
-                <input
-                  v-model="username"
-                  id="username"
-                  type="text"
-                  class="form-control"
-                  :class="{ 'is-invalid': submitted && !username }"
-                  name="username"
-                  value
-                  required
-                  autofocus
-                />
+                <input v-model="username" id="username" type="text" class="form-control" :class="{ 'is-invalid': submitted && !username }" name="username" value required autofocus/>
               </div>
             </div>
 
