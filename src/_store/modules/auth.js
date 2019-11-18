@@ -1,6 +1,8 @@
 import { AUTH_REQUEST, AUTH_ERROR, AUTH_SUCCESS, AUTH_LOGOUT } from '../actions/auth'
 import { USER_REQUEST } from '../actions/user'
 import { userService } from '../../_services';
+import { REMOVE_REGISTERED_MAIL_STATE } from "@/_store/actions/user";
+import { USER_CURRENT_COMMUNITY } from "@/_store/actions/community";
 
 const state = { token: localStorage.getItem('user-token') || '', status: '', hasLoadedOnce: false };
 
@@ -20,6 +22,7 @@ const actions = {
                 token => {
                     localStorage.setItem('user-token', token);
                     commit(AUTH_SUCCESS, token);
+                    commit(REMOVE_REGISTERED_MAIL_STATE);
                     dispatch(USER_REQUEST);
                     resolve(token);
                 },
@@ -34,6 +37,7 @@ const actions = {
     [AUTH_LOGOUT]: ({commit, dispatch}) => {
         return new Promise((resolve, reject) => {
             commit(AUTH_LOGOUT);
+            commit(USER_CURRENT_COMMUNITY, {});
             localStorage.removeItem('user-token');
             resolve();
         })

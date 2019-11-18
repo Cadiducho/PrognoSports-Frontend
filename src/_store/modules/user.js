@@ -4,17 +4,22 @@ import {
     USER_SUCCESS,
     USER_REGISTER,
     USER_REGISTER_SUCCESS,
-    USER_REGISTER_ERROR
-} from '../actions/user'
-import { AUTH_LOGOUT } from '../actions/auth'
-import { userService } from '../../_services';
+    USER_REGISTER_ERROR,
+    USER_FORGOT_PWD,
+    REMOVE_REGISTERED_MAIL_STATE,
+    USER_CHANGE_PWD,
+    USER_CHANGE_PWD_SUCCESS
+} from "@/_store/actions/user";
+import { AUTH_LOGOUT } from "@/_store/actions/auth";
+import { userService } from '@/_services';
 import Vue from 'vue'
 
-const state = { status: '', profile: {} };
+const state = { status: '', profile: {}, registeredMail: ''};
 
 const getters = {
     getProfile: state => state.profile,
     isProfileLoaded: state => !!state.profile.name,
+    getRegisteredMail: state => state.registeredMail,
 };
 
 const actions = {
@@ -48,6 +53,35 @@ const actions = {
                 });
         });
     },
+
+    [USER_FORGOT_PWD]: ({commit, dispatch}, { email }) => {
+        return new Promise((resolve, reject) => {
+            userService.sendForgotPassword(email)
+            .then(
+                () => {
+                    resolve();
+                },
+                error => {
+                    commit(REMOVE_REGISTERED_MAIL_STATE);
+                    reject(error);
+                });
+        });
+    },
+
+    [USER_CHANGE_PWD]: ({commit, dispatch}, { email, inputToken, inputPassword }) => {
+        return new Promise((resolve, reject) => {
+            userService.changePassword(email, inputToken, inputPassword)
+            .then(
+                () => {
+                    commit(USER_CHANGE_PWD_SUCCESS, email);
+                    resolve();
+                },
+                error => {
+                    commit(REMOVE_REGISTERED_MAIL_STATE);
+                    reject(error);
+                });
+        });
+    },
 };
 
 const mutations = {
@@ -69,9 +103,16 @@ const mutations = {
     },
     [USER_REGISTER_SUCCESS]: (state, email) => {
         state.status = 'success';
+        Vue.set(state, 'registeredMail', email);
     },
     [USER_REGISTER_ERROR]: (state) => {
         state.status = 'error';
+    },
+    [USER_CHANGE_PWD_SUCCESS]: (state, email) => {
+        Vue.set(state, 'registeredMail', email);
+    },
+    [REMOVE_REGISTERED_MAIL_STATE]: (state) => {
+        Vue.set(state, 'registeredMail', '');
     },
 };
 

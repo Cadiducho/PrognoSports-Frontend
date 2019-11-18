@@ -4,6 +4,8 @@ export const userService = {
     login,
     getMe,
     register,
+    sendForgotPassword,
+    changePassword,
 };
 
 function login(username, password) {
@@ -26,4 +28,12 @@ function register(email, username, password) {
             "username": username,
             "password": password
         });
+}
+
+function sendForgotPassword(email) {
+    return axios.post("forgotpassword", {"email": email});
+}
+
+function changePassword(email, inputToken, inputPassword) {
+    return axios.patch("changepassword", {"email": email, "token": inputToken, "password": inputPassword});
 }

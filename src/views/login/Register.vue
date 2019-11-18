@@ -1,46 +1,48 @@
 <template>
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="pb-3">
-        <h1>Registro</h1>
-      </div>
-      <div class="card">
-        <div class="card-header">Inserta tus datos</div>
+  <div id="registerComponent">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="pb-3">
+          <h1>Registro</h1>
+        </div>
+        <div class="card">
+          <div class="card-header">Inserta tus datos</div>
 
-        <div class="card-body">
-          <form id="register-form" @submit.prevent="handleSubmit">
-            <div class="form-group row">
-              <label for="username" class="col-sm-4 col-form-label text-md-right">Usuario</label>
+          <div class="card-body">
+            <form id="register-form" @submit.prevent="handleSubmit">
+              <div class="form-group row">
+                <label for="username" class="col-sm-4 col-form-label text-md-right">Usuario</label>
 
-              <div class="col-md-6">
-                <input v-model="username" id="username" type="text" class="form-control" :class="{ 'is-invalid': submitted && !username }" name="username" value required autofocus/>
+                <div class="col-md-6">
+                  <input v-model="username" id="username" type="text" class="form-control" :class="{ 'is-invalid': submitted && !username }" name="username" value required autofocus/>
+                </div>
               </div>
-            </div>
 
-            <div class="form-group row">
-              <label for="email" class="col-sm-4 col-form-label text-md-right">Correo electrónico</label>
+              <div class="form-group row">
+                <label for="email" class="col-sm-4 col-form-label text-md-right">Correo electrónico</label>
 
-              <div class="col-md-6">
-                <input v-model="email" id="email" type="text" class="form-control" :class="{ 'is-invalid': submitted && !email }" name="email" required autofocus />
+                <div class="col-md-6">
+                  <input v-model="email" id="email" type="text" class="form-control" :class="{ 'is-invalid': submitted && !email }" name="email" required autofocus />
+                </div>
               </div>
-            </div>
 
-            <div class="form-group row">
-              <label for="password" class="col-md-4 col-form-label text-md-right">Contraseña</label>
+              <div class="form-group row">
+                <label for="password" class="col-md-4 col-form-label text-md-right">Contraseña</label>
 
-              <div class="col-md-6">
-                <input v-model="password" id="password" type="password" class="form-control" :class="{ 'is-invalid': submitted && !password }" name="password" required />
+                <div class="col-md-6">
+                  <input v-model="password" id="password" type="password" class="form-control" :class="{ 'is-invalid': submitted && !password }" name="password" required />
+                </div>
               </div>
-            </div>
-            <div class="form-group row mb-0">
-              <div class="col-md-8 offset-md-4">
-                <button type="submit" class="btn btn-primary">Regístrate</button>
+              <div class="form-group row mb-0">
+                <div class="col-md-8 offset-md-4">
+                  <button type="submit" class="btn btn-primary">Regístrate</button>
+                </div>
               </div>
-            </div>
-            <h6>
-              <router-link to="/login">Ya tengo usuario</router-link>
-            </h6>
-          </form>
+              <h6>
+                <router-link to="/login">Ya tengo usuario</router-link>
+              </h6>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -49,8 +51,8 @@
 
 <script>
   import { mapState } from 'vuex'
-  import { USER_REGISTER } from "../../_store/actions/user";
-  import { notifications } from "../../js/notifications";
+  import { USER_REGISTER } from "@/_store/actions/user";
+  import { notifications } from "@/js/notifications";
 
   export default {
     data () {
