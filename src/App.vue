@@ -13,12 +13,14 @@
 
 <script>
 
-  import {USER_REQUEST} from "./_store/actions/user";
+  import {USER_REQUEST} from "@/_store/actions/user";
+  import {COMMUNITY_REQUEST} from "@/_store/actions/community";
 
   export default {
     created: function() {
       if (this.$store.getters.isAuthenticated) {
         this.$store.dispatch(USER_REQUEST); //Pedir los datos del usuario actual en cada componente
+        this.$store.dispatch(COMMUNITY_REQUEST);
       }
     }
   }

@@ -8,11 +8,7 @@
     <nav class="navbar navbar-light bg-light static-top">
       <div class="container">
         <a class="navbar-brand">
-          <img
-            src="https://prognosports.com/dist/img/logo.png"
-            class="navbar-brand-image d-inline-block align-top mr-2"
-            alt
-          />
+          <img src="@/assets/logo.png" class="navbar-brand-image d-inline-block align-top mr-2" alt/>
           PrognoSports
         </a>
         <section>
