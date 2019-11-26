@@ -15,6 +15,8 @@ moment.locale('es');
 
 import './js/tables';
 import './js/sidebar';
+import BootstrapVue from 'bootstrap-vue';
+Vue.use(BootstrapVue);
 
 import axios from 'axios';
 import VueAxios from 'vue-axios';
