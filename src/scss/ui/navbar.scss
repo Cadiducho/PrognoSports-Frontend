@@ -10,11 +10,16 @@
   .navbar-brand {
     padding-left: 1.2rem;
   }
+
+  .navbar-communities {
+    @extend .navbar-brand;
+    font-size: 1.0rem!important;
+  }
 }
 
 // User Profile
-.avatar-with-name {
-  > img {
+.navbar-avatar {
+  img {
     border-radius: $navbar-avatar-border-radius;
     width: $navbar-avatar-size;
     height: $navbar-avatar-size;
@@ -53,10 +58,6 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0px 0px 4px rgba(0,0,0,0.1);
-
-  .feather {
-    height: 1.1rem;
-  }
 }
 .nav-link-notification-number {
   font-weight: bold;
@@ -110,7 +111,7 @@
 }
 
 @include media-breakpoint-up(md) {
-  .avatar-with-name {
+  .navbar-avatar {
     span,
     &:after {
       display: inline-block;
