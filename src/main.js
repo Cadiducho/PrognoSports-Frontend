@@ -4,7 +4,7 @@ import { router, authHeader } from './_helpers'
 import store from './_store';
 
 import VueHeadful from 'vue-headful';
-import Loading from './components/lib/loading'
+import Loading from './components/lib/Loading'
 
 import './scss/app.scss';
 
@@ -66,7 +66,7 @@ Vue.config.productionTip = false
 
 
 Vue.component('vue-headful', VueHeadful);
-Vue.component("loading", Loading);
+Vue.component("Loading", Loading);
 
 new Vue({
   router,
