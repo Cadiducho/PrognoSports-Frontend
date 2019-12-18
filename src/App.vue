@@ -5,12 +5,13 @@
       <div class="adminx-container">
 
         <navbar />
+        <sidebar :active-page="this.$route.name" />
 
         <div class="adminx-content">
           <div class="adminx-main-content">
             <router-view/>
           </div>
-          <a id="back-to-top" href="#" class="btn btn-primary btn-lg back-to-top" role="button" title="Volver arriba" data-toggle="tooltip" data-placement="left"><i class="material-icons">keyboard_arrow_up</i></a>
+          <a id="back-to-top" @click="backToTop()" class="btn btn-primary btn-lg back-to-top" role="button" title="Volver arriba" data-toggle="tooltip" data-placement="left"><i class="material-icons">keyboard_arrow_up</i></a>
         </div>
       </div>
     </div>
@@ -41,10 +42,12 @@
   import {USER_REQUEST} from "@/_store/actions/user";
   import {COMMUNITY_REQUEST} from "@/_store/actions/community";
   import navbar from "@/components/navbar/Navbar";
+  import sidebar from "@/components/sidebar/Sidebar";
 
   export default {
     components: {
       navbar,
+      sidebar
     },
     data() {
       return {
@@ -55,6 +58,11 @@
       if (this.$store.getters.isAuthenticated) {
         this.$store.dispatch(USER_REQUEST); //Pedir los datos del usuario actual en cada componente
         this.$store.dispatch(COMMUNITY_REQUEST);
+      }
+    },
+    methods: {
+      backToTop() {
+
       }
     }
   }

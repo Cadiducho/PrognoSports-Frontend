@@ -3,9 +3,11 @@ import axios from 'axios';
 export const userService = {
     login,
     getMe,
+    getUser,
     register,
     sendForgotPassword,
     changePassword,
+    getUsersInCommunity
 };
 
 function login(username, password) {
@@ -19,6 +21,14 @@ function login(username, password) {
 function getMe() {
     return axios
         .get('/user/me');
+}
+
+async function getUser(user) {
+    return await axios.get(`/user/${user}`)
+}
+
+async function getUsersInCommunity(communityId) {
+    return await axios.get(`/communities/${communityId}/members`)
 }
 
 function register(email, username, password) {
