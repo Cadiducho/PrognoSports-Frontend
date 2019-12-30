@@ -16,7 +16,8 @@
 </template>
 
 <script>
-    import {AUTH_LOGOUT} from "@/_store/actions/auth";
+
+    import {AUTH_LOGOUT} from "@/_store/actions.type";
 
     export default {
         name: "AvatarComponent",

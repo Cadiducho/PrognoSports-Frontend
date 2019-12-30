@@ -1,19 +1,13 @@
-import {
-    USER_REQUEST,
-    USER_ERROR,
-    USER_SUCCESS,
-    USER_REGISTER,
-    USER_REGISTER_SUCCESS,
-    USER_REGISTER_ERROR,
-    USER_FORGOT_PWD,
-    REMOVE_REGISTERED_MAIL_STATE,
-    USER_CHANGE_PWD,
-    USER_CHANGE_PWD_SUCCESS
-} from "@/_store/actions/user";
-import { AUTH_LOGOUT } from "@/_store/actions/auth";
-import { USER_CURRENT_COMMUNITY } from "@/_store/actions/community";
 import { userService } from '@/_services';
 import Vue from 'vue'
+import {
+    AUTH_LOGOUT, REMOVE_REGISTERED_MAIL_STATE, USER_CHANGE_PWD, USER_CHANGE_PWD_SUCCESS,
+    USER_CURRENT_COMMUNITY,
+    USER_ERROR, USER_FORGOT_PWD,
+    USER_REGISTER, USER_REGISTER_ERROR, USER_REGISTER_SUCCESS,
+    USER_REQUEST,
+    USER_SUCCESS
+} from "@/_store/actions.type";
 
 const state = { status: '', profile: {}, registeredMail: ''};
 
@@ -30,7 +24,6 @@ const actions = {
         .then(user => {
             commit(USER_SUCCESS, user);
             if (!rootGetters.thereIsCurrentCommunity) {
-                console.log("comunidad?: " + rootGetters.thereIsCurrentCommunity);
                 // Si no hay comunidad guardada en el estado, intentar poner la que tiene por defecto el getMe()
                 commit(USER_CURRENT_COMMUNITY, user.currentCommunity);
             }

@@ -13,7 +13,11 @@
                     <a class="d-flex text-primary" @click="clearNotification"><small>Marcar todas como leídas</small></a>
                 </div>
                 <b-list-group>
-                    <b-list-group-item action v-for="noti in notificationList" :to="'/' + noti.data['gpSeason'] + '/' + noti.data['gpRound']" v-bind:class="{ unread: noti.readAt === undefined}">
+                    <b-list-group-item action
+                                       v-for="noti in notificationList" :to="'/' + noti.data['gpSeason'] + '/' + noti.data['gpRound']"
+                                       v-bind:class="{ unread: noti.readAt === undefined}"
+                                       :key="noti.id"
+                    >
                         <vswitch :value="noti.type">
                             <template #info>
                                 <p class="mb-1">

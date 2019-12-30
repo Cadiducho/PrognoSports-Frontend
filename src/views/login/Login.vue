@@ -45,8 +45,8 @@
 
 <script>
     import { mapState } from 'vuex'
-    import { AUTH_REQUEST } from "@/_store/actions/auth";
     import { notifications } from "@/js/notifications";
+    import {AUTH_REQUEST} from "@/_store/actions.type";
 
     export default {
         data () {

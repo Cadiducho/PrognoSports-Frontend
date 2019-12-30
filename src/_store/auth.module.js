@@ -1,8 +1,12 @@
-import { AUTH_REQUEST, AUTH_ERROR, AUTH_SUCCESS, AUTH_LOGOUT } from '../actions/auth'
-import { USER_REQUEST } from '../actions/user'
-import { userService } from '../../_services';
-import { REMOVE_REGISTERED_MAIL_STATE } from "@/_store/actions/user";
-import { USER_CURRENT_COMMUNITY } from "@/_store/actions/community";
+import { userService } from '../_services';
+import {
+    AUTH_ERROR,
+    AUTH_LOGOUT,
+    AUTH_REQUEST,
+    AUTH_SUCCESS,
+    REMOVE_REGISTERED_MAIL_STATE,
+    USER_CURRENT_COMMUNITY, USER_REQUEST
+} from "@/_store/actions.type";
 
 const state = { token: localStorage.getItem('user-token') || '', status: '', hasLoadedOnce: false };
 

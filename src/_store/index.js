@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import user from './modules/user'
+import user from './user.module'
 import auth from './modules/auth'
 import community from "./modules/community";
 

@@ -51,8 +51,8 @@
 
 <script>
   import { mapState } from 'vuex'
-  import { USER_REGISTER } from "@/_store/actions/user";
   import { notifications } from "@/js/notifications";
+  import {USER_REGISTER} from "@/_store/actions.type";
 
   export default {
     data () {

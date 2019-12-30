@@ -3,11 +3,11 @@
 
         <b-breadcrumb :items="breadcumbItems"></b-breadcrumb>
 
-        <progno-page-title name="Dashboard" />
+        <PrognoPageTitle name="Dashboard" />
 
         <b-row>
             <b-col lg="4">
-                <next-grand-prix />
+                <NextGrandPrix />
             </b-col>
             <b-col lg="8">
                 <div class="card">
@@ -20,10 +20,10 @@
 
 <script>
     import { mapGetters, mapState } from 'vuex'
-    import { USER_CURRENT_COMMUNITY } from "@/_store/actions/community";
 
     import PrognoPageTitle from "@/components/lib/PrognoPageTitle";
-    import NextGrandPrix from "@/views/home/NextGrandPrix";
+    import NextGrandPrix from "@/components/gps/NextGrandPrix";
+    import {USER_CURRENT_COMMUNITY} from "@/_store/actions.type";
 
     export default {
         components: {

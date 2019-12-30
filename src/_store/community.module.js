@@ -1,6 +1,6 @@
-import {COMMUNITY_REQUEST, USER_CURRENT_COMMUNITY} from "@/_store/actions/community";
 import {communityService} from "@/_services/community.service";
 import Vue from 'vue'
+import {COMMUNITY_REQUEST, USER_CURRENT_COMMUNITY} from "@/_store/actions.type";
 
 const state = {
     currentCommunityId: localStorage.getItem('current-community') || '',

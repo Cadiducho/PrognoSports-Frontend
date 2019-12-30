@@ -30,10 +30,10 @@
 
 <script>
     import { mapGetters, mapState } from 'vuex'
-    import { AUTH_LOGOUT } from "@/_store/actions/auth";
     import AvatarComponent from "@/components/navbar/AvatarComponent";
     import NotificationsDropdown from "@/components/navbar/NotificationsDropdown";
     import CommunitiesDropdown from "@/components/navbar/CommunitiesDropdown";
+    import {AUTH_LOGOUT} from "@/_store/actions.type";
 
     export default {
         components: {

@@ -53,7 +53,7 @@
 <script>
     import { mapState } from 'vuex'
     import { notifications } from "@/js/notifications";
-    import {USER_CHANGE_PWD, USER_FORGOT_PWD} from "@/_store/actions/user";
+    import {USER_CHANGE_PWD, USER_FORGOT_PWD} from "@/_store/actions.type";
 
     export default {
         data () {

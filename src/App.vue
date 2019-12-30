@@ -39,10 +39,9 @@
 
 <script>
 
-  import {USER_REQUEST} from "@/_store/actions/user";
-  import {COMMUNITY_REQUEST} from "@/_store/actions/community";
   import navbar from "@/components/navbar/Navbar";
   import sidebar from "@/components/sidebar/Sidebar";
+  import {COMMUNITY_REQUEST, USER_REQUEST} from "@/_store/actions.type";
 
   export default {
     components: {
