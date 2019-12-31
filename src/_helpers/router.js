@@ -16,6 +16,11 @@ const routes = [
         component: () => import('../views/home/Home.vue'),
     },
     {
+        path: '/gps',
+        name: 'gplist',
+        component: () => import('@/views/gps/GPList.vue'),
+    },
+    {
         path: '/ranking',
         name: 'ranking',
         component: () => import('../views/ranking/Ranking.vue'),

@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import user from './user.module'
-import auth from './modules/auth'
-import community from "./modules/community";
+import auth from './auth.module'
+import community from "./community.module";
+import grandprixes from "./grandprixes.module";
 
 Vue.use(Vuex);
 
@@ -13,6 +14,7 @@ export default new Vuex.Store({
     user,
     auth,
     community,
+    grandprixes,
   },
   strict: debug,
 })
