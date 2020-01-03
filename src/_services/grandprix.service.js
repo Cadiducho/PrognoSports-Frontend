@@ -2,7 +2,8 @@ import axios from "axios";
 
 export const grandPrixService = {
     getNextGrandPrix,
-    getGrandPrixesList
+    getGrandPrixesList,
+    getGrandPrix
 };
 
 async function getNextGrandPrix() {
@@ -15,4 +16,8 @@ async function getGrandPrixesList(searchType, season) {
                 searchType: searchType
             }
     });
+}
+
+async function getGrandPrix(season, id) {
+    return await axios.get(`/gps/${season}/${id}`);
 }

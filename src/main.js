@@ -8,10 +8,13 @@ import Loading from './components/lib/Loading'
 
 import './scss/app.scss';
 
-const moment = require('moment');
-require('moment/locale/es');
+const moment = require('moment')
+require('moment/locale/es')
 
-moment.locale('es');
+Vue.use(require('vue-moment-tz'), {
+  moment
+})
+
 
 import './js/tables';
 import './js/sidebar';
