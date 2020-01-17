@@ -12,7 +12,7 @@ export const userService = {
 
 function login(username, password) {
     return axios
-        .post('/login', {
+        .post('/auth/login', {
             "username": username,
             "password": password
         });
@@ -33,7 +33,7 @@ async function getUsersInCommunity(communityId) {
 
 function register(email, username, password) {
     return axios
-        .post('/register', {
+        .post('/auth/register', {
             "email": email,
             "username": username,
             "password": password
@@ -41,9 +41,9 @@ function register(email, username, password) {
 }
 
 function sendForgotPassword(email) {
-    return axios.post("forgotpassword", {"email": email});
+    return axios.post("/auth/forgotpassword", {"email": email});
 }
 
 function changePassword(email, inputToken, inputPassword) {
-    return axios.patch("changepassword", {"email": email, "token": inputToken, "password": inputPassword});
+    return axios.patch("/auth/changepassword", {"email": email, "token": inputToken, "password": inputPassword});
 }
