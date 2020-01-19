@@ -8,15 +8,12 @@
             <b-col md="8">
                 <b-tabs content-class="mt-3">
                     <b-tab title="Próximos" active>
-                        NEXT
                         <GrandPrixesList searchType="next"/>
                     </b-tab>
                     <b-tab title="Pasados">
-                        PAST
                         <GrandPrixesList searchType="past"/>
                     </b-tab>
                     <b-tab title="Todos">
-                        TODOS
                         <GrandPrixesList searchType="all"/>
                     </b-tab>
                 </b-tabs>
@@ -57,7 +54,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>
