@@ -1,11 +1,11 @@
-import {FETCH_GP_LIST, FETCH_GRAND_PRIX, FETCH_NEXT_GP} from "@/_store/actions.type";
+import {FETCH_GP_LIST, FETCH_GRAND_PRIX, FETCH_NEXT_GP, FETCH_TIPPS_LIST} from "@/_store/actions.type";
 import {grandPrixService} from "@/_services";
 import {
     FETCH_GP_LIST_END,
     FETCH_GP_LIST_START,
     FETCH_GRAND_PRIX_END, FETCH_GRAND_PRIX_START,
     FETCH_NEXT_GP_END,
-    FETCH_NEXT_GP_START
+    FETCH_NEXT_GP_START, FETCH_TIPPS_LIST_END
 } from "@/_store/mutations.type";
 
 const state = {

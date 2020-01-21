@@ -1,13 +1,20 @@
 import { userService } from '@/_services';
 import Vue from 'vue'
 import {
-    AUTH_LOGOUT, REMOVE_REGISTERED_MAIL_STATE, USER_CHANGE_PWD, USER_CHANGE_PWD_SUCCESS,
+    AUTH_LOGOUT, USER_CHANGE_PWD,
     USER_CURRENT_COMMUNITY,
-    USER_ERROR, USER_FORGOT_PWD,
-    USER_REGISTER, USER_REGISTER_ERROR, USER_REGISTER_SUCCESS,
+    USER_FORGOT_PWD,
+    USER_REGISTER,
     USER_REQUEST,
-    USER_SUCCESS
 } from "@/_store/actions.type";
+import {
+    REMOVE_REGISTERED_MAIL_STATE,
+    USER_CHANGE_PWD_SUCCESS,
+    USER_ERROR,
+    USER_REGISTER_ERROR,
+    USER_REGISTER_SUCCESS,
+    USER_SUCCESS
+} from "@/_store/mutations.type";
 
 const state = { status: '', profile: {}, registeredMail: ''};
 

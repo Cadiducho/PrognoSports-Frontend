@@ -1,12 +1,16 @@
 import { userService } from '../_services';
 import {
-    AUTH_ERROR,
     AUTH_LOGOUT,
     AUTH_REQUEST,
-    AUTH_SUCCESS,
-    REMOVE_REGISTERED_MAIL_STATE,
-    USER_CURRENT_COMMUNITY, USER_REQUEST
+    USER_REQUEST
 } from "@/_store/actions.type";
+import {
+    AUTH_ERROR,
+    AUTH_LOGOUT_MUTATION,
+    AUTH_REQUEST_LOADING,
+    AUTH_SUCCESS,
+    REMOVE_REGISTERED_MAIL_STATE, USER_SET_CURRENT_COMMUNITY
+} from "@/_store/mutations.type";
 
 const state = { token: localStorage.getItem('user-token') || '', status: '', hasLoadedOnce: false };
 
@@ -19,7 +23,7 @@ const getters = {
 const actions = {
     [AUTH_REQUEST]: ({commit, dispatch}, {username, password}) => {
         return new Promise((resolve, reject) => {
-            commit(AUTH_REQUEST);
+            commit(AUTH_REQUEST_LOADING);
 
             userService.login(username, password)
             .then(
@@ -40,8 +44,8 @@ const actions = {
     },
     [AUTH_LOGOUT]: ({commit, dispatch}) => {
         return new Promise((resolve, reject) => {
-            commit(AUTH_LOGOUT);
-            commit(USER_CURRENT_COMMUNITY, {});
+            commit(AUTH_LOGOUT_MUTATION);
+            commit(USER_SET_CURRENT_COMMUNITY, {});
             localStorage.removeItem('user-token');
             resolve();
         })
