@@ -2,7 +2,6 @@ import { userService } from '@/_services';
 import Vue from 'vue'
 import {
     AUTH_LOGOUT, USER_CHANGE_PWD,
-    USER_CURRENT_COMMUNITY,
     USER_FORGOT_PWD,
     USER_REGISTER,
     USER_REQUEST,
@@ -12,7 +11,7 @@ import {
     USER_CHANGE_PWD_SUCCESS,
     USER_ERROR,
     USER_REGISTER_ERROR,
-    USER_REGISTER_SUCCESS,
+    USER_REGISTER_SUCCESS, USER_SET_CURRENT_COMMUNITY,
     USER_SUCCESS
 } from "@/_store/mutations.type";
 
@@ -32,7 +31,7 @@ const actions = {
             commit(USER_SUCCESS, user);
             if (!rootGetters.thereIsCurrentCommunity) {
                 // Si no hay comunidad guardada en el estado, intentar poner la que tiene por defecto el getMe()
-                commit(USER_CURRENT_COMMUNITY, user.currentCommunity);
+                commit(USER_SET_CURRENT_COMMUNITY, user.currentCommunity);
             }
         })
         .catch(resp => {

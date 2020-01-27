@@ -23,7 +23,7 @@
 
     import PrognoPageTitle from "@/components/lib/PrognoPageTitle";
     import NextGrandPrix from "@/components/gps/NextGrandPrix";
-    import {USER_CURRENT_COMMUNITY} from "@/_store/actions.type";
+    import {USER_SET_CURRENT_COMMUNITY} from "@/_store/mutations.type";
 
     export default {
         components: {
@@ -33,7 +33,7 @@
         name: 'home',
         methods: {
             test: function () {
-                this.$store.commit(USER_CURRENT_COMMUNITY, {id: 2, name: "Hola desde vue"})
+                this.$store.commit(USER_SET_CURRENT_COMMUNITY, {id: 2, name: "Hola desde vue"})
             }
         },
         computed: {
