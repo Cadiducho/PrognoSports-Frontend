@@ -23,6 +23,7 @@ const state = {
     isLoadingNextGp: true,
     gpList: [],
     isLoadingGps: true,
+    qualiTipps: undefined,
 };
 
 const getters = {
@@ -47,6 +48,9 @@ const getters = {
     isLoadingGps(state) {
         return state.isLoadingGps;
     },
+    qualiTipps(state) {
+        return state.qualiTipps;
+    }
 };
 
 const actions = {
@@ -77,7 +81,15 @@ const actions = {
                 commit(FETCH_GP_LIST_END, list);
             })
         });
-    }
+    },
+    [FETCH_TIPPS_LIST]: ({commit, dispatch}, {gp, community}) => {
+        return new Promise((resolve, reject) => {
+            grandPrixService.getTipps(gp, community)
+            .then(list => {
+                commit(FETCH_TIPPS_LIST_END, list);
+            })
+        });
+    },
 };
 
 const mutations = {
@@ -101,6 +113,9 @@ const mutations = {
     [FETCH_GRAND_PRIX_END]: (state, gp) => {
         state.grandPrix = gp;
         state.isLoadingGrandPrix = false;
+    },
+    [FETCH_TIPPS_LIST_END]: (state, tipps) => {
+        state.qualiTipps = tipps;
     }
 };
 
