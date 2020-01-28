@@ -4,6 +4,7 @@ import user from './user.module'
 import auth from './auth.module'
 import community from "./community.module";
 import grandprixes from "./grandprixes.module";
+import drivers from "./drivers.module";
 
 Vue.use(Vuex);
 
@@ -15,6 +16,7 @@ export default new Vuex.Store({
     auth,
     community,
     grandprixes,
+    drivers
   },
   strict: debug,
 })
