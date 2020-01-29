@@ -4,7 +4,7 @@
             <loading />
         </div>
         <div v-else>
-            <b-breadcrumb :items="breadcumbItems"></b-breadcrumb>
+            <b-breadcrumb :items="breadcumbItems" />
 
             <b-row>
                 <b-col sm="9">
@@ -17,14 +17,20 @@
 
             <b-row>
                 <div v-bind:class="[startGrid !== undefined ? 'col-sm-6' : '', 'col-sm-9']">
-                    <b-card class="mb-grid">
-                        <b-card-header>
-                            Header
-                        </b-card-header>
-                        <b-card-body>
-                            Un gp de {{ grandPrix.code }}
-                                {{ JSON.stringify(grandPrix)}}
-                        </b-card-body>
+                    <b-card no-body>
+                        <b-tabs card>
+                            <b-tab title="Clasificación" active>
+                                <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>clasificación</strong> es {{humanDateMinusFive(grandPrix.qualiTime)}}</h6>
+                                <SelectDrivers :gp="grandPrix" />
+                            </b-tab>
+                            <b-tab title="Carrera">
+                                <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>carrera</strong> es {{humanDateMinusFive(grandPrix.raceTime)}}</h6>
+                                <form id="formRace">
+                                    <div class="form-group">
+                                    </div>
+                                </form>
+                            </b-tab>
+                        </b-tabs>
                     </b-card>
                 </div>
                 <b-col v-if="startGrid !== undefined" sm="3">
@@ -41,15 +47,18 @@
 <script>
     import store from "@/_store";
     import {FETCH_GRAND_PRIX} from "@/_store/actions.type";
-    import {mapGetters} from "vuex";
+    import {mapGetters, mapState} from "vuex";
     import PrognoPageTitle from "@/components/lib/PrognoPageTitle";
     import GrandPrixPagination from "@/components/gps/GrandPrixPagination";
     import CircuitCard from "@/components/gps/CircuitCard";
     import StartGrid from "@/components/gps/StartGrid";
+    import moment from "moment-timezone";
+    import SelectDrivers from "@/components/gps/SelectDrivers";
 
     export default {
         name: "GrandPrix",
         components: {
+            SelectDrivers,
             CircuitCard,
             PrognoPageTitle,
             GrandPrixPagination,
@@ -67,7 +76,7 @@
                         to: '/gps'
                     },
                     {
-                        text: this.$route.params.id,
+                        text: this.$store.getters.grandPrix.name,
                         active: true
                     }
                 ],
@@ -78,8 +87,19 @@
             store.dispatch(FETCH_GRAND_PRIX, payload).then(next());
         },
         computed: {
-            ...mapGetters(["isLoadingGrandPrix", "grandPrix", "startGrid"])
+            ...mapGetters(["isLoadingGrandPrix", "grandPrix", "startGrid"]),
+            ...mapState({
+                profile: state => state.user.profile,
+            })
         },
+        methods: {
+            humanDateMinusFive(date) {
+                return moment(String(date)).subtract(5, 'minutes').tz(this.profile.preferences['time-zone-id']).format('DD/MM/YYYY HH:mm:ss');
+            },
+            timeLeft(date) {
+                return moment(String(date)).tz(this.profile.preferences['time-zone-id']).fromNow();
+            }
+        }
     }
 </script>
 

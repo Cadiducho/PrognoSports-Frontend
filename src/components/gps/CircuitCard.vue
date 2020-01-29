@@ -1,6 +1,6 @@
 <template>
     <b-card class="mb-3">
-        <img v-if="circuit.logo_url !== undefined" class="card-img-top" :src="circuit.logo_url" alt="Logo image">
+        <img v-if="circuit.logo_url !== undefined && circuit.logo_url.length > 0" class="card-img-top" :src="circuit.logo_url" alt="Logo image">
         <img class="card-img-top" :src="circuit.image_url" alt="Circuit image">
         <b-card-body>
             <h5 class="card-title font-weight-bold">{{circuit.name}}</h5>
