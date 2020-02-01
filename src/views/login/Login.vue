@@ -43,50 +43,50 @@
     </div>
 </template>
 
-<script>
-    import { mapState } from 'vuex'
+<script lang="ts">
     import { notifications } from "@/js/notifications";
-    import {AUTH_REQUEST} from "@/_store/actions.type";
+    import AuthTypes from "@/_store/types/AuthTypes";
+    import {Component, Vue} from "vue-property-decorator";
+    import { namespace } from 'vuex-class';
 
-    export default {
-        data () {
-            return {
-                username: '',
-                password: '',
-                submitted: false
-            }
-        },
-        computed: {
-            ...mapState('account', ['status'])
-        },
+    const user = namespace('user');
+    const auth = namespace('auth');
+
+    @Component
+    export default class Login extends Vue {
+        @auth.Action(AuthTypes.actions.AUTH_REQUEST) actionAuth: any;
+        @user.Getter('getRegisteredMail') registeredMail!: string;
+
+        username: string = '';
+        password: string = '';
+        submitted: boolean = false;
+
         created () {
-            if (!!this.$store.getters.getRegisteredMail) {
-                this.username = this.$store.getters.getRegisteredMail;
+            if (!!this.registeredMail) {
+                this.username = this.registeredMail;
             }
-        },
-        methods: {
-            handleSubmit (e) {
-                this.submitted = true;
-                const { username, password } = this;
-                if (username && password) {
-                    this.$store.dispatch(AUTH_REQUEST, { username, password })
-                    .then(() => {
-                        this.$router.push('/home');
-                        notifications.fire('Has iniciado sesión correctamente', {
-                            autoHide: true,
-                            playSound: false,
-                            duration: 1500,
-                            style: 'info',
-                        });
-                    }, (error) => {
-                        notifications.fire('Fallo al iniciar sesión: ' + error, {
-                            autoHide: true,
-                            playSound: false,
-                            duration: 1500,
-                            style: 'danger',
-                        });
+        }
+
+        public handleSubmit (e: any) {
+            this.submitted = true;
+            const { username, password } = this;
+            if (username && password) {
+                this.actionAuth({ username, password }).
+                then(() => {
+                    this.$router.push({name: 'home'});
+                    notifications.fire('Has iniciado sesión correctamente', {autoHide: true,
+                        playSound: false,
+                        duration: 1500,
+                        style: 'info',
                     });
-                }
+                }, (error: any) => {
+                    notifications.fire('Fallo al iniciar sesión: ' + error, {
+                        autoHide: true,
+                        playSound: false,
+                        duration: 1500,
+                        style: 'danger',
+                    });
+                });
             }
         }
     };

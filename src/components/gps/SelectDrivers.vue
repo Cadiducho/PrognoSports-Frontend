@@ -26,6 +26,7 @@
             </div>
 
             Selected: {{JSON.stringify(form.selectedDriver)}}
+            Tipps: {{JSON.stringify(qualiTipps)}}
 
             <b-button type="submit" variant="primary">Guardar pronóstico</b-button>
             <b-button type="reset" variant="danger">Reiniciar formulario</b-button>
@@ -33,56 +34,58 @@
     </div>
 </template>
 
-<script>
-    import {mapGetters} from "vuex";
-    import {FETCH_DRIVERS_LIST, FETCH_TIPPS_LIST} from "@/_store/actions.type";
+<script lang="ts">
+    import {Component, Prop, Vue} from "vue-property-decorator";
+    import GrandPrixesTypes from "@/_store/types/GrandPrixesTypes.ts";
+    import { namespace } from 'vuex-class';
+    import {GrandPrix} from "@/types/GrandPrix";
+    import {Driver} from "@/types/Driver";
+    import DriversTypes from "@/_store/types/DriversTypes";
+    const grandprix = namespace('grandprix');
+    const drivers = namespace('drivers');
 
-    export default {
-        name: "SelectDrivers",
-        data() {
-            return {
-                form: {
-                    selectedDriver: [],
-                },
-            }
-        },
-        props: {
-            gp: { type: Object, required: true }
-        },
+    @Component
+    export default class SelectDrivers extends Vue {
+        @grandprix.Getter qualiTipps!: any;
+        @drivers.Getter isLoadingDriverList!: boolean;
+        @drivers.Getter driverList!: Array<Driver>;
+        @Prop({required: true}) gp!: GrandPrix;
+
+        @grandprix.Action(GrandPrixesTypes.actions.FETCH_TIPPS_LIST) actionTippsList!: (payload: Object) => void;
+        @drivers.Action(DriversTypes.actions.FETCH_DRIVERS_LIST) actionDriversList!: (gp: GrandPrix) => void;
+
+        private form = {
+            selectedDriver: [], //ToDo: Crear interfaz Driver
+        };
+
         mounted() {
-            this.fetchTippsList();
-            this.fetchDriversList();
-        },
-        computed: {
-            ...mapGetters(["qualiTipps", "isLoadingDriverList", "driverList"]),
+            let payload = {gp: this.gp, community: 1};
+            this.actionTippsList(payload);
 
-            drivers: function () {
-                let list = [{ value: null, text: '## No Pronosticado ##', disabled: true },];
-                this.driverList.forEach(driver => {
-                    list.push({
-                        value: driver.id,
-                        text: `${driver.lastname}, ${driver.firstname} - ${driver.team.name} (${driver.team.carname})`
-                    });
-                });
-                return list;
-            }
-        },
-        methods: {
-            fetchTippsList() {
-                let payload = {gp: this.gp, community: 1};
-                this.$store.dispatch(FETCH_TIPPS_LIST, payload);
-            },
-            fetchDriversList() {
-                this.$store.dispatch(FETCH_DRIVERS_LIST, this.gp);
-            },
-            onSubmit(evt) {
-                evt.preventDefault();
-                alert(JSON.stringify(this.form));
-            },
-            onReset(evt) {
-                evt.preventDefault();
-                this.form.food = null;
-            }
+            this.actionDriversList(this.gp);
         }
+
+        get drivers(): Array<any> {
+            let list = [{ value: '', text: '## No Pronosticado ##', disabled: true }];
+            this.driverList.forEach(driver => {
+                list.push({
+                    disabled: false,
+                    value: driver.id,
+                    text: `${driver.lastname}, ${driver.firstname} - ${driver.team.name} (${driver.team.carname})`
+                });
+            });
+            return list;
+        }
+
+        onSubmit(evt: any) {
+            evt.preventDefault();
+            alert(JSON.stringify(this.form));
+        }
+
+        onReset(evt: any) {
+            evt.preventDefault();
+            //this.form.selectedDriver = null; //FixMe
+        }
+
     }
 </script>

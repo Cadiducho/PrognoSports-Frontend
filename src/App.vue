@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div v-if="this.$store.getters.isAuthenticated">
+    <div v-if="this.isAuthenticated">
       <!-- App cargada e iniciada sesión -->
       <div class="adminx-container">
 
@@ -37,32 +37,39 @@
 }
 </style>
 
-<script>
+<script lang="ts">
+  import {Component, Vue} from "vue-property-decorator";
+  import { namespace } from 'vuex-class';
+  const auth = namespace('auth');
+  const user = namespace('user');
+  const community = namespace('community');
 
-  import navbar from "@/components/navbar/Navbar";
-  import sidebar from "@/components/sidebar/Sidebar";
-  import {COMMUNITY_REQUEST, USER_REQUEST} from "@/_store/actions.type";
+  import UserTypes from "@/_store/types/UserTypes.ts";
+  import CommunityTypes from "@/_store/types/CommunityTypes.ts";
 
-  export default {
+  import navbar from "@/components/navbar/Navbar.vue";
+  import sidebar from "@/components/sidebar/Sidebar.vue";
+
+  @Component({
     components: {
       navbar,
       sidebar
-    },
-    data() {
-      return {
-        isAuthenticated: false
-      }
-    },
-    created: function() {
-      if (this.$store.getters.isAuthenticated) {
-        this.$store.dispatch(USER_REQUEST); //Pedir los datos del usuario actual en cada componente
-        this.$store.dispatch(COMMUNITY_REQUEST);
-      }
-    },
-    methods: {
-      backToTop() {
+    }
+  })
+  export default class App extends Vue {
+    @user.Action(UserTypes.actions.USER_REQUEST) actionUserRequest: any;
+    @community.Action(CommunityTypes.actions.COMMUNITY_REQUEST) actionCommunityRequest: any;
+    @auth.Getter isAuthenticated!: boolean;
 
+    created() {
+      if (this.isAuthenticated) {
+        this.actionUserRequest();
+        this.actionCommunityRequest();
       }
+    }
+
+    public backToTop() {
+      //ToDo
     }
   }
 </script>

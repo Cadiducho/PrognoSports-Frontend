@@ -112,40 +112,39 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+    import {Component, Prop, Vue} from "vue-property-decorator";
     import {notificationService} from "@/_services/notification.service";
-    import vswitch from "../lib/v-switch";
+    import vswitch from "../lib/v-switch.vue";
     import moment from "moment";
 
-    export default {
-        name: "NotificationsDropdown",
-
+    @Component({
         components: {
             vswitch
         },
-        data() {
-            return {
-                unreadNotificationsCount: 0,
-                notificationList: {},
-            }
-        },
+    })
+    export default class NotificationsDropdown extends Vue {
+        private unreadNotificationsCount = 0;
+        private notificationList = {};
+
         created() {
             this.getNotifications();
-        },
-        methods: {
-            clearNotification: function () {
-                notificationService.clearNotifications().then(() => {
-                    this.unreadNotificationsCount = 0;
-                });
-            },
-            getNotifications: function () {
-                notificationService.getNotifications().then((result) => {
-                    this.notificationList = result;
-                });
-            },
-            moment: function () {
-                return moment();
-            }
+        }
+
+        public clearNotification() {
+            notificationService.clearNotifications().then(() => {
+                this.unreadNotificationsCount = 0;
+            });
+        }
+
+        public getNotifications()  {
+            notificationService.getNotifications().then((result) => {
+                this.notificationList = result;
+            });
+        }
+
+        public moment() {
+            return moment();
         }
     }
 </script>

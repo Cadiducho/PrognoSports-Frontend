@@ -1,5 +1,5 @@
 <template>
-    <div id="avatarComponent">
+    <div id="avatarComponent" v-if="profile !== undefined">
         <b-nav-item-dropdown right no-caret class="navbar-avatar">
             <template v-slot:button-content>
                 <img :src="profile.profileImageUrl" class="rounded-circle d-inline-block align-top dropdown-toggle-no-caret" alt="">
@@ -15,17 +15,21 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 
-    import {AUTH_LOGOUT} from "@/_store/actions.type";
+    import {Component, Prop, Vue} from "vue-property-decorator";
+    import AuthTypes from "@/_store/types/AuthTypes.ts";
+    import {User} from "@/types/User";
+    import {namespace, State} from 'vuex-class';
+    const auth = namespace('auth');
 
-    export default {
-        name: "AvatarComponent",
-        props: ['profile'],
-        methods: {
-            logout: function () {
-                this.$store.dispatch(AUTH_LOGOUT).then(() => this.$router.push('/login'))
-            },
+    @Component
+    export default class AvatarComponent extends Vue {
+        @State(state => state.user.profile) profile!: User;
+        @auth.Action(AuthTypes.actions.AUTH_LOGOUT) actionLogout!: Promise<any>;
+
+        logout() {
+            this.actionLogout.then(() => this.$router.push('/login'));
         }
     }
 </script>

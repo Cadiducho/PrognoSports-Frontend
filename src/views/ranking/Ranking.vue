@@ -87,17 +87,35 @@
     </div>
 </template>
 
-<script>
-    import PrognoPageTitle from "@/components/lib/PrognoPageTitle";
+<script lang="ts">
+    import {Component, Vue} from "vue-property-decorator";
+    import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
     import {communityService, grandPrixService, userService} from "@/_services";
+    import {GrandPrix} from "@/types/GrandPrix";
 
-    export default {
+    @Component({
         components: {
             PrognoPageTitle
-        },
-        name: "Ranking",
+        }
+    })
+    export default class Ranking extends Vue {
+        private rankingBusy: boolean = true;
+        private gps!: Array<GrandPrix>;
+        private listOfPoints: any;
+        private totalUserPoints: any;
+        private breadcumbItems = [
+            {
+                text: 'Inicio',
+                to: '/home'
+            },
+            {
+                text: 'Ranking',
+                active: true
+            }
+        ];
+
         created() {
-            grandPrixService.getGrandPrixesList(2019).then(gps => {
+            grandPrixService.getGrandPrixesList('all',2019).then(gps => {
                 this.gps = gps;
                 this.checkRankingLoaded();
             });
@@ -109,33 +127,10 @@
                 this.totalUserPoints = points;
                 this.checkRankingLoaded();
             });
-        },
-        data() {
-            return {
-                rankingBusy: true,
-                gps: undefined,
-                listOfPoints: undefined,
-                totalUserPoints: undefined,
-                breadcumbItems: [
-                    {
-                        text: 'Inicio',
-                        to: '/home'
-                    },
-                    {
-                        text: 'Ranking',
-                        active: true
-                    }
-                ],
-            }
-        },
-        methods: {
-            checkRankingLoaded() {
-                this.rankingBusy = this.gps !== undefined && this.listOfPoints !== undefined;
-            }
+        }
+
+        public checkRankingLoaded() {
+            this.rankingBusy = this.gps !== undefined && this.listOfPoints !== undefined;
         }
     }
 </script>
-
-<style scoped>
-
-</style>

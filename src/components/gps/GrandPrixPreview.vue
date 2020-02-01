@@ -14,37 +14,36 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+
+    import {Component, Prop, Vue} from "vue-property-decorator";
+    import {namespace, State} from 'vuex-class'
+    const grandprix = namespace('grandprix');
 
     import moment from "moment-timezone";
-    import {mapState} from "vuex";
+    import {GrandPrix} from "@/types/GrandPrix";
+    import {User} from "@/types/User";
 
-    export default {
-        name: "GrandPrixPreview",
-        props: {
-            gp: { type: Object, required: true }
-        },
-        computed: {
-            gpLink() {
-                return {
-                    name: "gpdetails",
-                    params: {
-                        season: this.gp.season,
-                        id: this.gp.id,
-                    }
-                };
-            },
-            ...mapState({
-                profile: state => state.user.profile,
-            })
-        },
-        methods: {
-            humanDate(date) {
-                return moment(String(date)).tz(this.profile.preferences['time-zone-id']).format('DD/MM/YYYY HH:mm:ss');
-            },
-            timeLeft(date) {
-                return moment(String(date)).tz(this.profile.preferences['time-zone-id']).fromNow();
-            }
+    @Component
+    export default class GrandPrixPreview extends Vue {
+        @Prop({required: true}) gp!: GrandPrix;
+        @State(state => state.user.profile) profile!: User;
+
+        get gpLink(): Object {
+            return {
+                name: "gpdetails",
+                params: {
+                    season: this.gp.season,
+                    id: this.gp.id,
+                },
+            };
+        }
+
+        humanDate(date: any) {
+            return moment(String(date)).tz(this.profile.preferences['time-zone-id']).format('DD/MM/YYYY HH:mm:ss');
+        }
+        timeLeft(date: any) {
+            return moment(String(date)).tz(this.profile.preferences['time-zone-id']).fromNow();
         }
     }
 </script>

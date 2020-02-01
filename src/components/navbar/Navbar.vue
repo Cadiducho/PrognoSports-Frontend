@@ -14,48 +14,50 @@
 
             <b-navbar-nav class="ml-auto">
 
-                <CommunitiesDropdown :currentCommunity="currentCommunity" />
+                <CommunitiesDropdown />
 
             </b-navbar-nav>
             <b-navbar-nav class="d-flex align-items-center justify-content-end mr-2">
 
                 <NotificationsDropdown />
 
-                <AvatarComponent :profile="profile" />
+                <AvatarComponent />
 
             </b-navbar-nav>
         </nav>
     </div>
 </template>
 
-<script>
-    import { mapGetters, mapState } from 'vuex'
-    import AvatarComponent from "@/components/navbar/AvatarComponent";
-    import NotificationsDropdown from "@/components/navbar/NotificationsDropdown";
-    import CommunitiesDropdown from "@/components/navbar/CommunitiesDropdown";
-    import {AUTH_LOGOUT} from "@/_store/actions.type";
+<script lang="ts">
+    import {Component, Vue} from "vue-property-decorator";
+    import {namespace, State} from 'vuex-class'
+    const user = namespace('user');
+    const community = namespace('community');
+    const auth = namespace('auth');
 
-    export default {
+    import AvatarComponent from "@/components/navbar/AvatarComponent.vue";
+    import NotificationsDropdown from "@/components/navbar/NotificationsDropdown.vue";
+    import CommunitiesDropdown from "@/components/navbar/CommunitiesDropdown.vue";
+    import AuthTypes from "@/_store/types/AuthTypes.ts";
+    import {User} from "@/types/User";
+    import {Community} from "@/types/Community";
+
+    @Component({
         components: {
             CommunitiesDropdown,
             NotificationsDropdown,
             AvatarComponent
-        },
-        name: 'navbar',
-        methods: {
-            logout: function () {
-                this.$store.dispatch(AUTH_LOGOUT).then(() => this.$router.push('/login'))
-            },
-        },
-        computed: {
-            ...mapGetters(['isAuthenticated', 'authStatus']),
-            ...mapState({
-                profile: state => state.user.profile,
-                currentCommunity: state => state.community.currentCommunity,
-            }),
-        },
-        data () {
-            return {}
-        },
+        }
+    })
+    export default class Navbar extends Vue {
+        @State(state => state.user.profile) profile!: User;
+        @State(state => state.community.currentCommunity) currentCommunity!: Community;
+        @auth.Getter isAuthenticated!: boolean;
+        @auth.Getter authStatus!: string;
+        @auth.Action(AuthTypes.actions.AUTH_LOGOUT) actionLogout!: Promise<any>;
+
+        public logout() {
+            this.actionLogout.then(() => this.$router.push('/login'));
+        }
     }
 </script>

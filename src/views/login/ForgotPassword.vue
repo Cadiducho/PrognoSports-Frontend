@@ -50,31 +50,28 @@
     </div>
 </template>
 
-<script>
-    import { mapState } from 'vuex'
+<script lang="ts">
+    import {Component, Vue} from "vue-property-decorator";
+    import { namespace } from 'vuex-class';
+    const auth = namespace('auth');
+    const user = namespace('user');
     import { notifications } from "@/js/notifications";
-    import {USER_CHANGE_PWD, USER_FORGOT_PWD} from "@/_store/actions.type";
+    import UserTypes from "@/_store/types/UserTypes.ts";
 
-    export default {
-        data () {
-            return {
-                email: '',
-                inputToken: '',
-                inputPassword: '',
-                showChangePassword: false,
-            }
-        },
-        computed: {
-            ...mapState('account', ['status'])
-        },
-        created () {
-        },
-        methods: {
-            handleSubmit (e) {
-                if (!this.showChangePassword) {
-                    const { email } = this;
-                    if (email) {
-                        this.$store.dispatch(USER_FORGOT_PWD, { email })
+    @Component
+    export default class ForgotPassword extends Vue {
+        @user.Action(UserTypes.actions.USER_FORGOT_PWD) actionForgotPassword!: (email: string) => Promise<any>;
+        @user.Action(UserTypes.actions.USER_FORGOT_PWD) actionChangePassword!: (email: string, inputToken: string, inputPassword: string) => Promise<any>;
+        private email: string = '';
+        private inputToken: string = '';
+        private inputPassword: string = '';
+        private showChangePassword: boolean = false;
+
+        handleSubmit (e: any) {
+            if (!this.showChangePassword) {
+                const { email } = this;
+                if (email) {
+                    this.actionForgotPassword(email)
                         .then(() => {
                             notifications.fire('Tu código de verificación ha sido enviado', {
                                 autoHide: true,
@@ -100,11 +97,11 @@
                                 });
                             }
                         });
-                    }
-                } else {
-                    const { email, inputToken, inputPassword } = this;
-                    if (email) {
-                        this.$store.dispatch(USER_CHANGE_PWD, { email, inputToken, inputPassword })
+                }
+            } else {
+                const { email, inputToken, inputPassword } = this;
+                if (email) {
+                    this.actionChangePassword(email, inputToken, inputPassword)
                         .then(() => {
                             notifications.fire('Tu contraseña ha sido restablecida', {
                                 autoHide: true,
@@ -151,7 +148,6 @@
                                 });
                             }
                         });
-                    }
                 }
             }
         }

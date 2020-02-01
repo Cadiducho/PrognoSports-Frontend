@@ -18,47 +18,40 @@
     </div>
 </template>
 
-<script>
-    import { mapGetters, mapState } from 'vuex'
+<script lang="ts">
+    import {Component, Vue} from "vue-property-decorator";
+    import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+    import NextGrandPrix from "@/components/gps/NextGrandPrix.vue";
+    import {namespace, State} from 'vuex-class'
+    const auth = namespace('auth');
+    import {Community} from "@/types/Community.ts";
+    import {User} from "@/types/User";
 
-    import PrognoPageTitle from "@/components/lib/PrognoPageTitle";
-    import NextGrandPrix from "@/components/gps/NextGrandPrix";
-    import {USER_SET_CURRENT_COMMUNITY} from "@/_store/mutations.type";
-
-    export default {
+    @Component({
         components: {
             NextGrandPrix,
             PrognoPageTitle
-        },
-        name: 'home',
-        methods: {
-            test: function () {
-                this.$store.commit(USER_SET_CURRENT_COMMUNITY, {id: 2, name: "Hola desde vue"})
+        }
+    })
+    export default class Home extends Vue {
+        @auth.Getter isAuthenticated!: boolean;
+        @auth.Getter authStatus!: string;
+        @State(state => state.user.profile) profile!: User;
+        @State(state => state.community.currentCommunity) currentCommunity!: Community;
+
+        get loading() {
+            return this.authStatus === 'loading' && !this.isAuthenticated;
+        }
+
+        private breadcumbItems = [
+            {
+                text: 'Inicio',
+                to: '/home'
+            },
+            {
+                text: 'Dashboard',
+                active: true
             }
-        },
-        computed: {
-            ...mapGetters(['isAuthenticated', 'authStatus']),
-            ...mapState({
-                profile: state => state.user.profile,
-                currentCommunity: state => state.community.currentCommunity,
-            }),
-            loading: function () {
-                return this.authStatus === 'loading' && !this.isAuthenticated;
-            }
-        },
-        data () {
-            return {
-                breadcumbItems: [
-                    {
-                        text: 'Inicio',
-                        to: '/home'
-                    },
-                    {
-                        text: 'Dashboard',
-                        active: true
-                    }
-                ]
-            }
-        },
+        ];
     }
 </script>

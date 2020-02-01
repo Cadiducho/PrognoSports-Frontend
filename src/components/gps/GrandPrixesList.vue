@@ -14,27 +14,26 @@
     </div>
 </template>
 
-<script>
-    import GrandPrixPreview from "@/components/gps/GrandPrixPreview";
-    import {mapGetters} from "vuex";
-    import {FETCH_GP_LIST} from "@/_store/actions.type";
+<script lang="ts">
+    import {Component, Prop, Vue} from "vue-property-decorator";
+    import {namespace, State} from 'vuex-class'
+    const grandprix = namespace('grandprix');
 
-    export default {
-        name: "GrandPrixesList",
-        components: {GrandPrixPreview},
-        props: {
-            searchType: { type: String, default: 'all' }
-        },
-        computed: {
-            ...mapGetters(["isLoadingGps", "gpList"])
-        },
+    import GrandPrixPreview from "@/components/gps/GrandPrixPreview.vue";
+    import {GrandPrix} from "@/types/GrandPrix";
+    import GrandPrixesTypes from "@/_store/types/GrandPrixesTypes";
+
+    @Component({
+        components: {GrandPrixPreview}
+    })
+    export default class GrandPrixesList extends Vue {
+        @grandprix.Getter isLoadingGps!: boolean;
+        @grandprix.Getter gpList!: Array<GrandPrix>;
+        @Prop() searchType!: string;
+        @grandprix.Action(GrandPrixesTypes.actions.FETCH_GP_LIST) fetchListAction!: (searchType: string) => void;
+
         mounted() {
-            this.fetchGPList();
-        },
-        methods: {
-            fetchGPList() {
-                this.$store.dispatch(FETCH_GP_LIST, this.searchType);
-            }
+            this.fetchListAction(this.searchType);
         }
     }
 </script>

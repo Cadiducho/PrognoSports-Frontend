@@ -1,5 +1,5 @@
 <template>
-    <div id="communitiesDropdown">
+    <div id="communitiesDropdown" v-if="currentCommunity !== undefined">
         <b-nav-item-dropdown :text="currentCommunity.name" right class="navbar-communities">
             <b-dropdown-item active :to="'/communities/' + currentCommunity.id">{{currentCommunity.name}}</b-dropdown-item>
             <b-dropdown-divider />
@@ -8,9 +8,13 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: "CommunitiesDropdown",
-        props: ['currentCommunity']
+<script lang="ts">
+    import {Component, Vue} from "vue-property-decorator";
+    import {Community} from "@/types/Community";
+    import {State} from "vuex-class";
+
+    @Component
+    export default class CommunitiesDropdown extends Vue {
+        @State(state => state.community.currentCommunity) currentCommunity!: Community;
     }
 </script>

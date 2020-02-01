@@ -4,7 +4,7 @@ import { router, authHeader } from './_helpers'
 import store from './_store';
 
 import VueHeadful from 'vue-headful';
-import Loading from './components/lib/Loading'
+import Loading from '@/components/lib/Loading.vue'
 
 import './scss/app.scss';
 
@@ -13,10 +13,9 @@ require('moment/locale/es')
 
 Vue.use(require('vue-moment-tz'), {
   moment
-})
+});
 
 
-import './js/tables';
 import './js/sidebar';
 import BootstrapVue from 'bootstrap-vue';
 Vue.use(BootstrapVue);

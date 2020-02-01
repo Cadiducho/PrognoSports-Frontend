@@ -36,11 +36,12 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: "GrandPrixPagination",
-        props: {
-            grandPrix: {type: Object, required: true}
-        }
+<script lang="ts">
+    import {Component, Prop, Vue} from "vue-property-decorator";
+    import {GrandPrix} from "../../types/GrandPrix";
+
+    @Component
+    export default class GrandPrixPagination extends Vue {
+        @Prop({required: true}) private grandPrix!: GrandPrix;
     }
 </script>

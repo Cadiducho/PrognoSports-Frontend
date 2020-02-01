@@ -23,31 +23,35 @@
     </div>
 </template>
 
-<script>
-    import {mapGetters} from "vuex";
-    import {FETCH_NEXT_GP} from "@/_store/actions.type";
+<script lang="ts">
+    import GrandPrixesTypes from "@/_store/types/GrandPrixesTypes.ts";
+    import {Component, Vue} from "vue-property-decorator";
+    import { namespace } from 'vuex-class';
+    import {GrandPrix} from "@/types/GrandPrix";
+    const grandprix = namespace('grandprix');
 
-    export default {
-        name: "NextGrandPrix",
-        computed: {
-            gpLink() {
-                return {
-                    name: "gpdetails",
-                    params: {
-                        season: this.nextGp.season,
-                        id: this.nextGp.id,
-                    }
-                };
-            },
-            ...mapGetters(["isLoadingNextGp", "nextGp"])
-        },
+    @Component
+    export default class NextGrandPrix extends Vue {
+        @grandprix.Action(GrandPrixesTypes.actions.FETCH_NEXT_GP) actionFetchNext: any;
+        @grandprix.Getter nextGp!: GrandPrix;
+        @grandprix.Getter isLoadingNextGp!: boolean;
+
+        get gpLink(): any {
+            return {
+                name: "gpdetails",
+                params: {
+                    season: this.nextGp.season,
+                    id: this.nextGp.id,
+                }
+            };
+        }
+
         mounted() {
             this.fetchNextGP();
-        },
-        methods: {
-            fetchNextGP() {
-                this.$store.dispatch(FETCH_NEXT_GP);
-            }
+        }
+
+        public fetchNextGP() {
+            this.actionFetchNext();
         }
     }
 </script>

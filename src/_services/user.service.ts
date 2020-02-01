@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {User} from "@/types/User";
 
 export const userService = {
     login,
@@ -10,7 +11,7 @@ export const userService = {
     getUsersInCommunity
 };
 
-function login(username, password) {
+function login(username: string, password: string): Promise<string> {
     return axios
         .post('/auth/login', {
             "username": username,
@@ -18,20 +19,20 @@ function login(username, password) {
         });
 }
 
-function getMe() {
+function getMe(): Promise<User> {
     return axios
         .get('/user/me');
 }
 
-async function getUser(user) {
-    return await axios.get(`/user/${user}`)
+async function getUser(user: number): Promise<User> {
+    return await axios.get(`/user/${user}`);
 }
 
-async function getUsersInCommunity(communityId) {
-    return await axios.get(`/communities/${communityId}/members`)
+async function getUsersInCommunity(communityId: number): Promise<Array<User>> {
+    return await axios.get(`/communities/${communityId}/members`);
 }
 
-function register(email, username, password) {
+function register(email: string, username: string, password: string) {
     return axios
         .post('/auth/register', {
             "email": email,
@@ -40,10 +41,10 @@ function register(email, username, password) {
         });
 }
 
-function sendForgotPassword(email) {
+function sendForgotPassword(email: string) {
     return axios.post("/auth/forgotpassword", {"email": email});
 }
 
-function changePassword(email, inputToken, inputPassword) {
+function changePassword(email: string, inputToken: string, inputPassword: string) {
     return axios.patch("/auth/changepassword", {"email": email, "token": inputToken, "password": inputPassword});
 }

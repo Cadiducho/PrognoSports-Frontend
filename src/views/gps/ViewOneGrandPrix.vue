@@ -44,19 +44,26 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
     import store from "@/_store";
-    import {FETCH_GRAND_PRIX} from "@/_store/actions.type";
-    import {mapGetters, mapState} from "vuex";
-    import PrognoPageTitle from "@/components/lib/PrognoPageTitle";
-    import GrandPrixPagination from "@/components/gps/GrandPrixPagination";
-    import CircuitCard from "@/components/gps/CircuitCard";
-    import StartGrid from "@/components/gps/StartGrid";
-    import moment from "moment-timezone";
-    import SelectDrivers from "@/components/gps/SelectDrivers";
 
-    export default {
-        name: "GrandPrix",
+    import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+    import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
+    import CircuitCard from "@/components/gps/CircuitCard.vue";
+    import StartGrid from "@/components/gps/StartGrid.vue";
+    import SelectDrivers from "@/components/gps/SelectDrivers.vue";
+
+    import moment from "moment-timezone";
+    import GrandPrixesTypes from "@/_store/types/GrandPrixesTypes.ts";
+
+    import {Component, Vue} from "vue-property-decorator";
+    import {namespace, State} from 'vuex-class'
+    import {GrandPrix} from "@/types/GrandPrix";
+    import {User} from "@/types/User";
+    const user = namespace('user');
+    const grandprix = namespace('grandprix');
+
+    @Component({
         components: {
             SelectDrivers,
             CircuitCard,
@@ -64,45 +71,44 @@
             GrandPrixPagination,
             StartGrid
         },
-        data() {
-            return {
-                breadcumbItems: [
-                    {
-                        text: 'Inicio',
-                        to: '/home'
-                    },
-                    {
-                        text: 'Grandes Premios',
-                        to: '/gps'
-                    },
-                    {
-                        text: this.$store.getters.grandPrix.name,
-                        active: true
-                    }
-                ],
-            }
-        },
-        beforeRouteEnter(to, from, next) {
+        beforeRouteEnter(to: any, from: any, next: any) {
             let payload = {'season': to.params.season, 'id': to.params.id};
-            store.dispatch(FETCH_GRAND_PRIX, payload).then(next());
-        },
-        computed: {
-            ...mapGetters(["isLoadingGrandPrix", "grandPrix", "startGrid"]),
-            ...mapState({
-                profile: state => state.user.profile,
-            })
-        },
-        methods: {
-            humanDateMinusFive(date) {
-                return moment(String(date)).subtract(5, 'minutes').tz(this.profile.preferences['time-zone-id']).format('DD/MM/YYYY HH:mm:ss');
+            store.dispatch('grandprix/' + GrandPrixesTypes.actions.FETCH_GRAND_PRIX, payload).then(next());
+        }
+    })
+    export default class ViewOneGrandPrix extends Vue {
+        @State(state => state.user.profile) profile!: User;
+        @grandprix.Getter isLoadingGrandPrix!: boolean;
+        @grandprix.Getter grandPrix!: GrandPrix;
+        @grandprix.Getter startGrid!: any;
+        @grandprix.Action fetchGpAction!: any;
+
+        private breadcumbItems = [
+            {
+                text: 'Inicio',
+                to: '/home'
             },
-            timeLeft(date) {
-                return moment(String(date)).tz(this.profile.preferences['time-zone-id']).fromNow();
+            {
+                text: 'Grandes Premios',
+                to: '/gps'
+            },
+            {
+                text: this.grandPrix !== undefined ? this.grandPrix.name : 'Grand Prix', //FixMe: Siempre sale GrandPrix. Creo que no se actualiza la variable breadcumbItems una vez se declara
+                active: true
             }
+        ];
+
+        public humanDateMinusFive(date: any) {
+            return moment(String(date))
+                .subtract(5, 'minutes')
+                .tz(this.profile.preferences['time-zone-id'])
+                .format('DD/MM/YYYY HH:mm:ss');
+        }
+
+        public timeLeft(date: any) {
+            return moment(String(date))
+                .tz(this.profile.preferences['time-zone-id'])
+                .fromNow();
         }
     }
 </script>
-
-<style scoped>
-
-</style>

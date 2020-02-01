@@ -12,17 +12,17 @@
     </b-card>
 </template>
 
-<script>
-    export default {
-        name: "CircuitCard",
-        props: {
-            circuit: {type: Object, required: true},
-            laps: {type: Number}
-        },
-        methods: {
-            hasLaps() {
-                return this.laps !== undefined || this.laps != 0;
-            }
+<script lang="ts">
+    import {Component, Prop, Vue} from "vue-property-decorator";
+    import {Circuit} from "../../types/Circuit";
+
+    @Component
+    export default class CircuitCard extends Vue {
+        @Prop({required: true}) private circuit!: Circuit;
+        @Prop() private laps!: number;
+
+        public hasLaps() {
+            return this.laps !== undefined || this.laps != 0;
         }
     }
 </script>

@@ -4,10 +4,12 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: "PrognoPageTitle",
-        props: ['name']
+<script lang="ts">
+    import {Component, Prop, Vue} from "vue-property-decorator";
+
+    @Component
+    export default class PrognoPageTitle extends Vue {
+        @Prop() private name!: string;
     }
 </script>
 

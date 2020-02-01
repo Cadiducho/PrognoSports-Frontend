@@ -6,13 +6,11 @@
     </div>
 </template>
 
-<script>
-    export default {
-        name: 'loading',
-        props: {},
-        components: {},
-        data () {
-            return {}
-        },
+<script lang="ts">
+    import Vue from 'vue'
+    import Component from 'vue-class-component'
+
+    @Component
+    export default class Loading extends Vue {
     }
 </script>

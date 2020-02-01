@@ -25,32 +25,30 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 
-    import PrognoPageTitle from "@/components/lib/PrognoPageTitle";
-    import NextGrandPrix from "@/components/gps/NextGrandPrix";
-    import GrandPrixesList from "@/components/gps/GrandPrixesList";
+    import {Component, Vue} from "vue-property-decorator";
+    import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+    import NextGrandPrix from "@/components/gps/NextGrandPrix.vue";
+    import GrandPrixesList from "@/components/gps/GrandPrixesList.vue";
 
-    export default {
+    @Component({
         components: {
             GrandPrixesList,
             NextGrandPrix,
             PrognoPageTitle
-        },
-        name: "GPList",
-        data() {
-            return {
-                breadcumbItems: [
-                    {
-                        text: 'Inicio',
-                        to: '/home'
-                    },
-                    {
-                        text: 'Grandes Premios',
-                        active: true
-                    },
-                ],
-            }
         }
+    })
+    export default class ViewGrandPrixList extends Vue {
+        private breadcumbItems = [
+            {
+                text: 'Inicio',
+                to: '/home'
+            },
+            {
+                text: 'Grandes Premios',
+                active: true
+            },
+        ];
     }
 </script>
