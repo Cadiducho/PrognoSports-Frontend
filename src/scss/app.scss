@@ -36,24 +36,6 @@ $notifications-zindex: 2000 !default;
 
 @import "misc/utilities";
 
-// Choices
-/**
-$choices-border-radius: $input-border-radius !default;
-$choices-bg-color: $input-bg !default;
-$choices-font-size-lg: $font-size-base !default;
-$choices-font-size-sm: 11px;
-$choices-text-color: $input-color !default;
-$choices-selector: 'choices' !default;
-$choices-primary-color: theme-color("primary") !default;
-
-$choices-button-icon-path: "~choices.js/assets/icons";
-@import '~choices.js/assets/styles/scss/choices';
-@import "vendor/choices.overrides";
-**/
-
-// Flatpickr
-@import "vendor/flatpickr";
-
 // UI Elements
 @import "ui/base";
 @import "ui/sidebar";
@@ -68,6 +50,5 @@ $choices-button-icon-path: "~choices.js/assets/icons";
 @import "ui/pagination";
 @import "ui/button";
 @import "ui/notification";
-@import "ui/progress";
 @import "ui/list-group";
 @import "ui/f1-card";

@@ -176,5 +176,5 @@
 </template>
 
 <style lang="scss" scoped>
-@import "@/scss/landing.scss";
+@import "landing.scss";
 </style>

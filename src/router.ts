@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import store from "../_store";
+import store from "@/_store";
 
 Vue.use(VueRouter);
 
@@ -8,12 +8,12 @@ const routes = [
     {
         path: '/',
         name: 'landing',
-        component: () => import('../views/Landing.vue'),
+        component: () => import('@/views/landing/Landing.vue'),
     },
     {
         path: '/home',
         name: 'home',
-        component: () => import('../views/home/Home.vue'),
+        component: () => import('@/views/home/Home.vue'),
     },
     {
         path: '/gps',
@@ -28,22 +28,22 @@ const routes = [
     {
         path: '/ranking',
         name: 'ranking',
-        component: () => import('../views/ranking/Ranking.vue'),
+        component: () => import('@/views/ranking/Ranking.vue'),
     },
     {
         path: '/login',
         name: 'login',
-        component: () => import('../views/login/Login.vue'),
+        component: () => import('@/views/login/Login.vue'),
     },
     {
         path: '/register',
         name: 'register',
-        component: () => import('../views/login/Register.vue'),
+        component: () => import('@/views/login/Register.vue'),
     },
     {
         path: '/forgotpassword',
         name: 'forgotpassword',
-        component: () => import('../views/login/ForgotPassword.vue'),
+        component: () => import('@/views/login/ForgotPassword.vue'),
     },
 ];
 

@@ -2,13 +2,15 @@
   <div id="app">
     <div v-if="this.isAuthenticated">
       <!-- App cargada e iniciada sesión -->
-      <div class="adminx-container">
+      <div class="prognosports-container">
 
         <navbar />
         <sidebar :active-page="this.$route.name" />
 
-        <div class="adminx-content">
-          <div class="adminx-main-content">
+        <div class="prognosports-content">
+          <div class="prognosports-main-content">
+            <b-alert show dismissible fade variant="warning">Estás utilizando PrognoSports Beta, la experiencia puede verse afectada</b-alert>
+
             <router-view/>
           </div>
           <a id="back-to-top" @click="backToTop()" class="btn btn-primary btn-lg back-to-top" role="button" title="Volver arriba" data-toggle="tooltip" data-placement="left"><i class="material-icons">keyboard_arrow_up</i></a>

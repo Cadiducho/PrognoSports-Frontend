@@ -1,6 +1,6 @@
 <template>
     <div id="sidebarComponent">
-        <div class="adminx-sidebar expand-hover push">
+        <div class="prognosports-sidebar expand-hover push">
             <ul class="sidebar-nav">
                 <li class="sidebar-nav-item">
                     <router-link to="/" class="sidebar-nav-link" v-bind:class="{ active: activePage === 'home' }">

@@ -1,4 +1,4 @@
-.adminx-aside {
+.prognosports-aside {
   background: #fff;
   z-index: $aside-zindex;
   @include transition;
@@ -6,7 +6,7 @@
 }
 
 @include media-breakpoint-up(md) {
-  .adminx-aside {
+  .prognosports-aside {
     position: fixed;
     left: $sidebar-collapsed-width;
     width: $aside-width;
