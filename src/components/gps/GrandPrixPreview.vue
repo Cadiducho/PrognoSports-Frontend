@@ -40,10 +40,10 @@
         }
 
         humanDate(date: any) {
-            return moment(String(date)).tz(this.profile.preferences['time-zone-id']).format('DD/MM/YYYY HH:mm:ss');
+            return moment(String(date)).tz(this.profile.preferences.get('time-zone-id')).format('DD/MM/YYYY HH:mm:ss');
         }
         timeLeft(date: any) {
-            return moment(String(date)).tz(this.profile.preferences['time-zone-id']).fromNow();
+            return moment(String(date)).tz(this.profile.preferences.get('time-zone-id')).fromNow();
         }
     }
 </script>

@@ -101,13 +101,13 @@
         public humanDateMinusFive(date: any) {
             return moment(String(date))
                 .subtract(5, 'minutes')
-                .tz(this.profile.preferences['time-zone-id'])
+                .tz(this.profile.preferences.get('time-zone-id'))
                 .format('DD/MM/YYYY HH:mm:ss');
         }
 
         public timeLeft(date: any) {
             return moment(String(date))
-                .tz(this.profile.preferences['time-zone-id'])
+                .tz(this.profile.preferences.get('time-zone-id'))
                 .fromNow();
         }
     }

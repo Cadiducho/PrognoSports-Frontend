@@ -10,5 +10,5 @@ export interface User {
     gender: string;
     location: string;
     currentCommunity: number;
-    preferences: Array<string>;
+    preferences: Map<string, any>;
 }
