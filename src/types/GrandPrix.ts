@@ -1,10 +1,11 @@
 import {Circuit} from "@/types/Circuit";
+import {Season} from "@/types/Season";
 
 export interface GrandPrix {
     id: string;
     name: string;
     code: string;
-    season: number;
+    season: Season;
     round: number;
     circuit: Circuit;
     promo_image_url: string;

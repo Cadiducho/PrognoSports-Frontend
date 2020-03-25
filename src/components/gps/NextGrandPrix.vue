@@ -40,7 +40,7 @@
             return {
                 name: "gpdetails",
                 params: {
-                    season: this.nextGp.season,
+                    season: this.nextGp.season.name,
                     id: this.nextGp.id,
                 }
             };
