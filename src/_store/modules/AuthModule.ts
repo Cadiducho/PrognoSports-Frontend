@@ -1,78 +1,92 @@
 import { userService } from '@/_services';
-import {ActionTree, GetterTree, MutationTree} from "vuex";
-import {State} from "@/_store/interfaces/auth";
-import types from '@/_store/types/AuthTypes';
-import userTypes from '@/_store/types/UserTypes';
-import communityTypes from '@/_store/types/CommunityTypes';
+import store from '@/_store'
+import {Action, getModule, Module, Mutation, VuexModule} from 'vuex-module-decorators'
+import {CommunityModule} from "@/_store/modules/CommunityModule";
+import {UserModule} from "@/_store/modules/UserModule";
 
-const namespaced: boolean = true;
+export interface IAuthState {
+    token: string
+    status: string
+    hasLoadedOnce: boolean
+}
 
-const state: State = {
-    token: localStorage.getItem('user-token') || '',
-    status: '',
-    hasLoadedOnce: false
-};
+@Module({dynamic: true, store: store, namespaced: false, name: 'auth' })
+class Auth extends VuexModule implements IAuthState {
+    token: string = localStorage.getItem('user-token') || '';
+    status: string = '';
+    hasLoadedOnce: boolean = false;
 
-const getters: GetterTree<State, any> = {
-    isAuthenticated: state => !!state.token,
-    authStatus: state => state.status,
-    authToken: state => state.token,
-};
+    get isAuthenticated() {
+        return !!this.token;
+    }
 
-const actions: ActionTree<State, any> = {
-    [types.actions.AUTH_REQUEST]: ({commit, dispatch}, {username, password}) => {
+    get authToken() {
+        return this.token;
+    }
+
+    get authStatus() {
+        return this.status;
+    }
+
+    @Action
+    async authRequest(payload: {username: string, password: string}): Promise<string> {
+        let {username, password} = payload;
         return new Promise((resolve, reject) => {
-            commit(types.mutations.AUTH_REQUEST_LOADING);
-
+            this.authRequestLoading();
             userService.login(username, password)
-            .then(
-                token => {
-                    localStorage.setItem('user-token', token);
-                    commit(types.mutations.AUTH_SUCCESS, token);
-                    commit('user/' + userTypes.mutations.REMOVE_REGISTERED_MAIL_STATE, null, {root: true});
-                    dispatch('user/' + userTypes.mutations.USER_REQUEST, null, {root: true});
-                    resolve(token);
-                },
-                error => {
-                    commit(types.mutations.AUTH_ERROR, error);
-                    localStorage.removeItem('user-token');
-                    reject(error);
-                }
-            );
+                .then(
+                    token => {
+                        localStorage.setItem('user-token', token);
+                        this.authSuccess(token);
+                        UserModule.removeRegisteredMailState();
+                        UserModule.userRequest();
+                        resolve(token);
+                    },
+                    error => {
+                        console.log("Error: " + error);
+                        this.authError();
+                        console.log("Error de tipo")
+                        reject(error);
+                    }
+                );
         });
-    },
-    [types.actions.AUTH_LOGOUT]: ({commit, dispatch}) => {
+    }
+
+    @Action
+    async logout(): Promise<void> {
         return new Promise((resolve, reject) => {
-            commit(types.mutations.AUTH_LOGOUT_MUTATION);
-            commit(communityTypes.mutations.USER_SET_CURRENT_COMMUNITY, {});
+            this.authLogoutMutation();
+            CommunityModule.removeCurrentUserCommunity();
+            AuthModule.authLogoutMutation();
+            CommunityModule.removeCurrentUserCommunity();
             localStorage.removeItem('user-token');
             resolve();
         })
     }
-};
 
-const mutations: MutationTree<State> = {
-    [types.mutations.AUTH_REQUEST_LOADING]: (state) => {
-        state.status = 'loading';
-    },
-    [types.mutations.AUTH_SUCCESS]: (state, token) => {
-        state.status = 'success';
-        state.token = token;
-        state.hasLoadedOnce = true;
-    },
-    [types.mutations.AUTH_ERROR]: (state) => {
-        state.status = 'error';
-        state.hasLoadedOnce = true;
-    },
-    [types.mutations.AUTH_LOGOUT_MUTATION]: (state) => {
-        state.token = '';
+    @Mutation
+    authRequestLoading() {
+        this.status = 'loading';
     }
-};
 
-export default {
-    namespaced,
-    state,
-    getters,
-    actions,
-    mutations,
-};
+    @Mutation
+    authSuccess(token: string) {
+        this.status = 'success';
+        this.token = token;
+        this.hasLoadedOnce = true;
+    }
+
+    @Mutation
+    authError() {
+        localStorage.removeItem('user-token');
+        this.status = 'error';
+        this.hasLoadedOnce = true;
+    }
+
+    @Mutation
+    authLogoutMutation() {
+        this.token = '';
+    }
+}
+
+export const AuthModule: Auth = getModule(Auth);

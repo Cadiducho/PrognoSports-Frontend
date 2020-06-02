@@ -1,50 +1,47 @@
 import {driversService} from "@/_services";
-import {State} from "@/_store/interfaces/drivers";
-import {ActionTree, GetterTree, MutationTree} from "vuex";
-import types from "@/_store/types/DriversTypes";
+import store from '@/_store'
+import {Action, getModule, Module, Mutation, VuexModule} from 'vuex-module-decorators'
+import {Driver} from "@/types/Driver";
+import {GrandPrix} from "@/types/GrandPrix";
 
-const namespaced: boolean = true;
+export interface IDriverState {
+    driverList: Array<Driver>,
+    isLoadingDriverList: boolean,
+}
 
-const state: State = {
-    driverList: [],
-    isLoadingDriverList: true,
-};
+@Module({dynamic: true, store: store, namespaced: true, name: 'driver' })
+class DriversMod extends VuexModule implements IDriverState {
+    driverList = [] as Driver[];
+    loadingDriverList = true;
 
-const getters: GetterTree<State, any> = {
-    driverList(state) {
-        return state.driverList;
-    },
-    isLoadingDriverList(state) {
-        return state.isLoadingDriverList;
-    },
-};
+    get getDriverList() {
+        return this.driverList;
+    }
 
-const actions: ActionTree<State, any> = {
-    [types.actions.FETCH_DRIVERS_LIST]: ({commit, dispatch}, grandprix) => {
-        commit(types.mutations.FETCH_DRIVERS_LIST_START);
+    get isLoadingDriverList() {
+        return this.loadingDriverList;
+    }
+
+    @Action
+    async fetchDriversList(grandPrix: GrandPrix) {
+        this.fetchDriversListStart();
         return new Promise((resolve, reject) => {
-            driversService.getDriversInGrandPrix(grandprix)
+            driversService.getDriversInGrandPrix(grandPrix)
                 .then(drivers => {
-                    commit(types.mutations.FETCH_DRIVERS_LIST_END, drivers);
+                    this.fetchDriversListEnd(drivers);
                 })
         });
-    },
-};
+    }
 
-const mutations: MutationTree<State> = {
-    [types.mutations.FETCH_DRIVERS_LIST_START]: (state) => {
-        state.isLoadingDriverList = true;
-    },
-    [types.mutations.FETCH_DRIVERS_LIST_END]: (state, drivers) => {
-        state.driverList = drivers;
-        state.isLoadingDriverList = false;
-    },
-};
+    @Mutation
+    fetchDriversListStart() {
+        this.loadingDriverList = true;
+    }
 
-export default {
-    namespaced,
-    state,
-    getters,
-    actions,
-    mutations,
-};
+    @Mutation
+    fetchDriversListEnd(drivers: Array<Driver>) {
+        this.loadingDriverList = false;
+        this.driverList = drivers;
+    }
+}
+export const DriversModule: DriversMod = getModule(DriversMod);

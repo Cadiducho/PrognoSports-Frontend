@@ -1,46 +1,48 @@
 import {communityService} from "@/_services/community.service";
-import Vue from 'vue'
-import {ActionTree, GetterTree, MutationTree} from "vuex";
-import {State} from "@/_store/interfaces/community";
-import types from "@/_store/types/CommunityTypes";
+import {Community} from "@/types/Community";
+import store from '@/_store'
+import {Action, getModule, Module, Mutation, VuexModule} from 'vuex-module-decorators'
 
-const namespaced: boolean = true;
+export interface ICommunityState {
+    currentCommunityId: number;
+    currentCommunity: Community;
+}
 
-const state: State = {
-    currentCommunityId: localStorage.getItem('current-community') || '',
-    currentCommunity: undefined
-};
+@Module({dynamic: true, store: store, namespaced: true, name: 'community' })
+class CommunityMod extends VuexModule implements ICommunityState {
+    currentCommunityId: number = parseInt(<string>localStorage.getItem('current-community')) || -1;
+    currentCommunity: Community = {} as Community;
 
-const getters: GetterTree<State, any>  = {
-    thereIsCurrentCommunity: state => !!state.currentCommunityId,
-};
+    get thereIsCurrentCommunity() {
+        return this.currentCommunityId > 0;
+    }
 
-const actions: ActionTree<State, any> = {
-    [types.actions.COMMUNITY_REQUEST]: ({commit, dispatch}) => {
+    @Action
+    async communityRequest() {
         return new Promise((resolve, reject) => {
-            communityService.getCurrentCommunity(parseInt(state.currentCommunityId))
+            communityService.getCurrentCommunity(this.currentCommunityId)
                 .then(community => {
-                    commit(types.mutations.USER_SET_CURRENT_COMMUNITY, community);
+                    this.setCurrentUserCommunity(community);
                 })
                 .catch(resp => {
-                    commit(types.mutations.USER_SET_CURRENT_COMMUNITY, {});
+                    this.removeCurrentUserCommunity();
                 })
         });
     }
-};
 
-const mutations: MutationTree<State> = {
-    [types.mutations.USER_SET_CURRENT_COMMUNITY]: (state, community) => {
-        Vue.set(state, 'currentCommunity', community);
-        localStorage.setItem('current-community', community.id);
-        Vue.set(state, 'currentCommunityId', community.id);
-    },
-};
+    @Mutation
+    setCurrentUserCommunity(community: Community) {
+        this.currentCommunity = community;
+        localStorage.setItem('current-community', String(community.id));
+        this.currentCommunityId = community.id;
+    }
 
-export default {
-    namespaced,
-    state,
-    getters,
-    actions,
-    mutations,
-};
+    @Mutation
+    removeCurrentUserCommunity() {
+        this.currentCommunity = {} as Community;
+        this.currentCommunityId = -1;
+        localStorage.removeItem('current-community');
+    }
+}
+
+export const CommunityModule: CommunityMod = getModule(CommunityMod);

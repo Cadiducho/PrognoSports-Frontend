@@ -1,65 +1,75 @@
 import { userService } from '@/_services';
-import Vue from 'vue'
-import {State} from "@/_store/interfaces/user";
-import {ActionTree, GetterTree, MutationTree} from "vuex";
-import types from "@/_store/types/UserTypes";
-import authTypes from "@/_store/types/AuthTypes";
-import communityTypes from "@/_store/types/CommunityTypes";
+import {Action, getModule, Module, Mutation, VuexModule} from "vuex-module-decorators";
+import store from "@/_store";
+import {User} from "@/types/User";
+import {CommunityModule} from "@/_store/modules/CommunityModule";
+import {AuthModule} from "@/_store/modules/AuthModule";
 
-const namespaced: boolean = true;
+export interface IUserState {
+    status: string,
+    profile: User,
+    registeredMail: string,
+}
 
-const state: State = {
-    status: '',
-    profile: undefined,
-    registeredMail: ''
-};
+@Module({dynamic: true, store: store, namespaced: true, name: 'user' })
+class UserMod extends VuexModule implements IUserState {
+    status = '';
+    profile: User = {} as User;
+    registeredMail = '';
 
-const getters: GetterTree<State, any> = {
-    getProfile: state => state.profile,
-    isProfileLoaded: state => {
-        if (state.profile === undefined) return false;
-        return !!state.profile.username;
-    },
-    getRegisteredMail: state => state.registeredMail,
-};
+    get getProfile(): User {
+        return this.profile;
+    }
 
-const actions: ActionTree<State, any> = {
-    [types.actions.USER_REQUEST]: ({commit, rootGetters, dispatch}) => {
-        commit(types.mutations.USER_REQUEST);
+    get isProfileLoaded(): boolean {
+        if (this.profile.id === undefined) return false;
+        return !!this.profile.username;
+    }
+
+    get getRegistedMail() {
+        return this.registeredMail;
+    }
+
+    @Action
+    async userRequest() {
+        this.userRequestStart();
         userService.getMe()
             .then(user => {
-                commit(types.mutations.USER_SUCCESS, user);
-                if (!rootGetters.thereIsCurrentCommunity) {
+                this.userRequestSuccess(user);
+                if (!CommunityModule.thereIsCurrentCommunity) {
                     // Si no hay comunidad guardada en el estado, intentar poner la que tiene por defecto el getMe()
-                    commit('community/' + communityTypes.mutations.USER_SET_CURRENT_COMMUNITY, user.currentCommunity, {root: true});
+                    CommunityModule.setCurrentUserCommunity(user.currentCommunity);
                 }
             })
             .catch(resp => {
-                commit(types.mutations.USER_ERROR);
+                this.userRequestError();
                 console.log("Auth error..." + resp);
                 // if resp is unauthorized, logout, to
-                dispatch('auth/' + authTypes.actions.AUTH_LOGOUT, null, {root: true});
+                AuthModule.logout();
             })
-    },
+    }
 
-    [types.actions.USER_REGISTER]: ({commit, dispatch}, { email, username, password }) => {
+    @Action
+    async userRegister(payload: {email: string, username: string, password: string}) {
+        let {email, username, password} = payload;
         return new Promise((resolve, reject) => {
-            commit(types.mutations.USER_REGISTER);
+            this.userRegisterStart();
             userService.register(email, username, password)
                 .then(
                     token => {
-                        commit(types.mutations.USER_REGISTER_SUCCESS, email);
+                        this.userRegisterSuccess(email);
                         resolve(email);
                     },
                     error => {
-                        commit(types.mutations.USER_REGISTER_ERROR);
+                        this.userRegisterError()
                         console.log("Register error..." + error);
                         reject(error);
                     });
         });
-    },
+    }
 
-    [types.actions.USER_FORGOT_PWD]: ({commit, dispatch}, { email }) => {
+    @Action
+    async userForgotPassword(email: string) {
         return new Promise((resolve, reject) => {
             userService.sendForgotPassword(email)
                 .then(
@@ -67,64 +77,74 @@ const actions: ActionTree<State, any> = {
                         resolve();
                     },
                     error => {
-                        commit(types.mutations.REMOVE_REGISTERED_MAIL_STATE);
+                        this.removeRegisteredMailState();
                         reject(error);
                     });
         });
-    },
+    }
 
-    [types.actions.USER_CHANGE_PWD]: ({commit, dispatch}, { email, inputToken, inputPassword }) => {
+    @Action
+    async userChangePassword(email: string, inputToken: string, inputPassword: string) {
         return new Promise((resolve, reject) => {
             userService.changePassword(email, inputToken, inputPassword)
                 .then(
                     () => {
-                        commit(types.mutations.USER_CHANGE_PWD_SUCCESS, email);
+                        this.userChangePasswordSuccess(email);
                         resolve();
                     },
                     error => {
-                        commit(types.mutations.REMOVE_REGISTERED_MAIL_STATE);
+                        this.removeRegisteredMailState();
                         reject(error);
                     });
         });
-    },
-};
+    }
 
-const mutations: MutationTree<State> = {
-    [types.mutations.USER_REQUEST]: (state) => {
-        state.status = 'loading';
-    },
-    [types.mutations.USER_SUCCESS]: (state, user) => {
-        state.status = 'success';
-        Vue.set(state, 'profile', user);
-    },
-    [types.mutations.USER_ERROR]: (state) => {
-        state.status = 'error';
-    },
-    [types.mutations.AUTH_LOGOUT]: (state) => {
-        state.profile = undefined;
-    },
-    [types.mutations.USER_REGISTER]: (state) => {
-        state.status = 'loading';
-    },
-    [types.mutations.USER_REGISTER_SUCCESS]: (state, email) => {
-        state.status = 'success';
-        Vue.set(state, 'registeredMail', email);
-    },
-    [types.mutations.USER_REGISTER_ERROR]: (state) => {
-        state.status = 'error';
-    },
-    [types.mutations.USER_CHANGE_PWD_SUCCESS]: (state, email) => {
-        Vue.set(state, 'registeredMail', email);
-    },
-    [types.mutations.REMOVE_REGISTERED_MAIL_STATE]: (state) => {
-        Vue.set(state, 'registeredMail', '');
-    },
-};
+    @Mutation
+    userRequestStart() {
+        this.status = 'loading';
+    }
 
-export default {
-    namespaced,
-    state,
-    getters,
-    actions,
-    mutations,
+    @Mutation
+    userRequestSuccess(user: User) {
+        this.profile = user;
+        this.status = 'success';
+    }
+
+    @Mutation
+    userRequestError() {
+        this.status = 'error';
+    }
+
+    @Mutation
+    authLogout() {
+        this.profile = {} as User;
+    }
+
+    @Mutation
+    userRegisterStart() {
+        this.status = 'loading';
+    }
+
+    @Mutation
+    userRegisterSuccess(email: string) {
+        this.status = 'success';
+        this.registeredMail = email;
+    }
+
+    @Mutation
+    userRegisterError() {
+        this.status = 'error';
+    }
+
+    @Mutation
+    userChangePasswordSuccess(email: string) {
+        this.registeredMail = email;
+    }
+
+    @Mutation
+    removeRegisteredMailState() {
+        this.registeredMail = '';
+    }
 }
+
+export const UserModule: UserMod = getModule(UserMod);
