@@ -6,13 +6,13 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "apexcharts": "^3.19.0",
+    "apexcharts": "^3.19.2",
     "axios": "^0.19.2",
-    "bootstrap": "^4.4.1",
-    "bootstrap-vue": "^2.13.0",
+    "bootstrap": "^4.5.0",
+    "bootstrap-vue": "^2.15.0",
     "core-js": "^3.6.5",
-    "moment": "^2.25.3",
-    "moment-timezone": "^0.5.28",
+    "moment": "^2.26.0",
+    "moment-timezone": "^0.5.31",
     "node-sass": "^4.14.1",
     "sass-loader": "^8.0.2",
     "sortablejs": "^1.10.2",
@@ -22,19 +22,19 @@
     "vue-headful": "^2.1.0",
     "vue-moment-tz": "^2.1.1",
     "vue-property-decorator": "^8.4.2",
-    "vue-router": "^3.1.6",
-    "vuex": "^3.3.0",
-    "vuex-class": "latest"
+    "vue-router": "^3.3.2",
+    "vuex": "^3.4.0"
   },
   "devDependencies": {
     "@types/moment-timezone": "^0.5.13",
-    "@vue/cli-plugin-babel": "^4.3.1",
-    "@vue/cli-plugin-router": "^4.3.1",
-    "@vue/cli-plugin-typescript": "^4.3.1",
-    "@vue/cli-plugin-vuex": "^4.3.1",
-    "@vue/cli-service": "^4.3.1",
-    "typescript": "^3.8.3",
-    "vue-template-compiler": "^2.6.11"
+    "@vue/cli-plugin-babel": "^4.4.1",
+    "@vue/cli-plugin-router": "^4.4.1",
+    "@vue/cli-plugin-typescript": "^4.4.1",
+    "@vue/cli-plugin-vuex": "^4.4.1",
+    "@vue/cli-service": "^4.4.1",
+    "typescript": "^3.9.5",
+    "vue-template-compiler": "^2.6.11",
+    "vuex-module-decorators": "^0.17.0"
   },
   "postcss": {
     "plugins": {
