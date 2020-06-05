@@ -1,5 +1,7 @@
 import axios from "axios";
 import {GrandPrix} from "@/types/GrandPrix";
+import {Competition} from "@/types/Competition";
+import {Season} from "@/types/Season";
 
 export const grandPrixService = {
     getNextGrandPrix,
@@ -8,22 +10,22 @@ export const grandPrixService = {
     getTipps,
 };
 
-async function getNextGrandPrix() : Promise<GrandPrix> {
-    return await axios.get('/gps/f1/next');
+async function getNextGrandPrix(competition: Competition) : Promise<GrandPrix> {
+    return await axios.get(`/gps/${competition.code}/next`);
 }
 
-async function getGrandPrixesList(searchType: string, season: number): Promise<Array<GrandPrix>> {
-    return await axios.get(`/gps/f1/${season}`, {
+async function getGrandPrixesList(searchType: string, competition: Competition, season: Season): Promise<Array<GrandPrix>> {
+    return await axios.get(`/gps/${competition.code}/${season.name}`, {
         params: {
             searchType: searchType
         }
     });
 }
 
-async function getGrandPrix(season: number, id: number): Promise<GrandPrix> {
-    return await axios.get(`/gps/f1/${season}/${id}`);
+async function getGrandPrix(competition: Competition, season: Season, id: string): Promise<GrandPrix> {
+    return await axios.get(`/gps/${competition.code}/${season}/${id}`);
 }
 
 async function getTipps(gp: GrandPrix, communityId: number) {
-    return await axios.get(`/gps/f1/${gp.season}/${gp.id}/qualiTipps/${communityId}`);
+    return await axios.get(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/qualiTipps/${communityId}`);
 }

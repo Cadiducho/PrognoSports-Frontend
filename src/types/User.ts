@@ -1,4 +1,5 @@
 import {UserRank} from "@/types/UserRank";
+import {Community} from "@/types/Community";
 
 export interface User {
     id: number;
@@ -9,6 +10,6 @@ export interface User {
     profileImageUrl: string;
     gender: string;
     location: string;
-    currentCommunity: number;
+    currentCommunity: Community;
     preferences: Map<string, any>;
 }

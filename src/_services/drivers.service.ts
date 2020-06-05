@@ -1,10 +1,11 @@
 import axios from "axios";
 import {GrandPrix} from "@/types/GrandPrix";
+import {Driver} from "@/types/Driver";
 
 export const driversService = {
-    getDriversInGrandPrix
+    getDriversInGrandPrix: getDriversInGrandPrix
 };
 
-async function getDriversInGrandPrix(gp: GrandPrix) {
-    return await axios.get(`/gps/${gp.season}/${gp.id}/drivers`);
+async function getDriversInGrandPrix(gp: GrandPrix): Promise<Array<Driver>> {
+    return await axios.get(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/drivers`);
 }
