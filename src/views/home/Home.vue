@@ -7,11 +7,12 @@
 
         <b-row>
             <b-col lg="4">
-                <NextGrandPrix />
+                <NextGrandPrix :competition="currentCommunity.competition" />
             </b-col>
             <b-col lg="8">
                 <div class="card">
                     Espacio a rellenar muy rico
+                    {{currentCommunity.competition}}
                 </div>
             </b-col>
         </b-row>
@@ -22,10 +23,11 @@
     import {Component, Vue} from "vue-property-decorator";
     import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
     import NextGrandPrix from "@/components/gps/NextGrandPrix.vue";
-    import {namespace, State} from 'vuex-class'
-    const auth = namespace('auth');
-    import {Community} from "@/types/Community.ts";
+    import {AuthModule} from "@/_store/modules/AuthModule";
+    import {Community} from "@/types/Community";
+    import {CommunityModule} from "@/_store/modules/CommunityModule";
     import {User} from "@/types/User";
+    import {UserModule} from "@/_store/modules/UserModule";
 
     @Component({
         components: {
@@ -34,13 +36,12 @@
         }
     })
     export default class Home extends Vue {
-        @auth.Getter isAuthenticated!: boolean;
-        @auth.Getter authStatus!: string;
-        @State(state => state.user.profile) profile!: User;
-        @State(state => state.community.currentCommunity) currentCommunity!: Community;
+
+        private currentCommunity: Community = CommunityModule.currentCommunity;
+        private profile: User = UserModule.profile;
 
         get loading() {
-            return this.authStatus === 'loading' && !this.isAuthenticated;
+            return AuthModule.authStatus === 'loading' && !AuthModule.isAuthenticated;
         }
 
         private breadcumbItems = [

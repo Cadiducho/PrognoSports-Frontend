@@ -8,7 +8,7 @@
 
             <b-row>
                 <b-col sm="9">
-                    <PrognoPageTitle :name="grandPrix.name + ' de ' + grandPrix.season" />
+                    <PrognoPageTitle :name="grandPrix.name + ' de ' + grandPrix.season.name + ' de '" />
                 </b-col>
                 <b-col sm="3">
                     <GrandPrixPagination :grand-prix="grandPrix"/>
@@ -45,23 +45,17 @@
 </template>
 
 <script lang="ts">
-    import store from "@/_store";
-
     import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
     import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
     import CircuitCard from "@/components/gps/CircuitCard.vue";
     import StartGrid from "@/components/gps/StartGrid.vue";
     import SelectDrivers from "@/components/gps/SelectDrivers.vue";
-
     import moment from "moment-timezone";
-    import GrandPrixesTypes from "@/_store/types/GrandPrixesTypes.ts";
-
     import {Component, Vue} from "vue-property-decorator";
-    import {namespace, State} from 'vuex-class'
-    import {GrandPrix} from "@/types/GrandPrix";
-    import {User} from "@/types/User";
-    const user = namespace('user');
-    const grandprix = namespace('grandprix');
+    import {GrandPrixesModule} from "@/_store/modules/GrandPrixesModule";
+    import {UserModule} from "@/_store/modules/UserModule";
+    import {Competition} from "@/types/Competition";
+    import {Season} from "@/types/Season";
 
     @Component({
         components: {
@@ -72,18 +66,18 @@
             StartGrid
         },
         beforeRouteEnter(to: any, from: any, next: any) {
-            let payload = {'season': to.params.season, 'id': to.params.id};
-            store.dispatch('grandprix/' + GrandPrixesTypes.actions.FETCH_GRAND_PRIX, payload).then(next());
+            let competition = {code: to.params.competition} as Competition;
+            let season = {name: to.params.season} as Season;
+            let payload = {competition: competition, season: season, id: to.params.id}
+            GrandPrixesModule.fetchGrandPrix(payload).then(next());
         }
     })
     export default class ViewOneGrandPrix extends Vue {
-        @State(state => state.user.profile) profile!: User;
-        @grandprix.Getter isLoadingGrandPrix!: boolean;
-        @grandprix.Getter grandPrix!: GrandPrix;
-        @grandprix.Getter startGrid!: any;
-        @grandprix.Action fetchGpAction!: any;
+        private profile = UserModule.profile;
+        private isLoadingGrandPrix = GrandPrixesModule.isLoadingGrandPrix;
+        private grandPrix = GrandPrixesModule.grandPrix;
 
-        private breadcumbItems = [
+        breadcumbItems = [
             {
                 text: 'Inicio',
                 to: '/home'
@@ -93,7 +87,7 @@
                 to: '/gps'
             },
             {
-                text: this.grandPrix !== undefined ? this.grandPrix.name : 'Grand Prix', //FixMe: Siempre sale GrandPrix. Creo que no se actualiza la variable breadcumbItems una vez se declara
+                text: this.isLoadingGrandPrix ? this.grandPrix.name : 'Grand Prix', //FixMe: Siempre sale GrandPrix. Creo que no se actualiza la variable breadcumbItems una vez se declara
                 active: true
             }
         ];

@@ -52,16 +52,11 @@
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
-    import { namespace } from 'vuex-class';
-    const auth = namespace('auth');
-    const user = namespace('user');
     import { notifications } from "@/js/notifications";
-    import UserTypes from "@/_store/types/UserTypes.ts";
+    import {UserModule} from "@/_store/modules/UserModule";
 
     @Component
     export default class ForgotPassword extends Vue {
-        @user.Action(UserTypes.actions.USER_FORGOT_PWD) actionForgotPassword!: (email: string) => Promise<any>;
-        @user.Action(UserTypes.actions.USER_FORGOT_PWD) actionChangePassword!: (email: string, inputToken: string, inputPassword: string) => Promise<any>;
         private email: string = '';
         private inputToken: string = '';
         private inputPassword: string = '';
@@ -71,7 +66,7 @@
             if (!this.showChangePassword) {
                 const { email } = this;
                 if (email) {
-                    this.actionForgotPassword(email)
+                    UserModule.userForgotPassword(email)
                         .then(() => {
                             notifications.fire('Tu código de verificación ha sido enviado', {
                                 autoHide: true,
@@ -101,7 +96,7 @@
             } else {
                 const { email, inputToken, inputPassword } = this;
                 if (email) {
-                    this.actionChangePassword(email, inputToken, inputPassword)
+                    UserModule.userChangePassword(email, inputToken, inputPassword)
                         .then(() => {
                             notifications.fire('Tu contraseña ha sido restablecida', {
                                 autoHide: true,

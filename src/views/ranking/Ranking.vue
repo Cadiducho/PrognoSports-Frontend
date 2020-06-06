@@ -92,6 +92,8 @@
     import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
     import {communityService, grandPrixService, userService} from "@/_services";
     import {GrandPrix} from "@/types/GrandPrix";
+    import {Competition} from "@/types/Competition";
+    import {Season} from "@/types/Season";
 
     @Component({
         components: {
@@ -115,7 +117,9 @@
         ];
 
         created() {
-            grandPrixService.getGrandPrixesList('all',2019).then(gps => {
+            let competition = { id: 1} as Competition;
+            let season = { id: 3} as Season;
+            grandPrixService.getGrandPrixesList('all', competition, season).then(gps => {
                 this.gps = gps;
                 this.checkRankingLoaded();
             });

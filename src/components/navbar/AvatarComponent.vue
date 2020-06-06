@@ -17,19 +17,17 @@
 
 <script lang="ts">
 
-    import {Component, Prop, Vue} from "vue-property-decorator";
-    import AuthTypes from "@/_store/types/AuthTypes.ts";
+    import {Component, Vue} from "vue-property-decorator";
     import {User} from "@/types/User";
-    import {namespace, State} from 'vuex-class';
-    const auth = namespace('auth');
+    import {UserModule} from "@/_store/modules/UserModule";
+    import {AuthModule} from "@/_store/modules/AuthModule";
 
     @Component
     export default class AvatarComponent extends Vue {
-        @State(state => state.user.profile) profile!: User;
-        @auth.Action(AuthTypes.actions.AUTH_LOGOUT) actionLogout!: Promise<any>;
+        private profile: User = UserModule.profile;
 
         logout() {
-            this.actionLogout.then(() => this.$router.push('/login'));
+            AuthModule.logout().then(() => this.$router.push('/login'));
         }
     }
 </script>

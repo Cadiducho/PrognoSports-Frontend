@@ -11,10 +11,10 @@
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
     import {Community} from "@/types/Community";
-    import {State} from "vuex-class";
+    import {CommunityModule} from "@/_store/modules/CommunityModule";
 
     @Component
     export default class CommunitiesDropdown extends Vue {
-        @State(state => state.community.currentCommunity) currentCommunity!: Community;
+        private currentCommunity: Community = CommunityModule.currentCommunity;
     }
 </script>

@@ -2,7 +2,7 @@
     <div>
         <loading v-if="isLoadingDriverList" />
         <b-form @submit="onSubmit" @reset="onReset" v-else>
-            <div v-if="qualiTipps !== undefined" v-for="(tipp, index) in qualiTipps" :key="index">
+            <!--<div v-if="qualiTipps !== undefined" v-for="(tipp, index) in qualiTipps" :key="index">
                 <b-form-group>
                     <div v-if="tipp !== undefined || tipp !== null">
                         if {{index}}
@@ -23,7 +23,7 @@
                         </b-form-select>
                     </div>
                 </b-form-group>
-            </div>
+            </div>-->
 
             Selected: {{JSON.stringify(form.selectedDriver)}}
             Tipps: {{JSON.stringify(qualiTipps)}}
@@ -36,23 +36,16 @@
 
 <script lang="ts">
     import {Component, Prop, Vue} from "vue-property-decorator";
-    import GrandPrixesTypes from "@/_store/types/GrandPrixesTypes.ts";
-    import { namespace } from 'vuex-class';
     import {GrandPrix} from "@/types/GrandPrix";
     import {Driver} from "@/types/Driver";
-    import DriversTypes from "@/_store/types/DriversTypes";
-    const grandprix = namespace('grandprix');
-    const drivers = namespace('drivers');
+    import {DriversModule} from "@/_store/modules/DriversModule";
 
     @Component
     export default class SelectDrivers extends Vue {
-        @grandprix.Getter qualiTipps!: any;
-        @drivers.Getter isLoadingDriverList!: boolean;
-        @drivers.Getter driverList!: Array<Driver>;
+        private isLoadingDriverList: boolean = DriversModule.isLoadingDriverList;
+        private driverList: Array<Driver> = DriversModule.driverList;
         @Prop({required: true}) gp!: GrandPrix;
 
-        @grandprix.Action(GrandPrixesTypes.actions.FETCH_TIPPS_LIST) actionTippsList!: (payload: Object) => void;
-        @drivers.Action(DriversTypes.actions.FETCH_DRIVERS_LIST) actionDriversList!: (gp: GrandPrix) => void;
 
         private form = {
             selectedDriver: [], //ToDo: Crear interfaz Driver
@@ -60,9 +53,7 @@
 
         mounted() {
             let payload = {gp: this.gp, community: 1};
-            this.actionTippsList(payload);
-
-            this.actionDriversList(this.gp);
+            DriversModule.fetchDriversList(this.gp);
         }
 
         get drivers(): Array<any> {

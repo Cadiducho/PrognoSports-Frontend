@@ -5,7 +5,7 @@
       <div class="prognosports-container">
 
         <navbar />
-        <sidebar :active-page="this.$route.name" />
+        <sidebar :active-page="this.$route.name" :competition="currentCommunity.competition" />
 
         <div class="prognosports-content">
           <div class="prognosports-main-content">
@@ -41,16 +41,13 @@
 
 <script lang="ts">
   import {Component, Vue} from "vue-property-decorator";
-  import { namespace } from 'vuex-class';
-  const auth = namespace('auth');
-  const user = namespace('user');
-  const community = namespace('community');
-
-  import UserTypes from "@/_store/types/UserTypes.ts";
-  import CommunityTypes from "@/_store/types/CommunityTypes.ts";
 
   import navbar from "@/components/navbar/Navbar.vue";
   import sidebar from "@/components/sidebar/Sidebar.vue";
+  import {UserModule} from "@/_store/modules/UserModule";
+  import {CommunityModule} from "@/_store/modules/CommunityModule";
+  import {AuthModule} from "@/_store/modules/AuthModule";
+  import {Community} from "@/types/Community";
 
   @Component({
     components: {
@@ -59,14 +56,14 @@
     }
   })
   export default class App extends Vue {
-    @user.Action(UserTypes.actions.USER_REQUEST) actionUserRequest: any;
-    @community.Action(CommunityTypes.actions.COMMUNITY_REQUEST) actionCommunityRequest: any;
-    @auth.Getter isAuthenticated!: boolean;
+
+    private isAuthenticated: boolean = AuthModule.isAuthenticated;
+    private currentCommunity: Community = CommunityModule.currentCommunity;
 
     created() {
       if (this.isAuthenticated) {
-        this.actionUserRequest();
-        this.actionCommunityRequest();
+        UserModule.userRequest();
+        CommunityModule.communityRequest();
       }
     }
 

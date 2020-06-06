@@ -24,22 +24,22 @@
 </template>
 
 <script lang="ts">
-    import GrandPrixesTypes from "@/_store/types/GrandPrixesTypes.ts";
-    import {Component, Vue} from "vue-property-decorator";
-    import { namespace } from 'vuex-class';
+    import {Component, Prop, Vue} from "vue-property-decorator";
     import {GrandPrix} from "@/types/GrandPrix";
-    const grandprix = namespace('grandprix');
+    import {Competition} from "@/types/Competition";
+    import {GrandPrixesModule} from "@/_store/modules/GrandPrixesModule";
 
     @Component
     export default class NextGrandPrix extends Vue {
-        @grandprix.Action(GrandPrixesTypes.actions.FETCH_NEXT_GP) actionFetchNext: any;
-        @grandprix.Getter nextGp!: GrandPrix;
-        @grandprix.Getter isLoadingNextGp!: boolean;
+        private nextGp: GrandPrix = GrandPrixesModule.nextGp;
+        private isLoadingNextGp: boolean = GrandPrixesModule.isLoadingNextGrandPrix;
+        @Prop() competition!: Competition;
 
         get gpLink(): any {
             return {
                 name: "gpdetails",
                 params: {
+                    competition: this.competition.code,
                     season: this.nextGp.season.name,
                     id: this.nextGp.id,
                 }
@@ -47,11 +47,7 @@
         }
 
         mounted() {
-            this.fetchNextGP();
-        }
-
-        public fetchNextGP() {
-            this.actionFetchNext();
+            GrandPrixesModule.fetchNextGrandPrix(this.competition);
         }
     }
 </script>

@@ -30,17 +30,14 @@
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
-    import {namespace, State} from 'vuex-class'
-    const user = namespace('user');
-    const community = namespace('community');
-    const auth = namespace('auth');
-
     import AvatarComponent from "@/components/navbar/AvatarComponent.vue";
     import NotificationsDropdown from "@/components/navbar/NotificationsDropdown.vue";
     import CommunitiesDropdown from "@/components/navbar/CommunitiesDropdown.vue";
-    import AuthTypes from "@/_store/types/AuthTypes.ts";
     import {User} from "@/types/User";
     import {Community} from "@/types/Community";
+    import {UserModule} from "@/_store/modules/UserModule";
+    import {CommunityModule} from "@/_store/modules/CommunityModule";
+    import {AuthModule} from "@/_store/modules/AuthModule";
 
     @Component({
         components: {
@@ -50,14 +47,13 @@
         }
     })
     export default class Navbar extends Vue {
-        @State(state => state.user.profile) profile!: User;
-        @State(state => state.community.currentCommunity) currentCommunity!: Community;
-        @auth.Getter isAuthenticated!: boolean;
-        @auth.Getter authStatus!: string;
-        @auth.Action(AuthTypes.actions.AUTH_LOGOUT) actionLogout!: Promise<any>;
+        private profile: User = UserModule.profile;
+        private currentCommunity: Community = CommunityModule.currentCommunity;
+        private isAuthenticated: boolean = AuthModule.isAuthenticated;
+        private authStatus: string = AuthModule.authStatus;
 
         public logout() {
-            this.actionLogout.then(() => this.$router.push('/login'));
+            AuthModule.logout().then(() => this.$router.push('/login'));
         }
     }
 </script>

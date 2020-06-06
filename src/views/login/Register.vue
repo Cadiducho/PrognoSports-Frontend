@@ -51,15 +51,11 @@
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
-    import { namespace } from 'vuex-class';
-    const user = namespace('user');
     import { notifications } from "@/js/notifications";
-    import UserTypes from "@/_store/types/UserTypes.ts";
+    import {UserModule} from "@/_store/modules/UserModule";
 
     @Component
     export default class Register extends Vue {
-        @user.Action(UserTypes.actions.USER_FORGOT_PWD) actionRegister!: (email: string, username: string, password: string) => Promise<any>;
-
         private email: string = '';
         private username: string = '';
         private password: string = '';
@@ -69,7 +65,7 @@
             this.submitted = true;
             const { email, username, password } = this;
             if (email && username && password) {
-                this.actionRegister(email, username, password)
+                UserModule.userRegister({email: email, username: username, password: password})
                     .then(() => {
                         this.$router.push('/login');
                         notifications.fire('Te has registrado con éxito', {

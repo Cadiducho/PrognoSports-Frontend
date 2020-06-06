@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from "@/_store";
+import {AuthModule} from "@/_store/modules/AuthModule";
 
 Vue.use(VueRouter);
 
@@ -16,12 +17,17 @@ const routes = [
         component: () => import('@/views/home/Home.vue'),
     },
     {
-        path: '/gps',
+        path: '/gps/:competition',
         name: 'gplist',
         component: () => import('@/views/gps/ViewGrandPrixList.vue'),
     },
     {
-        path: '/gps/:season/:id',
+        path: '/gps/:competition/:season',
+        name: 'gplist',
+        component: () => import('@/views/gps/ViewGrandPrixList.vue'),
+    },
+    {
+        path: '/gps/:competition/:season/:id',
         name: 'gpdetails',
         component: () => import('@/views/gps/ViewOneGrandPrix.vue'),
     },
@@ -57,7 +63,7 @@ router.beforeEach((to, from, next) => {
     // redirect to login page if not logged in and trying to access a restricted page
     const publicPages = ['/', '/login', '/register', '/forgotpassword'];
     const authRequired = !publicPages.includes(to.path);
-    const loggedIn = store.getters['auth/isAuthenticated'];
+    const loggedIn = AuthModule.isAuthenticated;
 
     if (authRequired && !loggedIn) {
         return next('/login');

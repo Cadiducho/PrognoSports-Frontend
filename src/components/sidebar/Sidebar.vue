@@ -25,8 +25,8 @@
                     </router-link>
                 </li>
 
-                <li class="sidebar-nav-item">
-                    <router-link to="/gps" class="sidebar-nav-link" v-bind:class="{ active: activePage === 'gps' }">
+                <li class="sidebar-nav-item" v-if="competition !== undefined">
+                    <router-link :to="`/gps/` + competition.code" class="sidebar-nav-link" v-bind:class="{ active: activePage === 'gps' }">
                         <span class="sidebar-nav-icon">
                             <i class="material-icons">done_all</i>
                         </span>
@@ -35,6 +35,7 @@
                         </span>
                     </router-link>
                 </li>
+                <li v-else>No competition</li>
 
                 <li class="sidebar-nav-item">
                     <router-link to="/notifications" class="sidebar-nav-link" v-bind:class="{ active: activePage === 'notifications' }">
@@ -75,8 +76,11 @@
 
 <script lang="ts">
     import {Component, Prop, Vue} from "vue-property-decorator";
+    import {Competition} from "@/types/Competition";
+
     @Component
     export default class Sidebar extends Vue {
+        @Prop() competition!: Competition;
         @Prop() activePage!: string;
     }
 </script>

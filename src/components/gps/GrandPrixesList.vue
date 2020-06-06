@@ -16,24 +16,24 @@
 
 <script lang="ts">
     import {Component, Prop, Vue} from "vue-property-decorator";
-    import {namespace, State} from 'vuex-class'
-    const grandprix = namespace('grandprix');
-
     import GrandPrixPreview from "@/components/gps/GrandPrixPreview.vue";
     import {GrandPrix} from "@/types/GrandPrix";
-    import GrandPrixesTypes from "@/_store/types/GrandPrixesTypes";
+    import {Season} from "@/types/Season";
+    import {Competition} from "@/types/Competition";
+    import {GrandPrixesModule} from "@/_store/modules/GrandPrixesModule";
 
     @Component({
-        components: {GrandPrixPreview}
+        components: {GrandPrixPreview},
     })
     export default class GrandPrixesList extends Vue {
-        @grandprix.Getter isLoadingGps!: boolean;
-        @grandprix.Getter gpList!: Array<GrandPrix>;
+        private isLoadingGps: boolean = GrandPrixesModule.isLoadingGrandPrixesList;
+        private gpList: Array<GrandPrix> = GrandPrixesModule.gpList;
         @Prop() searchType!: string;
-        @grandprix.Action(GrandPrixesTypes.actions.FETCH_GP_LIST) fetchListAction!: (searchType: string) => void;
+        @Prop() competition!: Competition;
+        @Prop() season!: Season;
 
         mounted() {
-            this.fetchListAction(this.searchType);
+            GrandPrixesModule.fetchGrandPrixesList({competition: this.competition, season: this.season, searchType: this.searchType});
         }
     }
 </script>

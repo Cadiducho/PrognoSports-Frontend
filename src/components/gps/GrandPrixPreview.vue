@@ -17,17 +17,15 @@
 <script lang="ts">
 
     import {Component, Prop, Vue} from "vue-property-decorator";
-    import {namespace, State} from 'vuex-class'
-    const grandprix = namespace('grandprix');
-
     import moment from "moment-timezone";
     import {GrandPrix} from "@/types/GrandPrix";
     import {User} from "@/types/User";
+    import {UserModule} from "@/_store/modules/UserModule";
 
     @Component
     export default class GrandPrixPreview extends Vue {
         @Prop({required: true}) gp!: GrandPrix;
-        @State(state => state.user.profile) profile!: User;
+        private profile: User = UserModule.profile;
 
         get gpLink(): Object {
             return {
