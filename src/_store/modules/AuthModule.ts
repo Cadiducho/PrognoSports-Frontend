@@ -57,8 +57,6 @@ class Auth extends VuexModule implements IAuthState {
         return new Promise((resolve, reject) => {
             this.authLogoutMutation();
             CommunityModule.removeCurrentUserCommunity();
-            AuthModule.authLogoutMutation();
-            CommunityModule.removeCurrentUserCommunity();
             localStorage.removeItem('user-token');
             resolve();
         })
@@ -71,6 +69,7 @@ class Auth extends VuexModule implements IAuthState {
 
     @Mutation
     authSuccess(token: string) {
+        localStorage.setItem('user-token', token);
         this.status = 'success';
         this.token = token;
         this.hasLoadedOnce = true;
