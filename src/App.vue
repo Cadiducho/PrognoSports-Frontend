@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div v-if="this.isAuthenticated">
+    <div v-if="this.isLoggedIn">
       <!-- App cargada e iniciada sesión -->
       <div class="prognosports-container">
 
@@ -57,11 +57,14 @@
   })
   export default class App extends Vue {
 
-    private isAuthenticated: boolean = AuthModule.isAuthenticated;
     private currentCommunity: Community = CommunityModule.currentCommunity;
 
-    created() {
-      if (this.isAuthenticated) {
+    get isLoggedIn(): boolean {
+        return AuthModule.isAuthenticated;
+    }
+
+    updated() {
+      if (this.isLoggedIn) {
         UserModule.userRequest();
         CommunityModule.communityRequest();
       }
