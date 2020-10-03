@@ -4,6 +4,7 @@ import store from "@/_store";
 import {User} from "@/types/User";
 import {CommunityModule} from "@/_store/modules/CommunityModule";
 import {AuthModule} from "@/_store/modules/AuthModule";
+import {router} from "@/router";
 
 export interface IUserState {
     status: string,
@@ -45,7 +46,9 @@ class UserMod extends VuexModule implements IUserState {
                 this.userRequestError();
                 console.log("Auth error..." + resp);
                 // if resp is unauthorized, logout, to
-                AuthModule.logout();
+                AuthModule.logout().then(() => {
+                    router.push({name: 'login'});
+                });
             })
     }
 
