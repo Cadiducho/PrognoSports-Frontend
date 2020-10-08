@@ -26,14 +26,14 @@
         components: {GrandPrixPreview},
     })
     export default class GrandPrixesList extends Vue {
-        private isLoadingGps: boolean = GrandPrixesModule.isLoadingGrandPrixesList;
-        private gpList: Array<GrandPrix> = GrandPrixesModule.gpList;
+        /*private isLoadingGps: boolean = GrandPrixesModule.isLoadingGrandPrixesList;
+        private gpList: Array<GrandPrix> = GrandPrixesModule.gpList;*/
         @Prop() searchType!: string;
         @Prop() competition!: Competition;
         @Prop() season!: Season;
 
         mounted() {
-            GrandPrixesModule.fetchGrandPrixesList({competition: this.competition, season: this.season, searchType: this.searchType});
+            //GrandPrixesModule.fetchGrandPrixesList({competition: this.competition, season: this.season, searchType: this.searchType});
         }
     }
 </script>
