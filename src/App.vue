@@ -45,9 +45,7 @@
   import navbar from "@/components/navbar/Navbar.vue";
   import sidebar from "@/components/sidebar/Sidebar.vue";
   import {UserModule} from "@/_store/modules/UserModule";
-  import {CommunityModule} from "@/_store/modules/CommunityModule";
   import {AuthModule} from "@/_store/modules/AuthModule";
-  import {Community} from "@/types/Community";
 
   @Component({
     components: {
@@ -57,8 +55,6 @@
   })
   export default class App extends Vue {
 
-    private currentCommunity: Community = CommunityModule.currentCommunity;
-
     get isLoggedIn(): boolean {
         return AuthModule.isAuthenticated;
     }
@@ -66,7 +62,6 @@
     updated() {
       if (this.isLoggedIn) {
         UserModule.userRequest();
-        CommunityModule.communityRequest();
       }
     }
 

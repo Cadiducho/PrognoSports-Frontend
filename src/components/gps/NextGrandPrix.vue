@@ -1,53 +1,64 @@
 <template>
-    <div class="card" id="cardNextGP">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <div class="card-header-title">Próximo Gran Premio</div>
+    <div id="cardNextGP">
+        <div class="tile" v-if="!loadingGpData">
+            <article class="tile is-child box">
+                <p class="title">Próximo Gran Premio</p>
+                <p class="subtitle">{{nextGp.name}}</p>
+                <figure class="image is-4by3">
+                    <img v-if="nextGp.promo_image_url !== undefined" :src="nextGp.promo_image_url">
+                </figure>
+                <div class="content block">
+                    {{nextGp.laps}} vueltas a {{nextGp.circuit.name}}.
+                    <!-- ToDo: Fecha, tiempo restante -->
+                </div>
+                <footer class="card-footer">
+                    <router-link :to="gpLink" class="button is-primary is-light is-fullwidth">Pronosticar</router-link>
+                </footer>
+            </article>
         </div>
-        <template v-if="isLoadingNextGp">
-            <loading />
-        </template>
-        <template v-else>
-            <img class="card-img-top" v-if="nextGp.promo_image_url !== undefined" :src="nextGp.promo_image_url" alt="Circuit image">
-            <div class="card-body">
-                <template v-if="nextGp !== undefined">
-                    <h4 class="card-title"> {{nextGp.name}}</h4>
-                    <h6 id="gpLeftTime"></h6>
-                    <p class="card-text"> {{nextGp.laps}} vueltas a {{nextGp.circuit.name}}.</p>
-                    <router-link :to="gpLink" class="btn btn-primary">Pronosticar</router-link>
-                </template>
-                <template v-else>
-                    No hay siguiente Gran Premio a la vista
-                </template>
-            </div>
-        </template>
+        <div class="tile" v-else>
+            <article class="tile is-child box">
+                <p class="title">Próximo Gran Premio</p>
+                <loading />
+            </article>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
+    import {Component, Vue} from "vue-property-decorator";
     import {GrandPrix} from "@/types/GrandPrix";
-    import {Competition} from "@/types/Competition";
-    import {GrandPrixesModule} from "@/_store/modules/GrandPrixesModule";
+    import {grandPrixService} from "@/_services";
+    import {Community} from "@/types/Community";
+    import {CommunityModule} from "@/_store/modules/CommunityModule";
+    import {namespace} from 'vuex-class'
+
+    const community = namespace('community')
 
     @Component
     export default class NextGrandPrix extends Vue {
-        private nextGp: GrandPrix = GrandPrixesModule.nextGp;
-        private isLoadingNextGp: boolean = GrandPrixesModule.isLoadingNextGrandPrix;
-        @Prop() competition!: Competition;
+        private nextGp?: GrandPrix;
+        private loadingGpData: boolean = true;
+        @community.Getter getCurrentCommunity?: Community;
+
 
         get gpLink(): any {
             return {
                 name: "gpdetails",
                 params: {
-                    competition: this.competition.code,
-                    season: this.nextGp.season.name,
-                    id: this.nextGp.id,
+                    competition: this.getCurrentCommunity!.competition.code,
+                    season: this.nextGp?.season.name,
+                    id: this.nextGp?.id,
                 }
             };
         }
 
         mounted() {
-            GrandPrixesModule.fetchNextGrandPrix(this.competition);
+            CommunityModule.communityRequest().then(() => {
+                grandPrixService.getNextGrandPrix(this.getCurrentCommunity!.competition).then(nextGp => {
+                    this.nextGp = nextGp;
+                }).finally(() => this.loadingGpData = false);
+            });
         }
     }
 </script>

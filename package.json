@@ -25,7 +25,8 @@
     "vue-moment-tz": "^2.1.1",
     "vue-property-decorator": "^9.0.2",
     "vue-router": "^3.4.5",
-    "vuex": "^3.5.1"
+    "vuex": "^3.5.1",
+    "vuex-class": "^0.3.2"
   },
   "devDependencies": {
     "@types/moment-timezone": "^0.5.30",

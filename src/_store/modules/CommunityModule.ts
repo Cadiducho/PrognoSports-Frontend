@@ -3,8 +3,14 @@ import {Community} from "@/types/Community";
 import store from '@/_store'
 import {Action, getModule, Module, Mutation, VuexModule} from 'vuex-module-decorators'
 
+export interface ICommunityState {
+    currentCommunityId: number;
+    currentCommunity: Community
+    loadingCurrentCommunity: boolean;
+}
+
 @Module({dynamic: true, store: store, namespaced: true, name: 'community' })
-class CommunityMod extends VuexModule {
+class CommunityMod extends VuexModule implements ICommunityState {
     currentCommunityId: number = parseInt(<string>localStorage.getItem('current-community')) || -1;
     currentCommunity: Community = {} as Community;
     loadingCurrentCommunity: boolean = true;
