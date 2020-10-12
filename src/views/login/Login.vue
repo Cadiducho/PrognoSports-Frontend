@@ -1,5 +1,7 @@
 <template>
     <div id="loginComponent">
+        <LandingNavbar />
+        <!-- ToDo: Rediseño -->
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="pb-3">
@@ -48,8 +50,11 @@
     import {Component, Vue} from "vue-property-decorator";
     import { AuthModule } from "@/_store/modules/AuthModule";
     import {UserModule} from "@/_store/modules/UserModule";
+    import LandingNavbar from "@/components/landing/LandingNavbar.vue";
 
-    @Component
+    @Component({
+        components: {LandingNavbar}
+    })
     export default class Login extends Vue {
 
         username: string = '';

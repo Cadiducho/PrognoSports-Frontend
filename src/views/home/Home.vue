@@ -1,21 +1,48 @@
 <template>
-    <div id="homeComponent" class="container-fluid">
-
-        <b-breadcrumb :items="breadcumbItems"></b-breadcrumb>
+    <div id="homeComponent" class="box">
 
         <PrognoPageTitle name="Dashboard" />
 
-        <b-row>
-            <b-col lg="4">
-                <NextGrandPrix :competition="currentCommunity.competition" />
-            </b-col>
-            <b-col lg="8">
-                <div class="card">
-                    Espacio a rellenar muy rico
-                    {{currentCommunity.competition}}
+        <div class="columns is-variable is-5">
+            <div class="column is-4">
+                <NextGrandPrix />
+            </div>
+            <div class="column is-8">
+                <div class="tile">
+                    <article class="tile is-child box">
+                        <p class="title">Resumen</p>
+                        <nav class="level is-mobile">
+                            <div class="level-item has-text-centered">
+                                <div>
+                                    <p class="heading">Puesto</p>
+                                    <p class="title">7º</p>
+                                </div>
+                            </div>
+                            <div class="level-item has-text-centered">
+                                <div>
+                                    <p class="heading">Puntos</p>
+                                    <p class="title">557</p>
+                                </div>
+                            </div>
+                            <div class="level-item has-text-centered">
+                                <div>
+                                    <p class="heading">Sesiones ganadas</p>
+                                    <p class="title">3</p>
+                                </div>
+                            </div>
+                            <div class="level-item has-text-centered">
+                                <div>
+                                    <p class="heading">Grandes Premios ganados</p>
+                                    <p class="title">1</p>
+                                </div>
+                            </div>
+                        </nav>
+                        <VueApexCharts height="400" type="line" :options="defaultChartsOptions" :series="seriesAccumulated"></VueApexCharts>
+                    </article>
                 </div>
-            </b-col>
-        </b-row>
+            </div>
+        </div>
+
     </div>
 </template>
 
@@ -28,17 +55,16 @@
     import {CommunityModule} from "@/_store/modules/CommunityModule";
     import {User} from "@/types/User";
     import {UserModule} from "@/_store/modules/UserModule";
+    import VueApexCharts from "vue-apexcharts";
 
     @Component({
         components: {
             NextGrandPrix,
-            PrognoPageTitle
+            PrognoPageTitle,
+            VueApexCharts
         }
     })
     export default class Home extends Vue {
-
-        private currentCommunity: Community = CommunityModule.currentCommunity;
-        private profile: User = UserModule.profile;
 
         get loading() {
             return AuthModule.authStatus === 'loading' && !AuthModule.isAuthenticated;

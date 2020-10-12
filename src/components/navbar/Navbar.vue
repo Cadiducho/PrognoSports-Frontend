@@ -1,9 +1,65 @@
 <template>
     <div id="navbarComponent">
+        <nav class="navbar is-light" role="navigation" aria-label="main navigation">
+            <div class="navbar-brand">
+                <router-link class="navbar-item" to="/">
+                    <img src="@/assets/logo.png" class="navbar-brand-image d-inline-block align-top mr-2" alt="">
+                    PrognoSports
+                </router-link>
+
+                <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                </a>
+            </div>
+
+            <div id="navbar" class="navbar-menu">
+                <div class="navbar-start">
+                    <router-link class="navbar-item" to="/gps">
+                        Grandes Premios
+                    </router-link>
+
+                    <router-link class="navbar-item" to="/ranking">
+                        Ranking
+                    </router-link>
+                </div>
+
+                <div class="navbar-end">
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">
+                            Comunidad
+                        </a>
+
+                        <div class="navbar-dropdown">
+                            <a class="navbar-item">
+                                PrognoSports
+                            </a>
+                            <hr class="navbar-divider">
+                            <router-link class="navbar-item" to="/communities">
+                                Todas las comunidades
+                            </router-link>
+                        </div>
+                    </div>
+                    <div class="navbar-item">
+                        <div class="field is-grouped">
+                            <span class="icon">
+                                <i class="material-icons display-inline-block align-middle">notifications_none</i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">
+                            Cadiducho
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+<!--
         <nav class="navbar navbar-expand justify-content-between fixed-top">
             <router-link class="navbar-brand mb-0 h1 d-none d-md-block" to="/home">
-                <img src="@/assets/logo.png" class="navbar-brand-image d-inline-block align-top mr-2" alt="">
-                PrognoSports
+
             </router-link>
 
             <div class="d-flex flex-1 d-block d-md-none">
@@ -24,7 +80,7 @@
                 <AvatarComponent />
 
             </b-navbar-nav>
-        </nav>
+        </nav>-->
     </div>
 </template>
 

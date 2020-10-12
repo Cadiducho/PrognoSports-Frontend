@@ -12,7 +12,11 @@
                     <!-- ToDo: Fecha, tiempo restante -->
                 </div>
                 <footer class="card-footer">
-                    <router-link :to="gpLink" class="button is-primary is-light is-fullwidth">Pronosticar</router-link>
+                    <b-button tag="router-link"
+                              :to="gpLink"
+                              type="is-info is-light" expanded>
+                        Pronosticar
+                    </b-button>
                 </footer>
             </article>
         </div>

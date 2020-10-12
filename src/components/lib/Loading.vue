@@ -1,8 +1,6 @@
 <template>
-    <div id="loadingComponent" class="text-center">
-        <div class="spinner-grow text-info" role="status">
-            <span class="sr-only">Loading...</span>
-        </div>
+    <div id="loadingComponent" >
+        <progress class="progress is-primary" max="100">%</progress>
     </div>
 </template>
 

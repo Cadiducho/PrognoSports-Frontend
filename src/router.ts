@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import store from "@/_store";
 import {AuthModule} from "@/_store/modules/AuthModule";
 
 Vue.use(VueRouter);
@@ -40,6 +39,11 @@ const routes = [
         path: '/login',
         name: 'login',
         component: () => import('@/views/login/Login.vue'),
+    },
+    {
+        path: '/logout',
+        name: 'lougout',
+        component: () => import('@/views/login/Logout.vue'),
     },
     {
         path: '/register',

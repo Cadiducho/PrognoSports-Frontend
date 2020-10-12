@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import Buefy from 'buefy';
 import App from '@/App.vue'
 import { router } from '@/router'
 import store from '@/_store';
@@ -9,17 +10,7 @@ import Loading from '@/components/lib/Loading.vue'
 
 import './scss/app.scss';
 
-const moment = require('moment');
-require('moment/locale/es');
-
-Vue.use(require('vue-moment-tz'), {
-  moment
-});
-
-import './js/sidebar';
-import BootstrapVue from 'bootstrap-vue';
-Vue.use(BootstrapVue);
-
+Vue.use(Buefy);
 Vue.config.productionTip = false;
 
 Vue.component('vue-headful', VueHeadful);

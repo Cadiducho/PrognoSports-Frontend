@@ -1,5 +1,7 @@
 <template>
     <div id="registerComponent">
+        <LandingNavbar />
+        <!-- ToDo: Rediseño -->
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="pb-3">
@@ -54,7 +56,11 @@
     import { notifications } from "@/js/notifications";
     import {UserModule} from "@/_store/modules/UserModule";
 
-    @Component
+    import LandingNavbar from "@/components/landing/LandingNavbar.vue";
+
+    @Component({
+        components: {LandingNavbar}
+    })
     export default class Register extends Vue {
         private email: string = '';
         private username: string = '';

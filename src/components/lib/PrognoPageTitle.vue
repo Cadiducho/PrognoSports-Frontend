@@ -1,6 +1,6 @@
 <template>
-    <div class="pb-3">
-        <h1>{{ name }}</h1>
+    <div>
+        <h1 class="title">{{ name }}</h1>
     </div>
 </template>
 

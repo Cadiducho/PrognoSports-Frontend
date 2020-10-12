@@ -1,54 +1,7 @@
-$body-bg: #f6f9fa !default;
-$enable-gradients: true !default;
-$headings-font-weight: 300 !default;
+// Import Bulma's core
+@import "~bulma/sass/utilities/_all";
 
-$sidebar-zindex: 1040 !default;
-$sidebar-width: 260px !default;
-$sidebar-collapsed-width: 4rem !default;
-
-$aside-width: 260px !default;
-$aside-zindex: 1020 !default;
-
-$navbar-avatar-size: 2.075rem !default;
-$navbar-avatar-border-radius: 1rem !default;
-$navbar-height: 3.5rem !default;
-
-$breadcrumb-bg: transparent !default;
-$breadcrumb-padding-y: 0 !default;
-$breadcrumb-padding-x: 0 !default;
-$breadcrumb-divider: "›" !default;
-$breadcrumb-margin-bottom: .5rem !default;
-
-$card-border-radius: 0 !default;
-$card-cap-bg: transparent !default;
-
-$table-hover-bg: #f4f9fe !default;
-$table-accent-bg: #f9f9f9 !default;
-$table-selected-bg: #FFFBCC !default;
-
-$input-btn-padding-y: 0.5rem !default;
-$input-btn-focus-width: 0.1rem !default;
-
-$notifications-zindex: 2000 !default;
-
-@import "~bootstrap/scss/bootstrap";
-@import '~bootstrap-vue/src/index.scss';
-
-@import "misc/utilities";
-
-// UI Elements
-@import "ui/base";
-@import "ui/sidebar";
-@import "ui/aside";
-@import "ui/nav";
-@import "ui/navbar";
-@import "ui/breadcrumb";
-@import "ui/card";
-@import "ui/dropdown";
-@import "ui/form";
-@import "ui/table";
-@import "ui/pagination";
-@import "ui/button";
-@import "ui/notification";
-@import "ui/list-group";
 @import "ui/f1-card";
+
+@import "~bulma";
+@import "~buefy/src/scss/buefy";

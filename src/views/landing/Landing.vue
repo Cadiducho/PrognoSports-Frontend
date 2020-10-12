@@ -3,20 +3,8 @@
     <vue-headful
         title="PrognoSports"
     />
-  <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-light bg-light static-top">
-      <div class="container">
-        <a class="navbar-brand">
-          <img src="@/assets/logo.png" class="navbar-brand-image d-inline-block align-top mr-2" alt/>
-          PrognoSports
-        </a>
-        <section>
-          <router-link to="/login" class="btn btn-primary" style="margin-right: 0.2em">Iniciar sesión</router-link>
-          <router-link to="/register" class="btn btn-outline-primary">Registrarse</router-link>
-        </section>
-      </div>
-    </nav>
+    <LandingNavbar/>
 
     <!-- Masthead -->
     <header class="masthead text-white text-center">
@@ -171,10 +159,19 @@
         </div>
       </div>
     </footer>
-  </body>
 </div>
 </template>
 
 <style lang="scss" scoped>
-@import "landing.scss";
+    @import "landing.scss";
 </style>
+<script lang="ts">
+    import {Component, Vue} from "vue-property-decorator";
+    import LandingNavbar from "@/components/landing/LandingNavbar.vue";
+
+    @Component({
+        components: {LandingNavbar}
+    })
+    export default class Landing extends Vue {
+    }
+</script>
