@@ -53,7 +53,6 @@
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
-    import { notifications } from "@/js/notifications";
     import {UserModule} from "@/_store/modules/UserModule";
 
     import LandingNavbar from "@/components/landing/LandingNavbar.vue";
@@ -74,54 +73,47 @@
                 UserModule.userRegister({email: email, username: username, password: password})
                     .then(() => {
                         this.$router.push('/login');
-                        notifications.fire('Te has registrado con éxito', {
-                            autoHide: true,
-                            playSound: false,
-                            duration: 1500,
-                            style: 'info',
+                        this.$buefy.toast.open({
+                            message: 'Te has registrado con éxito',
+                            type: 'is-success'
                         });
                     }, (error) => {
+                        //ToDo: usar los códigos de error, no comparar mensajes
                         if (error === "Email cannot be null") {
-                            notifications.fire('Debes introducir una dirección de email', {
-                                autoHide: true,
-                                playSound: false,
-                                duration: 2000,
-                                style: 'danger',
+                            this.$buefy.toast.open({
+                                duration: 5000,
+                                message: 'Debes introducir una dirección de email',
+                                type: 'is-danger'
                             });
                         } else if (error === "Username cannot be null") {
-                            notifications.fire('Debes introducir un nombre de usuario', {
-                                autoHide: true,
-                                playSound: false,
-                                duration: 2000,
-                                style: 'danger',
+                            this.$buefy.toast.open({
+                                duration: 5000,
+                                message: 'Debes introducir un nombre de usuario',
+                                type: 'is-danger'
                             });
                         } else if (error === "Password cannot be null") {
-                            notifications.fire('Debes introducir una contraseña', {
-                                autoHide: true,
-                                playSound: false,
-                                duration: 2000,
-                                style: 'danger',
+                            this.$buefy.toast.open({
+                                duration: 5000,
+                                message: 'Debes introducir una contraseña',
+                                type: 'is-danger'
                             });
                         } else if (error === "Email in use") {
-                            notifications.fire('Ya existe un usuario con ese email', {
-                                autoHide: true,
-                                playSound: false,
-                                duration: 2000,
-                                style: 'danger',
+                            this.$buefy.toast.open({
+                                duration: 5000,
+                                message: 'Ya existe un usuario con ese email',
+                                type: 'is-danger'
                             });
                         } else if (error === "Username in use") {
-                            notifications.fire('Ya existe un usuario con ese nombre', {
-                                autoHide: true,
-                                playSound: false,
-                                duration: 2000,
-                                style: 'danger',
+                            this.$buefy.toast.open({
+                                duration: 5000,
+                                message: 'Ya existe un usuario con ese nombre',
+                                type: 'is-danger'
                             });
                         } else if (error === "database error") {
-                            notifications.fire('Error inesperado registrando tus datos', {
-                                autoHide: true,
-                                playSound: false,
-                                duration: 2000,
-                                style: 'danger',
+                            this.$buefy.toast.open({
+                                duration: 5000,
+                                message: 'Error inesperado registrando tus datos',
+                                type: 'is-danger'
                             });
                         }
                     });

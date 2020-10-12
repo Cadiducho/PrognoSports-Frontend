@@ -53,7 +53,6 @@
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
-    import { notifications } from "@/js/notifications";
     import {UserModule} from "@/_store/modules/UserModule";
 
     @Component
@@ -69,27 +68,23 @@
                 if (email) {
                     UserModule.userForgotPassword(email)
                         .then(() => {
-                            notifications.fire('Tu código de verificación ha sido enviado', {
-                                autoHide: true,
-                                playSound: false,
-                                duration: 1500,
-                                style: 'info',
+                            this.$buefy.toast.open({
+                                message: 'Tu código de verificación ha sido enviado',
+                                type: 'is-success'
                             });
                             this.showChangePassword = true;
                         }, (error) => {
                             if (error === "User email cannot be null") {
-                                notifications.fire('Debes introducir tu dirección de email', {
-                                    autoHide: true,
-                                    playSound: false,
-                                    duration: 2000,
-                                    style: 'danger',
+                                this.$buefy.toast.open({
+                                    duration: 5000,
+                                    message: 'Debes introducir tu dirección de email',
+                                    type: 'is-danger'
                                 });
                             } else if (error === "User not found") {
-                                notifications.fire('Usuario no encontrado', {
-                                    autoHide: true,
-                                    playSound: false,
-                                    duration: 2000,
-                                    style: 'danger',
+                                this.$buefy.toast.open({
+                                    duration: 5000,
+                                    message: 'Usuario no encontrado',
+                                    type: 'is-danger'
                                 });
                             }
                         });
@@ -99,48 +94,41 @@
                 if (email) {
                     UserModule.userChangePassword(email, inputToken, inputPassword)
                         .then(() => {
-                            notifications.fire('Tu contraseña ha sido restablecida', {
-                                autoHide: true,
-                                playSound: false,
-                                duration: 2000,
-                                style: 'success',
+                            this.$buefy.toast.open({
+                                message: 'Tu contraseña ha sido restablecida',
+                                type: 'is-success'
                             });
                             this.$router.push("/login");
                         }, (error) => {
                             if (error === "User email cannot be null") {
-                                notifications.fire('Debes introducir tu dirección de email', {
-                                    autoHide: true,
-                                    playSound: false,
-                                    duration: 2000,
-                                    style: 'danger',
+                                this.$buefy.toast.open({
+                                    duration: 5000,
+                                    message: 'Debes introducir tu dirección de email',
+                                    type: 'is-danger'
                                 });
                             } else if (error === "User not found") {
-                                notifications.fire('Usuario no encontrado', {
-                                    autoHide: true,
-                                    playSound: false,
-                                    duration: 2000,
-                                    style: 'danger',
+                                this.$buefy.toast.open({
+                                    duration: 5000,
+                                    message: 'Usuario no encontrado',
+                                    type: 'is-danger'
                                 });
                             } else if (error === "You must send the security token") {
-                                notifications.fire('Debes escribir el código de seguridad recibido', {
-                                    autoHide: true,
-                                    playSound: false,
-                                    duration: 2000,
-                                    style: 'danger',
+                                this.$buefy.toast.open({
+                                    duration: 5000,
+                                    message: 'Debes escribir el código de seguridad recibido',
+                                    type: 'is-danger'
                                 });
                             } else if (error === "You must send new the password") {
-                                notifications.fire('Debes escribir tu nueva contraseña', {
-                                    autoHide: true,
-                                    playSound: false,
-                                    duration: 2000,
-                                    style: 'danger',
+                                this.$buefy.toast.open({
+                                    duration: 5000,
+                                    message: 'Debes escribir tu nueva contraseña',
+                                    type: 'is-danger'
                                 });
                             } else if (error === "Token rejected") {
-                                notifications.fire('Token rechazado. Compruebalo bien o vuelve a intentarlo en 15 minutos', {
-                                    autoHide: true,
-                                    playSound: false,
-                                    duration: 2000,
-                                    style: 'danger',
+                                this.$buefy.toast.open({
+                                    duration: 5000,
+                                    message: 'Token rechazado. Compruebalo bien o vuelve a intentarlo en 15 minutos',
+                                    type: 'is-danger'
                                 });
                             }
                         });

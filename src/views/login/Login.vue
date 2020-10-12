@@ -46,7 +46,6 @@
 </template>
 
 <script lang="ts">
-    import { notifications } from "@/js/notifications";
     import {Component, Vue} from "vue-property-decorator";
     import { AuthModule } from "@/_store/modules/AuthModule";
     import {UserModule} from "@/_store/modules/UserModule";
@@ -73,17 +72,16 @@
                 AuthModule.authRequest({username: this.username, password: this.password}).
                     then(() => {
                         this.$router.push({name: 'home'});
-                        notifications.fire('Has iniciado sesión correctamente', {autoHide: true,
-                            playSound: false,
-                            duration: 1500,
-                            style: 'info',
+
+                        this.$buefy.toast.open({
+                            message: '¡Has iniciado sesión correctamente!',
+                            type: 'is-success'
                         });
                     }, (error: any) => {
-                        notifications.fire('Fallo al iniciar sesión: ' + error, {
-                            autoHide: true,
-                            playSound: false,
-                            duration: 1500,
-                            style: 'danger',
+                        this.$buefy.toast.open({
+                            duration: 5000,
+                            message: 'Fallo al iniciar sesión: ' + error,
+                            type: 'is-danger'
                         });
                     });
             }
