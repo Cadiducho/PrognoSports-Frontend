@@ -15,11 +15,14 @@ async function getNextGrandPrix(competition: Competition) : Promise<GrandPrix> {
 }
 
 async function getGrandPrixesList(searchType: string, competition: Competition, season: Season): Promise<Array<GrandPrix>> {
-    return await axios.get(`/gps/${competition.code}/${season.name}`, {
-        params: {
-            searchType: searchType
-        }
-    });
+    switch (searchType) {
+        case "next":
+            return await axios.get(`/gps/${competition.code}/${season.name}/next`);
+        case "past":
+            return await axios.get(`/gps/${competition.code}/${season.name}/past`);
+        default:
+            return await axios.get(`/gps/${competition.code}/${season.name}`);
+    }
 }
 
 async function getGrandPrix(competition: Competition, season: Season, id: string): Promise<GrandPrix> {

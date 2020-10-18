@@ -1,12 +1,12 @@
 <template>
     <div id="gpListComponent">
-        <div v-if="isLoadingGps || gpList === undefined"><loading /></div>
+        <div v-if="isLoading"><loading /></div>
         <div v-else>
-            <div v-if="gpList.length === 0">
+            <div v-if="gps.length === 0">
                 No hay grandes premios aquí... de momento
             </div>
             <GrandPrixPreview
-                    v-for="(grandprix, index) in gpList"
+                    v-for="(grandprix, index) in gps"
                     :gp="grandprix"
                     :key="grandprix.name + index"
             />
@@ -21,19 +21,23 @@
     import {Season} from "@/types/Season";
     import {Competition} from "@/types/Competition";
     import {GrandPrixesModule} from "@/_store/modules/GrandPrixesModule";
+    import {grandPrixService} from "@/_services";
 
     @Component({
         components: {GrandPrixPreview},
     })
     export default class GrandPrixesList extends Vue {
-        /*private isLoadingGps: boolean = GrandPrixesModule.isLoadingGrandPrixesList;
-        private gpList: Array<GrandPrix> = GrandPrixesModule.gpList;*/
         @Prop() searchType!: string;
         @Prop() competition!: Competition;
         @Prop() season!: Season;
+        private isLoading: boolean = true;
+        private gps: Array<GrandPrix> = [];
 
         mounted() {
-            //GrandPrixesModule.fetchGrandPrixesList({competition: this.competition, season: this.season, searchType: this.searchType});
+            grandPrixService.getGrandPrixesList(this.searchType, this.competition, this.season).then((list) => {
+                this.gps.push(...list);
+                this.isLoading = false;
+            });
         }
     }
 </script>

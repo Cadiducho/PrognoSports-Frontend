@@ -1,16 +1,21 @@
 <template>
     <div>
-        <div class="card mb-2">
-            <div class="card-body">
-                <h5 class="card-title">{{gp.name}} de {{gp.season}}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">{{gp.circuit.name}}, {{gp.circuit.locality}} ({{gp.circuit.country}})</h6>
-                <p class="card-text">
-                    Clasificación: {{humanDate(gp.qualiTime)}} ({{timeLeft(gp.qualiTime)}}) <br>
-                    Carrera: {{humanDate(gp.raceTime)}} ({{timeLeft(gp.raceTime)}})
-                </p>
-                <router-link :to="gpLink" class="card-link">Pronosticar</router-link>
-            </div>
-        </div>
+        <article class="tile is-child box">
+            <p class="title">{{gp.name}} de {{gp.season.name}}</p>
+            <p class="subtitle">{{gp.circuit.name}}, {{gp.circuit.locality}} ({{gp.circuit.country}})</p>
+            <p class="content block">
+                <!--Clasificación: {{humanDate(gp.qualiTime)}} ({{timeLeft(gp.qualiTime)}}) <br>
+                    Carrera: {{humanDate(gp.raceTime)}} ({{timeLeft(gp.raceTime)}})-->
+                Tiempos y horas
+            </p>
+            <footer class="card-footer">
+                <b-button tag="router-link"
+                          :to="gpLink"
+                          type="is-info is-light" expanded>
+                    Pronosticar
+                </b-button>
+            </footer>
+        </article>
     </div>
 </template>
 
@@ -31,7 +36,7 @@
             return {
                 name: "gpdetails",
                 params: {
-                    season: this.gp.season,
+                    season: this.gp.season.name,
                     id: this.gp.id,
                 },
             };

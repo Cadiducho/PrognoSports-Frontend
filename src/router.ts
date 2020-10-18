@@ -16,13 +16,9 @@ const routes = [
         component: () => import('@/views/home/Home.vue'),
     },
     {
-        path: '/gps/:competition',
+        path: '/gps/:competition?/:season?',
         name: 'gplist',
-        component: () => import('@/views/gps/ViewGrandPrixList.vue'),
-    },
-    {
-        path: '/gps/:competition/:season',
-        name: 'gplist',
+        alias: ['/gps/:competition?', '/gps'],
         component: () => import('@/views/gps/ViewGrandPrixList.vue'),
     },
     {
