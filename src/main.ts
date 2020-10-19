@@ -9,6 +9,8 @@ import VueHeadful from 'vue-headful';
 import Loading from '@/components/lib/Loading.vue'
 
 import './scss/app.scss';
+import { loadFilters } from "@/plugins/dayjs";
+loadFilters(Vue);
 
 Vue.use(Buefy);
 Vue.config.productionTip = false;

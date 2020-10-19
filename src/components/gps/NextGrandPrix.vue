@@ -7,10 +7,13 @@
                 <figure class="image is-4by3">
                     <img v-if="nextGp.promo_image_url !== undefined" :src="nextGp.promo_image_url">
                 </figure>
-                <div class="content block">
+                <p class="content block">
                     {{nextGp.laps}} vueltas a {{nextGp.circuit.name}}.
-                    <!-- ToDo: Fecha, tiempo restante -->
-                </div>
+                </p>
+                <p class="content block">
+                    Clasificación: {{nextGp.qualiTime | humanDate }} ({{nextGp.qualiTime | dateDiff }}) <br>
+                    Carrera: {{nextGp.raceTime | humanDate }} ({{nextGp.raceTime | dateDiff }})
+                </p>
                 <footer class="card-footer">
                     <b-button tag="router-link"
                               :to="gpLink"
@@ -44,7 +47,6 @@
         private nextGp?: GrandPrix;
         private loadingGpData: boolean = true;
         @community.Getter getCurrentCommunity?: Community;
-
 
         get gpLink(): any {
             return {

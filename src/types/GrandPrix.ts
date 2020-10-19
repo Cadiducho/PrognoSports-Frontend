@@ -11,7 +11,7 @@ export interface GrandPrix {
     round: number;
     circuit: Circuit;
     promo_image_url: string;
-    qualiTime: any; //ToDO: Buscar tipos de datos de fechas
-    raceTime: any;
+    qualiTime: Date; //ToDO: Buscar tipos de datos de fechas
+    raceTime: Date;
     laps: number;
 }

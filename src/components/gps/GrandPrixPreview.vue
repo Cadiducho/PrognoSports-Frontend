@@ -1,12 +1,20 @@
 <template>
     <div>
         <article class="tile is-child box">
-            <p class="title">{{gp.name}} de {{gp.season.name}}</p>
-            <p class="subtitle">{{gp.circuit.name}}, {{gp.circuit.locality}} ({{gp.circuit.country}})</p>
+            <div class="media">
+                <div class="media-content">
+                    <p class="title is-4">{{gp.name}} de {{gp.season.name}}</p>
+                    <p class="subtitle is-6">{{gp.circuit.name}}, {{gp.circuit.locality}} ({{gp.circuit.country}})</p>
+                </div>
+                <div class="media-right">
+                    <figure class="image is-128x128">
+                        <img :src="gp.circuit.logo_url" alt="Placeholder image">
+                    </figure>
+                </div>
+            </div>
             <p class="content block">
-                <!--Clasificación: {{humanDate(gp.qualiTime)}} ({{timeLeft(gp.qualiTime)}}) <br>
-                    Carrera: {{humanDate(gp.raceTime)}} ({{timeLeft(gp.raceTime)}})-->
-                Tiempos y horas
+                Clasificación: {{gp.qualiTime | humanDate }} ({{gp.qualiTime | dateDiff }}) <br>
+                Carrera: {{gp.raceTime | humanDate}} ({{gp.raceTime | dateDiff }})
             </p>
             <footer class="card-footer">
                 <b-button tag="router-link"
@@ -22,15 +30,11 @@
 <script lang="ts">
 
     import {Component, Prop, Vue} from "vue-property-decorator";
-    import moment from "moment-timezone";
     import {GrandPrix} from "@/types/GrandPrix";
-    import {User} from "@/types/User";
-    import {UserModule} from "@/_store/modules/UserModule";
 
     @Component
     export default class GrandPrixPreview extends Vue {
         @Prop({required: true}) gp!: GrandPrix;
-        private profile: User = UserModule.profile;
 
         get gpLink(): Object {
             return {
@@ -40,13 +44,6 @@
                     id: this.gp.id,
                 },
             };
-        }
-
-        humanDate(date: any) {
-            return moment(String(date)).tz(this.profile.preferences.get('time-zone-id')).format('DD/MM/YYYY HH:mm:ss');
-        }
-        timeLeft(date: any) {
-            return moment(String(date)).tz(this.profile.preferences.get('time-zone-id')).fromNow();
         }
     }
 </script>
