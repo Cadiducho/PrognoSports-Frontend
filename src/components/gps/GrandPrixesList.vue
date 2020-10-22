@@ -20,7 +20,6 @@
     import {GrandPrix} from "@/types/GrandPrix";
     import {Season} from "@/types/Season";
     import {Competition} from "@/types/Competition";
-    import {GrandPrixesModule} from "@/_store/modules/GrandPrixesModule";
     import {grandPrixService} from "@/_services";
 
     @Component({

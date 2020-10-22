@@ -10,7 +10,7 @@
             </div>
             <div v-else>
                 <li class="page-item">
-                    <router-link class="page-link" :to="'/gps/' + grandPrix.season.name + '/' + (grandPrix.round - 1)" aria-label="Previo">
+                    <router-link class="page-link" :to="'/gps/' + competition.code + '/' + grandPrix.season.name + '/' + (grandPrix.round - 1)" aria-label="Previo">
                         <span aria-hidden="true">&laquo;</span>
                     </router-link>
                 </li>
@@ -27,7 +27,7 @@
             </div>
             <div v-else>
                 <li class="page-item">
-                    <router-link class="page-link" :to="'/gps/' + grandPrix.season.name + '/' + (grandPrix.round + 1)" aria-label="Siguiente">
+                    <router-link class="page-link" :to="'/gps/'+ competition.code + '/' + grandPrix.season.name + '/' + (grandPrix.round + 1)" aria-label="Siguiente">
                         <span aria-hidden="true">&raquo;</span>
                     </router-link>
                 </li>
@@ -41,9 +41,11 @@
 <script lang="ts">
     import {Component, Prop, Vue} from "vue-property-decorator";
     import {GrandPrix} from "@/types/GrandPrix";
+    import {Competition} from "@/types/Competition";
 
     @Component
     export default class GrandPrixPagination extends Vue {
+        @Prop({required: true}) private competition!: Competition;
         @Prop({required: true}) private grandPrix!: GrandPrix;
     }
 </script>

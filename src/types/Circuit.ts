@@ -1,11 +1,13 @@
+import {CircuitVariant} from "@/types/CircuitVariant";
+
 export interface Circuit {
     id: string;
     name: string;
     country: string;
-    locatily: string;
+    locality: string;
     latitude: number;
     longitude: number;
     logo_url: string;
-    image_url: string;
-    distance: number
+
+    variant: CircuitVariant;
 }

@@ -2,11 +2,13 @@ import axios from "axios";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
+import {StartGridPosition} from "@/types/StartGridPosition";
 
 export const grandPrixService = {
     getNextGrandPrix,
     getGrandPrixesList,
     getGrandPrix,
+    getGrandPrixGrid,
     getTipps,
 };
 
@@ -26,7 +28,11 @@ async function getGrandPrixesList(searchType: string, competition: Competition, 
 }
 
 async function getGrandPrix(competition: Competition, season: Season, id: string): Promise<GrandPrix> {
-    return await axios.get(`/gps/${competition.code}/${season}/${id}`);
+    return await axios.get(`/gps/${competition.code}/${season.name}/${id}`);
+}
+
+async function getGrandPrixGrid(competition: Competition, season: Season, gpId: string): Promise<Array<StartGridPosition>> {
+    return await axios.get(`/gps/${competition.code}/${season.name}/${gpId}/grid`);
 }
 
 async function getTipps(gp: GrandPrix, communityId: number) {
