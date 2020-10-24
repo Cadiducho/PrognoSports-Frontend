@@ -1,23 +1,7 @@
 <template>
-    <div>
-        <!-- <b-radio v-model="formaPronosticar"
-
-                 name="Seleccionar"
-                 native-value="seleccionar">
-            Seleccionar
-        </b-radio>
-        <b-radio v-model="formaPronosticar"
-
-                 name="Arrastrar"
-                 native-value="arrastrar">
-            Arrastrar
-        </b-radio>
-
-        <div v-if="formaPronosticar === 'seleccionar'">
-            Forma de selecccionar
-        </div> -->
-        <div class="columns">
-            <div class="column is-6">
+    <div class="content mt-5">
+        <div class="columns is-3-mobile is-5-desktop">
+            <div class="column is-6 box">
                 <h3>Pilotos pronosticados</h3>
                 <draggable class="list-group" :list="pilotosPronosticados" group="people">
                     <transition-group type="transition" :name="!drag ? 'flip-list' : null">
@@ -86,28 +70,3 @@ export default class SelectTipps extends Vue {
     }
 }
 </script>
-
-<style scoped>
-.button {
-    margin-top: 35px;
-}
-.flip-list-move {
-    transition: transform 0.5s;
-}
-.no-move {
-    transition: transform 0s;
-}
-.ghost {
-    opacity: 0.5;
-    background: #c8ebfb;
-}
-.list-group {
-    min-height: 20px;
-}
-.list-group-item {
-    cursor: move;
-}
-.list-group-item i {
-    cursor: pointer;
-}
-</style>

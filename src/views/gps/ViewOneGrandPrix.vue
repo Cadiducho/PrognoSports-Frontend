@@ -65,7 +65,7 @@
         private season: Season = {name: this.$route.params.season } as Season;
         private id: string = this.$route.params.id;
 
-        private grandPrix: GrandPrix;
+        private grandPrix?: GrandPrix;
         private isLoadingGrandPrix: boolean = true;
         private thereIsGrid: boolean = false;
         private startGrid: Array<StartGridPosition> = [];
