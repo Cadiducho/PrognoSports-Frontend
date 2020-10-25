@@ -3,33 +3,37 @@
         <div class="columns is-3-mobile is-5-desktop">
             <div class="column is-6 box">
                 <h3>Pilotos pronosticados</h3>
-                <draggable class="list-group" :list="pilotosPronosticados" group="people">
+                <draggable class="block-list has-radius is-highlighted is-primary" :list="pilotosPronosticados" group="people" :emptyInsertThreshold="100">
                     <transition-group type="transition" :name="!drag ? 'flip-list' : null">
                         <li
-                            class="list-group-item"
+                            class="has-radius is-primary"
                             v-for="(element, index)  in pilotosPronosticados"
-                            :key="element.id">
+                            :key="element.number">
                             <i :class="element.fixed ? 'fa fa-anchor' : 'glyphicon glyphicon-pushpin'"
                                @click="element.fixed = !element.fixed"
                                aria-hidden="true"
                             ></i>
-                            Pos {{ index + 1 }}. {{ element.name }}
+                            Pos {{ index + 1 }}º. {{ element.firstname }} {{ element.lastname }} - {{ element.team.name }} ({{element.team.carname}})
                         </li>
                     </transition-group>
                 </draggable>
             </div>
-            <div class="column is-6">
+            <div class="column is-6 box">
                 <h3>Lista de pilotos</h3>
-                <draggable class="list-group" :list="pilotosDisponibles" group="people">
+                <b-field>
+                    <b-input v-model="filtroPiloto" placeholder="Buscar piloto"></b-input>
+                </b-field>
+                <draggable class="block-list has-radius is-highlighted is-info" :list="pilotosDisponiblesFiltrados" group="people">
                     <transition-group type="transition" :name="!drag ? 'flip-list' : null">
                         <li
-                            class="list-group-item"
-                            v-for="element  in pilotosDisponibles"
+                            class="is-highlighted is-info"
+                            v-for="element in pilotosDisponiblesFiltrados"
                             :key="element.number">
-                            <i :class="element.fixed ? 'fa fa-anchor' : 'glyphicon glyphicon-pushpin'"
+                            <i
+                                :class="element.fixed ? 'fa fa-anchor' : 'glyphicon glyphicon-pushpin'"
                                 @click="element.fixed = !element.fixed"
                                 aria-hidden="true"
-                            ></i>{{ element.firstname }} {{ element.lastname }} # {{ element.team.name }}
+                            ></i>{{ element.firstname }} {{ element.lastname }} - {{ element.team.name }} ({{element.team.carname}})
                         </li>
                     </transition-group>
                 </draggable>
@@ -57,11 +61,24 @@ export default class SelectTipps extends Vue {
     @Prop({required: true}) session!: RaceSession;
     @Prop({required: true}) grandPrix!: GrandPrix;
 
-    //private formaPronosticar = 'arrastrar';
     private drag: boolean = false;
+    private filtroPiloto: string = '';
 
-    private pilotosPronosticados = [];
+    private pilotosPronosticados: Array<Driver> = [];
     private pilotosDisponibles: Array<Driver> = [];
+
+    get pilotosDisponiblesFiltrados(): Array<Driver> {
+        if (!this.filtroPiloto.trim()) {
+            return this.pilotosDisponibles;
+        }
+
+        return this.pilotosDisponibles.filter(driver => { return driver.lastname.toLowerCase().includes(this.filtroPiloto.toLowerCase())
+                || driver.firstname.toLowerCase().includes(this.filtroPiloto.toLowerCase())
+                || driver.team.name.toLowerCase().includes(this.filtroPiloto.toLowerCase())
+                || driver.team.longname.toLowerCase().includes(this.filtroPiloto.toLowerCase())
+                || driver.team.carname.toLowerCase().includes(this.filtroPiloto.toLowerCase())
+        })
+    }
 
     mounted() {
         driversService.getDriversInGrandPrix(this.grandPrix).then((drivers) => {
