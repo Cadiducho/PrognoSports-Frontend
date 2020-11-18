@@ -1,33 +1,41 @@
 <template>
-    <div id="avatarComponent" v-if="profile !== undefined">
-        <b-nav-item-dropdown right no-caret class="navbar-avatar">
-            <template v-slot:button-content>
-                <img :src="profile.profileImageUrl" class="rounded-circle d-inline-block align-top dropdown-toggle-no-caret" alt="">
-            </template>
-            <b-dropdown-item disabled>{{profile.username}}</b-dropdown-item>
-            <b-dropdown-header>{{profile.email}}</b-dropdown-header>
-            <b-dropdown-divider />
-            <b-dropdown-item :to="'/u/' + profile.id">Mi perfil</b-dropdown-item>
-            <b-dropdown-item to="/settings">Ajustes</b-dropdown-item>
-            <b-dropdown-divider />
-            <b-dropdown-item variant="danger" @click="logout">Cerrar sesión</b-dropdown-item>
-        </b-nav-item-dropdown>
+    <div id="avatarComponent" class="navbar-item has-dropdown is-hoverable">
+        <!-- ToDo: Imagen de perfil -->
+        <a class="navbar-link">
+            {{ user.username }}
+        </a>
+
+        <div class="navbar-dropdown">
+            <a class="navbar-item disabled">
+                {{user.email}} <!--ToDo: Esto pequeño y disabled-->
+            </a>
+            <hr class="navbar-divider">
+
+            <router-link class="navbar-item" :to="'/u/' + user.id">
+                Mi perfil
+            </router-link>
+            <router-link class="navbar-item" to="/settings">
+                Ajustes
+            </router-link>
+            <hr class="navbar-divider">
+            <a class="navbar-item" @click="logout()">
+                Cerrar sesión
+            </a>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
 
-    import {Component, Vue} from "vue-property-decorator";
+import {Component, Prop, Vue} from "vue-property-decorator";
     import {User} from "@/types/User";
-    import {UserModule} from "@/_store/modules/UserModule";
-    import {AuthModule} from "@/_store/modules/AuthModule";
 
     @Component
     export default class AvatarComponent extends Vue {
-        private profile: User = UserModule.profile;
+        @Prop() private user!: User;
 
         logout() {
-            AuthModule.logout().then(() => this.$router.push('/login'));
+            this.$router.push('/logout');
         }
     }
 </script>
