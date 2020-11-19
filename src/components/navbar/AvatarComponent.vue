@@ -1,12 +1,15 @@
 <template>
     <div id="avatarComponent" class="navbar-item has-dropdown is-hoverable">
-        <!-- ToDo: Imagen de perfil -->
-        <a class="navbar-link">
+
+        <a class="navbar-link nav-tag">
+            <figure class="image is-32x32 avatar-figure">
+                <img class="avatar" :src="user.profileImageUrl">
+            </figure>
             {{ user.username }}
         </a>
 
-        <div class="navbar-dropdown">
-            <a class="navbar-item disabled">
+        <div class="navbar-dropdown is-right">
+            <a class="navbar-item is-disabled">
                 {{user.email}} <!--ToDo: Esto pequeño y disabled-->
             </a>
             <hr class="navbar-divider">

@@ -3,7 +3,8 @@
         <nav class="navbar is-light" role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
                 <router-link class="navbar-item" to="/">
-                    <img src="@/assets/logo.png" class="navbar-brand-image d-inline-block align-top mr-2" alt="">
+                    <img src="@/assets/logo.png" class="navbar-brand-image d-inline-block align-top mr-3" alt="">
+
                     PrognoSports
                 </router-link>
 
@@ -26,28 +27,8 @@
                 </div>
 
                 <div class="navbar-end">
-                    <div class="navbar-item has-dropdown is-hoverable">
-                        <a class="navbar-link">
-                            Comunidad
-                        </a>
-
-                        <div class="navbar-dropdown">
-                            <a class="navbar-item">
-                                PrognoSports
-                            </a>
-                            <hr class="navbar-divider">
-                            <router-link class="navbar-item" to="/communities">
-                                Todas las comunidades
-                            </router-link>
-                        </div>
-                    </div>
-                    <div class="navbar-item">
-                        <div class="field is-grouped">
-                            <span class="icon">
-                                <i class="material-icons display-inline-block align-middle">notifications_none</i>
-                            </span>
-                        </div>
-                    </div>
+                    <CommunitiesDropdown/>
+                    <NotificationsDropdown />
 
                     <AvatarComponent :user="getProfile"/>
                 </div>
