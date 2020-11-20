@@ -52,7 +52,7 @@
     })
     export default class NotificationsDropdown extends Vue {
         private unreadNotificationsCount = 0;
-        private notificationList: Array<Notification> = {};
+        private notificationList: Array<Notification> = [];
 
         created() {
             this.getNotifications();

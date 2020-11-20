@@ -10,6 +10,6 @@ async function getNotifications(): Promise<Array<Notification>> {
     return await axios.get('/notifications');
 }
 
-async function clearNotifications() {
+async function clearNotifications(): Promise<void> {
     return await axios.delete('/notifications');
 }
