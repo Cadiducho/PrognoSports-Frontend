@@ -1,6 +1,7 @@
 import axios from 'axios';
 import VueAxios from 'vue-axios';
 import Vue from "vue";
+import {SeasonService} from "@/_services/season.service";
 
 Vue.use(VueAxios, axios);
 
@@ -40,3 +41,4 @@ export * from './community.service';
 export * from './notification.service';
 export * from './grandprix.service';
 export * from './drivers.service';
+export const seasonService = new SeasonService();
