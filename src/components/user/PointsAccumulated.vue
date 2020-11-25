@@ -9,53 +9,66 @@
 import {Component, Prop, Vue} from "vue-property-decorator";
 import VueApexCharts from "vue-apexcharts";
 import {User} from "@/types/User";
-import {grandPrixService, userService} from "@/_services";
+import {grandPrixService, seasonService, userService} from "@/_services";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
 import {Community} from "@/types/Community";
+import {namespace} from "vuex-class";
+const communitymodule = namespace('community')
 
-@Component({
+@Component<PointsAccumulated>({
     components: {
         VueApexCharts
+    },
+    watch: {
+        currentCommunity() {
+            this.fetchData();
+        }
     }
 })
 export default class PointsAccumulated extends Vue {
     private grandPrixes = new Map<string, string>();
-    private pointsMap = new Map<string, number>();
+    @communitymodule.Getter private getCurrentCommunity?: Community;
     @Prop() private user!: User;
 
-    mounted() {
-        grandPrixService.getGrandPrixesList("all", {code: "f1"} as Competition, {name: "2020"} as Season).then(gplist => {
-            gplist.forEach(gp => this.grandPrixes.set(gp.code, gp.name));
+    get currentCommunity(): Community {
+        return this.getCurrentCommunity!;
+    }
 
-            // Actualizar leyenda con los codigos de los gps
-            this.chartOptions = {
-                xaxis: {
-                    categories: [...this.grandPrixes.keys()],
-                }
-            }
+    public fetchData(): void {
+        let season: Season;
+        let competition: Competition = this.currentCommunity.competition;
+
+        seasonService.getCurrentSeason(competition).then((seasonFetched) => {
+            season = seasonFetched;
+
         }).then(() => {
+            grandPrixService.getGrandPrixesList("all", competition, season).then(gplist => {
+                gplist.forEach(gp => this.grandPrixes.set(gp.code, gp.name));
 
-            // Fixme: Datos reales del usuario iniciado sesión
-            let community = {id: 1} as Community;
-            let competitition = {id: 1} as Competition;
-            let season = {id: 3} as Season;
-            //-----
+                // Actualizar leyenda con los codigos de los gps
+                this.chartOptions = {
+                    xaxis: {
+                        categories: [...this.grandPrixes.keys()],
+                    }
+                }
+            }).then(() => {
 
-            userService.getCumulatedPointsInCommunity(this.user, community, competitition, season).then(cumulatedPoints => {
-                let dataAcumulada = [...Object.values(cumulatedPoints)];
-                userService.getPointsInCommunity(this.user, community, competitition, season).then(points => {
-                    let dataPoints = [...Object.values(points)];
-                    this.chartSeries = [
-                        {
-                            name: 'Puntos acumulados',
-                            data: dataAcumulada
-                        },
-                        {
-                            name: 'Puntos por Gan Premio',
-                            data: dataPoints
-                        }
-                    ]
+                userService.getCumulatedPointsInCommunity(this.user, this.currentCommunity, competition, season).then(cumulatedPoints => {
+                    let dataAcumulada = [...Object.values(cumulatedPoints)];
+                    userService.getPointsInCommunity(this.user, this.currentCommunity, competition, season).then(points => {
+                        let dataPoints = [...Object.values(points)];
+                        this.chartSeries = [
+                            {
+                                name: 'Puntos acumulados',
+                                data: dataAcumulada
+                            },
+                            {
+                                name: 'Puntos por Gan Premio',
+                                data: dataPoints
+                            }
+                        ]
+                    });
                 });
             });
         });
@@ -111,7 +124,3 @@ export default class PointsAccumulated extends Vue {
     };
 }
 </script>
-
-<style scoped>
-
-</style>
