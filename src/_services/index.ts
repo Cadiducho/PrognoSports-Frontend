@@ -14,7 +14,7 @@ function authHeader() {
     }
 }
 
-axios.defaults.baseURL = 'http://localhost:8000/api/v2';
+axios.defaults.baseURL = 'https://prognosports.com/api/v2';
 axios.interceptors.request.use(function (config) {
     const token = authHeader();
     config.headers.Authorization =  token;
