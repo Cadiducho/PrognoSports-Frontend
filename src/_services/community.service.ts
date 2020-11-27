@@ -1,11 +1,13 @@
 import axios from 'axios';
 import {Community} from "@/types/Community";
+import {User} from "@/types/User";
 
 export const communityService = {
     getCurrentCommunity,
     getUserPointsByGP,
     getUserCummulatedPointsByGP,
-    getTotalUserPoints
+    getTotalUserPoints,
+    getUserCommunities
 };
 
 async function getCurrentCommunity(communityId: number): Promise<Community> {
@@ -22,4 +24,8 @@ async function getUserCummulatedPointsByGP(communityId: number, season: number) 
 
 async function getTotalUserPoints(communityId: number, season: number) {
     return await axios.get(`/communities/${communityId}/${season}/totaluserpoints`);
+}
+
+async function getUserCommunities(user: User): Promise<Array<Community>> {
+    return await axios.get(`/user/${user.id}/communities`);
 }

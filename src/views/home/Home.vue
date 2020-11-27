@@ -37,7 +37,7 @@
                                 </div>
                             </div>
                         </nav>
-                        <VueApexCharts height="400" type="line" :options="defaultChartsOptions" :series="seriesAccumulated"></VueApexCharts>
+                        <PointsAccumulated :user="getProfile" />
                     </article>
                 </div>
             </div>
@@ -51,20 +51,24 @@
     import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
     import NextGrandPrix from "@/components/gps/NextGrandPrix.vue";
     import {AuthModule} from "@/_store/modules/AuthModule";
-    import {Community} from "@/types/Community";
-    import {CommunityModule} from "@/_store/modules/CommunityModule";
-    import {User} from "@/types/User";
-    import {UserModule} from "@/_store/modules/UserModule";
     import VueApexCharts from "vue-apexcharts";
+    import PointsAccumulated from "@/components/user/PointsAccumulated.vue";
+    import {User} from "@/types/User";
+    import {namespace} from 'vuex-class'
+
+    const usermodule = namespace('user')
 
     @Component({
         components: {
+            PointsAccumulated,
             NextGrandPrix,
             PrognoPageTitle,
             VueApexCharts
         }
     })
     export default class Home extends Vue {
+
+        @usermodule.Getter private getProfile?: User;
 
         get loading() {
             return AuthModule.authStatus === 'loading' && !AuthModule.isAuthenticated;

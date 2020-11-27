@@ -1,5 +1,8 @@
 import axios from 'axios';
 import {User} from "@/types/User";
+import {Community} from "@/types/Community";
+import {Competition} from "@/types/Competition";
+import {Season} from "@/types/Season";
 
 export const userService = {
     login,
@@ -8,7 +11,9 @@ export const userService = {
     register,
     sendForgotPassword,
     changePassword,
-    getUsersInCommunity
+    getUsersInCommunity,
+    getPointsInCommunity,
+    getCumulatedPointsInCommunity
 };
 
 function login(username: string, password: string): Promise<string> {
@@ -47,4 +52,12 @@ function sendForgotPassword(email: string) {
 
 function changePassword(email: string, inputToken: string, inputPassword: string) {
     return axios.patch("/auth/changepassword", {"email": email, "token": inputToken, "password": inputPassword});
+}
+
+async function getPointsInCommunity(user: User, community: Community, competition: Competition, season: Season): Promise<any> {
+    return await axios.get(`/user/${user.id}/communities/${community.id}/${competition.id}/${season.id}/points`);
+}
+
+async function getCumulatedPointsInCommunity(user: User, community: Community, competition: Competition, season: Season): Promise<Map<string, number>> {
+    return await axios.get(`/user/${user.id}/communities/${community.id}/${competition.id}/${season.id}/cummulatedpoints`);
 }

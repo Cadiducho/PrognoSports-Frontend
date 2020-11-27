@@ -40,9 +40,10 @@
             return {
                 name: "gpdetails",
                 params: {
+                    competition: this.gp.competition.code,
                     season: this.gp.season.name,
                     id: this.gp.id,
-                },
+                }
             };
         }
     }

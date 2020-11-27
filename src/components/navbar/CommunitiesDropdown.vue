@@ -1,20 +1,52 @@
 <template>
-    <div id="communitiesDropdown" v-if="currentCommunity !== undefined">
-        <b-nav-item-dropdown :text="currentCommunity.name" right class="navbar-communities">
-            <b-dropdown-item active :to="'/communities/' + currentCommunity.id">{{currentCommunity.name}}</b-dropdown-item>
-            <b-dropdown-divider />
-            <b-dropdown-item variant="info" to="/communities" >Todas las comunidades</b-dropdown-item>
-        </b-nav-item-dropdown>
+    <div id="communtiesDropdown" class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+            Comunidad
+        </a>
+
+        <div class="navbar-dropdown">
+            <router-link class="navbar-item" v-for="com in communitiesList" :to="'/communities/' + com.id">
+                {{ com.name }}
+            </router-link>
+            <hr class="navbar-divider">
+            <router-link class="navbar-item" to="/communities">
+                Todas las comunidades
+            </router-link>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
+import {Component, Vue} from "vue-property-decorator";
     import {Community} from "@/types/Community";
-    import {CommunityModule} from "@/_store/modules/CommunityModule";
+    import {communityService} from "@/_services";
+    import {namespace} from "vuex-class";
+    import {User} from "@/types/User";
+    const usermodule = namespace('user')
+    const communitymodule = namespace('community')
 
-    @Component
+    @Component<CommunitiesDropdown>({
+        watch: {
+            user() {
+                this.getCommunityList();
+            }
+        }
+    })
     export default class CommunitiesDropdown extends Vue {
-        private currentCommunity: Community = CommunityModule.currentCommunity;
+        @usermodule.Getter private getProfile?: User;
+        @usermodule.Getter private isProfileLoaded?: boolean;
+        @communitymodule.Getter private getCurrentCommunity?: Community;
+        private communitiesList: Array<Community> = [];
+
+        // Variable para detectar los cambios en el watch
+        get user(): User {
+            return this.getProfile!;
+        }
+
+        getCommunityList(): Promise<any> {
+            return communityService.getUserCommunities(this.user).then(list => {
+                this.communitiesList = list;
+            });
+        }
     }
 </script>

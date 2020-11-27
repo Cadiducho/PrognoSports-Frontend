@@ -1,13 +1,15 @@
 import axios from 'axios';
+import {Notification} from "@/types/Notification";
 
 export const notificationService = {
     getNotifications,
     clearNotifications
 };
 
-function getNotifications() {
-    return axios.get('/notifications');
+async function getNotifications(): Promise<Array<Notification>> {
+    return await axios.get('/notifications');
 }
-function clearNotifications() {
-    return axios.delete('/notifications');
+
+async function clearNotifications(): Promise<void> {
+    return await axios.delete('/notifications');
 }

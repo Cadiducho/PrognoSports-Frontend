@@ -1,122 +1,49 @@
 <template>
-    <div id="notificationsDropdown">
-        <b-nav-item-dropdown right no-caret>
-            <template v-slot:button-content class="nav-link-notifications">
+    <b-dropdown id="notificationDropdown" position="is-bottom-left" append-to-body aria-role="menu" trap-focus>
+        <a class="navbar-item nav-tag" slot="trigger" role="button">
+            <span class="icon">
                 <i class="material-icons display-inline-block align-middle">notifications_none</i>
-                <span v-if="unreadNotificationsCount > 0" class="nav-link-notification-number" id="notification-count-number">{{unreadNotificationsCount}}</span>
-            </template>
-            <div class="dropdown-menu-notifications">
-                <div class="notifications-header d-flex justify-content-between align-items-center">
-                    <span class="notifications-header-title">
-                        Notificaciones
-                    </span>
-                    <a class="d-flex text-primary" @click="clearNotification"><small>Marcar todas como leídas</small></a>
+            </span>
+            <span v-if="unreadNotificationsCount > 0" class="tag is-danger counter">{{unreadNotificationsCount}}</span>
+        </a>
+
+        <b-dropdown-item aria-role="menu-item" :focusable="false" custom paddingless>
+                <div class="modal-card" style="width:350px;">
+                    <section class="modal-card-body">
+                        <div class="level">
+                            <div class="level-left">
+                                <p class="subtitle is-5">Notificaciones</p>
+                            </div>
+                            <div class="level-right">
+                                <p class="has-text-info" @click="clearNotification()">Marcar como leídas</p>
+                            </div>
+                        </div>
+                        <article v-for="noti in notificationList" class="message is-small">
+                            <div class="message-header">
+                                <p>Notificación #{{noti.id}}</p>
+                            </div>
+                            <div class="message-body">
+                                Descripción de la notificación
+                                <!-- ToDo: Cuerpo -->
+                                <br />
+                                <span class="has-text-info is-italic">Recibida el
+                                    <b-tooltip :label="noti.data.time | dateDiff" position="is-right">
+                                        {{ noti.data.time | humanDate }}
+                                    </b-tooltip>
+                                </span>
+                            </div>
+                        </article>
+                    </section>
                 </div>
-                <b-list-group>
-                    <b-list-group-item action
-                                       v-for="noti in notificationList" :to="'/' + noti.data['gpSeason'] + '/' + noti.data['gpRound']"
-                                       v-bind:class="{ unread: noti.readAt === undefined}"
-                                       :key="noti.id"
-                    >
-                        <vswitch :value="noti.type">
-                            <template #info>
-                                <p class="mb-1">
-                                    <strong class="text-info">Info #{{noti.id}}</strong>
-                                    <br/>
-                                    {{noti.data["info"]}}
-                                </p>
-                            </template>
-                            <template #QUALI_PRE_ALERT>
-                                <div class="d-flex w-100 justify-content-between">
-                                    <strong class="mb-1 text-primary">Clasificación mañana</strong>
-                                    <small class="text-muted">{{ moment(noti.time).fromNow() }}</small>
-                                </div>
-
-                                <p class="mb-1">
-                                    Realiza tus pronósticos para {{noti.data["gpName"]}} antes del <!--{{noti.data["time"].format('dd/MM/yyyy HH:mm', loggedUser.timeZoneId)}-->
-                                </p>
-                            </template>
-                            <template #QUALI_ALERT>
-                                <div class="d-flex w-100 justify-content-between">
-                                    <strong class="mb-1 text-warning">Clasificación hoy</strong>
-                                    <small class="text-muted">{{ moment(noti.time).fromNow() }}</small>
-                                </div>
-
-                                <p class="mb-1">
-                                    Realiza tus pronósticos para {{noti.data["gpName"]}} antes del <!--{{noti.data["time"].format('dd/MM/yyyy HH:mm', loggedUser.timeZoneId)}-->
-                                </p>
-                            </template>
-                            <template #RACE_PRE_ALERT>
-                                <div class="d-flex w-100 justify-content-between">
-                                    <strong class="mb-1 text-primary">Carrera mañana</strong>
-                                    <small class="text-muted">{{ moment(noti.time).fromNow() }}</small>
-                                </div>
-
-                                <p class="mb-1">
-                                    Realiza tus pronósticos para {{noti.data["gpName"]}} antes del <!--{{noti.data["time"].format('dd/MM/yyyy HH:mm', loggedUser.timeZoneId)}-->
-                                </p>
-                            </template>
-                            <template #RACE_ALERT>
-                                <div class="d-flex w-100 justify-content-between">
-                                    <strong class="mb-1 text-warning">Carrera hoy</strong>
-                                    <small class="text-muted">{{ moment(noti.time).fromNow() }}</small>
-                                </div>
-
-                                <p class="mb-1">
-                                    Realiza tus pronósticos para {{noti.data["gpName"]}} antes del <!--{{noti.data["time"].format('dd/MM/yyyy HH:mm', loggedUser.timeZoneId)}-->
-                                </p>
-                            </template>
-                            <template #QUALI_POINTS>
-                                <div class="d-flex w-100 justify-content-between">
-                                    <strong class="mb-1 text-success">Puntos de clasificación</strong>
-                                    <small class="text-muted">{{ moment(noti.time).fromNow() }}</small>
-                                </div>
-
-                                <p class="mb-1" v-for="(community, points) in noti.data.points">
-                                    <strong class="text-info">{{community.name}}</strong>: {{points.pointsInQualify}} puntos<br/>
-                                    Acumulados un total de {{points.accumulatedPoints}} puntos en la temporada
-                                </p>
-                                <strong class="text-success">Puntos de clasificación</strong>
-                            </template>
-                            <template #GRID_CHANGES>
-                                <p class="mb-1">
-                                    <strong class="text-success">Cambios en la parrilla</strong>
-                                    <br/>
-                                    Se han producido cambios en la parrilla de salida de {{noti.data["gpName"]}}
-                                </p>
-                            </template>
-                            <template #RACE_POINTS>
-                                <div class="d-flex w-100 justify-content-between">
-                                    <strong class="mb-1 text-success">Puntos de carrera</strong>
-                                    <small class="text-muted">{{ moment(noti.time).fromNow() }}</small>
-                                </div>
-
-                                <p class="mb-1" v-for="(community, points) in noti.data.points">
-                                    <strong class="text-info">{{community.name}}</strong>: {{points.pointsInQualify}} puntos<br/>
-                                    Acumulados un total de {{points.accumulatedPoints}} puntos en la temporada
-                                </p>
-                            </template>
-                            <template #default>
-                                <p class="mb-1">
-                                    <strong class="text-info">Notificacion #{{noti.id}}</strong>
-                                </p>
-                            </template>
-                        </vswitch>
-                    </b-list-group-item>
-                </b-list-group>
-                <div class="notifications-footer text-center">
-                    <router-link to="/notifications"><small>Ver todas las notificaciones</small></router-link>
-                </div>
-            </div>
-        </b-nav-item-dropdown>
-    </div>
+        </b-dropdown-item>
+    </b-dropdown>
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
+    import {Component, Vue} from "vue-property-decorator";
     import {notificationService} from "@/_services/notification.service";
+    import {Notification} from "@/types/Notification";
     import vswitch from "../lib/v-switch.vue";
-    import moment from "moment";
 
     @Component({
         components: {
@@ -125,7 +52,7 @@
     })
     export default class NotificationsDropdown extends Vue {
         private unreadNotificationsCount = 0;
-        private notificationList = {};
+        private notificationList: Array<Notification> = [];
 
         created() {
             this.getNotifications();
@@ -140,11 +67,8 @@
         public getNotifications()  {
             notificationService.getNotifications().then((result) => {
                 this.notificationList = result;
+                this.unreadNotificationsCount = result.length;
             });
-        }
-
-        public moment() {
-            return moment();
         }
     }
 </script>

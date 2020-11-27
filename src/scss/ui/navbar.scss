@@ -1,0 +1,32 @@
+.nav-tag {
+  position: relative;
+}
+
+.nav-tag .icon {
+  height: 2.0rem;
+  width: 2.0rem;
+  border-radius: 50%;
+}
+
+.nav-tag .counter {
+  border-radius: 50%;
+  position: absolute;
+  top: 5px;
+  right: 0;
+}
+
+.nav-tag .avatar-figure {
+  margin-top: 0.1em;
+  margin-right: 0.3em;
+}
+.nav-tag .avatar {
+  height: 2.0rem;
+  width: 2.0rem;
+  border-radius: 50%;
+}
+
+@media (max-width: 768px) {
+  .nav-tag .counter {
+    margin-left: -2px;
+  }
+}
