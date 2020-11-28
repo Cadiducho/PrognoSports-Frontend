@@ -1,7 +1,6 @@
 <template>
   <div id="registerComponent">
     <LandingNavbar />
-
     <div class="container">
       <div class="columns is-centered">
         <div class="column is-two-fifths">
@@ -47,7 +46,7 @@
                   </div>
                 </div>
                 <div class="field">
-                  <label class="label">Email</label>
+                  <label class="label">Correo electrónico</label>
                   <div class="control has-icons-left has-icons-right">
                     <input
                       v-model="email"
@@ -78,6 +77,11 @@
             <div class="card-footer">
               <div class="card-footer-item">
                 <router-link to="/login">Ya tengo usuario</router-link>
+              </div>
+              <div class="card-footer-item">
+                <router-link to="/forgotpassword"
+                  >He olvidado mi contraseña</router-link
+                >
               </div>
             </div>
           </div>
