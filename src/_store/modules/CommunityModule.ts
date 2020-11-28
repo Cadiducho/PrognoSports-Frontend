@@ -1,4 +1,4 @@
-import {communityService} from "@/_services/community.service";
+import {communityService} from "@/_services";
 import {Community} from "@/types/Community";
 import store from '@/_store'
 import {Action, getModule, Module, Mutation, VuexModule} from 'vuex-module-decorators'

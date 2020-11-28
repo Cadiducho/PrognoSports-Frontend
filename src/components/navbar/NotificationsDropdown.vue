@@ -41,7 +41,7 @@
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
-    import {notificationService} from "@/_services/notification.service";
+    import {notificationService} from "@/_services";
     import {Notification} from "@/types/Notification";
     import vswitch from "../lib/v-switch.vue";
 

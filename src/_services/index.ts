@@ -2,6 +2,11 @@ import axios from 'axios';
 import VueAxios from 'vue-axios';
 import Vue from "vue";
 import {SeasonService} from "@/_services/season.service";
+import {UserService} from "@/_services/user.service";
+import {CommunityService} from "@/_services/community.service";
+import {NotificationService} from "@/_services/notification.service";
+import {GrandprixService} from "@/_services/grandprix.service";
+import {DriversService} from "@/_services/drivers.service";
 
 Vue.use(VueAxios, axios);
 
@@ -36,9 +41,9 @@ axios.interceptors.response.use(function (response) {
 });
 
 // API Services
-export * from './user.service';
-export * from './community.service';
-export * from './notification.service';
-export * from './grandprix.service';
-export * from './drivers.service';
+export const userService = new UserService();
+export const communityService = new CommunityService();
+export const notificationService = new NotificationService();
+export const grandPrixService = new GrandprixService();
+export const driversService = new DriversService();
 export const seasonService = new SeasonService();
