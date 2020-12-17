@@ -1,6 +1,14 @@
 <template>
     <div id="cardNextGP">
-        <div class="tile" v-if="!loadingGpData">
+        <div class="tile" v-if="noNextGp">
+            <article class="tile is-child box">
+                <p class="title">Próximo Gran Premio</p>
+                <p class="content block">
+                    No hay próximo Gran Premio
+                </p>
+            </article>
+        </div>
+        <div class="tile" v-else-if="!loadingGpData">
             <article class="tile is-child box">
                 <p class="title">Próximo Gran Premio</p>
                 <p class="subtitle">{{nextGp.name}}</p>
@@ -45,6 +53,7 @@
     @Component
     export default class NextGrandPrix extends Vue {
         private nextGp?: GrandPrix;
+        private noNextGp: boolean = false;
         private loadingGpData: boolean = true;
         @community.Getter getCurrentCommunity?: Community;
 
@@ -63,6 +72,8 @@
             CommunityModule.communityRequest().then(() => {
                 grandPrixService.getNextGrandPrix(this.getCurrentCommunity!.competition).then(nextGp => {
                     this.nextGp = nextGp;
+                }).catch(() => {
+                    this.noNextGp = true;
                 }).finally(() => this.loadingGpData = false);
             });
         }
