@@ -73,7 +73,7 @@ class UserMod extends VuexModule implements IUserState {
 
     @Action
     async userForgotPassword(email: string) {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             userService.sendForgotPassword(email)
                 .then(
                     () => {
@@ -88,7 +88,7 @@ class UserMod extends VuexModule implements IUserState {
 
     @Action
     async userChangePassword(email: string, inputToken: string, inputPassword: string) {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             userService.changePassword(email, inputToken, inputPassword)
                 .then(
                     () => {

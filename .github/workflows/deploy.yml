@@ -1,0 +1,24 @@
+name: Deploy
+
+on:
+    push:
+        branches: [ master ]
+        
+jobs:
+    deploy:
+        name: Deploy    
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@master
+        - name: Vue Build
+          run: npm run build
+        - name: Upload to server
+          uses: appleboy/scp-action@v0.1.1
+          with:
+            host: ${{ secrets.SECRET_FRONTEND_HOST }}
+            username: ${{ secrets.SECRET_FRONTEND_USER }}
+            key: ${{ secrets.SECRET_FRONTEND_RSA }}
+            port: ${{ secrets.SECRET_FRONTEND_PORT }}
+            source: "dist/"
+            target: ${{ secrets.SECRET_FRONTEND_PATH }}
+            strip_components: 1
