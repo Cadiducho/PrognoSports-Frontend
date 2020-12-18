@@ -67,7 +67,11 @@
         public getNotifications()  {
             notificationService.getNotifications().then((result) => {
                 this.notificationList = result;
-                this.unreadNotificationsCount = result.length;
+                this.notificationList.forEach(notification => {
+                    if (notification.readAt == undefined) {
+                        this.unreadNotificationsCount++;
+                    }
+                });
             });
         }
     }

@@ -18,7 +18,7 @@
                         </nav>
                         <div class="notification has-background-warning">Estás utilizando PrognoSports Beta, la experiencia puede verse afectada</div>
 
-                        <router-view/>
+                        <router-view :key="$route.fullPath"/>
                     </div>
                 </div>
             </div>

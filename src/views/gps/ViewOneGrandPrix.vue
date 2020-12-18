@@ -5,7 +5,7 @@
         </div>
         <div v-else>
             <div class="columns is-variable is-5">
-                <div class="column is-9">
+                <div class="column">
                     <PrognoPageTitle :name="grandPrix.name + ' de ' + grandPrix.season.name" />
                 </div>
                 <div class="column is-3">
@@ -13,7 +13,7 @@
                 </div>
             </div>
 
-            <div class="columns is-variable is-5">
+            <div class="columns">
                 <div v-bind:class="thereIsGrid ? 'column is-6' : 'column is-9'">
                     <b-tabs v-model="activeTab">
                         <b-tab-item label="Clasificación">
@@ -26,11 +26,12 @@
                         </b-tab-item>
                     </b-tabs>
                 </div>
-                <div v-if="thereIsGrid" class="column is-3">
+                <div v-if="thereIsGrid" class="content column">
                     <StartGrid :grid="startGrid"/>
                 </div>
                 <div class="column is-3">
                     <CircuitCard :circuit="grandPrix.circuit" :laps="grandPrix.laps" />
+                    <PitLaneStartGrid :grid="startGrid"/>
                 </div>
             </div>
         </div>
@@ -41,7 +42,7 @@
     import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
     import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
     import CircuitCard from "@/components/gps/CircuitCard.vue";
-    import StartGrid from "@/components/gps/StartGrid.vue";
+    import StartGrid from "@/components/gps/StartGridList.vue";
     import {Component, Vue} from "vue-property-decorator";
     import {Competition} from "@/types/Competition";
     import {Season} from "@/types/Season";
@@ -49,9 +50,11 @@
     import {grandPrixService} from "@/_services";
     import {StartGridPosition} from "@/types/StartGridPosition";
     import SelectTipps from "@/components/gps/SelectTipps.vue";
+    import PitLaneStartGrid from "@/components/gps/PitLaneStartGrid.vue";
 
     @Component({
         components: {
+            PitLaneStartGrid,
             SelectTipps,
             CircuitCard,
             PrognoPageTitle,
@@ -87,8 +90,5 @@
                 });
 
         }
-
-
-
     }
 </script>

@@ -1,14 +1,19 @@
 <template>
-    <div id="startGridComponent">
+    <div id="startGridComponent" class="box" v-if="grid !== undefined">
+        <h3>Parrilla de Salida</h3>
         <div class="columns">
             <div class="column is-6">
+                <StartGridCard v-for="pos in parrillaDerecha" />
                 <div v-for="pos in parrillaIzquierda">
-                    Piloto {{pos.driver.firstname}}
+                    <StartGridCard :gridPos="pos"/>
+                    <div class="block"></div>
                 </div>
             </div>
             <div class="column is-6">
+                <div class="block"></div>
                 <div v-for="pos in parrillaDerecha">
-                    Piloto {{pos.driver.firstname}}
+                    <StartGridCard :gridPos="pos"/>
+                    <div class="block"></div>
                 </div>
             </div>
         </div>
@@ -18,22 +23,23 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {StartGridPosition} from "@/types/StartGridPosition";
-
-    @Component
-    export default class StartGrid extends Vue {
+import StartGridCard from "@/components/gps/StartGridCard.vue";
+@Component({
+    components: {StartGridCard}
+})
+    export default class StartGridList extends Vue {
         @Prop({required: true}) grid!: Array<StartGridPosition>;
 
         get parrillaIzquierda() {
             return this.grid.filter(function (gridPos) {
-                return gridPos.position % 2 !== 0;
+                return gridPos.position % 2 !== 0 && !gridPos.isFromPit;
             })
         }
 
         get parrillaDerecha() {
             return this.grid.filter(function (gridPos) {
-                return gridPos.position % 2 === 0;
+                return gridPos.position % 2 === 0  && !gridPos.isFromPit;
             })
         }
-
     }
 </script>
