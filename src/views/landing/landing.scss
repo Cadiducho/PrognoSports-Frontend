@@ -1,5 +1,13 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+a {
+  text-decoration: none;
+}
+
 body {
-    font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 h1,
@@ -8,124 +16,116 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-weight: 700;
+  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 700;
 }
 
 header.masthead {
-    position: relative;
-    background: #343a40 url("https://prognosports.com/dist/img/landing/spa-francorchamps-13.jpg") no-repeat center center;
-    background-size: cover;
-    padding-top: 8rem;
-    padding-bottom: 8rem;
-}
-
-header.masthead .overlay {
-    position: absolute;
-    background-color: #212529;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
-    opacity: 0.3;
+  position: relative;
+  background: #343a40 url("https://cuentavueltas.files.wordpress.com/2012/08/spa-portada.jpg") no-repeat center center;
+  background-size: cover;
+  padding-top: 8rem;
+  padding-bottom: 8rem;
 }
 
 header.masthead h1 {
-    font-size: 2rem;
+  font-size: 2rem;
 }
 
 @media (min-width: 768px) {
-    header.masthead {
-        padding-top: 12rem;
-        padding-bottom: 12rem;
-    }
-    header.masthead h1 {
-        font-size: 3rem;
-    }
+  header.masthead {
+    padding-top: 12rem;
+    padding-bottom: 12rem;
+  }
+  header.masthead h1 {
+    font-size: 3rem;
+  }
 }
 
-.showcase .showcase-text {
-    padding: 3rem;
-}
-
-.showcase .showcase-img {
-    min-height: 30rem;
-    background-size: cover;
-}
-
-@media (min-width: 768px) {
-    .showcase .showcase-text {
-        padding: 7rem;
-    }
+.heading {
+  -webkit-text-stroke-width: 0.5px;
+  -webkit-text-stroke-color: black;
+  font-size: 2rem;
+  text-transform: none!important;
 }
 
 .features-icons {
-    padding-top: 7rem;
-    padding-bottom: 7rem;
+  padding-top: 7rem;
+  padding-bottom: 7rem;
 }
 
 .features-icons .features-icons-item {
-    max-width: 20rem;
+  max-width: 20rem;
 }
 
 .features-icons .features-icons-item .features-icons-icon {
-    height: 7rem;
+  height: 7rem;
 }
 
 .features-icons .features-icons-item .features-icons-icon i {
-    font-size: 4.5rem;
+  font-size: 4.5rem;
 }
 
 .features-icons .features-icons-item:hover .features-icons-icon i {
-    font-size: 5rem;
+  font-size: 5rem;
 }
 
-.testimonials {
-    padding-top: 7rem;
-    padding-bottom: 7rem;
+.features-icons .features-icons-item .features-icons-text {
+  font-size: 1.25rem;
+  font-weight: 300;
 }
 
-.testimonials .testimonial-item {
-    max-width: 18rem;
+.btn {
+  width: 280px;
+  height: 50px;
+  border-radius: 100px;
+  border: none;
+  font-size: 16px;
+  color: #507ce8;
+  box-sizing: border-box;
+  padding: 0 30px 0 51px;
+  background-image: url("../../assets/logo.png");
+  background-size: 26px 26px;
+  background-repeat: no-repeat;
+  background-position: 39px;
+  background-color: white;
+  outline: none;
+  cursor: pointer;
 }
 
-.testimonials .testimonial-item img {
-    max-width: 12rem;
-    -webkit-box-shadow: 0 5px 5px 0 #adb5bd;
-    box-shadow: 0 5px 5px 0 #adb5bd;
+.landing-content {
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
-.call-to-action {
-    position: relative;
-    background: #343a40 url("https://prognosports.com/dist/img/landing/spa-francorchamps-13.jpg") no-repeat center center;
-    background-size: cover;
-    padding-top: 7rem;
-    padding-bottom: 7rem;
+.feature-box {
+  margin: 4rem;
+  align-self: center;
 }
 
-.call-to-action .overlay {
-    position: absolute;
-    background-color: #212529;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
-    opacity: 0.3;
+.text {
+  font-size: 17px;
+  margin-top: 1rem;
+  height: 100px;
+  color: #6d7d93;
 }
-
-.dedicado {
-    background-image: url('https://prognosports.com/dist/img/landing/dedicado.png');
+.primary-background {
+  background-color: #507ce8;
+  padding: 38px 20px;
 }
-
-.visual {
-    background-image: url('https://prognosports.com/dist/img/landing/visual.png');
+.call-to-action-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-
-.personalizable {
-    background-image: url('https://prognosports.com/dist/img/landing/personalizable.png');
+.call-to-action-btn {
+  margin: 2rem;
 }
-
-footer.footer {
-    padding-top: 4rem;
-    padding-bottom: 4rem;
+.call-to-action-h1 {
+  font-size: 28px;
+  color: white;
+}
+.call-to-action-p {
+  font-size: 17px;
+  color: white;
 }

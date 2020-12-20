@@ -1,7 +1,7 @@
 <template>
     <div id="forgotPasswordComponent">
         <LandingNavbar />
-        <div class="container">
+        <div class="container mt-6 mb-6">
             <div class="columns is-centered">
                 <div class="column is-two-fifths">
                     <div class="card">
@@ -76,6 +76,8 @@
                 </div>
             </div>
         </div>
+
+        <LandingFooter/>
     </div>
 </template>
 
@@ -83,9 +85,10 @@
 import { Component, Vue } from "vue-property-decorator";
 import { UserModule } from "@/_store/modules/UserModule";
 import LandingNavbar from "@/components/landing/LandingNavbar.vue";
+import LandingFooter from "@/components/landing/LandingFooter.vue";
 
 @Component({
-    components: { LandingNavbar },
+    components: { LandingNavbar, LandingFooter },
 })
 export default class ForgotPassword extends Vue {
     private email: string = "";
