@@ -7,6 +7,7 @@ import {CommunityService} from "@/_services/community.service";
 import {NotificationService} from "@/_services/notification.service";
 import {GrandprixService} from "@/_services/grandprix.service";
 import {DriversService} from "@/_services/drivers.service";
+import { CircuitService } from './circuit.service';
 
 Vue.use(VueAxios, axios);
 
@@ -50,3 +51,4 @@ export const notificationService = new NotificationService();
 export const grandPrixService = new GrandprixService();
 export const driversService = new DriversService();
 export const seasonService = new SeasonService();
+export const circuitService = new CircuitService();

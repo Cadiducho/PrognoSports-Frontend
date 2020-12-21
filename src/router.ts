@@ -22,6 +22,11 @@ const routes = [
         component: () => import('@/views/gps/ViewGrandPrixList.vue'),
     },
     {
+        path: '/circuits',
+        name: 'circuitlist',
+        component: () => import('@/views/circuit/ViewCircuitList.vue'),
+    },
+    {
         path: '/gps/:competition/:season/:id',
         name: 'gpdetails',
         component: () => import('@/views/gps/ViewOneGrandPrix.vue'),
