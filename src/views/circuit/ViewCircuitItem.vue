@@ -65,7 +65,7 @@
     </div>
 </template>
 
-<script lang="ts" scoped>
+<script lang="ts">
 import { Circuit } from "@/types/Circuit";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
@@ -81,7 +81,7 @@ export default class ViewCircuitItem extends Vue {
 }
 </script>
 
-<style>
+<style scoped>
 
 .circuit {
     width: 25em;
