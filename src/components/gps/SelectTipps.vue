@@ -82,11 +82,13 @@ export default class SelectTipps extends Vue {
             return this.pilotosDisponibles;
         }
 
-        return this.pilotosDisponibles.filter(driver => { return driver.lastname.toLowerCase().includes(this.filtroPiloto.toLowerCase())
-                || driver.firstname.toLowerCase().includes(this.filtroPiloto.toLowerCase())
-                || driver.team.name.toLowerCase().includes(this.filtroPiloto.toLowerCase())
-                || driver.team.longname.toLowerCase().includes(this.filtroPiloto.toLowerCase())
-                || driver.team.carname.toLowerCase().includes(this.filtroPiloto.toLowerCase())
+        let filtroLowerCase = this.filtroPiloto.toLowerCase();
+        return this.pilotosDisponibles.filter(driver => {
+            return driver.lastname.toLowerCase().includes(filtroLowerCase)
+                || driver.firstname.toLowerCase().includes(filtroLowerCase)
+                || driver.team.name.toLowerCase().includes(filtroLowerCase)
+                || driver.team.longname.toLowerCase().includes(filtroLowerCase)
+                || driver.team.carname.toLowerCase().includes(filtroLowerCase);
         })
     }
 

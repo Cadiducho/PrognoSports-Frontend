@@ -11,13 +11,13 @@
         <div class="card-content">
             <div class="media">
                 <div class="media-content">
-                    <p class="title is-4">{{circuit.name}} {{ hasVariant() ? ('-' + circuit.variant.name) : ""}}</p>
+                    <p class="title is-4">{{circuit.name}} {{ circuit.hasVariant ? ('-' + circuit.variant.name) : ""}}</p>
                     <p class="subtitle is-6">{{circuit.locality}}, {{circuit.country}}</p>
                 </div>
             </div>
 
             <div class="content">
-                <p v-if="hasVariant()" class="card-text"><b>Variante: </b>{{circuit.variant.name}}</p>
+                <p v-if="circuit.hasVariant" class="card-text"><b>Variante: </b>{{circuit.variant.name}}</p>
                 <p class="card-text"><b>Distancia por vuelta: </b>{{circuit.variant.distance}} km</p>
                 <p v-if="hasLaps()" class="card-text"><b>Vueltas: </b>{{laps}}</p>
                 <p v-if="hasLaps()" class="card-text"><b>Distancia total: </b>{{laps * circuit.variant.distance}} km</p>
@@ -36,16 +36,12 @@
         @Prop({required: true}) private circuit!: Circuit;
         @Prop() private laps!: number;
 
-        public hasVariant(): boolean {
-            return this.circuit!.variant.name !== "grandprix";
-        }
-
         public hasLaps(): boolean {
             return this.laps != undefined || this.laps != 0;
         }
 
         get circuitUrl(): string {
-            let variant = this.hasVariant() ? ('/ '+ this.circuit!.variant) : "";
+            let variant = this.circuit.hasVariant ? ('/ '+ this.circuit!.variant) : "";
             return '/circuits/' + this.circuit!.id + variant;
         }
     }
