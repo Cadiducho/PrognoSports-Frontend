@@ -2,10 +2,10 @@
     <div class="card">
         <div class="card-image">
             <figure class="image">
-                <img v-if="circuit.logo_url !== undefined && circuit.logo_url.length > 0" class="card-img-top" :src="circuit.logo_url" alt="Logo image">
+                <img v-if="circuit.logo_url !== undefined && circuit.logo_url.length > 0" :src="circuit.logo_url" alt="Logo image">
             </figure>
             <figure class="image">
-                <img class="card-img-top" :src="circuit.variant.layout_image" alt="Circuit layout image">
+                <img :src="circuit.variant.layout_image" alt="Circuit layout image">
             </figure>
         </div>
         <div class="card-content">

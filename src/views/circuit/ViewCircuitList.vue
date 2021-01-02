@@ -26,7 +26,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import ViewCircuitItem from "@/views/circuit/ViewCircuitItem.vue";
+import ViewCircuitItem from "@/components/circuits/ViewCircuitItem.vue";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import { Circuit } from "@/types/Circuit";
 import { circuitService } from "@/_services";
