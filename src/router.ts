@@ -16,15 +16,20 @@ const routes = [
         component: () => import('@/views/home/Home.vue'),
     },
     {
+        path: '/circuits',
+        name: 'circuitlist',
+        component: () => import('@/views/circuit/ViewCircuitList.vue'),
+    },
+    {
+        path: '/circuits/:circuit/:variant?',
+        name: 'circuitDetails',
+        component: () => import('@/views/circuit/ViewOneCircuit.vue'),
+    },
+    {
         path: '/gps/:competition?/:season?',
         name: 'gplist',
         alias: ['/gps/:competition?', '/gps'],
         component: () => import('@/views/gps/ViewGrandPrixList.vue'),
-    },
-    {
-        path: '/circuits',
-        name: 'circuitlist',
-        component: () => import('@/views/circuit/ViewCircuitList.vue'),
     },
     {
         path: '/gps/:competition/:season/:id',
