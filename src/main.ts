@@ -10,7 +10,9 @@ import Loading from '@/components/lib/Loading.vue'
 
 import './scss/app.scss';
 import { loadFilters } from "@/plugins/dayjs";
+import { loadLeaflet } from "@/plugins/leaflet";
 loadFilters(Vue);
+loadLeaflet();
 
 Vue.use(Buefy);
 Vue.config.productionTip = false;

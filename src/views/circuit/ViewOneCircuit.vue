@@ -36,7 +36,26 @@
                 <div class="column">
                     <div class="box">
                         <h2 class="title is-3">Localización</h2>
-                            < Mapa >
+                        <div style="height: 500px; width: 100%">
+                            <l-map
+                                :zoom="zoom"
+                                :center="center"
+                                :options="mapOptions"
+                                style="height: 100%"
+                            >
+                                <l-tile-layer
+                                    :url="url"
+                                    :attribution="attribution"
+                                />
+                                <l-marker :lat-lng="center">
+                                    <l-popup>
+                                        <div>
+                                            {{circuitName }}
+                                        </div>
+                                    </l-popup>
+                                </l-marker>
+                            </l-map>
+                        </div>
                         <figure class="image is-4by3">
                             <img :src="circuit.variant.layout_image" alt="Circuit layout image">
                         </figure>
@@ -65,8 +84,9 @@ import { CircuitVariant } from "@/types/CircuitVariant";
 import { circuitService } from "@/_services";
 import CircuitCard from "@/components/gps/CircuitCard.vue";
 
+import { LatLng, latLng} from "leaflet";
 import {LMap, LTileLayer, LMarker, LPopup, LTooltip} from "vue2-leaflet";
-import {GrandPrix} from "../../types/GrandPrix";
+import {GrandPrix} from "@/types/GrandPrix";
 
 @Component<ViewOneCircuit>({
     components: {
@@ -85,6 +105,14 @@ export default class ViewOneCircuit extends Vue {
     private isLoading: boolean = true;
     private thereIsCircuit: boolean = false;
 
+    zoom = 14;
+    private center!: LatLng;
+    url= 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    attribution= '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors';
+    mapOptions= {
+        zoomSnap: 0.5
+    };
+
     private grandPrixesUsingCircuit: Array<GrandPrix> = [];
 
     created() {
@@ -92,6 +120,7 @@ export default class ViewOneCircuit extends Vue {
         circuitService.getCircuit(circuitId).then((circuit) => {
             this.circuit = circuit;
             this.thereIsCircuit = true;
+            this.center = latLng(circuit.latitude, circuit.longitude);
 
             circuitService.getGPThatUsesCircuit(circuit).then((gps) => {
                this.grandPrixesUsingCircuit = gps;
