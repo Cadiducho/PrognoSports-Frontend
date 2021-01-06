@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "apexcharts": "^3.23.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "buefy": "^0.9.4",
     "bulma-block-list": "^0.4.0",
     "bulma-css-vars": "^0.5.6",
