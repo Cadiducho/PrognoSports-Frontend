@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Circuit } from '@/types/Circuit';
 import { GrandPrix } from "@/types/GrandPrix";
+import { CircuitVariant } from "@/types/CircuitVariant";
 
 export class CircuitService {
 
@@ -12,8 +13,16 @@ export class CircuitService {
         return await axios.get(`/circuits/${circuitId}`);
     }
 
-    public async getGPThatUsesCircuit(circuit: Circuit): Promise<Array<GrandPrix>> {
-        return await axios.get(`/circuits/${circuit.id}/grandprix/gps`); //ToDo: Buscar por variante
+    public async getCircuitWithVariant(circuitId: string, variantId: string) : Promise<Circuit> {
+        return await axios.get(`/circuits/${circuitId}/${variantId}`);
     }
-    
+
+    public async getGPThatUsesCircuit(circuit: Circuit, variant: CircuitVariant): Promise<Array<GrandPrix>> {
+        return await axios.get(`/circuits/${circuit.id}/${variant.name}/gps`);
+    }
+
+    public async listCircuitVariant(circuit: Circuit): Promise<Array<CircuitVariant>> {
+        return await axios.get(`/circuits/${circuit.id}/variants`);
+    }
+
 }

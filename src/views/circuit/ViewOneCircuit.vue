@@ -5,8 +5,20 @@
             <loading />
         </div>
 
-        <p v-if="!thereIsCircuit">Circuito no encontrado</p>
-        <template  v-else>
+        <p v-if="!thereIsCircuit">El circuito buscado con nombre <i>{{ getRawCircuitName }}</i> no ha sido encontrado</p>
+        <template v-else>
+            <div class="tabs">
+                <ul>
+                    <li v-for="tab in variantTabs"
+                        v-bind:class="{ 'is-active': (variant.name === tab.label) }">
+                        <router-link
+                            :to='"/circuits/" + circuit.id + "/" + tab.label'>
+                            {{ tab.label }}
+                        </router-link>
+                    </li>
+                </ul>
+            </div>
+
             <div class="columns">
                 <div class="column">
                     <div class="card">
@@ -21,14 +33,28 @@
                         <div class="card-content">
                             <div class="media">
                                 <div class="media-content">
-                                    <p class="title is-4">{{circuit.name}} {{ circuit.hasVariant ? ('-' + circuit.variant.name) : ""}}</p>
+                                    <p class="title is-4">{{circuit.name}} {{ this.variant.name !== 'GrandPrix' ? ('- ' + circuit.variant.name) : ""}}</p>
                                     <p class="subtitle is-6">{{circuit.locality}}, {{circuit.country}}</p>
                                 </div>
                             </div>
 
                             <div class="content">
-                                <p v-if="circuit.hasVariant" class="card-text"><b>Variante: </b>{{circuit.variant.name}}</p>
-                                <p class="card-text"><b>Distancia por vuelta: </b>{{circuit.variant.distance}} km</p>
+                                <p v-if="this.variant.name !== 'GrandPrix'" class="card-text">
+                                    <i class="fas fa-fw fa-random mr-2"></i>
+                                    <b>Variante: </b>{{circuit.variant.name}}
+                                </p>
+                                <p class="card-text">
+                                    <i class="fas fa-fw fa-map-marked-alt mr-2"></i>
+                                    <b>Ubicación: </b>{{circuit.latitude}}, {{circuit.longitude}}
+                                </p>
+                                <p class="card-text">
+                                    <i class="fas fa-fw fa-ruler mr-2"></i>
+                                    <b>Distancia por vuelta: </b>{{circuit.variant.distance}} km
+                                </p>
+                                <p class="card-text">
+                                    <i class="fas fa-fw fa-directions mr-2"></i>
+                                    <b>Curvas: </b>{{circuit.variant.turns}}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -50,7 +76,7 @@
                                 <l-marker :lat-lng="center">
                                     <l-popup>
                                         <div>
-                                            {{circuitName }}
+                                            {{ circuitName }}
                                         </div>
                                     </l-popup>
                                 </l-marker>
@@ -66,7 +92,36 @@
                 <div class="column">
                     <div class="box">
                         <h2 class="title is-3">Grandes Premios que usaron el circuito</h2>
-                        <p v-for="gp in grandPrixesUsingCircuit">{{gp.name}} de {{gp.season.name}}</p> <!--ToDo: Agregar diseño -->
+                        <article class="mt-5 columns is-multiline">
+                            <div class="is-inline-block zoom ml-4 mr-4 mb-4" v-for="gp in grandPrixesUsingCircuit">
+                                <div class="card">
+                                    <div class="card-content">
+                                        <p class="title">
+                                            {{gp.name}} de {{gp.season.name}}
+                                        </p>
+                                        <p class="subtitle">
+                                            {{gp.circuit.name}}, {{gp.circuit.locality}} ({{gp.circuit.country}})
+                                        </p>
+                                        <p class="subtitle">
+                                            Carrera del {{gp.raceTime | humanDate}} ({{gp.raceTime | dateDiff }})
+                                        </p>
+                                    </div>
+
+                                    <b-button tag="router-link"
+                                              :to="{
+                                            name: 'gpdetails',
+                                            params: {
+                                                competition: gp.competition.code,
+                                                season: gp.season.name,
+                                                id: gp.id,
+                                            }
+                                          }"
+                                              type="is-info is-light" expanded>
+                                        Detalles
+                                    </b-button>
+                                </div>
+                            </div>
+                        </article>
                     </div>
                 </div>
             </div>
@@ -114,16 +169,27 @@ export default class ViewOneCircuit extends Vue {
     };
 
     private grandPrixesUsingCircuit: Array<GrandPrix> = [];
+    private circuitVariants: Array<CircuitVariant> = [];
 
     created() {
         let circuitId = this.$route.params.circuit;
-        circuitService.getCircuit(circuitId).then((circuit) => {
+        let variantId = this.$route.params.variant;
+        if (this.thereIsNotVariant(variantId)) {
+            this.variant = {name: "grandprix"} as CircuitVariant;
+        } else {
+            this.variant = {name: variantId} as CircuitVariant;
+        }
+
+        circuitService.getCircuitWithVariant(circuitId, this.variant.name).then((circuit) => {
             this.circuit = circuit;
             this.thereIsCircuit = true;
             this.center = latLng(circuit.latitude, circuit.longitude);
 
-            circuitService.getGPThatUsesCircuit(circuit).then((gps) => {
-               this.grandPrixesUsingCircuit = gps;
+            circuitService.getGPThatUsesCircuit(circuit, this.variant).then((gps) => {
+                this.grandPrixesUsingCircuit = gps;
+            });
+            circuitService.listCircuitVariant(circuit).then((vars) => {
+                this.circuitVariants = vars;
             });
         }).catch((reason) => {
             this.thereIsCircuit = false;
@@ -132,10 +198,39 @@ export default class ViewOneCircuit extends Vue {
         })
     }
 
-    get circuitName() {
-        return this.thereIsCircuit ? this.circuit.name : "Circuito no encontrado";
+    private thereIsNotVariant(variantId: string) {
+        return (variantId === undefined || variantId === "grandprix");
     }
 
+    get circuitName() {
+        if (this.thereIsCircuit) {
+            if (this.variant.name !== "GrandPrix") {
+                return this.circuit.name + " (" + this.variant.name + ")";
+            }
+            return this.circuit.name;
+        } else {
+            return "Circuito no encontrado";
+        }
+    }
+
+    get getRawCircuitName() {
+        let variant = !this.thereIsNotVariant(this.$route.params.variant) ? ' y la variante ' + this.$route.params.variant : "";
+        return this.$route.params.circuit + variant;
+    }
+
+    get variantTabs() {
+        let tabs: { id: string; label: string; }[] = [];
+        if (this.circuitVariants.length > 1) {
+            this.circuitVariants.forEach((value: CircuitVariant) => {
+                let label = value.name === "grandprix" ? "GrandPrix" : value.name;
+                tabs.push({
+                    id: value.name.toLowerCase(),
+                    label: label,
+                });
+            })
+        }
+        return tabs;
+    }
 }
 </script>
 
