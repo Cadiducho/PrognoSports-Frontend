@@ -61,6 +61,10 @@ const routes = [
         name: 'forgotpassword',
         component: () => import('@/views/login/ForgotPassword.vue'),
     },
+    {
+        path: '*',
+        component: () => import('@/views/error/ErrorNotFound.vue')
+    }
 ];
 
 export const router = new VueRouter({
