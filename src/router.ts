@@ -1,6 +1,7 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
+import VueRouter, {NavigationGuardNext, Route} from 'vue-router'
 import {AuthModule} from "@/_store/modules/AuthModule";
+import {CommunityModule} from "@/_store/modules/CommunityModule";
 
 Vue.use(VueRouter);
 
@@ -73,19 +74,53 @@ export const router = new VueRouter({
     routes
 });
 
+// Si está iniciado sesión y va a /, mandar a /home
 router.beforeEach((to, from, next) => {
-    // redirect to login page if not logged in and trying to access a restricted page
-    const publicPages = ['/', '/login', '/register', '/forgotpassword'];
-    const authRequired = !publicPages.includes(to.path);
-    const loggedIn = AuthModule.isAuthenticated;
-
-    if (authRequired && !loggedIn) {
-        return next('/login');
-    }
-
-    if (to.path === "/" && loggedIn) {
-        return next('/home');
-    }
-
-    next();
+    sendToHome(to, from, next);
+    checkLoggedIn(to, from, next);
+    checkCommunity(to, from, next);
 });
+
+function sendToHome(to: Route, from: Route, next: NavigationGuardNext) {
+    const loggedIn = AuthModule.isAuthenticated;
+    if (to.path === "/" && loggedIn) {
+        next('/home');
+    } else {
+        next();
+    }
+}
+
+// Requerir login cuando sea necesario
+function checkLoggedIn(to: Route, from: Route, next: NavigationGuardNext) {
+    if (!to.name?.startsWith('/gps') && !to.name?.startsWith('/u')
+        && !to.name?.startsWith('/invitation') && !to.name?.startsWith('/settings')
+        && !to.name?.startsWith('/communities')) {
+        // Si no es ninguna de estas rutas 'privadas', no hacer nada
+        next();
+    } else {
+        const loggedIn = AuthModule.isAuthenticated;
+        if (!loggedIn) {
+            // Si es una de esas rutas 'privadas' y no está logged, mandar a /login
+            next('/login');
+        } else {
+            next();
+        }
+    }
+}
+
+// Asegurar que el usuario está en una comunidad si esa ruta lo requiere
+function checkCommunity(to: Route, from: Route, next: NavigationGuardNext) {
+    if (!to.name?.startsWith('/gps') && !to.name?.startsWith('/ranking') && !to.name?.startsWith('/rules')) {
+        // Si no es ninguna de estas rutas, no hacer nada
+        console.log()
+        next();
+    } else {
+        const hasCommunity = CommunityModule.thereIsCurrentCommunity;
+        if (!hasCommunity) {
+            // Si es una de esas rutas que necesitan comunidad, y no la tiene, mandar a /communities
+            next('/communities');
+        } else {
+            next();
+        }
+    }
+}
