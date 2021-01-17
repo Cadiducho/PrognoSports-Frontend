@@ -30,7 +30,7 @@ class CommunityMod extends VuexModule implements ICommunityState {
     @Action
     async communityRequest() {
         return new Promise((resolve, reject) => {
-            communityService.getCurrentCommunity(this.currentCommunityId)
+            communityService.getCommunityById(this.currentCommunityId)
                 .then(community => {
                     this.setCurrentUserCommunity(community);
                     resolve(community)

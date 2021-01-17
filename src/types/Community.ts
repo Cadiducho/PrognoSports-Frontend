@@ -9,6 +9,7 @@ export interface Community {
     image_url: string;
     open: boolean;
     owner: User;
+    created: Date,
     cantidad_usuarios: number;
 
     qualify_positions_predict: number;
