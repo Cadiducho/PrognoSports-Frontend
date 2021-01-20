@@ -31,6 +31,11 @@ const routes = [
         name: 'communitiesList',
         component: () => import('@/views/communities/ViewCommunitiesList.vue'),
     },
+    {
+        path: '/invitation/:community?/:code?',
+        name: 'invitation',
+        component: () => import('@/views/communities/InvitationToCommunity.vue'),
+    },
         path: '/gps/:competition?/:season?',
         name: 'gplist',
         alias: ['/gps/:competition?', '/gps'],
@@ -116,7 +121,6 @@ function checkLoggedIn(to: Route, from: Route, next: NavigationGuardNext) {
 function checkCommunity(to: Route, from: Route, next: NavigationGuardNext) {
     if (!to.name?.startsWith('/gps') && !to.name?.startsWith('/ranking') && !to.name?.startsWith('/rules')) {
         // Si no es ninguna de estas rutas, no hacer nada
-        console.log()
         next();
     } else {
         const hasCommunity = CommunityModule.thereIsCurrentCommunity;

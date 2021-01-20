@@ -4,6 +4,9 @@
         <progno-page-title class="mb-5" name="Lista de Comunidades" />
         <div v-if="isLoading"><loading /></div>
         <div v-else>
+            <div v-if="!thereIsCurrentCommunity" class="notification has-background-danger">
+                No perteneces aún a ninguna comunidad. Para poder competir, debes unirte a alguna comunidad.
+            </div>
             <b-tabs v-model="activeTab" type="is-boxed">
                 <b-tab-item label="Mis comunidades">
                     <b-field>
@@ -49,6 +52,7 @@
                             icon="search"
                         ></b-input>
                     </b-field>
+                    <div class="notification has-background-info-light">Para formar parte de comunidades cerradas necesitarás una invitación</div>
                     <CommunityListItem
                         v-for="(community, index) in closedCommunities"
                         :community="community"
@@ -79,14 +83,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import {Component, Vue} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import {Community} from "@/types/Community";
 import {communityService} from "@/_services";
 import CommunityListItem from "@/components/communities/CommunityListItem.vue";
 import {User} from "@/types/User";
 import {namespace} from "vuex-class";
+import EventBus from "@/plugins/eventbus";
 const usermodule = namespace('user')
+const communitymodule = namespace('community')
 
 @Component<ViewCommunitiesList>({
     components: {
@@ -96,6 +102,7 @@ const usermodule = namespace('user')
 })
 export default class ViewCommunitiesList extends Vue {
     @usermodule.Getter private getProfile?: User;
+    @communitymodule.Getter private thereIsCurrentCommunity?: boolean;
     private activeTab: number = 1;
     private communityList: Array<Community> = [];
     private myCommunityList: Array<Community> = [];
@@ -104,13 +111,19 @@ export default class ViewCommunitiesList extends Vue {
 
     created() {
         this.loadCommunities();
+
+        EventBus.$on('reloadCommunitiesList', () => {
+            this.isLoading = true;
+            this.loadCommunities();
+        });
     }
 
     loadCommunities() {
         communityService.getAllCommunities().then((communities) => {
+            this.communityList = [];
             this.communityList.push(...communities);
             communityService.getUserCommunities(this.getProfile!).then(userCommunities => {
-
+                this.myCommunityList = [];
                 this.myCommunityList.push(...userCommunities);
                 this.isLoading = false;
             })

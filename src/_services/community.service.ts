@@ -20,6 +20,18 @@ export class CommunityService {
         return await axios.get(`/communities/${community.id}/validate`);
     }
 
+    public async joinCommunity(community: Community, code?: string): Promise<Community> {
+        if (code) {
+            return await axios.post(`/communities/${community.id}/join/${code}`);
+        } else {
+            return await axios.post(`/communities/${community.id}/join`);
+        }
+    }
+
+    public async quitCommunity(community: Community): Promise<Community> {
+        return await axios.post(`/communities/${community.id}/quit`)
+    }
+
     //ToDo: mover a score
     public async getUserPointsByGP(communityId: number, season: number) {
         return await axios.get(`/communities/${communityId}/${season}/points`);

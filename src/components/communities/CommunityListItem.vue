@@ -28,12 +28,25 @@
                 <i>Comunidad creada el <time :datetime="community.created">{{ community.created | humanDate }}</time></i>
                 <br />
                 <div class="buttons mt-2">
-                    <b-button v-if="community.open" type="is-success" @click="tryJoinCommunity">Unirse</b-button>
+                    <b-button v-if="community.open && !isUserInCommunity" type="is-success" @click="tryJoinCommunity">Unirse</b-button>
                     <b-button v-if="isUserInCommunity" type="is-danger" @click="tryLeaveCommunity">Dejar comunidad</b-button>
                     <b-button tag="router-link" type="is-link is-light" :to="'/communities/' + community.name">Detalles</b-button>
                 </div>
             </div>
         </div>
+
+        <b-modal
+            v-model="isJoinModalActive"
+            has-modal-card
+            :can-cancel="true">
+            <ConfirmJoinCommunityModal />
+        </b-modal>
+        <b-modal
+            v-model="isLeaveModalActive"
+            has-modal-card
+            :can-cancel="true">
+            <ConfirmLeaveCommunityModal />
+        </b-modal>
     </div>
 </template>
 
@@ -41,13 +54,17 @@
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {Community} from "@/types/Community";
 import {communityService} from "@/_services";
+import ConfirmLeaveCommunityModal from "@/components/communities/ConfirmLeaveCommunityModal.vue";
+import ConfirmJoinCommunityModal from "@/components/communities/ConfirmJoinCommunityModal.vue";
 
 @Component<CommunityListItem>({
-    components: {},
+    components: {ConfirmJoinCommunityModal, ConfirmLeaveCommunityModal},
 })
 export default class CommunityListItem extends Vue {
     @Prop() community!: Community;
     private isUserInCommunity: boolean = false;
+    private isJoinModalActive: boolean = false;
+    private isLeaveModalActive: boolean = false;
 
     created() {
         this.validateUserInCommunity();
@@ -58,12 +75,23 @@ export default class CommunityListItem extends Vue {
             this.isUserInCommunity = is;
         });
     }
+
     private tryJoinCommunity() {
-        this.$buefy.notification.open('Join');
+        this.$buefy.modal.open({
+            parent: this,
+            component: ConfirmJoinCommunityModal,
+            trapFocus: false,
+            props: {community: this.community}
+        });
     }
 
     private tryLeaveCommunity() {
-        this.$buefy.notification.open('Leave');
+        this.$buefy.modal.open({
+            parent: this,
+            component: ConfirmLeaveCommunityModal,
+            trapFocus: false,
+            props: {community: this.community}
+        });
     }
 }
 </script>

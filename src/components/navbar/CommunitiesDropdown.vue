@@ -5,7 +5,7 @@
         </a>
 
         <div class="navbar-dropdown">
-            <router-link class="navbar-item" v-for="com in communitiesList" :to="'/communities/' + com.id">
+            <router-link class="navbar-item" v-for="com in communitiesList" :to="'/communities/' + com.id" @click="switchToCommunity(com)">
                 {{ com.name }}
             </router-link>
             <hr class="navbar-divider">
@@ -17,11 +17,12 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
+    import {Component, Vue} from "vue-property-decorator";
     import {Community} from "@/types/Community";
     import {communityService} from "@/_services";
     import {namespace} from "vuex-class";
     import {User} from "@/types/User";
+    import {CommunityModule} from "@/_store/modules/CommunityModule";
     const usermodule = namespace('user')
     const communitymodule = namespace('community')
 
@@ -47,6 +48,10 @@ import {Component, Vue} from "vue-property-decorator";
             return communityService.getUserCommunities(this.user).then(list => {
                 this.communitiesList = list;
             });
+        }
+
+        private switchToCommunity(community: Community) {
+            CommunityModule.setCurrentUserCommunity(community);
         }
     }
 </script>
