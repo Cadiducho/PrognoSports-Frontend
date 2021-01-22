@@ -26,13 +26,13 @@ import {Community} from "@/types/Community";
 import {communityService} from "@/_services";
 import EventBus from "@/plugins/eventbus";
 import {namespace} from "vuex-class";
-import {CommunityModule} from "@/_store/modules/CommunityModule";
-const communitymodule = namespace('community')
+const Auth = namespace("Auth");
 
 @Component
 export default class ConfirmLeaveCommunityModal extends Vue {
     @Prop() community!: Community;
-    @communitymodule.Getter getCurrentCommunity?: Community;
+    @Auth.State("community") private currentCommunity!: Community;
+    @Auth.Action removeCommunity!: () => void;
 
     public leaveCommunity() {
         communityService.quitCommunity(this.community).then(() => {
@@ -40,8 +40,8 @@ export default class ConfirmLeaveCommunityModal extends Vue {
                 message: "¡Has dejado la comunidad " + this.community.name + "!",
                 type: "is-success",
             });
-            if (this.community.id == getCurrentCommunity!.id) {
-                CommunityModule.removeCurrentUserCommunity();
+            if (this.community.id == this.currentCommunity.id) {
+                this.removeCommunity();
             }
         }).catch((error) => {
             this.$buefy.toast.open({

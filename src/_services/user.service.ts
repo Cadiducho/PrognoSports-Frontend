@@ -6,14 +6,6 @@ import {Season} from "@/types/Season";
 
 export class UserService {
 
-    public async login(username: string, password: string): Promise<string> {
-        return await axios
-            .post('/auth/login', {
-                "username": username,
-                "password": password
-            });
-    }
-
     public async getMe(): Promise<User> {
         return await axios
             .get('/user/me');
@@ -25,15 +17,6 @@ export class UserService {
 
     public async getUsersInCommunity(communityId: number): Promise<Array<User>> {
         return await axios.get(`/communities/${communityId}/members`);
-    }
-
-    public async register(email: string, username: string, password: string) {
-        return await axios
-            .post('/auth/register', {
-                "email": email,
-                "username": username,
-                "password": password
-            });
     }
 
     public async sendForgotPassword(email: string) {

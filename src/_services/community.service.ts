@@ -4,7 +4,7 @@ import {User} from "@/types/User";
 
 export class CommunityService {
 
-    public async getCommunityById(communityId: number): Promise<Community> {
+    public async getCommunityById(communityId: string | number): Promise<Community> { //FixMe: Poder buscar comunidades por nombre en la API
         return await axios.get(`/communities/${communityId}`);
     }
 

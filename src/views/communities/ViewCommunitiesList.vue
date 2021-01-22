@@ -83,7 +83,7 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
+import {Component, Vue, Watch} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import {Community} from "@/types/Community";
 import {communityService} from "@/_services";
@@ -91,8 +91,7 @@ import CommunityListItem from "@/components/communities/CommunityListItem.vue";
 import {User} from "@/types/User";
 import {namespace} from "vuex-class";
 import EventBus from "@/plugins/eventbus";
-const usermodule = namespace('user')
-const communitymodule = namespace('community')
+const Auth = namespace('Auth')
 
 @Component<ViewCommunitiesList>({
     components: {
@@ -101,15 +100,15 @@ const communitymodule = namespace('community')
     },
 })
 export default class ViewCommunitiesList extends Vue {
-    @usermodule.Getter private getProfile?: User;
-    @communitymodule.Getter private thereIsCurrentCommunity?: boolean;
+    @Auth.State("user") private currentUser!: User;
+    @Auth.Getter private thereIsCurrentCommunity?: boolean;
     private activeTab: number = 1;
     private communityList: Array<Community> = [];
     private myCommunityList: Array<Community> = [];
     private filtroComunidad: String = '';
     private isLoading: boolean = true;
 
-    created() {
+    mounted() {
         this.loadCommunities();
 
         EventBus.$on('reloadCommunitiesList', () => {
@@ -122,7 +121,8 @@ export default class ViewCommunitiesList extends Vue {
         communityService.getAllCommunities().then((communities) => {
             this.communityList = [];
             this.communityList.push(...communities);
-            communityService.getUserCommunities(this.getProfile!).then(userCommunities => {
+
+            communityService.getUserCommunities(this.currentUser).then(userCommunities => {
                 this.myCommunityList = [];
                 this.myCommunityList.push(...userCommunities);
                 this.isLoading = false;

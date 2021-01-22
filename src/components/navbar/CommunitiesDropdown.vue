@@ -5,7 +5,7 @@
         </a>
 
         <div class="navbar-dropdown">
-            <router-link class="navbar-item" v-for="com in communitiesList" :to="'/communities/' + com.id" @click="switchToCommunity(com)">
+            <router-link class="navbar-item" v-for="com in communitiesList" v-bind:key="com.id" :to="'/communities/' + com.id" @click="switchToCommunity(com)">
                 {{ com.name }}
             </router-link>
             <hr class="navbar-divider">
@@ -22,36 +22,28 @@
     import {communityService} from "@/_services";
     import {namespace} from "vuex-class";
     import {User} from "@/types/User";
-    import {CommunityModule} from "@/_store/modules/CommunityModule";
-    const usermodule = namespace('user')
-    const communitymodule = namespace('community')
+    const Auth = namespace('Auth')
 
-    @Component<CommunitiesDropdown>({
-        watch: {
-            user() {
-                this.getCommunityList();
-            }
-        }
-    })
+    @Component
     export default class CommunitiesDropdown extends Vue {
-        @usermodule.Getter private getProfile?: User;
-        @usermodule.Getter private isProfileLoaded?: boolean;
-        @communitymodule.Getter private getCurrentCommunity?: Community;
+        @Auth.State("user") private currentUser!: User;
+        @Auth.Getter private isProfileLoaded?: boolean;
+        @Auth.State("community") private currentCommunity!: Community;
+        @Auth.Action setCommunity!: (community: Community) => void;
         private communitiesList: Array<Community> = [];
 
-        // Variable para detectar los cambios en el watch
-        get user(): User {
-            return this.getProfile!;
+        mounted() {
+            this.getCommunityList();
         }
 
         getCommunityList(): Promise<any> {
-            return communityService.getUserCommunities(this.user).then(list => {
+            return communityService.getUserCommunities(this.currentUser).then(list => {
                 this.communitiesList = list;
             });
         }
 
         private switchToCommunity(community: Community) {
-            CommunityModule.setCurrentUserCommunity(community);
+            this.setCommunity(community);
         }
     }
 </script>

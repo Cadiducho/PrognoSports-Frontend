@@ -83,9 +83,9 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { UserModule } from "@/_store/modules/UserModule";
 import LandingNavbar from "@/components/landing/LandingNavbar.vue";
 import LandingFooter from "@/components/landing/LandingFooter.vue";
+import {userService} from "@/_services";
 
 @Component({
     components: { LandingNavbar, LandingFooter },
@@ -100,7 +100,7 @@ export default class ForgotPassword extends Vue {
         if (!this.showChangePassword) {
             const { email } = this;
             if (email) {
-                UserModule.userForgotPassword(email).then(
+                userService.sendForgotPassword(email).then(
                     () => {
                         this.$buefy.toast.open({
                             message:
@@ -130,7 +130,7 @@ export default class ForgotPassword extends Vue {
         } else {
             const { email, inputToken, inputPassword } = this;
             if (email) {
-                UserModule.userChangePassword(
+                userService.changePassword(
                     email,
                     inputToken,
                     inputPassword

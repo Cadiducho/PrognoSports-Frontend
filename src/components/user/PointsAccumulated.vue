@@ -14,25 +14,20 @@ import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
 import {Community} from "@/types/Community";
 import {namespace} from "vuex-class";
-const communitymodule = namespace('community')
+const Auth = namespace('Auth')
 
 @Component<PointsAccumulated>({
     components: {
         VueApexCharts
-    },
-    watch: {
-        currentCommunity() {
-            this.fetchData();
-        }
     }
 })
 export default class PointsAccumulated extends Vue {
     private grandPrixes = new Map<string, string>();
-    @communitymodule.Getter private getCurrentCommunity?: Community;
+    @Auth.State("community") private currentCommunity!: Community;
     @Prop() private user!: User;
 
-    get currentCommunity(): Community {
-        return this.getCurrentCommunity!;
+    mounted() {
+        this.fetchData();
     }
 
     public fetchData(): void {

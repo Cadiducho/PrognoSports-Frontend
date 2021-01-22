@@ -29,7 +29,7 @@
 
 <script lang="ts">
 
-    import {Component, Vue} from "vue-property-decorator";
+import {Component, Vue, Watch} from "vue-property-decorator";
     import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
     import NextGrandPrix from "@/components/gps/NextGrandPrix.vue";
     import GrandPrixesList from "@/components/gps/GrandPrixesList.vue";
@@ -38,24 +38,20 @@
     import {seasonService} from "@/_services";
     import {Community} from "@/types/Community";
     import {namespace} from "vuex-class";
-    const communitymodule = namespace('community')
+    const Auth = namespace('Auth')
 
     @Component<ViewGrandPrixList>({
         components: {
             GrandPrixesList,
             NextGrandPrix,
             PrognoPageTitle
-        }, watch: {
-            currentCommunity() {
-                this.searchDefaultCompetition();
-            }
         }
     })
     export default class ViewGrandPrixList extends Vue {
 
         private competition!: Competition;
         private season!: Season;
-        @communitymodule.Getter private getCurrentCommunity?: Community;
+        @Auth.State("community") private currentCommunity!: Community;
 
         private shouldSearchDefaultCompetition: boolean = false;
         private shouldSearchDefaultSeason: boolean = false;
@@ -63,10 +59,6 @@
 
         private competitionReady: boolean = false;
         private seasonReady: boolean = false;
-
-        get currentCommunity(): Community {
-            return this.getCurrentCommunity!;
-        }
 
         created() {
             this.competition = { code: this.$route.params.competition } as Competition;
@@ -84,6 +76,11 @@
             } else {
                 this.seasonReady = true;
             }
+        }
+
+        @Watch('currentCommunity')
+        onCurrentCommunityChange(community: Community) {
+            this.searchDefaultCompetition();
         }
 
         /**

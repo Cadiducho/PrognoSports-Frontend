@@ -7,8 +7,7 @@
 
         <p v-if="!thereIsCommunity">La comunidad con nombre <i>{{ this.$route.params.community }}</i> no ha sido encontrada</p>
         <template v-else>
-            Validando invitación a la comunidad {{ community.name }}...
-            <loading />
+            Comunidad {{ community }}
         </template>
     </div>
 </template>
@@ -33,27 +32,12 @@ export default class ViewOneCommunity extends Vue {
 
     created() {
         let communityId = this.$route.params.community;
-        let code = this.$route.params.community;
-        if (communityId == undefined || code == undefined) {
-            this.$router.push('/communities');
-        }
 
         communityService.getCommunityById(communityId).then((community) => {
             this.community = community;
             this.thereIsCommunity = true;
 
-            communityService.joinCommunity(community, code).then((communityRes) => {
-                this.$buefy.toast.open({
-                    message: "¡Te has unido correctamente a " + communityRes.name + "!",
-                    type: "is-success",
-                });
-                this.$router.push(`/communities/${communityRes.name}`);
-            }).catch((reason => {
-                this.$buefy.toast.open({
-                    message: "Ha ocurrido un error: " + reason.message,
-                    type: "is-warning",
-                });
-            }))
+            //members
         }).catch((reason) => {
             this.thereIsCommunity = false;
         }).finally(() => {

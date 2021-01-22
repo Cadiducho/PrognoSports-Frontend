@@ -37,7 +37,7 @@
                                 </div>
                             </div>
                         </nav>
-                        <PointsAccumulated :user="getProfile" />
+                        <PointsAccumulated :user="currentUser" />
                     </article>
                 </div>
             </div>
@@ -50,13 +50,12 @@
     import {Component, Vue} from "vue-property-decorator";
     import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
     import NextGrandPrix from "@/components/gps/NextGrandPrix.vue";
-    import {AuthModule} from "@/_store/modules/AuthModule";
     import VueApexCharts from "vue-apexcharts";
     import PointsAccumulated from "@/components/user/PointsAccumulated.vue";
     import {User} from "@/types/User";
     import {namespace} from 'vuex-class'
 
-    const usermodule = namespace('user')
+    const Auth = namespace('Auth')
 
     @Component({
         components: {
@@ -68,10 +67,10 @@
     })
     export default class Home extends Vue {
 
-        @usermodule.Getter private getProfile?: User;
-
+        @Auth.State("user") private currentUser!: User;
+        @Auth.Getter private isLoggedIn?: boolean;
         get loading() {
-            return AuthModule.authStatus === 'loading' && !AuthModule.isAuthenticated;
+            return this.isLoggedIn;
         }
 
         private breadcumbItems = [

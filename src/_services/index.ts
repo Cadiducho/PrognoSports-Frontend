@@ -7,7 +7,8 @@ import {CommunityService} from "@/_services/community.service";
 import {NotificationService} from "@/_services/notification.service";
 import {GrandprixService} from "@/_services/grandprix.service";
 import {DriversService} from "@/_services/drivers.service";
-import { CircuitService } from './circuit.service';
+import {CircuitService} from './circuit.service';
+import {AuthService} from "@/_services/auth.service";
 
 Vue.use(VueAxios, axios);
 
@@ -49,6 +50,7 @@ axios.interceptors.response.use(function (response) {
 });
 
 // API Services
+export const authService = new AuthService();
 export const userService = new UserService();
 export const communityService = new CommunityService();
 export const notificationService = new NotificationService();

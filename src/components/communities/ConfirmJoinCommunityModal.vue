@@ -24,11 +24,13 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import {Community} from "@/types/Community";
 import {communityService} from "@/_services";
-import {CommunityModule} from "@/_store/modules/CommunityModule";
+import {namespace} from "vuex-class";
+const Auth = namespace("Auth");
 
 @Component
 export default class ConfirmJoinCommunityModal extends Vue {
     @Prop() community!: Community;
+    @Auth.Action setCommunity!: (community: Community) => void;
 
     public joinCommunity() {
         communityService.joinCommunity(this.community).then(communityRes => {
@@ -36,7 +38,8 @@ export default class ConfirmJoinCommunityModal extends Vue {
                 message: "¡Te has unido correctamente a " + communityRes.name + "!",
                 type: "is-success",
             });
-            CommunityModule.setCurrentUserCommunity(communityRes);
+
+            this.setCommunity(communityRes);
             this.$router.push(`/communities/${communityRes.name}`);
         }).catch((error) => {
             this.$buefy.toast.open({

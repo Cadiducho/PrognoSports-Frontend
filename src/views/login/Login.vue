@@ -92,11 +92,10 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { AuthModule } from "@/_store/modules/AuthModule";
-import { UserModule } from "@/_store/modules/UserModule";
 import LandingNavbar from "@/components/landing/LandingNavbar.vue";
-import { Action } from "vuex-module-decorators";
 import LandingFooter from "@/components/landing/LandingFooter.vue";
+import {namespace} from "vuex-class";
+const Auth = namespace("Auth");
 
 @Component({
     components: { LandingNavbar, LandingFooter },
@@ -106,16 +105,19 @@ export default class Login extends Vue {
     password: string = "";
     submitted: boolean = false;
 
+    @Auth.Action private login!: (payload: {username: string, password: string}) => Promise<string>;
+
     created() {
-        if (!!UserModule.registeredMail) {
-            this.username = UserModule.registeredMail;
-        }
+        /* //ToDo: Mail state
+        if (!!.registeredMail) {
+            this.username = Auth.registeredMail;
+        }*/
     }
 
     public handleSubmit() {
         this.submitted = true;
         if (this.username && this.password) {
-            AuthModule.authRequest({
+            this.login({
                 username: this.username,
                 password: this.password,
             }).then(

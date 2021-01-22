@@ -45,23 +45,20 @@
     import {GrandPrix} from "@/types/GrandPrix";
     import {grandPrixService} from "@/_services";
     import {Community} from "@/types/Community";
-    import {CommunityModule} from "@/_store/modules/CommunityModule";
     import {namespace} from 'vuex-class'
-
-    const community = namespace('community')
+    const Auth = namespace('Auth')
 
     @Component
     export default class NextGrandPrix extends Vue {
         private nextGp?: GrandPrix;
         private noNextGp: boolean = false;
         private loadingGpData: boolean = true;
-        @community.Getter getCurrentCommunity?: Community;
-
+        @Auth.State("community") private currentCommunity!: Community;
         get gpLink(): any {
             return {
                 name: "gpdetails",
                 params: {
-                    competition: this.getCurrentCommunity!.competition.code,
+                    competition: this.currentCommunity.competition.code,
                     season: this.nextGp?.season.name,
                     id: this.nextGp?.id,
                 }
@@ -69,13 +66,11 @@
         }
 
         mounted() {
-            CommunityModule.communityRequest().then(() => {
-                grandPrixService.getNextGrandPrix(this.getCurrentCommunity!.competition).then(nextGp => {
-                    this.nextGp = nextGp;
-                }).catch(() => {
-                    this.noNextGp = true;
-                }).finally(() => this.loadingGpData = false);
-            });
+            grandPrixService.getNextGrandPrix(this.currentCommunity.competition).then(nextGp => {
+                this.nextGp = nextGp;
+            }).catch(() => {
+                this.noNextGp = true;
+            }).finally(() => this.loadingGpData = false);
         }
     }
 </script>

@@ -40,27 +40,50 @@
 </style>
 
 <script lang="ts">
-  import {Component, Vue} from "vue-property-decorator";
+    import {Component, Vue} from "vue-property-decorator";
+    import navbar from "@/components/navbar/Navbar.vue";
+    import {namespace} from "vuex-class";
+    import {User} from "@/types/User";
+    import {Community} from "@/types/Community";
+    const Auth = namespace("Auth");
 
-  import navbar from "@/components/navbar/Navbar.vue";
-  import {UserModule} from "@/_store/modules/UserModule";
-  import {AuthModule} from "@/_store/modules/AuthModule";
+    @Component({
+        components: {
+            navbar,
+        }
+    })
+    export default class App extends Vue {
 
-  @Component({
-    components: {
-      navbar,
+        @Auth.Getter
+        private isLoggedIn!: boolean;
+
+        @Auth.Action
+        private userRequest!: () => Promise<User>;
+
+        @Auth.Action
+        private communityRequest!: (payload: {communityId: number}) => Promise<Community>;
+
+        updated() {
+            if (this.isLoggedIn) {
+                this.userRequest()
+                    .then((user) => {
+                        if (user.currentCommunity === undefined) {
+                            this.$router.push('/communities');
+                        } else {
+                            this.communityRequest({communityId: user.currentCommunity.id})
+                                .catch((error) => {
+                                    console.log("Error solicitando la comunidad: " + error);
+                                    this.$router.push('/communities');
+                                });
+                        }
+
+                    })
+                    .catch((error) => {
+                        console.log("Error solicitando al usuario: " + error)
+                        console.log("Mandando a login");
+                        this.$router.push('/login');
+                });
+            }
+        }
     }
-  })
-  export default class App extends Vue {
-
-    get isLoggedIn(): boolean {
-        return AuthModule.isAuthenticated;
-    }
-
-    updated() {
-      if (this.isLoggedIn) {
-        UserModule.userRequest();
-      }
-    }
-  }
 </script>

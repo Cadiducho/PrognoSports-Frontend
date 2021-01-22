@@ -114,10 +114,11 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { UserModule } from "@/_store/modules/UserModule";
 
 import LandingNavbar from "@/components/landing/LandingNavbar.vue";
 import LandingFooter from "@/components/landing/LandingFooter.vue";
+import {namespace} from "vuex-class";
+const Auth = namespace("Auth");
 
 @Component({
     components: { LandingNavbar, LandingFooter },
@@ -127,12 +128,13 @@ export default class Register extends Vue {
     private username: string = "";
     private password: string = "";
     private submitted: boolean = false;
+    @Auth.Action private register!: (payload: {username: string, email: string, password: string}) => Promise<any>;
 
     public handleSubmit(e: any) {
         this.submitted = true;
         const { email, username, password } = this;
         if (email && username && password) {
-            UserModule.userRegister({
+            this.register({
                 email: email,
                 username: username,
                 password: password,

@@ -6,14 +6,15 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import { AuthModule } from "@/_store/modules/AuthModule";
-
+import {namespace} from "vuex-class";
+const Auth = namespace("Auth");
 @Component
 export default class Logout extends Vue {
 
+    @Auth.Action private signOut!: () => Promise<void>;
     created() {
-        AuthModule.logout().then(() => {
-            this.$router.push({name: 'home'});
+        this.signOut().then(() => {
+            this.$router.push({name: 'login'});
             this.$buefy.toast.open({
                 message: 'Has cerrado sesión correctamente',
                 type: 'is-info'

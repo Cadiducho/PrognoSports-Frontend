@@ -1,8 +1,6 @@
 import Vue from 'vue'
 import VueRouter, {NavigationGuardNext, Route} from 'vue-router'
-import {AuthModule} from "@/_store/modules/AuthModule";
-import {CommunityModule} from "@/_store/modules/CommunityModule";
-
+import store from '@/_store';
 Vue.use(VueRouter);
 
 const routes = [
@@ -85,13 +83,13 @@ export const router = new VueRouter({
 
 // Si está iniciado sesión y va a /, mandar a /home
 router.beforeEach((to, from, next) => {
-    sendToHome(to, from, next);
     checkLoggedIn(to, from, next);
     checkCommunity(to, from, next);
+    sendToHome(to, from, next);
 });
 
 function sendToHome(to: Route, from: Route, next: NavigationGuardNext) {
-    const loggedIn = AuthModule.isAuthenticated;
+    const loggedIn = store.getters['Auth/isLoggedIn'];
     if (to.path === "/" && loggedIn) {
         next('/home');
     } else {
@@ -107,7 +105,7 @@ function checkLoggedIn(to: Route, from: Route, next: NavigationGuardNext) {
         // Si no es ninguna de estas rutas 'privadas', no hacer nada
         next();
     } else {
-        const loggedIn = AuthModule.isAuthenticated;
+        const loggedIn = store.getters['Auth/isLoggedIn'];
         if (!loggedIn) {
             // Si es una de esas rutas 'privadas' y no está logged, mandar a /login
             next('/login');
@@ -123,7 +121,7 @@ function checkCommunity(to: Route, from: Route, next: NavigationGuardNext) {
         // Si no es ninguna de estas rutas, no hacer nada
         next();
     } else {
-        const hasCommunity = CommunityModule.thereIsCurrentCommunity;
+        const hasCommunity = store.getters['Auth/thereIsCurrentCommunity'];
         if (!hasCommunity) {
             // Si es una de esas rutas que necesitan comunidad, y no la tiene, mandar a /communities
             next('/communities');
