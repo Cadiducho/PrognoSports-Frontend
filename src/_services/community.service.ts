@@ -4,7 +4,7 @@ import {User} from "@/types/User";
 
 export class CommunityService {
 
-    public async getCommunityById(communityId: string | number): Promise<Community> { //FixMe: Poder buscar comunidades por nombre en la API
+    public async getCommunityById(communityId: string | number): Promise<Community> {
         return await axios.get(`/communities/${communityId}`);
     }
 
@@ -31,15 +31,4 @@ export class CommunityService {
     public async quitCommunity(community: Community): Promise<Community> {
         return await axios.post(`/communities/${community.id}/quit`)
     }
-
-    //ToDo: mover a score
-    public async getUserPointsByGP(communityId: number, season: number) {
-        return await axios.get(`/communities/${communityId}/${season}/points`);
-    }
-
-    //ToDo: mover a score
-    public async getTotalUserPoints(communityId: number, season: number) {
-        return await axios.get(`/communities/${communityId}/${season}/totaluserpoints`);
-    }
-
 }

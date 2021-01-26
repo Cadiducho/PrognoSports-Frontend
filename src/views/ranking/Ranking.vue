@@ -90,7 +90,7 @@
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
     import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-    import {communityService, grandPrixService, userService} from "@/_services";
+    import {grandPrixService, scoreService} from "@/_services";
     import {GrandPrix} from "@/types/GrandPrix";
     import {Competition} from "@/types/Competition";
     import {Season} from "@/types/Season";
@@ -123,11 +123,11 @@
                 this.gps = gps;
                 this.checkRankingLoaded();
             });
-            communityService.getUserPointsByGP(1, 2019).then(points => {
+            scoreService.getUserPointsByGP(1, 2019).then(points => {
                 this.listOfPoints = points;
                 this.checkRankingLoaded();
             });
-            communityService.getTotalUserPoints(1, 2019).then(points => {
+            scoreService.getTotalUserPoints(1, 2019).then(points => {
                 this.totalUserPoints = points;
                 this.checkRankingLoaded();
             });

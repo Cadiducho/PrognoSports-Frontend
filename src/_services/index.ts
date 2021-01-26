@@ -9,6 +9,7 @@ import {GrandprixService} from "@/_services/grandprix.service";
 import {DriversService} from "@/_services/drivers.service";
 import {CircuitService} from './circuit.service';
 import {AuthService} from "@/_services/auth.service";
+import {ScoreService} from "@/_services/score.service";
 
 Vue.use(VueAxios, axios);
 
@@ -57,4 +58,5 @@ export const notificationService = new NotificationService();
 export const grandPrixService = new GrandprixService();
 export const driversService = new DriversService();
 export const seasonService = new SeasonService();
+export const scoreService = new ScoreService();
 export const circuitService = new CircuitService();
