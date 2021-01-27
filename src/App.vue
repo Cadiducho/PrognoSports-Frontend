@@ -66,18 +66,6 @@
         updated() {
             if (this.isLoggedIn) {
                 this.userRequest()
-                    .then((user) => {
-                        if (user.currentCommunity === undefined) {
-                            this.$router.push('/communities');
-                        } else {
-                            this.communityRequest({communityId: user.currentCommunity.id})
-                                .catch((error) => {
-                                    console.log("Error solicitando la comunidad: " + error);
-                                    this.$router.push('/communities');
-                                });
-                        }
-
-                    })
                     .catch((error) => {
                         console.log("Error solicitando al usuario: " + error)
                         console.log("Mandando a login");

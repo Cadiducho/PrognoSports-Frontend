@@ -112,7 +112,7 @@ class AuthVuexModule extends VuexModule {
                 localStorage.setItem('user', JSON.stringify(user));
                 this.context.commit('userRequestSuccess', user);
                 if (user.currentCommunity) {
-                    this.context.dispatch('communityRequest', {communityId: user.currentCommunity});
+                    this.context.dispatch('communityRequest', {communityId: user.currentCommunity.id});
                 }
                 return Promise.resolve(user);
             },
