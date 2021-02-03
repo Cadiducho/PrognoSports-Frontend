@@ -18,7 +18,7 @@
                             </figure>
                         </div>
                         <div class="media-content">
-                            <p class="title is-4">{{circuit.name}} {{ circuit.hasVariant ? (' - ' + circuit.variant.name) : ""}}</p>
+                            <p class="title is-4">{{circuit.name}} {{ hasVariant(circuit) ? (' - ' + circuit.variant.name) : ""}}</p>
                             <p class="subtitle is-6">
                                 {{ circuit.locality }} - {{ circuit.country }}
                             </p>
@@ -26,7 +26,7 @@
                     </div>
 
                     <div class="content quick-data mb-5">
-                        <div v-if="circuit.hasVariant">
+                        <div v-if="hasVariant(circuit)">
                             <i class="fas fa-fw fa-random"></i>
                             <span class="ml-1">
                                 Variante: {{ circuit.variant.name }}

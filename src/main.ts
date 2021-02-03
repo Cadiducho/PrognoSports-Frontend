@@ -11,6 +11,8 @@ import Loading from '@/components/lib/Loading.vue'
 import './scss/app.scss';
 import { loadFilters } from "@/plugins/dayjs";
 import { loadLeaflet } from "@/plugins/leaflet";
+import mixin from "@/plugins/mixin";
+
 loadFilters(Vue);
 loadLeaflet();
 
@@ -19,6 +21,7 @@ Vue.config.productionTip = false;
 
 Vue.component('vue-headful', VueHeadful);
 Vue.component("Loading", Loading);
+Vue.mixin(mixin);
 
 new Vue({
   router,

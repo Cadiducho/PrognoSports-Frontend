@@ -7,8 +7,7 @@ import {Season} from "@/types/Season";
 export class UserService {
 
     public async getMe(): Promise<User> {
-        return await axios
-            .get('/user/me');
+        return await axios.get('/user/me');
     }
 
     public async getUser(user: number): Promise<User> {

@@ -11,13 +11,13 @@
         <div class="card-content">
             <div class="media">
                 <div class="media-content">
-                    <p class="title is-4">{{circuit.name}} {{ circuit.hasVariant ? ('-' + circuit.variant.name) : ""}}</p>
+                    <p class="title is-4">{{circuit.name}} {{ hasVariant(circuit) ? ('-' + circuit.variant.name) : ""}}</p>
                     <p class="subtitle is-6">{{circuit.locality}}, {{circuit.country}}</p>
                 </div>
             </div>
 
             <div class="content">
-                <p v-if="circuit.hasVariant" class="card-text"><b>Variante: </b>{{circuit.variant.name}}</p>
+                <p v-if="hasVariant(circuit)" class="card-text"><b>Variante: </b>{{circuit.variant.name}}</p>
                 <p class="card-text"><b>Distancia por vuelta: </b>{{circuit.variant.distance}} km</p>
                 <p v-if="hasLaps()" class="card-text"><b>Vueltas: </b>{{laps}}</p>
                 <p v-if="hasLaps()" class="card-text"><b>Distancia total: </b>{{laps * circuit.variant.distance}} km</p>
@@ -30,6 +30,7 @@
 <script lang="ts">
     import {Component, Prop, Vue} from "vue-property-decorator";
     import {Circuit} from "../../types/Circuit";
+    import {hasVariant} from "@/utils";
 
     @Component
     export default class CircuitCard extends Vue {
@@ -41,7 +42,7 @@
         }
 
         get circuitUrl(): string {
-            let variant = this.circuit.hasVariant ? ('/ '+ this.circuit!.variant) : "";
+            let variant = hasVariant(this.circuit) ? ('/ '+ this.circuit!.variant) : "";
             return '/circuits/' + this.circuit!.id + variant;
         }
     }
