@@ -106,12 +106,12 @@ export default class Login extends Vue {
     submitted: boolean = false;
 
     @Auth.Action private login!: (payload: {username: string, password: string}) => Promise<string>;
+    @Auth.State("mail") private registeredMail!: string;
 
     created() {
-        /* //ToDo: Mail state
-        if (!!.registeredMail) {
-            this.username = Auth.registeredMail;
-        }*/
+        if (!!this.registeredMail) {
+            this.username = this.registeredMail;
+        }
     }
 
     public handleSubmit() {

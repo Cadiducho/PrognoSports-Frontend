@@ -4,15 +4,15 @@ import {User} from "@/types/User";
 import {Community} from "@/types/Community";
 
 const storedUser = localStorage.getItem('user');
+const storedMail = localStorage.getItem('mail');
 const storedToken = localStorage.getItem('token');
 const storedCommunity = localStorage.getItem('community');
-
-//ToDo: Mail state en el registro
 
 @Module({ namespaced: true })
 class AuthVuexModule extends VuexModule {
     public status = storedUser ? { loggedIn: true } : { loggedIn: false };
     public user = storedUser ? JSON.parse(storedUser) : null;
+    public mail = storedMail ? JSON.parse(storedMail) : null;
     public token = storedToken ? JSON.parse(storedToken) : null;
     public community = storedCommunity ? JSON.parse(storedCommunity) : null;
 
@@ -43,6 +43,11 @@ class AuthVuexModule extends VuexModule {
     }
 
     @Mutation
+    public changeMailState(mail: string): void {
+        this.mail = mail;
+    }
+
+    @Mutation
     public registerSuccess(): void {
         this.status.loggedIn = false;
     }
@@ -70,7 +75,7 @@ class AuthVuexModule extends VuexModule {
             token => {
                 localStorage.setItem('user-token', token);
                 this.context.commit('loginSuccess', token);
-                //ToDo: Mail state
+                this.context.commit('changeMailState', null); // Ya no guardar el mail state tras el login correcto
                 this.context.dispatch('userRequest');
                 return Promise.resolve(token);
             },
@@ -85,6 +90,7 @@ class AuthVuexModule extends VuexModule {
     signOut(): void {
         localStorage.removeItem('user');
         localStorage.removeItem('user-token');
+        localStorage.removeItem('mail');
         this.context.commit('removeCurrentCommunity');
         this.context.commit('logout');
     }
@@ -95,10 +101,12 @@ class AuthVuexModule extends VuexModule {
         return authService.register(username, email, password).then(
             response => {
                 this.context.commit('registerSuccess');
+                this.context.commit('changeMailState', email);
                 return Promise.resolve(response);
             },
             error => {
                 this.context.commit('registerFailure');
+                this.context.commit('changeMailState', null);
                 return Promise.reject(error);
             }
         );
