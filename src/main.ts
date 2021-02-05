@@ -6,6 +6,7 @@ import store from '@/_store';
 
 // @ts-ignore
 import VueHeadful from 'vue-headful';
+import VueClipboard from 'vue-clipboard2'
 import Loading from '@/components/lib/Loading.vue'
 
 import './scss/app.scss';
@@ -17,6 +18,7 @@ loadFilters(Vue);
 loadLeaflet();
 
 Vue.use(Buefy);
+Vue.use(VueClipboard);
 Vue.config.productionTip = false;
 
 Vue.component('vue-headful', VueHeadful);

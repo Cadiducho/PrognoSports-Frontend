@@ -35,6 +35,11 @@ const routes = [
         component: () => import('@/views/communities/InvitationToCommunity.vue'),
     },
     {
+        path: '/communities/:community',
+        name: 'communitiesDetails',
+        component: () => import('@/views/communities/ViewOneCommunity.vue'),
+    },
+    {
         path: '/gps/:competition?/:season?',
         name: 'gplist',
         alias: ['/gps/:competition?', '/gps'],

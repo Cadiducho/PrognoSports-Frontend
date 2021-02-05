@@ -8,6 +8,9 @@ export interface User {
     bio: string;
     rank: UserRank;
     profileImageUrl: string;
+    created: Date,
+    updated: Date,
+    birthdate: Date,
     gender: string;
     location: string;
     currentCommunity: Community;

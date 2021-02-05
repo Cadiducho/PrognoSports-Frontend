@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {Community} from "@/types/Community";
 import {User} from "@/types/User";
+import {CommunityUser} from "@/types/CommunityUser";
 
 export class CommunityService {
 
@@ -30,5 +31,9 @@ export class CommunityService {
 
     public async quitCommunity(community: Community): Promise<Community> {
         return await axios.post(`/communities/${community.id}/quit`)
+    }
+
+    public async getMembers(community: Community): Promise<Array<CommunityUser>> {
+        return await axios.get(`/communities/${community.id}/members`)
     }
 }

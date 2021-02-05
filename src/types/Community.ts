@@ -11,6 +11,7 @@ export interface Community {
     owner: User;
     created: Date,
     cantidad_usuarios: number;
+    invitation: string;
 
     qualify_positions_predict: number;
     race_positions_predict: number;
