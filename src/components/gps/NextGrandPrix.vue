@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
+    import {Component, Vue, Watch} from "vue-property-decorator";
     import {GrandPrix} from "@/types/GrandPrix";
     import {grandPrixService} from "@/_services";
     import {Community} from "@/types/Community";
@@ -66,6 +66,17 @@
         }
 
         mounted() {
+            if (this.currentCommunity) {
+                this.fetchNextGrandPrixData();
+            }
+        }
+
+        @Watch('currentCommunity')
+        onCurrentCommunityChange(community: Community) {
+            this.fetchNextGrandPrixData();
+        }
+
+        fetchNextGrandPrixData() {
             grandPrixService.getNextGrandPrix(this.currentCommunity.competition).then(nextGp => {
                 this.nextGp = nextGp;
             }).catch(() => {

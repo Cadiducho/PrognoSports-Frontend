@@ -1,12 +1,13 @@
 <template>
-    <div>
-        <VueApexCharts height="400" type="line" :options="chartOptions" :series="chartSeries"></VueApexCharts>
+    <div id="pointsChart">
+        <loading v-if="loading"></loading>
+        <VueApexCharts v-else height="400" type="line" :options="chartOptions" :series="chartSeries"></VueApexCharts>
     </div>
 </template>
 
 <script lang="ts">
 
-import {Component, Prop, Vue} from "vue-property-decorator";
+import {Component, Prop, Vue, Watch} from "vue-property-decorator";
 import VueApexCharts from "vue-apexcharts";
 import {User} from "@/types/User";
 import {grandPrixService, seasonService, userService} from "@/_services";
@@ -23,10 +24,19 @@ const Auth = namespace('Auth')
 })
 export default class PointsAccumulated extends Vue {
     private grandPrixes = new Map<string, string>();
+    private loading: boolean = false;
     @Auth.State("community") private currentCommunity!: Community;
     @Prop() private user!: User;
 
     mounted() {
+        this.loading = true;
+        if (this.currentCommunity) {
+            this.fetchData();
+        }
+    }
+
+    @Watch('currentCommunity')
+    onCurrentCommunityChange(community: Community) {
         this.fetchData();
     }
 
@@ -63,6 +73,8 @@ export default class PointsAccumulated extends Vue {
                                 data: dataPoints
                             }
                         ]
+
+                        this.loading = false;
                     });
                 });
             });

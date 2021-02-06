@@ -26,8 +26,8 @@
                     </router-link>
                 </div>
 
-                <div class="navbar-end">
-                    <CommunitiesDropdown/>
+                <div class="navbar-end" v-if="currentUser">
+                    <CommunitiesDropdown v-if="currentCommunity"/>
                     <NotificationsDropdown />
                     <AddElementsDropdown />
                     <AvatarComponent/>
@@ -59,10 +59,5 @@
     export default class Navbar extends Vue {
         @Auth.State("user") private currentUser!: User;
         @Auth.State("community") private currentCommunity!: Community;
-        @Auth.Action private signOut!: () => Promise<void>;
-
-        public logout() {
-            this.signOut().then(() => this.$router.push('/login'));
-        }
     }
 </script>

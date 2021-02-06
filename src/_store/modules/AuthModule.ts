@@ -65,7 +65,9 @@ class AuthVuexModule extends VuexModule {
 
     @Mutation
     public removeCurrentCommunity(): void {
-        this.user.currentCommunity = null;
+        if (this.user) {
+            this.user.currentCommunity = null;
+        }
         this.community = null;
     }
 
@@ -89,12 +91,16 @@ class AuthVuexModule extends VuexModule {
     }
 
     @Action
-    signOut(): void {
-        localStorage.removeItem('user');
-        localStorage.removeItem('user-token');
-        localStorage.removeItem('mail');
-        this.context.commit('removeCurrentCommunity');
-        this.context.commit('logout');
+    signOut(): Promise<void> {
+        return new Promise((resolve => {
+            localStorage.removeItem('user');
+            localStorage.removeItem('user-token');
+            localStorage.removeItem('mail');
+            localStorage.removeItem('community');
+            this.context.commit('removeCurrentCommunity');
+            this.context.commit('logout');
+            resolve();
+        }))
     }
 
     @Action({ rawError: true })
@@ -124,7 +130,7 @@ class AuthVuexModule extends VuexModule {
                 return Promise.resolve(user);
             },
             error => {
-                console.log("Auth error..." + error);
+                console.log("Auth error...", error);
                 this.context.commit('loginFailure');
                 return Promise.reject(error);
             }

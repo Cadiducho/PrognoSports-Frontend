@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
+    import {Component, Vue, Watch} from "vue-property-decorator";
     import {Community} from "@/types/Community";
     import {communityService} from "@/_services";
     import {namespace} from "vuex-class";
@@ -41,11 +41,19 @@
             EventBus.$on('reloadCommunitiesDropdown', () => {
                 this.getCommunityList();
             });
+
+            if (this.currentCommunity) {
+                this.getCommunityList();
+            }
+        }
+
+        @Watch('currentCommunity')
+        onCurrentCommunityChange(community: Community) {
             this.getCommunityList();
         }
 
-        getCommunityList(): Promise<any> {
-            return communityService.getUserCommunities(this.currentUser).then(list => {
+        getCommunityList(): void {
+            communityService.getUserCommunities(this.currentUser).then(list => {
                 this.communitiesList = [];
                 list.forEach(comm => {
                     // Agregar todas menos la activa, que ya saldrá en la primera
@@ -70,6 +78,7 @@
                         "Has cambiado a la comunidad " + targetCommunity.name,
                     type: "is-info",
                 });
+                EventBus.$emit('reloadCommunitiesDropdown'); // Recargar la lista, que previsiblemente quitará la target y añadirá la que estaba originalmente
             })
         }
     }
