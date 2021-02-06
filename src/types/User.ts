@@ -10,6 +10,7 @@ export interface User {
     profileImageUrl: string;
     created: Date,
     updated: Date,
+    last_activity: Date,
     birthdate: Date,
     gender: string;
     location: string;

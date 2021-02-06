@@ -66,6 +66,11 @@ const routes = [
         component: () => import('@/views/login/Logout.vue'),
     },
     {
+        path: '/new/community',
+        name: 'communitiesCreate',
+        component: () => import('@/views/communities/CreateCommunity.vue'),
+    },
+    {
         path: '/register',
         name: 'register',
         component: () => import('@/views/login/Register.vue'),

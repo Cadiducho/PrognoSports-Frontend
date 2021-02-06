@@ -36,4 +36,8 @@ export class CommunityService {
     public async getMembers(community: Community): Promise<Array<CommunityUser>> {
         return await axios.get(`/communities/${community.id}/members`)
     }
+
+    public async createCommunity(data: any): Promise<Community> {
+        return await axios.post(`/communities`, data)
+    }
 }

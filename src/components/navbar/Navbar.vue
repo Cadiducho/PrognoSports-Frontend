@@ -29,6 +29,7 @@
                 <div class="navbar-end">
                     <CommunitiesDropdown/>
                     <NotificationsDropdown />
+                    <AddElementsDropdown />
                     <AvatarComponent/>
                 </div>
             </div>
@@ -41,6 +42,7 @@
     import AvatarComponent from "@/components/navbar/AvatarComponent.vue";
     import NotificationsDropdown from "@/components/navbar/NotificationsDropdown.vue";
     import CommunitiesDropdown from "@/components/navbar/CommunitiesDropdown.vue";
+    import AddElementsDropdown from "@/components/navbar/AddElementsDropdown.vue";
     import {Community} from "@/types/Community";
     import {User} from "@/types/User";
     import {namespace} from 'vuex-class'
@@ -50,13 +52,14 @@
         components: {
             CommunitiesDropdown,
             NotificationsDropdown,
-            AvatarComponent
+            AvatarComponent,
+            AddElementsDropdown
         }
     })
     export default class Navbar extends Vue {
         @Auth.State("user") private currentUser!: User;
+        @Auth.State("community") private currentCommunity!: Community;
         @Auth.Action private signOut!: () => Promise<void>;
-        @Auth.Getter private currentCommunity?: Community;
 
         public logout() {
             this.signOut().then(() => this.$router.push('/login'));

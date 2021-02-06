@@ -59,11 +59,13 @@ class AuthVuexModule extends VuexModule {
 
     @Mutation
     public setCurrentCommunity(community: Community): void {
+        this.user.currentCommunity = community;
         this.community = community;
     }
 
     @Mutation
     public removeCurrentCommunity(): void {
+        this.user.currentCommunity = null;
         this.community = null;
     }
 
@@ -119,9 +121,6 @@ class AuthVuexModule extends VuexModule {
             user => {
                 localStorage.setItem('user', JSON.stringify(user));
                 this.context.commit('userRequestSuccess', user);
-                if (user.currentCommunity) {
-                    this.context.dispatch('communityRequest', {communityId: user.currentCommunity.id});
-                }
                 return Promise.resolve(user);
             },
             error => {
@@ -137,13 +136,13 @@ class AuthVuexModule extends VuexModule {
         let {communityId} = payload;
         return communityService.getCommunityById(communityId).then(
             community => {
-                this.context.commit('setCurrentCommunity', community);
+                this.context.dispatch('setCommunity', community);
                 return Promise.resolve(community);
             },
             error => {
                 console.log("Community error...");
                 console.log(error);
-                this.context.commit('removeCurrentCommunity');
+                this.context.dispatch('removeCommunity');
                 return Promise.reject(error);
             }
         );

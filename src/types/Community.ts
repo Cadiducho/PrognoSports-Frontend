@@ -10,9 +10,9 @@ export interface Community {
     open: boolean;
     owner: User;
     created: Date,
-    cantidad_usuarios: number;
+    members_amount: number;
     invitation: string;
 
-    qualify_positions_predict: number;
-    race_positions_predict: number;
+    qualify_positions_predicted: number;
+    race_positions_predicted: number;
 }

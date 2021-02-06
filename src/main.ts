@@ -17,7 +17,9 @@ import mixin from "@/plugins/mixin";
 loadFilters(Vue);
 loadLeaflet();
 
-Vue.use(Buefy);
+Vue.use(Buefy, {
+    defaultIconPack: 'fa'
+});
 Vue.use(VueClipboard);
 Vue.config.productionTip = false;
 

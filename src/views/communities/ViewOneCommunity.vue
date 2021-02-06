@@ -44,9 +44,11 @@
                                             </p>
                                         </b-field>
 
-                                <p class="card-text"><b>Usuarios apuntados: </b> {{community.cantidad_usuarios}}</p>
-                                <p class="card-text"><b>Posiciones de clasificación pronosticadas</b>: {{ community.qualify_positions_predict}}</p>
-                                <p class="card-text"><b>Posiciones de carrera pronosticadas</b>: {{ community.race_positions_predict}}</p>
+                                <p class="card-text"><b>Usuarios apuntados: </b> {{ community.members_amount }}</p>
+                                <p class="card-text"><b>Posiciones de clasificación pronosticadas</b>:
+                                    {{ community.qualify_positions_predicted }}</p>
+                                <p class="card-text"><b>Posiciones de carrera pronosticadas</b>:
+                                    {{ community.race_positions_predicted }}</p>
                             </div>
                         </div>
                     </div>
@@ -76,11 +78,20 @@
                                                             <router-link :to="{name: 'user', params: { user: cu.user.username}}">
                                                                 {{cu.user.username}}
                                                             </router-link>
-                                                        </strong> <small :style="{ color : '#' + cu.user.rank.color }">{{cu.user.rank.name}}</small> <small><span class="icon-text">
-                                                        <span class="icon">
-                                                            <i class="fas fa-clock"></i>
-                                                        </span>
-                                                        <span>{{ cu.user.updated | dateDiff }}</span></span></small>
+                                                        </strong>
+                                                        <small :style="{ color : '#' + cu.user.rank.color }">{{cu.user.rank.name}}</small>
+                                                        <small>
+                                                            <span class="icon-text" v-if="cu.user.last_activity">
+                                                                <span class="icon">
+                                                                    <i class="fas fa-clock"></i>
+                                                                </span>
+                                                                <span>
+                                                                    <b-tooltip label="Última conexión">
+                                                                        {{ cu.user.last_activity | dateDiff }}
+                                                                    </b-tooltip>
+                                                                </span>
+                                                            </span>
+                                                        </small>
                                                         <br>
                                                         {{cu.user.bio}}
                                                     </p>
