@@ -21,6 +21,7 @@
                     <CommunityListItem
                         v-for="(community, index) in filteredCommunities(this.myCommunityList)"
                         :community="community"
+                        :user-communities="myCommunityList"
                         v-bind:key="index"
                     />
                 </b-tab-item>
@@ -38,6 +39,7 @@
                     <CommunityListItem
                         v-for="(community, index) in openCommunities"
                         :community="community"
+                        :user-communities="myCommunityList"
                         v-bind:key="index"
                     />
                 </b-tab-item>
@@ -56,6 +58,7 @@
                     <CommunityListItem
                         v-for="(community, index) in closedCommunities"
                         :community="community"
+                        :user-communities="myCommunityList"
                         v-bind:key="index"
                     />
                 </b-tab-item>
@@ -73,6 +76,7 @@
                     <CommunityListItem
                         v-for="(community, index) in filteredCommunities(this.communityList)"
                         :community="community"
+                        :user-communities="myCommunityList"
                         v-bind:key="index"
                     />
                 </b-tab-item>
@@ -83,7 +87,7 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue, Watch} from "vue-property-decorator";
+import {Component, Vue} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import {Community} from "@/types/Community";
 import {communityService} from "@/_services";

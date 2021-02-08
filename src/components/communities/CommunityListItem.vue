@@ -62,6 +62,7 @@ import ConfirmJoinCommunityModal from "@/components/communities/ConfirmJoinCommu
 })
 export default class CommunityListItem extends Vue {
     @Prop() community!: Community;
+    @Prop() userCommunities!: Array<Community>;
     private isUserInCommunity: boolean = false;
     private isJoinModalActive: boolean = false;
     private isLeaveModalActive: boolean = false;
@@ -71,9 +72,7 @@ export default class CommunityListItem extends Vue {
     }
 
     private validateUserInCommunity() {
-        communityService.validateUserInCommunity(this.community).then(is => {
-            this.isUserInCommunity = is;
-        });
+        return this.userCommunities.some(c => c.id === this.community.id);
     }
 
     private tryJoinCommunity() {
@@ -95,7 +94,3 @@ export default class CommunityListItem extends Vue {
     }
 }
 </script>
-
-<style scoped>
-
-</style>
