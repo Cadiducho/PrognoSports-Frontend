@@ -6,7 +6,7 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "apexcharts": "^3.23.1",
+    "apexcharts": "^3.24.0",
     "axios": "^0.21.1",
     "buefy": "^0.9.4",
     "bulma-block-list": "^0.4.2",
