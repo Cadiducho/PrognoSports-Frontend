@@ -2,6 +2,7 @@ import axios from 'axios';
 import {Community} from "@/types/Community";
 import {User} from "@/types/User";
 import {CommunityUser} from "@/types/CommunityUser";
+import {RuleSet} from "@/types/RuleSet";
 
 export class CommunityService {
 
@@ -35,6 +36,14 @@ export class CommunityService {
 
     public async getMembers(community: Community): Promise<Array<CommunityUser>> {
         return await axios.get(`/communities/${community.id}/members`)
+    }
+
+    public async createRuleSet(data: any): Promise<RuleSet> {
+        return await axios.post(`/rulesets`, data)
+    }
+
+    public async removeRuleSet(ruleset: RuleSet): Promise<RuleSet> {
+        return await axios.delete(`/rulesets/${ruleset.id}`)
     }
 
     public async createCommunity(data: any): Promise<Community> {
