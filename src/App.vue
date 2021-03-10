@@ -5,25 +5,20 @@
 
         <navbar />
 
-        <div class="section">
-            <div class="columns">
-                <div class="column">
-                    <div class="container is-fluid">
+        <section class="section is-tiny">
+            <div class="container prognocontainer">
+                <nav class="breadcrumb" aria-label="breadcrumbs">
+                    <ul>
+                        <li><a href="#">PrognoSports</a></li>
+                        <li class="is-active"><a href="#" aria-current="page">Inicio</a></li>
+                    </ul>
+                </nav>
+                <div class="notification has-background-warning">Estás utilizando PrognoSports Beta, la experiencia puede verse afectada</div>
 
-                        <nav class="breadcrumb" aria-label="breadcrumbs">
-                            <ul>
-                                <li><a href="#">PrognoSports</a></li>
-                                <li class="is-active"><a href="#" aria-current="page">Inicio</a></li>
-                            </ul>
-                        </nav>
-                        <div class="notification has-background-warning">Estás utilizando PrognoSports Beta, la experiencia puede verse afectada</div>
-
-                        <router-view :key="$route.fullPath"/>
-                    </div>
-                </div>
+                <router-view :key="$route.fullPath"/>
             </div>
-        </div>
-      </div>
+        </section>
+    </div>
 
     <div v-else>
       <!-- Resto de paginas -->

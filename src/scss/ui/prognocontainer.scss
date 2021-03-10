@@ -1,0 +1,12 @@
+.container.prognocontainer {
+  max-width: none !important;
+  width: 100%;
+}
+
+@media screen and (min-width: 1024px) {
+  .container.prognocontainer {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+

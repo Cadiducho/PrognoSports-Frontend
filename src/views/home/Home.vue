@@ -1,5 +1,5 @@
 <template>
-    <div id="homeComponent" class="box">
+    <div id="homeComponent">
 
         <PrognoPageTitle name="Dashboard" />
 
