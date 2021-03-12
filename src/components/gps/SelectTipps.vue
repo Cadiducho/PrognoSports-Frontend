@@ -6,39 +6,60 @@
                 <b-field>
                     <b-input v-model="filtroPiloto" placeholder="Buscar piloto" type="search" icon-pack="fas" icon="search"></b-input>
                 </b-field>
-                <draggable class="block-list has-radius is-highlighted is-info" :list="pilotosDisponiblesFiltrados" group="people">
+                <draggable class="block-list has-radius is-highlighted is-info"
+                           :list="pilotosDisponiblesFiltrados" group="people">
                     <transition-group type="transition" :name="!drag ? 'flip-list' : null">
                         <li
-                            class="is-highlighted"
+                            class="is-highlighted has-text-weight-semibold"
                             v-bind:style="styleDriverCard(element)"
                             v-for="element in pilotosDisponiblesFiltrados"
                             :key="element.number">
                             <i @click="element.fixed = !element.fixed"
                                 aria-hidden="true"
-                            ></i>{{ element.firstname }} {{ element.lastname }} #{{ element.number }} - {{ element.team.name }} ({{element.team.carname}})
+                            ></i>
+                                {{ element.firstname }} {{ element.lastname }}
+                                <span class="tag is-rounded" v-bind:style="styleDorsal(element)">#{{ element.number }}</span>
+                                <b-tooltip class="ml-1" :label="element.team.longname">
+                                    {{ element.team.name }}
+                                </b-tooltip>
+                                ({{element.team.carname}})
                         </li>
                     </transition-group>
                 </draggable>
             </div>
             <div class="column is-6">
-                <h3>Pilotos pronosticados</h3>
-                <draggable class="block-list has-radius is-highlighted is-primary" :list="pilotosPronosticados" group="people" :emptyInsertThreshold="100">
+                <h3>Pilotos pronosticados ({{cantidadPilotosPronosticados}})</h3>
+                <draggable class="block-list has-radius is-highlighted is-primary"
+                           :list="pilotosPronosticados" group="people"
+                           :emptyInsertThreshold="100">
                     <transition-group type="transition" tag="div" :name="!drag ? 'flip-list' : null">
                         <li
-                            class="has-radius is-primary"
+                            class="is-highlighted has-text-weight-semibold"
+                            v-bind:style="styleDriverCard(element)"
                             v-for="(element, index)  in pilotosPronosticados"
                             :key="element.number">
                             <i @click="element.fixed = !element.fixed"
                                aria-hidden="true"
                             ></i>
-                            <b>{{ index + 1 }}º.</b> {{ element.firstname }} {{ element.lastname }} #{{ element.number }}- {{ element.team.name }} ({{element.team.carname}})
+                                <b>{{ index + 1 }}º.</b> {{ element.firstname }} {{ element.lastname }}
+                                <span class="tag is-rounded" v-bind:style="styleDorsal(element)">#{{ element.number }}</span>
+                                <b-tooltip class="ml-1" :label="element.team.longname">
+                                    {{ element.team.name }}
+                                </b-tooltip>
+                                ({{element.team.carname}})
                         </li>
                     </transition-group>
                 </draggable>
+                <b-button v-if="pilotosPronosticados.length === cantidadPilotosPronosticados" type="is-success is-fullwidth" @click="enviarPronostico">Enviar pronóstico</b-button>
+                <div v-else class="notification is-warning is-light">
+                    El pronóstico debe tener {{ cantidadPilotosPronosticados }} pilotos escogidos y ordenados.
+                </div>
+
+                <hr v-if="pilotosPronosticados.length > 0"/>
                 <b-button v-if="pilotosPronosticados.length > 0" type="is-danger is-light is-fullwidth" @click="reiniciarPronostico">Limpiar pronóstico</b-button>
+
             </div>
         </div>
-        <b-button type="is-success is-fullwidth">Enviar pronóstico</b-button>
     </div>
 </template>
 
@@ -49,6 +70,9 @@ import draggable from "vuedraggable";
 import {driversService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Driver} from "@/types/Driver";
+import {Community} from "@/types/Community";
+import {namespace} from "vuex-class";
+const Auth = namespace('Auth')
 
 @Component({
     components: {
@@ -58,6 +82,8 @@ import {Driver} from "@/types/Driver";
 export default class SelectTipps extends Vue {
     @Prop({required: true}) session!: RaceSession;
     @Prop({required: true}) grandPrix!: GrandPrix;
+
+    @Auth.State("community") private currentCommunity!: Community;
 
     private drag: boolean = false;
     private filtroPiloto: string = '';
@@ -75,6 +101,14 @@ export default class SelectTipps extends Vue {
             'border-right-image-source': 'linear-gradient(to left, #'+ driver.team.teamcolor + ', #ffffff)',
             opacity: 0.9,
         }
+    }
+
+    public styleDorsal(driver: Driver) {
+        return {
+            color: 'white',
+            textShadow: '0 0 2px #000',
+            backgroundColor: '#' + driver.team.teamcolor,
+    }
     }
 
     get pilotosDisponiblesFiltrados(): Array<Driver> {
@@ -96,6 +130,19 @@ export default class SelectTipps extends Vue {
         this.pilotosPronosticados = [];
         this.pilotosDisponibles = [];
         this.pilotosDisponibles.push(...this.originalPilotos);
+    }
+
+    private enviarPronostico() {
+    }
+
+    get cantidadPilotosPronosticados() {
+        switch (this.session) {
+            case RaceSession.QUALIFY:
+                return this.currentCommunity.qualify_positions_predicted;
+            case RaceSession.RACE:
+                return this.currentCommunity.race_positions_predicted;
+        }
+        return 0;
     }
 
     mounted() {
