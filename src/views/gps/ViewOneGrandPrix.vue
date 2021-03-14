@@ -34,6 +34,15 @@
                     <PitLaneStartGrid :grid="startGrid"/>
                 </div>
             </div>
+
+            <b-tabs v-model="activeTabResults">
+                <b-tab-item label="Clasificación">
+                    <ScoreComponents session="QUALIFY"/>
+                </b-tab-item>
+                <b-tab-item label="Carrera">
+                    <ScoreComponents session="RACE"/>
+                </b-tab-item>
+            </b-tabs>
         </div>
     </div>
 </template>
@@ -51,9 +60,11 @@
     import {StartGridPosition} from "@/types/StartGridPosition";
     import SelectTipps from "@/components/gps/SelectTipps.vue";
     import PitLaneStartGrid from "@/components/gps/PitLaneStartGrid.vue";
+    import ScoreComponents from "@/components/gps/ScoreComponents.vue";
 
     @Component({
         components: {
+            ScoreComponents,
             PitLaneStartGrid,
             SelectTipps,
             CircuitCard,
@@ -74,6 +85,7 @@
         private startGrid: Array<StartGridPosition> = [];
 
         private activeTab: number = 0;
+        private activeTabResults: number = 0;
 
         mounted() {
             grandPrixService.getGrandPrix(this.competition, this.season, this.id)

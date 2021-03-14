@@ -1,5 +1,5 @@
 
 export enum RaceSession {
-    QUALIFY,
-    RACE,
+    QUALIFY = "QUALIFY",
+    RACE = "RACE",
 }
