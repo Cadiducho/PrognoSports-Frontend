@@ -7,6 +7,8 @@
 
 import {UserRank} from "@/types/UserRank";
 import {Circuit} from "@/types/Circuit";
+import {Community} from "@/types/Community";
+import {RaceSession} from "@/types/RaceSession";
 
 export function isAdmin(rank: UserRank): boolean {
     return rank.name.toLowerCase() === "admin";
@@ -14,4 +16,14 @@ export function isAdmin(rank: UserRank): boolean {
 
 export function hasVariant(circuit: Circuit): boolean {
     return circuit.variant.name !== "grandprix";
+}
+
+export function cantidadPilotosPronosticados(currentCommunity: Community, session: RaceSession): number {
+    switch (session) {
+        case RaceSession.QUALIFY:
+            return currentCommunity.qualify_positions_predicted;
+        case RaceSession.RACE:
+            return currentCommunity.race_positions_predicted;
+    }
+    return 0;
 }

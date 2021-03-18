@@ -28,7 +28,7 @@
                 </draggable>
             </div>
             <div class="column is-6">
-                <h3>Pilotos pronosticados ({{cantidadPilotosPronosticados}})</h3>
+                <h3>Pilotos pronosticados ({{ cantidadPilotosPronosticados(currentCommunity, session) }})</h3>
                 <draggable class="block-list has-radius is-highlighted is-primary"
                            :list="pilotosPronosticados" group="people"
                            :emptyInsertThreshold="100">
@@ -50,9 +50,9 @@
                         </li>
                     </transition-group>
                 </draggable>
-                <b-button v-if="pilotosPronosticados.length === cantidadPilotosPronosticados" type="is-success is-fullwidth" @click="enviarPronostico">Enviar pronóstico</b-button>
+                <b-button v-if="pilotosPronosticados.length === cantidadPilotosPronosticados(currentCommunity, session)" type="is-success is-fullwidth" @click="enviarPronostico">Enviar pronóstico</b-button>
                 <div v-else class="notification is-warning is-light">
-                    El pronóstico debe tener {{ cantidadPilotosPronosticados }} pilotos escogidos y ordenados.
+                    El pronóstico debe tener {{ cantidadPilotosPronosticados(currentCommunity, session) }} pilotos escogidos y ordenados.
                 </div>
 
                 <hr v-if="pilotosPronosticados.length > 0"/>
@@ -108,7 +108,7 @@ export default class SelectTipps extends Vue {
             color: 'white',
             textShadow: '0 0 2px #000',
             backgroundColor: '#' + driver.team.teamcolor,
-    }
+        }
     }
 
     get pilotosDisponiblesFiltrados(): Array<Driver> {
@@ -133,16 +133,8 @@ export default class SelectTipps extends Vue {
     }
 
     private enviarPronostico() {
-    }
-
-    get cantidadPilotosPronosticados() {
-        switch (this.session) {
-            case RaceSession.QUALIFY:
-                return this.currentCommunity.qualify_positions_predicted;
-            case RaceSession.RACE:
-                return this.currentCommunity.race_positions_predicted;
-        }
-        return 0;
+        console.log("Enviando: ");
+        console.log(this.pilotosPronosticados.map(d => d.lastname));
     }
 
     mounted() {
