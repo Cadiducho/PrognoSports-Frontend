@@ -1,5 +1,5 @@
 <template>
-    <div id="grandprix" class="box">
+    <div id="grandprix">
         <div v-if="isLoadingGrandPrix || grandPrix === undefined">
             <loading />
         </div>
@@ -37,10 +37,10 @@
 
             <b-tabs v-model="activeTabResults">
                 <b-tab-item label="Clasificación">
-                    <ScoreComponents session="QUALIFY"/>
+                   <ScoreComponents :gp="grandPrix" session="QUALIFY" :user-points="userPoints"/>
                 </b-tab-item>
                 <b-tab-item label="Carrera">
-                    <ScoreComponents session="RACE"/>
+                   <ScoreComponents :gp="grandPrix" session="RACE" :user-points="userPoints"/>
                 </b-tab-item>
             </b-tabs>
         </div>
@@ -56,11 +56,16 @@
     import {Competition} from "@/types/Competition";
     import {Season} from "@/types/Season";
     import {GrandPrix} from "@/types/GrandPrix";
-    import {grandPrixService} from "@/_services";
+    import {grandPrixService, scoreService} from "@/_services";
     import {StartGridPosition} from "@/types/StartGridPosition";
     import SelectTipps from "@/components/gps/SelectTipps.vue";
     import PitLaneStartGrid from "@/components/gps/PitLaneStartGrid.vue";
-    import ScoreComponents from "@/components/gps/ScoreComponents.vue";
+    import ScoreComponents from "@/components/gps/ScoreComponent.vue";
+    import {Community} from "@/types/Community";
+    import {namespace} from "vuex-class";
+    import {UserPoints} from "@/types/UserPoints";
+    import {Dictionary} from "@/types/Dictionary";
+    const Auth = namespace('Auth')
 
     @Component({
         components: {
@@ -74,6 +79,7 @@
         }
     })
     export default class ViewOneGrandPrix extends Vue {
+        @Auth.State("community") private currentCommunity!: Community;
 
         private competition: Competition = { code: this.$route.params.competition } as Competition;
         private season: Season = {name: this.$route.params.season } as Season;
@@ -83,6 +89,7 @@
         private isLoadingGrandPrix: boolean = true;
         private thereIsGrid: boolean = false;
         private startGrid: Array<StartGridPosition> = [];
+        private userPoints: Dictionary<number, UserPoints> = {};
 
         private activeTab: number = 0;
         private activeTabResults: number = 0;
@@ -98,7 +105,13 @@
                         if (this.startGrid.length !== 0) {
                             this.thereIsGrid = true;
                         }
-                    })
+                    }).then(() => {
+                        scoreService.getPointsInGrandPrix(this.currentCommunity, this.grandPrix!).then((points) => {
+                            points.forEach((userPoints) => {
+                                this.userPoints[userPoints.user.id] = userPoints;
+                            });
+                        });
+                    });
                 });
 
         }
