@@ -9,7 +9,10 @@
                 El ganador del es reflejado con color <b-tag type="is-warning">dorado</b-tag> <br/>
             </p>
             <!-- ToDo: Avisar de que tiene los pronosticos ocultos -->
-            <!-- ToDo: ¿Confirmar que aún no hay resultados y avisarselo al usuario? -->
+
+            <b-notification v-if="!thereAreFinishResults" type="is-info is-light" aria-close-label="Close notification">
+                Aún no hay resultados confirmados para esta sesión
+            </b-notification>
             <b-table :data="tableData"
                      hoverable
                      mobile-cards
@@ -47,12 +50,22 @@
                     </template>
                     <template v-slot="props">
                         <!-- ToDo: Si no es hora de mostrar un resultado aún oculto, el tooltip dice ??? (Oculto) -->
+
                         <!-- ToDo: Mostrar en un subtexto la puntuación obtenida por ese piloto y posición pronosticado -->
-                        <b-tooltip v-if="props.row.tipps[index] !== undefined"
-                                   :label="driverTooltip(props.row.tipps[index].driver)"
-                                    append-to-body>
-                            {{ props.row.tipps[index].driver.code }}
-                        </b-tooltip>
+                        <template v-if="props.row.tipps[index] !== undefined">
+                            <!-- Si hay pronóstico, pero este esta oculto, informar de eso -->
+                            <b-tooltip v-if="props.row.tipps[index].id !== '???'"
+                                       label="Pronóstico oculto"
+                                       append-to-body>
+                                ???
+                            </b-tooltip>
+                            <b-tooltip v-else
+                                       :label="driverTooltip(props.row.tipps[index].driver)"
+                                       append-to-body>
+                                {{ props.row.tipps[index].driver.code }}
+                            </b-tooltip>
+                        </template>
+
                         <!-- Si no hay pronóstico para este usuario y posición, se coloca un "---" -->
                         <template v-else>
                             ---
@@ -109,12 +122,15 @@ export default class ScoreComponents extends Vue {
 
 
     private loaded = false;
+    private thereAreFinishResults = false;
     private sessionResults: Array<RaceResult> = [];
     private communityMembers: Array<CommunityUser> = [];
     private tableData: TableType[] = [];
 
     mounted() {
         grandPrixService.getResults(this.gp, this.session).then((results) => {
+
+            this.thereAreFinishResults = results.length > 0;
 
             this.sessionResults = [];
             for (let position = 0; position < cantidadPilotosPronosticados(this.currentCommunity, this.session); ++position) {
@@ -138,15 +154,34 @@ export default class ScoreComponents extends Vue {
                     this.communityMembers.push(...members);
 
                     this.communityMembers.forEach(comUser => {
-                        this.tableData.push({
+                        let rowData: TableType = {
                             'user': comUser.user,
-                            'tipps': tipps[comUser.user.id],
+                            'tipps': [],
                             'score': {
-                                'session': this.session == "RACE" ? this.userPoints[comUser.user.id]!.pointsInRace : this.userPoints[comUser.user.id]!.pointsInQualify,
-                                'gp': this.userPoints[comUser.user.id]!.pointsInGP,
-                                'accumulated': this.userPoints[comUser.user.id]!.accumulatedPoints
+                                'session': 0,
+                                'gp': 0,
+                                'accumulated': 0,
+                            },
+                        }
+
+                        rowData.tipps = tipps[comUser.user.id];
+
+                        if (this.userPoints[comUser.user.id]!!) {
+                            if (this.session == "RACE") {
+                                if (this.userPoints[comUser.user.id]!.pointsInRace!!) {
+                                    rowData.score.session = this.userPoints[comUser.user.id]!.pointsInRace;
+                                }
+                            } else {
+                                if (this.userPoints[comUser.user.id]!.pointsInQualify!!) {
+                                    rowData.score.session = this.userPoints[comUser.user.id]!.pointsInQualify;
+                                }
                             }
-                        })
+
+                            rowData.score.gp = this.userPoints[comUser.user.id]!.pointsInGP || 0;
+                            rowData.score.accumulated = this.userPoints[comUser.user.id]!.accumulatedPoints || 0;
+                        }
+
+                        this.tableData.push(rowData);
                     });
 
                     this.loaded = true;
