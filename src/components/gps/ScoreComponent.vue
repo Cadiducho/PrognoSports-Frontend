@@ -54,13 +54,12 @@
                     <template v-slot="props">
 
                         <!-- ToDo: Mostrar en un subtexto la puntuación obtenida por ese piloto y posición pronosticado -->
-                        <template v-if="props.row.tipps[index] !== undefined">
-                            <b-tooltip
-                                :label="driverTooltip(props.row.tipps[index].driver)"
-                                append-to-body>
-                                    {{ props.row.tipps[index].driver.code }}
-                            </b-tooltip>
-                        </template>
+                        <b-tooltip
+                            v-if="props.row.tipps[index] !== undefined"
+                            :label="driverTooltip(props.row.tipps[index].driver)"
+                            append-to-body>
+                            {{ props.row.tipps[index].driver.code }}
+                        </b-tooltip>
 
                         <!-- Si no hay pronóstico para este usuario y posición, se coloca un "---" -->
                         <template v-else>
@@ -160,7 +159,7 @@ export default class ScoreComponents extends Vue {
                             },
                         }
 
-                        rowData.tipps = tipps[comUser.user.id];
+                        rowData.tipps = tipps[comUser.user.id] || []; // Pongo [] por defecto por que a veces tipps[id] es undefined??? misterios
 
                         if (this.userPoints[comUser.user.id]!!) {
                             if (this.session == "RACE") {

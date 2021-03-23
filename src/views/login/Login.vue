@@ -130,9 +130,16 @@ export default class Login extends Vue {
                     this.$router.push({ name: "home" });
                 },
                 (error: any) => {
+                    let message: string;
+                    if (error.code === 600) {
+                        message = "Fallo al iniciar sesión: Credenciales inválidas";
+                    } else {
+                        message = "Fallo al iniciar sesión: " + error.message;
+                    }
+
                     this.$buefy.toast.open({
                         duration: 5000,
-                        message: "Fallo al iniciar sesión: " + error,
+                        message: message,
                         type: "is-danger",
                     });
                 }
