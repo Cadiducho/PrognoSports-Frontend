@@ -8,11 +8,14 @@
                 Tus puntuaciones salen reflejadas con color <b-tag type="is-primary">verde</b-tag> <br/>
                 El ganador del es reflejado con color <b-tag type="is-warning">dorado</b-tag> <br/>
             </p>
-            <!-- ToDo: Avisar de que tiene los pronosticos ocultos -->
 
+            <b-notification v-if="currentUser.preferences['hide-tipps-until-start'] === true" type="is-info is-light" aria-close-label="Close notification">
+                Tus pronósticos están ocultos al resto de usuarios hasta {{ (this.session === "RACE" ? gp.raceTime : gp.qualiTime) | humanDateMinusFiveMinutes}}
+            </b-notification>
             <b-notification v-if="!thereAreFinishResults" type="is-info is-light" aria-close-label="Close notification">
                 Aún no hay resultados confirmados para esta sesión
             </b-notification>
+
             <b-table :data="tableData"
                      hoverable
                      mobile-cards
@@ -49,20 +52,13 @@
                         </template>
                     </template>
                     <template v-slot="props">
-                        <!-- ToDo: Si no es hora de mostrar un resultado aún oculto, el tooltip dice ??? (Oculto) -->
 
                         <!-- ToDo: Mostrar en un subtexto la puntuación obtenida por ese piloto y posición pronosticado -->
                         <template v-if="props.row.tipps[index] !== undefined">
-                            <!-- Si hay pronóstico, pero este esta oculto, informar de eso -->
-                            <b-tooltip v-if="props.row.tipps[index].id !== '???'"
-                                       label="Pronóstico oculto"
-                                       append-to-body>
-                                ???
-                            </b-tooltip>
-                            <b-tooltip v-else
-                                       :label="driverTooltip(props.row.tipps[index].driver)"
-                                       append-to-body>
-                                {{ props.row.tipps[index].driver.code }}
+                            <b-tooltip
+                                :label="driverTooltip(props.row.tipps[index].driver)"
+                                append-to-body>
+                                    {{ props.row.tipps[index].driver.code }}
                             </b-tooltip>
                         </template>
 
@@ -210,6 +206,7 @@ export default class ScoreComponents extends Vue {
     }
 
     private driverTooltip(driver: Driver) {
+        if (driver.code === "???") return "Pronóstico Oculto"; // Si hay pronóstico, pero este esta oculto, informar de eso
         return driver.firstname + ' ' + driver.lastname + ' (' + driver.team.name + ')';
     }
 
