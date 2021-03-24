@@ -67,11 +67,13 @@
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {RaceSession} from "@/types/RaceSession";
 import draggable from "vuedraggable";
-import {driversService} from "@/_services";
+import {driversService, grandPrixService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Driver} from "@/types/Driver";
 import {Community} from "@/types/Community";
 import {namespace} from "vuex-class";
+import {RaceResult} from "@/types/RaceResult";
+import {User} from "@/types/User";
 const Auth = namespace('Auth')
 
 @Component({
@@ -133,8 +135,27 @@ export default class SelectTipps extends Vue {
     }
 
     private enviarPronostico() {
-        console.log("Enviando: ");
-        console.log(this.pilotosPronosticados.map(d => d.lastname));
+        let tipps: Array<RaceResult> = [];
+
+        this.pilotosPronosticados.forEach((driver, index, array) => {
+            tipps.push({position: index + 1, driver: {id: driver.id} as Driver} as RaceResult);
+        });
+        grandPrixService.postUserTipps(this.grandPrix, this.session, this.currentCommunity, tipps).then(
+            () => {
+                this.$buefy.toast.open({
+                    message: "¡Has guardado tus pronósticos!",
+                    type: "is-success",
+                });
+            },
+            (error: any) => {
+                let message = "Error guardando tus pronósticos: " + error;
+
+                this.$buefy.toast.open({
+                    duration: 5000,
+                    message: message,
+                    type: "is-danger",
+                });
+            });
     }
 
     mounted() {

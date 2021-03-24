@@ -44,4 +44,8 @@ export class GrandprixService {
     public async getUserTipps(gp: GrandPrix, session: RaceSession, community: Community, user: User): Promise<Map<number, Array<RaceResult>>> {
         return await axios.get(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/${session}/tipps/${community.id}/${user.id}`);
     }
+
+    public async postUserTipps(gp: GrandPrix, session: RaceSession, community: Community, tipps: Array<RaceResult>): Promise<string> {
+        return await axios.post(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/${session}/tipps/${community.id}`, {tipps: tipps});
+    }
 }
