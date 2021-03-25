@@ -7,6 +7,7 @@ import {RaceSession} from "@/types/RaceSession";
 import {RaceResult} from "@/types/RaceResult";
 import {User} from "@/types/User";
 import {Community} from "@/types/Community";
+import {Dictionary} from "@/types/Dictionary";
 
 export class GrandprixService {
 
@@ -41,7 +42,7 @@ export class GrandprixService {
         return await axios.get(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/${session}/tipps/${community.id}`);
     }
 
-    public async getUserTipps(gp: GrandPrix, session: RaceSession, community: Community, user: User): Promise<Map<number, Array<RaceResult>>> {
+    public async getUserTipps(gp: GrandPrix, session: RaceSession, community: Community, user: User): Promise<Dictionary<number, RaceResult>> {
         return await axios.get(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/${session}/tipps/${community.id}/${user.id}`);
     }
 

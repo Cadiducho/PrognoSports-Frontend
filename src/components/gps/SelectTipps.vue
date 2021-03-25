@@ -85,6 +85,7 @@ export default class SelectTipps extends Vue {
     @Prop({required: true}) session!: RaceSession;
     @Prop({required: true}) grandPrix!: GrandPrix;
 
+    @Auth.State("user") private currentUser!: User;
     @Auth.State("community") private currentCommunity!: Community;
 
     private drag: boolean = false;
@@ -93,6 +94,28 @@ export default class SelectTipps extends Vue {
     private pilotosPronosticados: Array<Driver> = [];
     private pilotosDisponibles: Array<Driver> = [];
     private originalPilotos: Array<Driver> = [];
+
+    mounted() {
+        driversService.getDriversInGrandPrix(this.grandPrix).then((drivers) => {
+            this.originalPilotos.push(...drivers);
+            this.pilotosDisponibles.push(...drivers);
+        }).then(() => {
+            grandPrixService.getUserTipps(this.grandPrix, this.session, this.currentCommunity, this.currentUser).then((userTipps) => {
+                for (let key in userTipps) {
+                    let value: RaceResult = userTipps[key]!;
+
+                    // Básicamente, si hay pronóstico. De otro modo, driver es undefined (value es {})
+                    if (value.driver != undefined) {
+                        // Elimino al piloto pronosticado de la lsita de disponibles
+                        this.pilotosDisponibles = this.pilotosDisponibles.filter(d => d.code != value.driver.code);
+
+                        // Añado el piloto pronosticado a la lista de pronósticos
+                        this.pilotosPronosticados.push(value.driver);
+                    }
+                }
+            })
+        })
+    }
 
     public styleDriverCard(driver: Driver) {
         return {
@@ -148,7 +171,7 @@ export default class SelectTipps extends Vue {
                 });
             },
             (error: any) => {
-                let message = "Error guardando tus pronósticos: " + error;
+                let message = "Error guardando tus pronósticos: " + error.message;
 
                 this.$buefy.toast.open({
                     duration: 5000,
@@ -156,13 +179,6 @@ export default class SelectTipps extends Vue {
                     type: "is-danger",
                 });
             });
-    }
-
-    mounted() {
-        driversService.getDriversInGrandPrix(this.grandPrix).then((drivers) => {
-            this.originalPilotos.push(...drivers);
-            this.pilotosDisponibles.push(...drivers);
-        })
     }
 }
 </script>
