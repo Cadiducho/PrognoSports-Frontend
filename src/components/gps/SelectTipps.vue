@@ -67,13 +67,14 @@
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {RaceSession} from "@/types/RaceSession";
 import draggable from "vuedraggable";
-import {driversService, grandPrixService} from "@/_services";
+import {grandPrixService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Driver} from "@/types/Driver";
 import {Community} from "@/types/Community";
 import {namespace} from "vuex-class";
 import {RaceResult} from "@/types/RaceResult";
 import {User} from "@/types/User";
+import EventBus from "@/plugins/eventbus";
 const Auth = namespace('Auth')
 
 @Component({
@@ -96,25 +97,26 @@ export default class SelectTipps extends Vue {
     private originalPilotos: Array<Driver> = [];
 
     mounted() {
-        driversService.getDriversInGrandPrix(this.grandPrix).then((drivers) => {
+
+        EventBus.$on('sendDriversInGrandPrix', (drivers: Array<Driver>) => {
             this.originalPilotos.push(...drivers);
             this.pilotosDisponibles.push(...drivers);
-        }).then(() => {
-            grandPrixService.getUserTipps(this.grandPrix, this.session, this.currentCommunity, this.currentUser).then((userTipps) => {
-                for (let key in userTipps) {
-                    let value: RaceResult = userTipps[key]!;
+        });
 
-                    // Básicamente, si hay pronóstico. De otro modo, driver es undefined (value es {})
-                    if (value.driver != undefined) {
-                        // Elimino al piloto pronosticado de la lsita de disponibles
-                        this.pilotosDisponibles = this.pilotosDisponibles.filter(d => d.code != value.driver.code);
+        grandPrixService.getUserTipps(this.grandPrix, this.session, this.currentCommunity, this.currentUser).then((userTipps) => {
+            for (let key in userTipps) {
+                let value: RaceResult = userTipps[key]!;
 
-                        // Añado el piloto pronosticado a la lista de pronósticos
-                        this.pilotosPronosticados.push(value.driver);
-                    }
+                // Básicamente, si hay pronóstico. De otro modo, driver es undefined (value es {})
+                if (value.driver != undefined) {
+                    // Elimino al piloto pronosticado de la lsita de disponibles
+                    this.pilotosDisponibles = this.pilotosDisponibles.filter(d => d.code != value.driver.code);
+
+                    // Añado el piloto pronosticado a la lista de pronósticos
+                    this.pilotosPronosticados.push(value.driver);
                 }
-            })
-        })
+            }
+        });
     }
 
     public styleDriverCard(driver: Driver) {

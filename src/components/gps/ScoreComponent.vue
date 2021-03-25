@@ -87,7 +87,7 @@ import {Component, Prop, Vue} from "vue-property-decorator";
 import {User} from "@/types/User";
 import {namespace} from "vuex-class";
 import {RaceSession} from "@/types/RaceSession";
-import {communityService, grandPrixService} from "@/_services";
+import {grandPrixService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
 import {RaceResult} from "@/types/RaceResult";
 import {Community} from "@/types/Community";
@@ -97,6 +97,7 @@ import UserMiniCard from "@/components/user/UserMiniCard.vue";
 import {cantidadPilotosPronosticados} from "@/utils";
 import {UserPoints} from "@/types/UserPoints";
 import {Dictionary} from "@/types/Dictionary";
+import EventBus from "@/plugins/eventbus";
 const Auth = namespace('Auth')
 
 interface TableType {
@@ -123,6 +124,10 @@ export default class ScoreComponents extends Vue {
     private tableData: TableType[] = [];
 
     mounted() {
+        EventBus.$on('sendCommunityMembers', (members: Array<CommunityUser>) => {
+            this.communityMembers.push(...members);
+        });
+
         grandPrixService.getResults(this.gp, this.session).then((results) => {
 
             this.thereAreFinishResults = results.length > 0;
@@ -145,40 +150,35 @@ export default class ScoreComponents extends Vue {
 
         }).then(() => {
             grandPrixService.getAllTipps(this.gp, this.session, this.currentCommunity).then((tipps) => {
-                communityService.getMembers(this.currentCommunity).then((members) => {
-                    this.communityMembers.push(...members);
+                this.communityMembers.forEach(comUser => {
+                    let rowData: TableType = {
+                        'user': comUser.user,
+                        'tipps': [],
+                        'score': {
+                            'session': 0,
+                            'gp': 0,
+                            'accumulated': 0,
+                        },
+                    }
 
-                    this.communityMembers.forEach(comUser => {
-                        let rowData: TableType = {
-                            'user': comUser.user,
-                            'tipps': [],
-                            'score': {
-                                'session': 0,
-                                'gp': 0,
-                                'accumulated': 0,
-                            },
-                        }
+                    rowData.tipps = tipps[comUser.user.id] || []; // Pongo [] por defecto por que a veces tipps[id] es undefined??? misterios
 
-                        rowData.tipps = tipps[comUser.user.id] || []; // Pongo [] por defecto por que a veces tipps[id] es undefined??? misterios
-
-                        if (this.userPoints[comUser.user.id]!!) {
-                            if (this.session == "RACE") {
-                                if (this.userPoints[comUser.user.id]!.pointsInRace!!) {
-                                    rowData.score.session = this.userPoints[comUser.user.id]!.pointsInRace;
-                                }
-                            } else {
-                                if (this.userPoints[comUser.user.id]!.pointsInQualify!!) {
-                                    rowData.score.session = this.userPoints[comUser.user.id]!.pointsInQualify;
-                                }
+                    if (this.userPoints[comUser.user.id]!!) {
+                        if (this.session == "RACE") {
+                            if (this.userPoints[comUser.user.id]!.pointsInRace!!) {
+                                rowData.score.session = this.userPoints[comUser.user.id]!.pointsInRace;
                             }
-
-                            rowData.score.gp = this.userPoints[comUser.user.id]!.pointsInGP || 0;
-                            rowData.score.accumulated = this.userPoints[comUser.user.id]!.accumulatedPoints || 0;
+                        } else {
+                            if (this.userPoints[comUser.user.id]!.pointsInQualify!!) {
+                                rowData.score.session = this.userPoints[comUser.user.id]!.pointsInQualify;
+                            }
                         }
 
-                        this.tableData.push(rowData);
-                    });
+                        rowData.score.gp = this.userPoints[comUser.user.id]!.pointsInGP || 0;
+                        rowData.score.accumulated = this.userPoints[comUser.user.id]!.accumulatedPoints || 0;
+                    }
 
+                    this.tableData.push(rowData);
                     this.loaded = true;
                 });
             });

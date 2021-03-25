@@ -18,11 +18,13 @@
                     <b-tabs v-model="activeTab">
                         <b-tab-item label="Clasificación">
                             <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>clasificación</strong> es {{grandPrix.qualiTime | humanDateMinusFiveMinutes}}</h6>
-                            <SelectTipps session="QUALIFY" :grand-prix="grandPrix"/>
+                            <SelectTipps session="QUALIFY"
+                                        :grand-prix="grandPrix"/>
                         </b-tab-item>
                         <b-tab-item label="Carrera">
                             <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>carrera</strong> es {{grandPrix.raceTime | humanDateMinusFiveMinutes}}</h6>
-                            <SelectTipps session="RACE" :grand-prix="grandPrix"/>
+                            <SelectTipps session="RACE"
+                                         :grand-prix="grandPrix"/>
                         </b-tab-item>
                     </b-tabs>
                 </div>
@@ -37,10 +39,14 @@
 
             <b-tabs v-model="activeTabResults">
                 <b-tab-item label="Clasificación">
-                   <ScoreComponents :gp="grandPrix" session="QUALIFY" :user-points="userPoints"/>
+                   <ScoreComponents :gp="grandPrix"
+                                    session="QUALIFY"
+                                    :user-points="userPoints"/>
                 </b-tab-item>
                 <b-tab-item label="Carrera">
-                   <ScoreComponents :gp="grandPrix" session="RACE" :user-points="userPoints"/>
+                   <ScoreComponents :gp="grandPrix"
+                                    session="RACE"
+                                    :user-points="userPoints"/>
                 </b-tab-item>
             </b-tabs>
         </div>
@@ -56,7 +62,7 @@
     import {Competition} from "@/types/Competition";
     import {Season} from "@/types/Season";
     import {GrandPrix} from "@/types/GrandPrix";
-    import {grandPrixService, scoreService} from "@/_services";
+    import {communityService, driversService, grandPrixService, scoreService} from "@/_services";
     import {StartGridPosition} from "@/types/StartGridPosition";
     import SelectTipps from "@/components/gps/SelectTipps.vue";
     import PitLaneStartGrid from "@/components/gps/PitLaneStartGrid.vue";
@@ -65,6 +71,9 @@
     import {namespace} from "vuex-class";
     import {UserPoints} from "@/types/UserPoints";
     import {Dictionary} from "@/types/Dictionary";
+    import {CommunityUser} from "@/types/CommunityUser";
+    import {Driver} from "@/types/Driver";
+    import EventBus from "@/plugins/eventbus";
     const Auth = namespace('Auth')
 
     @Component({
@@ -100,20 +109,29 @@
                     this.grandPrix = gp;
                     this.isLoadingGrandPrix = false;
                 }).then(() => {
-                    grandPrixService.getGrandPrixGrid(this.competition, this.season, this.id).then((grid) => {
-                        this.startGrid.push(...grid);
-                        if (this.startGrid.length !== 0) {
-                            this.thereIsGrid = true;
-                        }
-                    }).then(() => {
+                    if (this.grandPrix) {
+                        driversService.getDriversInGrandPrix(this.grandPrix!).then((drivers) => {
+                            EventBus.$emit('sendDriversInGrandPrix', drivers);
+                        });
+
+                        grandPrixService.getGrandPrixGrid(this.competition, this.season, this.id).then((grid) => {
+                            this.startGrid.push(...grid);
+                            if (this.startGrid.length !== 0) {
+                                this.thereIsGrid = true;
+                            }
+                        });
+
                         scoreService.getPointsInGrandPrix(this.currentCommunity, this.grandPrix!).then((points) => {
                             points.forEach((userPoints) => {
                                 this.userPoints[userPoints.user.id] = userPoints;
                             });
                         });
-                    });
-                });
 
+                        communityService.getMembers(this.currentCommunity).then((members) => {
+                            EventBus.$emit('sendCommunityMembers', members);
+                        });
+                    }
+                });
         }
     }
 </script>
