@@ -3,7 +3,7 @@
         <nav class="navbar is-light" role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
                 <router-link class="navbar-item" to="/">
-                    <img src="@/assets/logo.png" class="navbar-brand-image d-inline-block align-top mr-3" alt="">
+                    <img src="@/assets/logo_navbar.png" class="mr-3 ml-2" alt="PrognoSports.com">
 
                     PrognoSports
                 </router-link>

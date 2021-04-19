@@ -2,7 +2,7 @@
     <article class="media">
         <div class="media-left">
             <figure class="image is-64x64">
-                <img class="is-rounded" :src="user.profileImageUrl || 'https://prognosports.com/logo_bw.png'" alt="Profile Image">
+                <img class="is-rounded" :src="userProfileImage(user)" alt="Profile Image">
             </figure>
         </div>
         <div class="media-content">
@@ -36,6 +36,10 @@ export default class ScoreComponents extends Vue {
         return {
             backgroundColor: '#' + rank.color,
         }
+    }
+
+    public userProfileImage(user: User) {
+        return user.profileImageUrl || require('@/assets/default_profile_image.jpg');
     }
 }
 </script>

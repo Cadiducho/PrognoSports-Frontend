@@ -2,11 +2,7 @@
     <b-navbar type="is-light">
         <template slot="brand">
             <b-navbar-item tag="router-link" :to="{ path: '/' }">
-                <img
-                    src="@/assets/logo.png"
-                    alt="PrognoSports.com"
-                    class="mr-3 navbar-prognosports"
-                >
+                <img src="@/assets/logo_navbar.png" class="mr-3 ml-2" alt="PrognoSports.com">
                 PrognoSports
             </b-navbar-item>
         </template>
@@ -53,7 +49,6 @@
 
 <style scoped>
 .navbar-prognosports {
-    margin-right: 1rem;
     font-size: 1.25rem;
     white-space: nowrap;
     line-height: inherit;

@@ -4,7 +4,7 @@
             <div class="footer-top">
                 <div class="footer-div">
                 <router-link to="/">
-                    <img src="@/assets/logo.png" alt width="100rem"/>
+                    <img src="@/assets/logo.png" alt="Logo PrognoSports"/>
                 </router-link>
                 </div>
                 <div class="footer-div footer-left">
