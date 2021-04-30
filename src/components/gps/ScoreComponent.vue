@@ -59,6 +59,15 @@
                             :label="driverTooltip(props.row.tipps[index].driver)"
                             append-to-body>
                             {{ props.row.tipps[index].driver.code }}
+
+                            <sub v-if="pointsByPosition[props.row.user.id] !== undefined
+                                        && !!pointsByPosition[props.row.user.id][index + 1] !== undefined"
+                                 v-bind:class="{
+                                            'has-text-link': pointsByPosition[props.row.user.id][index + 1] > 0,
+                                            'has-text-danger': pointsByPosition[props.row.user.id][index + 1] < 0,
+                                 }">
+                                {{ pointsByPosition[props.row.user.id][index + 1] }}
+                            </sub>
                         </b-tooltip>
 
                         <!-- Si no hay pronóstico para este usuario y posición, se coloca un "---" -->
@@ -87,7 +96,7 @@ import {Component, Prop, Vue} from "vue-property-decorator";
 import {User} from "@/types/User";
 import {namespace} from "vuex-class";
 import {RaceSession} from "@/types/RaceSession";
-import {grandPrixService} from "@/_services";
+import {grandPrixService, scoreService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
 import {RaceResult} from "@/types/RaceResult";
 import {Community} from "@/types/Community";
@@ -121,6 +130,7 @@ export default class ScoreComponents extends Vue {
     private thereAreFinishResults = false;
     private sessionResults: Array<RaceResult> = [];
     private communityMembers: Array<CommunityUser> = [];
+    private pointsByPosition: Dictionary<number, Dictionary<number, number>> = {};
     private tableData: TableType[] = [];
 
     mounted() {
@@ -150,6 +160,10 @@ export default class ScoreComponents extends Vue {
 
         }).then(() => {
             grandPrixService.getAllTipps(this.gp, this.session, this.currentCommunity).then((tipps) => {
+                scoreService.getPointsByPositionInGrandPrix(this.currentCommunity, this.gp, this.session).then(points => {
+                    this.pointsByPosition = points;
+                }).catch(() => {}); // Capturar el error de pronósticos antes de tiempo, ignorarlo
+
                 this.communityMembers.forEach(comUser => {
                     let rowData: TableType = {
                         'user': comUser.user,

@@ -69,7 +69,7 @@ export default class PointsAccumulated extends Vue {
                                 data: dataAcumulada
                             },
                             {
-                                name: 'Puntos por Gan Premio',
+                                name: 'Puntos por Gran Premio',
                                 data: dataPoints
                             }
                         ]

@@ -22,6 +22,9 @@ export function loadFilters(Vue: any) {
     Vue.filter('humanDateMinusFiveMinutes', function (date: Date, timezone: string = "Europe/Madrid"): string {
         return dayjs.tz(date, timezone).subtract(5, 'minute').format('D/M/YY [a las] H:mm');
     });
+    Vue.filter('isBefore', function (date: Date): boolean {
+        return dayjs().isBefore(date);
+    });
 }
 
 export default dayjs;
