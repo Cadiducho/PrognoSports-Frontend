@@ -6,7 +6,8 @@
             <span class="title is-6">Leyenda</span>
             <p class="content">
                 Tus puntuaciones salen reflejadas con color <b-tag type="is-primary">verde</b-tag> <br/>
-                El ganador del es reflejado con color <b-tag type="is-warning">dorado</b-tag> <br/>
+                El ganador del Gran Premio es reflejado con color <b-tag type="is-warning">dorado</b-tag> <br/>
+                Los ganadores de cada categoría tendrán representado un <b-icon pack="fas" icon="trophy"></b-icon>
             </p>
 
             <b-notification v-if="currentUser.preferences['hide-tipps-until-start'] === true" type="is-info is-light" aria-close-label="Close notification">
@@ -53,7 +54,6 @@
                     </template>
                     <template v-slot="props">
 
-                        <!-- ToDo: Mostrar en un subtexto la puntuación obtenida por ese piloto y posición pronosticado -->
                         <b-tooltip
                             v-if="props.row.tipps[index] !== undefined"
                             :label="driverTooltip(props.row.tipps[index].driver)"
@@ -78,9 +78,13 @@
                 </b-table-column>
 
                 <b-table-column field="score.session" label="SES" sortable numeric v-slot="props">
+                    <b-icon v-if="checkAndInserTrophy(props.row.user.username, true)"
+                            pack="fas" type="is-info" icon="trophy"></b-icon>
                     {{ props.row.score.session }}
                 </b-table-column>
                 <b-table-column field="score.gp" label="GP" sortable numeric v-slot="props">
+                    <b-icon v-if="checkAndInserTrophy(props.row.user.username, false)"
+                            pack="fas" type="is-success" icon="trophy"></b-icon>
                     {{ props.row.score.gp }}
                 </b-table-column>
                 <b-table-column field="score.accumulated" label="TOT" sortable numeric v-slot="props">
@@ -199,7 +203,10 @@ export default class ScoreComponents extends Vue {
         })
     }
 
-    get winnerUser() {
+    /**
+     * Buscar el nombre del usuario con más puntos en un GP
+     */
+    get winnerUserOfGrandPrix() {
         let maxSum = 0;
         let winner = "";
         for (let key in this.userPoints) {
@@ -212,10 +219,36 @@ export default class ScoreComponents extends Vue {
         return winner;
     }
 
+    /**
+     * Buscar el nombre del usuario con más puntos en la sesión
+     * ToDo: Fusionar metodo con winnerUserOfGrandPrix
+     */
+    get winnerUserOfSession() {
+        let maxSum = 0;
+        let winner = "";
+        for (let key in this.userPoints) {
+            let value = this.userPoints[key]!;
+            let searchedPoints = this.session == "RACE" ? value.pointsInRace : value.pointsInQualify;
+            if (searchedPoints > maxSum) {
+                maxSum = searchedPoints;
+                winner = value.user.username;
+            }
+        }
+        return winner;
+    }
+
     private checkRowClass(row: any, index: number) {
-        if (row.user.username === this.winnerUser) return 'is-winner';
+        if (row.user.username === this.winnerUserOfGrandPrix) return 'is-winner';
         if (row.user.username === this.currentUser.username) return 'is-user';
         return '';
+    }
+
+    /**
+     * Retorna un icono de trofeo si eres el ganador de esas puntuaciones
+     * @param session Verdadero si es para la sesión, falso si es para el GP
+     */
+    private checkAndInserTrophy(name: string, session: boolean) {
+        return ((session && name == this.winnerUserOfSession) || (!session && name === this.winnerUserOfGrandPrix));
     }
 
     private driverTooltip(driver: Driver) {
