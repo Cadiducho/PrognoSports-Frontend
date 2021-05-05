@@ -3,6 +3,28 @@
         <div class="columns is-mobile">
             <div class="column is-6">
                 <h3>Lista de pilotos</h3>
+                <b-collapse :open="false" aria-id="contentIdForA11y1" class="mb-2">
+                    <template #trigger>
+                        <b-button
+                            label="Opciones de ordenado"
+                            type="is-primary"
+                            aria-controls="contentIdForA11y1" />
+                    </template>
+
+                    <div class="box">
+                        <b-field label="Orderar lista de pilotos">
+                            <b-radio v-model='orderType' :native-value='0'>Orden arfabético</b-radio>
+                            <b-radio v-model='orderType' :native-value='1'>Por equipos</b-radio>
+                            <b-radio v-model='orderType' :native-value='2'>Por dorsal</b-radio>
+                        </b-field>
+                        <b-field>
+                            <b-switch v-model="orderAscendent">
+                                Orden {{ orderAscendent ? "ascendente" : "descendente" }}
+                            </b-switch>
+                        </b-field>
+                    </div>
+                </b-collapse>
+
                 <b-field>
                     <b-input v-model="filtroPiloto" placeholder="Buscar piloto" type="search" icon-pack="fas" icon="search"></b-input>
                 </b-field>
@@ -102,6 +124,8 @@ export default class SelectTipps extends Vue {
 
     private drag: boolean = false;
     private filtroPiloto: string = '';
+    private orderType: number = 1;
+    private orderAscendent: boolean = true;
 
     private pilotosPronosticados: Array<Driver> = [];
     private pilotosDisponibles: Array<Driver> = [];
@@ -150,12 +174,20 @@ export default class SelectTipps extends Vue {
     }
 
     get pilotosDisponiblesFiltrados(): Array<Driver> {
+        let sortAlfabetico = (d1: Driver, d2: Driver) => (d1.lastname < d2.lastname ? -1 : 1);
+        let sortEquipos = (d1: Driver, d2: Driver) => (d1.team.name < d2.team.name ? -1 : 1);
+        let sortDorsal = (d1: Driver, d2: Driver) => (d1.number < d2.number ? -1 : 1);
+        let listaOrdenada = this.pilotosDisponibles.sort(this.orderType === 0 ? sortAlfabetico : (this.orderType === 1 ? sortEquipos : sortDorsal));
+
+        if (this.orderAscendent) {
+            listaOrdenada = listaOrdenada.reverse();
+        }
         if (!this.filtroPiloto.trim()) {
-            return this.pilotosDisponibles;
+            return listaOrdenada;
         }
 
         let filtroLowerCase = this.filtroPiloto.toLowerCase();
-        return this.pilotosDisponibles.filter(driver => {
+        return listaOrdenada.filter(driver => {
             return driver.lastname.toLowerCase().includes(filtroLowerCase)
                 || driver.firstname.toLowerCase().includes(filtroLowerCase)
                 || driver.team.name.toLowerCase().includes(filtroLowerCase)
