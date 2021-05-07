@@ -53,7 +53,7 @@
                 <h3>Pilotos pronosticados ({{ cantidadPilotosPronosticados(currentCommunity, session) }})</h3>
                 <draggable class="block-list has-radius is-highlighted is-primary"
                            :list="pilotosPronosticados" group="people"
-                           :emptyInsertThreshold="100">
+                           :emptyInsertThreshold="1000">
                     <transition-group type="transition" tag="div" :name="!drag ? 'flip-list' : null">
                         <li
                             class="is-highlighted has-text-weight-semibold"
