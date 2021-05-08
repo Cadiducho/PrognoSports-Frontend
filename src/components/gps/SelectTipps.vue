@@ -72,7 +72,7 @@
                         </li>
                     </transition-group>
                 </draggable>
-                <template v-if="isBeforeEndDate()">
+                <template v-if="isBeforeEndDate(this.grandPrix, this.session)">
                     <b-button v-if="pilotosPronosticados.length === cantidadPilotosPronosticados(currentCommunity, session)"
                               type="is-success is-fullwidth"
                               @click="enviarPronostico">Enviar pronóstico
@@ -224,14 +224,6 @@ export default class SelectTipps extends Vue {
                     type: "is-danger",
                 });
             });
-    }
-
-    private isBeforeEndDate(): boolean {
-        if (this.session === "QUALIFY") {
-            return dayjs().isBefore(this.grandPrix.qualiTime);
-        } else {
-            return dayjs().isBefore(this.grandPrix.raceTime);
-        }
     }
 }
 </script>

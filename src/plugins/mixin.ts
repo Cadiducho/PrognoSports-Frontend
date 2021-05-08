@@ -1,8 +1,9 @@
 import {UserRank} from "@/types/UserRank";
 import {Circuit} from "@/types/Circuit";
-import {cantidadPilotosPronosticados, hasVariant, isAdmin} from "@/utils";
+import {cantidadPilotosPronosticados, hasVariant, isAdmin, isBeforeEndDate} from "@/utils";
 import {RaceSession} from "@/types/RaceSession";
 import {Community} from "@/types/Community";
+import {GrandPrix} from "@/types/GrandPrix";
 
 let mixin = {
     methods: {
@@ -14,6 +15,9 @@ let mixin = {
         },
         cantidadPilotosPronosticados(currentCommunity: Community, session: RaceSession): number {
             return cantidadPilotosPronosticados(currentCommunity, session);
+        },
+        isBeforeEndDate(grandPrix: GrandPrix, session: RaceSession): boolean {
+            return isBeforeEndDate(grandPrix, session);
         }
     }
 }

@@ -7,7 +7,7 @@
             <p class="content">
                 Tus puntuaciones salen reflejadas con color <b-tag type="is-primary">verde</b-tag> <br/>
                 El ganador del Gran Premio es reflejado con color <b-tag type="is-warning">dorado</b-tag> <br/>
-                Los ganadores de cada categoría tendrán representado un <b-icon pack="fas" icon="trophy"></b-icon>
+                Los ganadores de cada sesión tendrán representado un <b-icon pack="fas" icon="trophy"></b-icon>
             </p>
 
             <b-notification v-if="currentUser.preferences['hide-tipps-until-start'] === true" type="is-info is-light" aria-close-label="Close notification">
@@ -107,7 +107,7 @@ import {Community} from "@/types/Community";
 import {Driver} from "@/types/Driver";
 import {CommunityUser} from "@/types/CommunityUser";
 import UserMiniCard from "@/components/user/UserMiniCard.vue";
-import {cantidadPilotosPronosticados} from "@/utils";
+import {cantidadPilotosPronosticados, isBeforeEndDate} from "@/utils";
 import {UserPoints} from "@/types/UserPoints";
 import {Dictionary} from "@/types/Dictionary";
 import EventBus from "@/plugins/eventbus";
@@ -164,9 +164,13 @@ export default class ScoreComponents extends Vue {
 
         }).then(() => {
             grandPrixService.getAllTipps(this.gp, this.session, this.currentCommunity).then((tipps) => {
-                scoreService.getPointsByPositionInGrandPrix(this.currentCommunity, this.gp, this.session).then(points => {
-                    this.pointsByPosition = points;
-                }).catch(() => {}); // Capturar el error de pronósticos antes de tiempo, ignorarlo
+
+                // Si ya se ha cerrado el pronóstico para esta sesión, quizás hay puntos
+                if (!isBeforeEndDate(this.gp, this.session)) {
+                    scoreService.getPointsByPositionInGrandPrix(this.currentCommunity, this.gp, this.session).then(points => {
+                        this.pointsByPosition = points;
+                    }).catch(() => {}); // Capturar el error de pronósticos antes de tiempo, ignorarlo
+                }
 
                 this.communityMembers.forEach(comUser => {
                     let rowData: TableType = {

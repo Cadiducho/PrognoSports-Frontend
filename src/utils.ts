@@ -9,6 +9,8 @@ import {UserRank} from "@/types/UserRank";
 import {Circuit} from "@/types/Circuit";
 import {Community} from "@/types/Community";
 import {RaceSession} from "@/types/RaceSession";
+import dayjs from "dayjs";
+import {GrandPrix} from "@/types/GrandPrix";
 
 export function isAdmin(rank: UserRank): boolean {
     return rank.name.toLowerCase() === "admin";
@@ -26,4 +28,12 @@ export function cantidadPilotosPronosticados(currentCommunity: Community, sessio
             return currentCommunity.race_positions_predicted;
     }
     return 0;
+}
+
+export function isBeforeEndDate(grandPrix: GrandPrix, session: RaceSession): boolean {
+    if (session === "QUALIFY") {
+        return dayjs().isBefore(grandPrix.qualiTime);
+    } else {
+        return dayjs().isBefore(grandPrix.raceTime);
+    }
 }
