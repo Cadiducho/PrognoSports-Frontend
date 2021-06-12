@@ -11,7 +11,11 @@
         <div class="card-content">
             <div class="media">
                 <div class="media-content">
-                    <p class="title is-4">{{circuit.name}} {{ hasVariant(circuit) ? ('-' + circuit.variant.name) : ""}}</p>
+                    <p class="title is-4">
+                        <router-link :to="'/circuits/' + circuit.id + (hasVariant(circuit) ? ('/' + circuit.variant.name) : '')" class="has-text-black">
+                            {{circuit.name}} {{ hasVariant(circuit) ? ('- ' + circuit.variant.name) : ""}}
+                        </router-link>
+                    </p>
                     <p class="subtitle is-6">{{circuit.locality}}, {{circuit.country}}</p>
                 </div>
             </div>

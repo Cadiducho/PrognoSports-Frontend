@@ -1,6 +1,6 @@
 <template>
     <div class="is-inline-block zoom ml-4 mr-4 mb-4">
-        <a class="circuit">
+        <router-link class="circuit" :to="'/circuits/' + circuit.id">
             <div class="card circuit">
                 <div class="card-image">
                     <figure class="image is-4by3">
@@ -61,7 +61,7 @@
                     </div>
                 </div>
             </div>
-        </a>
+        </router-link>
     </div>
 </template>
 

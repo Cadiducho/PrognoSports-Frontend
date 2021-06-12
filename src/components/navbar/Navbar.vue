@@ -20,7 +20,9 @@
                     <router-link class="navbar-item" to="/gps">
                         Grandes Premios
                     </router-link>
-
+                    <router-link class="navbar-item" to="/circuits">
+                        Circuitos
+                    </router-link>
                     <router-link class="navbar-item" to="/ranking">
                         Ranking
                     </router-link>
