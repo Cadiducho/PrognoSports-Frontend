@@ -77,14 +77,34 @@
                     </template>
                 </b-table-column>
 
-                <b-table-column field="score.session" label="SES" sortable numeric v-slot="props">
-                    <b-icon v-if="checkAndInserTrophy(props.row.user.username, true)"
-                            pack="fas" type="is-info" icon="trophy"></b-icon>
-                    {{ props.row.score.session }}
+                <b-table-column field="score.qualify" label="Q" sortable numeric v-slot="props">
+                    <b-tooltip v-if="checkAndInsertTrophy(props.row.user.username, 1)"
+                               label="Ganador de la sesión de clasificación"
+                               type="is-light">
+                        <b-icon pack="fas" type="is-info" icon="trophy"></b-icon>
+                    </b-tooltip>
+                    {{ props.row.score.qualify }}
                 </b-table-column>
+
+                <b-table-column field="score.race" label="R" sortable numeric v-slot="props">
+                    <b-tooltip v-if="checkAndInsertTrophy(props.row.user.username, 2)"
+                                label="Ganador de la sesión de carrera"
+                               type="is-light">
+                        <b-icon pack="fas" type="is-success" icon="trophy"></b-icon>
+                    </b-tooltip>
+
+                    <span v-bind:class="{'has-text-danger': props.row.score.race < 0}">
+                        {{ props.row.score.race }}
+                    </span>
+
+                </b-table-column>
+
                 <b-table-column field="score.gp" label="GP" sortable numeric v-slot="props">
-                    <b-icon v-if="checkAndInserTrophy(props.row.user.username, false)"
-                            pack="fas" type="is-success" icon="trophy"></b-icon>
+                    <b-tooltip v-if="checkAndInsertTrophy(props.row.user.username, 3)"
+                               label="Ganador del Gran Premio"
+                               type="is-light">
+                        <b-icon pack="fas" type="is-purple" icon="trophy"></b-icon>
+                    </b-tooltip>
                     {{ props.row.score.gp }}
                 </b-table-column>
                 <b-table-column field="score.accumulated" label="TOT" sortable numeric v-slot="props">
@@ -111,12 +131,13 @@ import {cantidadPilotosPronosticados, isBeforeEndDate} from "@/utils";
 import {UserPoints} from "@/types/UserPoints";
 import {Dictionary} from "@/types/Dictionary";
 import EventBus from "@/plugins/eventbus";
+
 const Auth = namespace('Auth')
 
 interface TableType {
     'user': User;
     'tipps': Array<RaceResult>;
-    'score': {'session': number, 'gp': number, 'accumulated': number}
+    'score': {'qualify': number, 'race': number, 'gp': number, 'accumulated': number}
 }
 
 @Component({
@@ -129,13 +150,16 @@ export default class ScoreComponents extends Vue {
     @Auth.State("user") private currentUser!: User;
     @Auth.State("community") private currentCommunity!: Community;
 
-
     private loaded = false;
     private thereAreFinishResults = false;
     private sessionResults: Array<RaceResult> = [];
     private communityMembers: Array<CommunityUser> = [];
     private pointsByPosition: Dictionary<number, Dictionary<number, number>> = {};
     private tableData: TableType[] = [];
+
+    private winnersOfQualify: Array<string> = [];
+    private winnersOfRace: Array<string> = [];
+    private winnersOfGrandPrix: Array<string> = [];
 
     mounted() {
         EventBus.$on('sendCommunityMembers', (members: Array<CommunityUser>) => {
@@ -177,7 +201,8 @@ export default class ScoreComponents extends Vue {
                         'user': comUser.user,
                         'tipps': [],
                         'score': {
-                            'session': 0,
+                            'qualify': 0,
+                            'race': 0,
                             'gp': 0,
                             'accumulated': 0,
                         },
@@ -186,14 +211,11 @@ export default class ScoreComponents extends Vue {
                     rowData.tipps = tipps[comUser.user.id] || []; // Pongo [] por defecto por que a veces tipps[id] es undefined??? misterios
 
                     if (this.userPoints[comUser.user.id]!!) {
-                        if (this.session == "RACE") {
-                            if (this.userPoints[comUser.user.id]!.pointsInRace!!) {
-                                rowData.score.session = this.userPoints[comUser.user.id]!.pointsInRace;
-                            }
-                        } else {
-                            if (this.userPoints[comUser.user.id]!.pointsInQualify!!) {
-                                rowData.score.session = this.userPoints[comUser.user.id]!.pointsInQualify;
-                            }
+                        if (this.userPoints[comUser.user.id]!.pointsInQualify!!) {
+                            rowData.score.qualify = this.userPoints[comUser.user.id]!.pointsInQualify;
+                        }
+                        if (this.userPoints[comUser.user.id]!.pointsInRace!!) {
+                            rowData.score.race = this.userPoints[comUser.user.id]!.pointsInRace;
                         }
 
                         rowData.score.gp = this.userPoints[comUser.user.id]!.pointsInGP || 0;
@@ -201,58 +223,65 @@ export default class ScoreComponents extends Vue {
                     }
 
                     this.tableData.push(rowData);
-                    this.loaded = true;
+
                 });
+
+                this.winnersOfQualify = this.findWinnerUserOfSession(RaceSession.QUALIFY);
+                this.winnersOfRace = this.findWinnerUserOfSession(RaceSession.RACE);
+                this.winnersOfGrandPrix = this.findWinnerUserOfSession(undefined);
+
+                this.loaded = true;
             });
         })
     }
 
     /**
-     * Buscar el nombre del usuario con más puntos en un GP
-     */
-    get winnerUserOfGrandPrix() {
-        let maxSum = 0;
-        let winner = "";
-        for (let key in this.userPoints) {
-            let value = this.userPoints[key]!;
-            if (value.pointsInGP > maxSum) {
-                maxSum = value.pointsInGP;
-                winner = value.user.username;
-            }
-        }
-        return winner;
-    }
-
-    /**
      * Buscar el nombre del usuario con más puntos en la sesión
-     * ToDo: Fusionar metodo con winnerUserOfGrandPrix
      */
-    get winnerUserOfSession() {
-        let maxSum = 0;
-        let winner = "";
+    private findWinnerUserOfSession(session?: RaceSession, minumum = -Infinity): Array<string> {
+        let maxSum = minumum;
+
+        let winners = [];
         for (let key in this.userPoints) {
             let value = this.userPoints[key]!;
-            let searchedPoints = this.session == "RACE" ? value.pointsInRace : value.pointsInQualify;
-            if (searchedPoints > maxSum) {
-                maxSum = searchedPoints;
-                winner = value.user.username;
+            let pointsOfUser = 0;
+
+            if (session === undefined) {
+                pointsOfUser = value.pointsInGP;
+            } else if (session == "RACE") {
+                pointsOfUser = value.pointsInRace;
+            } else {
+                pointsOfUser = value.pointsInQualify;
+            }
+
+            if (pointsOfUser == maxSum) {
+                winners.push(value.user.username);
+            } else if (pointsOfUser > maxSum) {
+                maxSum = pointsOfUser;
+                return this.findWinnerUserOfSession(session, maxSum);
             }
         }
-        return winner;
+        return winners;
     }
 
     private checkRowClass(row: any, index: number) {
-        if (row.user.username === this.winnerUserOfGrandPrix) return 'is-winner';
+        if (this.winnersOfGrandPrix.includes(row.user.username)) return 'is-winner';
         if (row.user.username === this.currentUser.username) return 'is-user';
         return '';
     }
 
     /**
      * Retorna un icono de trofeo si eres el ganador de esas puntuaciones
-     * @param session Verdadero si es para la sesión, falso si es para el GP
+     * @param name
+     * @param type
      */
-    private checkAndInserTrophy(name: string, session: boolean) {
-        return ((session && name == this.winnerUserOfSession) || (!session && name === this.winnerUserOfGrandPrix));
+    private checkAndInsertTrophy(name: string, type: number) {
+        switch (type) {
+            case 1: return (this.winnersOfQualify.includes(name))
+            case 2: return (this.winnersOfRace.includes(name))
+            case 3: return (this.winnersOfGrandPrix.includes(name))
+        }
+        return false;
     }
 
     private driverTooltip(driver: Driver) {
@@ -278,5 +307,9 @@ tr.is-user {
 
 tr.is-winner {
     background: $warning;
+}
+
+.has-text-purple {
+    color: #9200d1 !important;
 }
 </style>
