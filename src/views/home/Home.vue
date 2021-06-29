@@ -50,7 +50,6 @@
     import {Component, Vue} from "vue-property-decorator";
     import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
     import NextGrandPrix from "@/components/gps/NextGrandPrix.vue";
-    import VueApexCharts from "vue-apexcharts";
     import PointsAccumulated from "@/components/user/PointsAccumulated.vue";
     import {User} from "@/types/User";
     import {namespace} from 'vuex-class'
@@ -62,7 +61,6 @@
             PointsAccumulated,
             NextGrandPrix,
             PrognoPageTitle,
-            VueApexCharts
         }
     })
     export default class Home extends Vue {

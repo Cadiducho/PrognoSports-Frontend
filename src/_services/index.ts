@@ -1,5 +1,4 @@
 import axios from 'axios';
-import VueAxios from 'vue-axios';
 import Vue from "vue";
 import {SeasonService} from "@/_services/season.service";
 import {UserService} from "@/_services/user.service";
@@ -10,8 +9,6 @@ import {DriversService} from "@/_services/drivers.service";
 import {CircuitService} from './circuit.service';
 import {AuthService} from "@/_services/auth.service";
 import {ScoreService} from "@/_services/score.service";
-
-Vue.use(VueAxios, axios);
 
 function authHeader() {
     let token = localStorage.getItem('user-token');
