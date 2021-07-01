@@ -17,3 +17,17 @@ export interface User {
     currentCommunity: Community;
     preferences: Map<string, any>;
 }
+
+export interface UserResume {
+    points: number;
+    pointsInQualis: number;
+    pointsInRaces: number;
+    averageInRaces: number;
+    averageInQualis: number;
+    raceParticipations: number;
+    qualiParticipations: number;
+    position: number;
+    wonQualifySessions: number;
+    wonRaceSessions: number;
+    wonGrandPrixes: number;
+}

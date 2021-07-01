@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {User} from "@/types/User";
+import {User, UserResume} from "@/types/User";
 import {Community} from "@/types/Community";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
@@ -32,5 +32,9 @@ export class UserService {
 
     public async getCumulatedPointsInCommunity(user: User, community: Community, competition: Competition, season: Season): Promise<Map<string, number>> {
         return await axios.get(`/user/${user.id}/communities/${community.id}/${competition.id}/${season.id}/cummulatedpoints`);
+    }
+
+    public async getUserResume(user: User, community: Community, competition: Competition, season: Season): Promise<UserResume> {
+        return await axios.get(`/user/${user.id}/communities/${community.id}/${competition.id}/${season.id}/resume`);
     }
 }
