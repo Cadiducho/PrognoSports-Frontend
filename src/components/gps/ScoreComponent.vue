@@ -254,11 +254,11 @@ export default class ScoreComponents extends Vue {
                 pointsOfUser = value.pointsInQualify;
             }
 
-            if (pointsOfUser == maxSum) {
-                winners.push(value.user.username);
-            } else if (pointsOfUser > maxSum) {
+            if (pointsOfUser > maxSum) {
                 maxSum = pointsOfUser;
                 return this.findWinnerUserOfSession(session, maxSum);
+            } else if (pointsOfUser == maxSum && pointsOfUser != 0) {
+                winners.push(value.user.username);
             }
         }
         return winners;

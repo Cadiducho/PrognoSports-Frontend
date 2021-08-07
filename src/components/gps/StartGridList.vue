@@ -3,7 +3,7 @@
         <h3>Parrilla de Salida</h3>
         <div class="columns">
             <div class="column is-6">
-                <StartGridCard v-for="pos in parrillaDerecha" />
+                <StartGridCard v-for="pos in parrillaDerecha" v-bind:key="pos.position"/>
                 <div v-for="pos in parrillaIzquierda">
                     <StartGridCard :gridPos="pos"/>
                     <div class="block"></div>

@@ -1,7 +1,6 @@
 <template>
     <div class="block" v-if="gridPos !== undefined">
-        <div class="card has-text-centered" v-bind:style="gridCardStyle(gridPos.driver)"
-        >
+        <div class="card has-text-centered" v-bind:style="gridCardStyle(gridPos.driver)">
             <header class="card-header f1-card-header" v-bind:style="gridCardBackgroundStyle(gridPos.driver)" >
                 <div class="tags">
                     <span class="tag is-dark">{{ gridPos.position }}º</span>
