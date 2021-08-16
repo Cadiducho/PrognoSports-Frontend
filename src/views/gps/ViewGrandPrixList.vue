@@ -66,6 +66,7 @@ import {Component, Vue, Watch} from "vue-property-decorator";
 
             if (this.competition.code == undefined) {
                 this.shouldSearchDefaultCompetition = true;
+                this.searchDefaultCompetition();
             } else {
                 this.competitionReady = true;
             }

@@ -8,7 +8,7 @@
                 </div>
                 <div class="media-right">
                     <figure class="image is-128x128">
-                        <img :src="gp.circuit.logo_url" alt="Placeholder image">
+                        <img :src="circuitLogoImage(gp.circuit)" alt="Circuit logo">
                     </figure>
                 </div>
             </div>
@@ -31,6 +31,7 @@
 
     import {Component, Prop, Vue} from "vue-property-decorator";
     import {GrandPrix} from "@/types/GrandPrix";
+    import {Circuit} from "@/types/Circuit";
 
     @Component
     export default class GrandPrixPreview extends Vue {
@@ -45,6 +46,10 @@
                     id: this.gp.id,
                 }
             };
+        }
+
+        public circuitLogoImage(circuit: Circuit) {
+            return circuit.logo_url || require('@/assets/default_profile_image.jpg');
         }
     }
 </script>
