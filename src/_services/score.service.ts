@@ -4,17 +4,35 @@ import {GrandPrix} from "@/types/GrandPrix";
 import {UserPoints} from "@/types/UserPoints";
 import {RaceSession} from "@/types/RaceSession";
 import {Dictionary} from "@/types/Dictionary";
+import {Competition} from "@/types/Competition";
+import {Season} from "@/types/Season";
 
 export class ScoreService {
 
-    // FixMe: usar tipos
-    public async getUserPointsByGP(communityId: number, season: number) {
-        return await axios.get(`/communities/${communityId}/${season}/points`);
+    /**
+     * Devuelve un map del estilo:
+     *
+     * "Australian Grand Prix": {
+     *     "michael": 60,
+     *     "fernando": 25
+     *  },
+     *  "Bahrein..."
+     * @param community
+     * @param competition
+     * @param season
+     */
+    public async getUserPointsByGP(community: Community, competition: Competition, season: Season): Promise<Dictionary<string, Dictionary<string, number>>> {
+        return await axios.get(`/communities/${community.id}/${competition.id}/${season.id}/points`);
     }
 
-    // FixMe: usar tipos
-    public async getTotalUserPoints(communityId: number, season: number) {
-        return await axios.get(`/communities/${communityId}/${season}/totaluserpoints`);
+    /**
+     * Devuelve un map de {username -> puntos totales}
+     * @param community
+     * @param competition
+     * @param season
+     */
+    public async getTotalUserPoints(community: Community, competition: Competition, season: Season): Promise<Dictionary<string, number>> {
+        return await axios.get(`/communities/${community.id}/${competition.id}/${season.id}/totaluserpoints`);
     }
 
     public async getPointsInGrandPrix(community: Community, gp: GrandPrix): Promise<Array<UserPoints>> {
