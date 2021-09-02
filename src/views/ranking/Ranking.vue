@@ -66,7 +66,13 @@
         </template>
         <template v-else><loading /></template>
 
-        <h1 class="title is-5">Ranking acumulado</h1>
+        <h1 class="title is-5">Puntos por Gran Premio</h1>
+        <VueApexCharts
+                       height="400"
+                       type="line"
+                       :options="chartOptions"
+                       :series="chartSeries">
+        </VueApexCharts>
     </div>
 </template>
 
@@ -82,6 +88,7 @@
     import {Community} from "@/types/Community";
     import {namespace} from "vuex-class";
     import {Dictionary} from "@/types/Dictionary";
+    import VueApexCharts from "vue-apexcharts";
 
     interface TableEntry {
         'user': User;
@@ -92,7 +99,7 @@
     const Auth = namespace('Auth')
     @Component({
         components: {
-            PrognoPageTitle, UserMiniCard
+            PrognoPageTitle, UserMiniCard, VueApexCharts
         }
     })
     export default class Ranking extends Vue {
@@ -109,8 +116,8 @@
         private communityMembers: Dictionary<string, User> = {};
 
         private tableData: TableEntry[] = [];
-
-        private breadcumbItems = [
+        private chartSeries: any = [];
+            private breadcumbItems = [
             {
                 text: 'Inicio',
                 to: '/home'
@@ -129,6 +136,13 @@
             grandPrixService.getGrandPrixesList('all', competition, season).then(gps => {
                 this.gps = gps;
                 this.checkRankingLoaded();
+
+                this.chartOptions = {
+                    ...this.chartOptions,
+                    xaxis: {
+                        categories: [...this.gps.map(gp => gp.code)],
+                    }
+                }
             });
 
             communityService.getMembers(this.currentCommunity).then((members) => {
@@ -155,6 +169,7 @@
                         this.gpsWithPoints.push(gp);
                         this.maxPointsInGrandPrix.set(gp, -Infinity);
 
+                        let puntosGraficaGranPremio = [];
                         // Cada usuario en cada gran premio
                         // @ts-ignore
                         Object.entries(entry).forEach(([user, point]) => {
@@ -172,11 +187,26 @@
                     scoreService.getTotalUserPoints(this.currentCommunity, competition, season).then(points => {
                         Object.entries(points).forEach(([username, totalScore]) => {
                             // @ts-ignore
-                            entradas[username].totalScore = totalScore || 0;
 
-                            // Utilizo el mismo for de iterar usuarios para guardar las filas
-                            // Guardo las entradas creadas en las filas de la tabla
-                            this.tableData.push(entradas[username]!);
+                            // Agrego a tablas y gráficas sólo si ha recibido alguna puntuación en la temporada
+                            if (totalScore != 0) {
+                                entradas[username].totalScore = totalScore || 0;
+
+                                // Utilizo el mismo for de iterar usuarios para guardar las filas
+                                // Guardo las entradas creadas en las filas de la tabla
+                                this.tableData.push(entradas[username]!);
+
+
+                                // Agrego a la gráfica de puntos
+                                this.chartSeries = [
+                                    ...this.chartSeries,
+                                    {
+                                        name: username,
+                                        data: Object.values(entradas[username].gps),
+                                    },
+                                ]
+                            }
+
                         });
                     }).then(() => {
                         this.checkRankingLoaded();
@@ -205,6 +235,53 @@
         private checkAndInsertTrophy(gp: string, score: number) {
             return (this.maxPointsInGrandPrix.get(gp)! == score);
         }
+
+
+        private chartOptions: any = {
+            chart: {
+                shadow: {
+                    enabled: true,
+                    color: '#000',
+                    top: 18,
+                    left: 7,
+                    blur: 10,
+                    opacity: 1
+                },
+                zoom: {
+                    enabled: false
+                }
+            },
+            dataLabels: {
+                enabled: true,
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 3
+            },
+            markers: {
+                size: 5
+            },
+            xaxis: {
+                title: {
+                    text: 'Grandes Premios'
+                }
+            },
+            yaxis: {
+                title: {
+                    text: 'Puntos'
+                }
+            },
+            legend: {
+                position: 'top',
+                floating: true,
+            },
+            tooltip: {
+                x: {
+                    formatter: (codePos: number) => { return [...this.grandPrixList().values()][codePos - 1].name },
+                }
+            },
+        };
+
     }
 </script>
 
