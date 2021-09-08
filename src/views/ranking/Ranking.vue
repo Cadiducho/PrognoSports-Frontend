@@ -3,137 +3,141 @@
         <PrognoPageTitle name="Ranking" />
 
         <template v-if="rankingBusy">
-            <!--<section>
-                <b-field grouped group-multiline>
-                    <div class="control">
-                        // Esto no se puede hacer como es deseado porque BTable no tiene :columns reactivo. Se añaden colummnas, pero al desactivar el slider no se eliminan,.
-                        <b-switch v-model="showEmptyGrandPrixes" @click="reloadTable()">Mostrar GPs sin puntuación</b-switch>
-                    </div>
-                </b-field>
-            </section>-->
-            <h1 class="title is-4">Ranking individual</h1>
-            <p class="content">
-                Los ganadores de cada Gran Premio tendrán representado un <b-icon pack="fas" type="is-info" icon="trophy"></b-icon>
-            </p>
-            <b-table :data="tableData"
-                     hoverable
-                     mobile-cards
-                     default-sort="totalScore"
-                     default-sort-direction="DESC"
-                     :row-class="(row, index) => checkRowClass(row, index)"
-                >
 
-                <b-table-column label="Pos." sortable numeric v-slot="props">
-                    <span class="has-text-weight-bold">#{{ props.index + 1 }}</span>
-                </b-table-column>
+            <b-tabs v-model="activeTab">
+                <b-tab-item label="Ranking por Gran Premio">
+                    <h1 class="title is-4">Ranking por Gran Premio</h1>
+                    <p class="content">
+                        Los ganadores de cada Gran Premio tendrán representado un <b-icon pack="fas" type="is-info" icon="trophy"></b-icon>
+                    </p>
+                    <b-table :data="tableData"
+                             hoverable
+                             mobile-cards
+                             default-sort="totalScore"
+                             default-sort-direction="DESC"
+                             :row-class="(row, index) => checkRowClass(row, index)"
+                    >
 
-                <b-table-column field="user.username" label="Nombre" sortable>
-                    <template v-slot="props">
-                        <b-tooltip
-                            position="is-right"
-                            type="is-light"
-                            append-to-body>
-                            <template v-slot:content>
-                                <UserMiniCard :user="communityMembers[props.row.user.username]" />
+                        <b-table-column label="Pos." sortable numeric v-slot="props">
+                            <span class="has-text-weight-bold">#{{ props.index + 1 }}</span>
+                        </b-table-column>
+
+                        <b-table-column field="user.username" label="Nombre" sortable>
+                            <template v-slot="props">
+                                <b-tooltip
+                                    position="is-right"
+                                    type="is-light"
+                                    append-to-body>
+                                    <template v-slot:content>
+                                        <UserMiniCard :user="communityMembers.get(props.row.user.username)" />
+                                    </template>
+
+                                    <span class="has-text-weight-bold">{{ props.row.user.username }}</span>
+                                </b-tooltip>
                             </template>
+                        </b-table-column>
 
-                            <span class="has-text-weight-bold">{{ props.row.user.username }}</span>
-                        </b-tooltip>
-                    </template>
-                </b-table-column>
-
-                <b-table-column v-for="gp in grandPrixList()" v-bind:key="gp.code" :field="gp.code" sortable numeric>
-                    <template v-slot:header="{ column }">
-                        <b-tooltip :label="gp.name">
-                            {{ gp.code }}
-                        </b-tooltip>
-                    </template>
-                    <template v-slot="props">
-
-                        <b-tooltip v-if="checkAndInsertTrophy(gp.name, props.row.gps[gp.name])"
-                                   :label="'Ganador de ' + gp.name"
-                                   type="is-light">
-                            <b-icon pack="fas" type="is-info" icon="trophy"></b-icon>
-                        </b-tooltip>
-
-                        <!-- //ToDo: Tooltip desglosando puntos por sesiones-->
-                        {{ props.row.gps[gp.name] || 0 }}
-                    </template>
-                </b-table-column>
-
-                <b-table-column field="totalScore" label="Total" sortable numeric v-slot="props">
-                    <span class="has-text-weight-bold">{{ props.row.totalScore }}</span>
-                </b-table-column>
-            </b-table>
-
-            <h1 class="title is-4 mt-4">Ranking acumulado</h1>
-            <p class="content">
-                La puntuación marcada en <b-tag type="is-warning">dorado</b-tag> es la máxima acumulada para ese Gran Premio<br/>
-            </p>
-            <b-table :data="tableDataAcumulada"
-                     hoverable
-                     mobile-cards
-                     default-sort="totalScore"
-                     default-sort-direction="DESC"
-                     :row-class="(row, index) => checkRowClass(row, index)"
-            >
-
-                <b-table-column label="Pos." sortable numeric v-slot="props">
-                    <span class="has-text-weight-bold">#{{ props.index + 1 }}</span>
-                </b-table-column>
-
-                <b-table-column field="user.username" label="Nombre" sortable>
-                    <template v-slot="props">
-                        <b-tooltip
-                            position="is-right"
-                            type="is-light"
-                            append-to-body>
-                            <template v-slot:content>
-                                <UserMiniCard :user="communityMembers[props.row.user.username]" />
+                        <b-table-column v-for="gp in grandPrixList()" v-bind:key="gp.code" :field="gp.code" sortable numeric>
+                            <template v-slot:header="{ column }">
+                                <b-tooltip :label="gp.name">
+                                    {{ gp.code }}
+                                </b-tooltip>
                             </template>
+                            <template v-slot="props">
 
-                            <span class="has-text-weight-bold">{{ props.row.user.username }}</span>
-                        </b-tooltip>
-                    </template>
-                </b-table-column>
+                                <b-tooltip v-if="checkAndInsertTrophy(gp.name, props.row.gps.get(gp.name))"
+                                           :label="'Ganador de ' + gp.name"
+                                           type="is-light">
+                                    <b-icon pack="fas" type="is-info" icon="trophy"></b-icon>
+                                </b-tooltip>
 
-                <b-table-column v-for="gp in grandPrixList()" v-bind:key="gp.code"
-                                :field="gp.code"
-                                sortable numeric>
-                    <template v-slot:header="{ column }">
-                        <b-tooltip :label="gp.name">
-                            {{ gp.code }}
-                        </b-tooltip>
-                    </template>
-                    <template v-slot="props">
+                                <!-- //ToDo: Tooltip desglosando puntos por sesiones-->
+                                {{ props.row.gps.get(gp.name) || 0 }}
+                            </template>
+                        </b-table-column>
 
-                        <!-- //ToDo: Tooltip desglosando puntos por sesiones-->
-                        <b-tag type="is-warning" v-if="checkWinnerCell(gp.name, props.row.gps[gp.name])">{{ props.row.gps[gp.name] }}</b-tag>
-                        <template v-else>
-                            {{ props.row.gps[gp.name] || 0 }}
-                        </template>
-                    </template>
-                </b-table-column>
-            </b-table>
+                        <b-table-column field="totalScore" label="Total" sortable numeric v-slot="props">
+                            <span class="has-text-weight-bold">{{ props.row.totalScore }}</span>
+                        </b-table-column>
+                    </b-table>
+
+                    <h1 class="title is-4 mt-4">Puntos por Gran Premio</h1>
+                    <VueApexCharts
+                        height="400"
+                        type="line"
+                        :options="chartOptions"
+                        :series="chartSeries">
+                    </VueApexCharts>
+                </b-tab-item>
+                <b-tab-item label="Ranking acumulado">
+                    <h1 class="title is-4 mt-4">Ranking acumulado</h1>
+                    <p class="content">
+                        La puntuación marcada en <b-tag type="is-warning">dorado</b-tag> es la máxima acumulada para ese Gran Premio<br/>
+                    </p>
+                    <b-table :data="tableDataAcumulada"
+                             hoverable
+                             mobile-cards
+                             default-sort="totalScore"
+                             default-sort-direction="DESC"
+                             :row-class="(row, index) => checkRowClass(row, index)"
+                    >
+
+                        <b-table-column label="Pos." sortable numeric v-slot="props">
+                            <span class="has-text-weight-bold">#{{ props.index + 1 }}</span>
+                        </b-table-column>
+
+                        <b-table-column field="user.username" label="Nombre" sortable>
+                            <template v-slot="props">
+                                <b-tooltip
+                                    position="is-right"
+                                    type="is-light"
+                                    append-to-body>
+                                    <template v-slot:content>
+                                        <UserMiniCard :user="communityMembers.get(props.row.user.username)" />
+                                    </template>
+
+                                    <span class="has-text-weight-bold">{{ props.row.user.username }}</span>
+                                </b-tooltip>
+                            </template>
+                        </b-table-column>
+
+                        <b-table-column v-for="gp in grandPrixList()" v-bind:key="gp.code"
+                                        :field="gp.code"
+                                        sortable numeric>
+                            <template v-slot:header="{ column }">
+                                <b-tooltip :label="gp.name">
+                                    {{ gp.code }}
+                                </b-tooltip>
+                            </template>
+                            <template v-slot="props">
+
+                                <!-- //ToDo: Tooltip desglosando puntos por sesiones-->
+                                <b-tag type="is-warning" v-if="checkWinnerCell(gp.name, props.row.gps.get(gp.name))">{{ props.row.gps.get(gp.name) }}</b-tag>
+                                <template v-else>
+                                    {{ props.row.gps.get(gp.name) || 0 }}
+                                </template>
+                            </template>
+                        </b-table-column>
+                    </b-table>
+
+                    <h1 class="title is-4 mt-4">Puntos acumulados</h1>
+                    <VueApexCharts
+                        height="400"
+                        type="line"
+                        :options="chartOptions"
+                        :series="chartSeriesAcumuladas">
+                    </VueApexCharts>
+                </b-tab-item>
+                <b-tab-item label="Ranking por clasificación" disabled>
+
+                </b-tab-item>
+            </b-tabs>
+
+
 
         </template>
         <template v-else><loading /></template>
 
-        <h1 class="title is-4 mt-4">Puntos por Gran Premio</h1>
-        <VueApexCharts
-                       height="400"
-                       type="line"
-                       :options="chartOptions"
-                       :series="chartSeries">
-        </VueApexCharts>
-
-        <h1 class="title is-4 mt-4">Puntos acumulados</h1>
-        <VueApexCharts
-            height="400"
-            type="line"
-            :options="chartOptions"
-            :series="chartSeriesAcumuladas">
-        </VueApexCharts>
     </div>
 </template>
 
@@ -153,7 +157,7 @@
 
     interface TableEntry {
         'user': User;
-        'gps': Dictionary<string, number>; //ToDo: no number, any o algo para poner los puntos por cada sesión
+        'gps': Map<string, number>; //ToDo: no number, any o algo para poner los puntos por cada sesión
         'totalScore': number
     }
 
@@ -167,15 +171,15 @@
         @Auth.State("community") private currentCommunity!: Community;
         @Auth.State("user") private currentUser!: User;
 
+        private activeTab: number = 0;
         private rankingBusy: boolean = true;
-        private showEmptyGrandPrixes = false;
         private gps: Array<GrandPrix> = [];
         private gpsWithPoints: Array<string> = []; // Only names
-        private pointsByGrandPrix: Dictionary<string, Dictionary<string, number>> = {};
+
         private maxPointsInGrandPrix: Map<string, number> = new Map();
         private maxAccumulatedPointsInGrandPrix: Map<string, number> = new Map();
 
-        private communityMembers: Dictionary<string, User> = {};
+        private communityMembers: Map<string, User> = new Map();
 
         private tableData: TableEntry[] = [];
         private tableDataAcumulada: TableEntry[] = [];
@@ -202,27 +206,24 @@
 
             communityService.getMembers(this.currentCommunity).then((members) => {
                 members.forEach(miembro => {
-                    this.communityMembers[miembro.user.username] = miembro.user;
+                    this.communityMembers.set(miembro.user.username, miembro.user);
                 });
             }).then(() => {
                 scoreService.getUserPointsByGP(this.currentCommunity, competition, season).then(grandPrixPoints => {
-                    this.pointsByGrandPrix = grandPrixPoints;
 
-                    let entradas: Dictionary<string, TableEntry> = {};
-                    let entradasAcumuladas: Dictionary<string, TableEntry> = {};
-                    let tableEntry: TableEntry;
-                    Object.values(this.communityMembers).forEach((member) => {
-                        tableEntry = {
-                            gps: {},
+                    let entradas: Map<string, TableEntry> = new Map();
+                    let entradasAcumuladas: Map<string, TableEntry> = new Map();
+                    this.communityMembers.forEach((member) => {
+                        entradas.set(member!.username, {
+                            gps: new Map(),
                             totalScore: 0,
                             user: member!
-                        };
-                        entradas[member!.username] = tableEntry;
-                        entradasAcumuladas[member!.username] = {
-                            gps: {},
+                        });
+                        entradasAcumuladas.set(member!.username, {
+                            gps: new Map(),
                             totalScore: 0,
                             user: member!
-                        };;
+                        });
                     });
 
                     // Para cada gran premio
@@ -231,18 +232,17 @@
                         this.maxPointsInGrandPrix.set(gp, -Infinity);
                         this.maxAccumulatedPointsInGrandPrix.set(gp, -Infinity);
 
-                        let puntosGraficaGranPremio = [];
                         // Cada usuario en cada gran premio
                         // @ts-ignore
                         Object.entries(entry).forEach(([user, point]) => {
                             // asigno entradas a los usuarios existentes, con sus resultados en el gp iterado
-                            if (user !== undefined && entradas[user]!!) {
-                                // @ts-ignore
-                                entradas[user].gps[gp] = point;
+                            if (user !== undefined && (entradas.has(user) || entradasAcumuladas.has(user))) {
 
-                                let puntosAnteriores = [0, ...Object.values(entradasAcumuladas[user].gps)];
-                                let puntosAcumulados = point + puntosAnteriores[puntosAnteriores.length-1];
-                                entradasAcumuladas[user].gps[gp] = puntosAcumulados;
+                                entradas.get(user)!.gps.set(gp, point || 0);
+
+                                let puntosAnteriores: Array<number> = [0, ...entradasAcumuladas.get(user)!.gps.values()];
+                                let puntosAcumulados: number = point! + puntosAnteriores[puntosAnteriores.length-1] + 1;
+                                entradasAcumuladas.get(user)!.gps.set(gp, puntosAcumulados);
 
                                 if (point! > this.maxPointsInGrandPrix.get(gp)!) {
                                     this.maxPointsInGrandPrix.set(gp, point!);
@@ -260,13 +260,12 @@
                             // Agrego a tablas y gráficas sólo si ha recibido alguna puntuación en la temporada
                             if (totalScore != 0) {
 
-                                // @ts-ignore
-                                entradas[username].totalScore = totalScore || 0;
+                                entradas.get(username)!.totalScore = totalScore || 0;
 
                                 // Utilizo el mismo for de iterar usuarios para guardar las filas
                                 // Guardo las entradas creadas en las filas de la tabla
-                                this.tableData.push(entradas[username]!);
-                                this.tableDataAcumulada.push(entradasAcumuladas[username]!);
+                                this.tableData.push(entradas.get(username)!);
+                                this.tableDataAcumulada.push(entradasAcumuladas.get(username)!);
 
 
                                 // Agrego a la gráfica de puntos
@@ -274,16 +273,14 @@
                                     ...this.chartSeries,
                                     {
                                         name: username,
-                                        // @ts-ignore
-                                        data: Object.values(entradas[username].gps),
+                                        data: [...entradas.get(username)!.gps.values()],
                                     },
                                 ]
                                 this.chartSeriesAcumuladas = [
                                     ...this.chartSeriesAcumuladas,
                                     {
                                         name: username,
-                                        // @ts-ignore
-                                        data: Object.values(entradasAcumuladas[username].gps),
+                                        data: [...entradasAcumuladas.get(username)!.gps.values()],
                                     },
                                 ]
                             }
@@ -308,9 +305,7 @@
         }
 
         public grandPrixList(): Array<GrandPrix> {
-            if (!this.showEmptyGrandPrixes) return this.gps.filter((gp => this.gpsWithPoints.includes(gp.name)));
-
-            return this.gps;
+            return this.gps.filter((gp => this.gpsWithPoints.includes(gp.name)));
         }
 
         private checkAndInsertTrophy(gp: string, score: number) {
