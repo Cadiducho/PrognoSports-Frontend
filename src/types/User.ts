@@ -26,7 +26,7 @@ export interface UserResume {
     averageInQualis: number;
     raceParticipations: number;
     qualiParticipations: number;
-    position: number;
+    standing: number;
     wonQualifySessions: number;
     wonRaceSessions: number;
     wonGrandPrixes: number;

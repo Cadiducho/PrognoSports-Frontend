@@ -15,11 +15,11 @@
                             <div class="level-item has-text-centered">
                                 <b-tooltip multilined type="is-light">
                                     <template v-slot:content>
-                                        Esta funcionalidad aún no está implementada
+                                        Eres el {{ userResume.standing }}º en el ranking de esta comunidad
                                     </template>
 
                                     <p class="heading">Puesto</p>
-                                    <p class="title">?</p>
+                                    <p class="title">{{ userResume.standing }}º</p>
                                 </b-tooltip>
                             </div>
                             <div class="level-item has-text-centered">
@@ -105,7 +105,7 @@
             pointsInRaces: 0,
             qualiParticipations: 0,
             raceParticipations: 0,
-            position: 0,
+            standing: 0,
             wonGrandPrixes: 0, wonQualifySessions: 0, wonRaceSessions: 0,
             points: 0
         };

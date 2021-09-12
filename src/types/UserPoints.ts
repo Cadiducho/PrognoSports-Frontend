@@ -7,5 +7,6 @@ export interface UserPoints {
     pointsInQualify: number;
     pointsInRace: number;
     pointsInGP: number;
+    standings: number,
     accumulatedPoints: number;
 }
