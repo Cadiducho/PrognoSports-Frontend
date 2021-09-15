@@ -6,6 +6,7 @@ import {RaceSession} from "@/types/RaceSession";
 import {Dictionary} from "@/types/Dictionary";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
+import {User} from "@/types/User";
 
 export class ScoreService {
 
@@ -21,7 +22,7 @@ export class ScoreService {
      * @param competition
      * @param season
      */
-    public async getUserPointsByGP(community: Community, competition: Competition, season: Season): Promise<Dictionary<string, Dictionary<string, number>>> {
+    public async getUserPointsByGP(community: Community, competition: Competition, season: Season): Promise<Dictionary<string, Dictionary<string, UserPoints>>> {
         return await axios.get(`/communities/${community.id}/${competition.id}/${season.id}/points`);
     }
 
