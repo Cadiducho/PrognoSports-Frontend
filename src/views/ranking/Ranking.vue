@@ -37,7 +37,7 @@
                             </template>
                         </b-table-column>
 
-                        <b-table-column v-for="gp in grandPrixList()" v-bind:key="gp.code" :field="gp.code" sortable numeric>
+                        <b-table-column v-for="gp in grandPrixList()" v-bind:key="gp.code" field="pointsInGP" sortable numeric>
                             <template v-slot:header="{ column }">
                                 <b-tooltip :label="gp.name">
                                     {{ gp.code }}
@@ -45,14 +45,20 @@
                             </template>
                             <template v-slot="props">
 
-                                <b-tooltip v-if="checkAndInsertTrophy(gp.name, props.row.gps.get(gp.name))"
+                                <b-tooltip v-if="checkAndInsertTrophy(gp.name, props.row.gps.get(gp.name).pointsInGP)"
                                            :label="'Ganador de ' + gp.name"
                                            type="is-light">
                                     <b-icon pack="fas" type="is-info" icon="trophy"></b-icon>
                                 </b-tooltip>
 
-                                <!-- //ToDo: Tooltip desglosando puntos por sesiones-->
-                                {{ props.row.gps.get(gp.name) || 0 }}
+                                <PointsTooltipComponent
+                                    v-if="props.row.gps.has(gp.name)"
+                                    :gp-name="gp.name"
+                                    :user-points="props.row.gps.get(gp.name)"
+                                    :display-points="props.row.gps.get(gp.name).pointsInGP" />
+                                <template v-else>
+                                    0 :(
+                                </template>
                             </template>
                         </b-table-column>
 
@@ -112,10 +118,24 @@
                             <template v-slot="props">
 
                                 <!-- //ToDo: Tooltip desglosando puntos por sesiones-->
-                                <b-tag type="is-warning" v-if="checkWinnerCell(gp.name, props.row.gps.get(gp.name))">{{ props.row.gps.get(gp.name) }}</b-tag>
-                                <template v-else>
-                                    {{ props.row.gps.get(gp.name) || 0 }}
+                                <template v-if="props.row.gps.has(gp.name)">
+                                    <b-tag type="is-warning" v-if="checkWinnerCell(gp.name, props.row.gps.get(gp.name).accumulatedPoints)">
+                                        <PointsTooltipComponent
+                                            :gp-name="gp.name"
+                                            :user-points="props.row.gps.get(gp.name)"
+                                            :display-points="props.row.gps.get(gp.name).accumulatedPoints" />
+                                    </b-tag>
+                                    <template v-else>
+                                        <PointsTooltipComponent
+                                            :gp-name="gp.name"
+                                            :user-points="props.row.gps.get(gp.name)"
+                                            :display-points="props.row.gps.get(gp.name).accumulatedPoints" />
+                                    </template>
                                 </template>
+                                <template v-else>
+                                    0 :(
+                                </template>
+
                             </template>
                         </b-table-column>
                     </b-table>
