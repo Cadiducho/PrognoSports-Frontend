@@ -174,17 +174,19 @@
     import {namespace} from "vuex-class";
     import {Dictionary} from "@/types/Dictionary";
     import VueApexCharts from "vue-apexcharts";
+    import {UserPoints} from "@/types/UserPoints";
+    import PointsTooltipComponent from "@/components/ranking/PointsTooltipComponent.vue";
 
     interface TableEntry {
         'user': User;
-        'gps': Map<string, number>; //ToDo: no number, any o algo para poner los puntos por cada sesión
+        'gps': Map<string, UserPoints>;
         'totalScore': number
     }
 
     const Auth = namespace('Auth')
     @Component({
         components: {
-            PrognoPageTitle, UserMiniCard, VueApexCharts
+            PrognoPageTitle, UserMiniCard, VueApexCharts, PointsTooltipComponent
         }
     })
     export default class Ranking extends Vue {
@@ -253,25 +255,22 @@
                         this.maxAccumulatedPointsInGrandPrix.set(gp, -Infinity);
 
                         // Cada usuario en cada gran premio
-                        // @ts-ignore
-                        Object.entries(entry).forEach(([user, point]) => {
+                        for (let [slot, userPoints] of Object.entries(entry!)) {
+                            let user = userPoints!.user!.username;
                             // asigno entradas a los usuarios existentes, con sus resultados en el gp iterado
                             if (user !== undefined && (entradas.has(user) || entradasAcumuladas.has(user))) {
 
-                                entradas.get(user)!.gps.set(gp, point || 0);
+                                entradas.get(user)!.gps.set(gp, userPoints!);
+                                entradasAcumuladas.get(user)!.gps.set(gp, userPoints!);
 
-                                let puntosAnteriores: Array<number> = [0, ...entradasAcumuladas.get(user)!.gps.values()];
-                                let puntosAcumulados: number = point! + puntosAnteriores[puntosAnteriores.length-1] + 1;
-                                entradasAcumuladas.get(user)!.gps.set(gp, puntosAcumulados);
-
-                                if (point! > this.maxPointsInGrandPrix.get(gp)!) {
-                                    this.maxPointsInGrandPrix.set(gp, point!);
+                                if (userPoints!.pointsInGP! > this.maxPointsInGrandPrix.get(gp)!) {
+                                    this.maxPointsInGrandPrix.set(gp, userPoints!.pointsInGP!);
                                 }
-                                if (puntosAcumulados > this.maxAccumulatedPointsInGrandPrix.get(gp)!) {
-                                    this.maxAccumulatedPointsInGrandPrix.set(gp, puntosAcumulados);
+                                if (userPoints!.accumulatedPoints > this.maxAccumulatedPointsInGrandPrix.get(gp)!) {
+                                    this.maxAccumulatedPointsInGrandPrix.set(gp, userPoints!.accumulatedPoints!);
                                 }
                             }
-                        });
+                        }
                     });
 
                     scoreService.getTotalUserPoints(this.currentCommunity, competition, season).then(points => {
@@ -288,19 +287,28 @@
                                 this.tableDataAcumulada.push(entradasAcumuladas.get(username)!);
 
 
+                                let chartData = [];
+                                let accumulatedChartData = [];
+                                for (let uPoints of entradas.get(username)!.gps.values()) {
+                                    chartData.push(uPoints.pointsInGP);
+                                }
+                                for (let uPoints of entradasAcumuladas.get(username)!.gps.values()) {
+                                    accumulatedChartData.push(uPoints.accumulatedPoints);
+                                }
+                                for (let uPoints of entradas.get(username)!.gps.values()) {
                                 // Agrego a la gráfica de puntos
                                 this.chartSeries = [
                                     ...this.chartSeries,
                                     {
                                         name: username,
-                                        data: [...entradas.get(username)!.gps.values()],
+                                        data: chartData,
                                     },
                                 ]
                                 this.chartSeriesAcumuladas = [
                                     ...this.chartSeriesAcumuladas,
                                     {
                                         name: username,
-                                        data: [...entradasAcumuladas.get(username)!.gps.values()],
+                                        data: accumulatedChartData,
                                     },
                                 ]
                             }
@@ -335,7 +343,6 @@
         private checkWinnerCell(gp: string, score: number) {
             return (this.maxAccumulatedPointsInGrandPrix.get(gp)! == score);
         }
-
 
         private chartOptions: any = {
             chart: {
