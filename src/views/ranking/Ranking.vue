@@ -148,7 +148,66 @@
                         :series="chartSeriesAcumuladas">
                     </VueApexCharts>
                 </b-tab-item>
-                <b-tab-item label="Ranking por clasificación" disabled>
+                <b-tab-item label="Ranking por clasificación">
+                    <h1 class="title is-4 mt-4">Clasificaciones</h1>
+                    <b-table :data="tableDataAcumulada"
+                             hoverable
+                             mobile-cards
+                             default-sort="totalScore"
+                             default-sort-direction="DESC"
+                             :row-class="(row, index) => checkRowClass(row, index)"
+                    >
+
+                        <b-table-column field="user.username" label="Nombre" sortable>
+                            <template v-slot="props">
+                                <b-tooltip
+                                    position="is-right"
+                                    type="is-light"
+                                    append-to-body>
+                                    <template v-slot:content>
+                                        <UserMiniCard :user="communityMembers.get(props.row.user.username)" />
+                                    </template>
+
+                                    <span class="has-text-weight-bold">{{ props.row.user.username }}</span>
+                                </b-tooltip>
+                            </template>
+                        </b-table-column>
+
+                        <b-table-column v-for="gp in grandPrixList()" v-bind:key="gp.code"
+                                        :field="gp.code"
+                                        sortable numeric>
+                            <template v-slot:header="{ column }">
+                                <b-tooltip :label="gp.name">
+                                    {{ gp.code }}
+                                </b-tooltip>
+                            </template>
+                            <template v-slot="props">
+
+                                <!-- //ToDo: Tooltip desglosando puntos por sesiones-->
+                                <template v-if="props.row.gps.has(gp.name)">
+                                    <b-tag type="is-warning" v-if="props.row.gps.get(gp.name).standings === 1">
+                                        {{ props.row.gps.get(gp.name).standings }}
+                                    </b-tag>
+                                    <template v-else>
+                                        {{ props.row.gps.get(gp.name).standings }}
+                                    </template>
+                                </template>
+                                <template v-else>
+                                    0 :(
+                                </template>
+
+                            </template>
+                        </b-table-column>
+                    </b-table>
+
+                    <VueApexCharts
+                        height="400"
+                        type="line"
+                        :options="chartStandingsOptions"
+                        :series="chartStandings">
+                    </VueApexCharts>
+                </b-tab-item>
+                <b-tab-item label="Estadisticas de usuarios" disabled>
 
                 </b-tab-item>
             </b-tabs>
@@ -208,6 +267,7 @@
 
         private chartSeries: any = [];
         private chartSeriesAcumuladas: any = [];
+        private chartStandings: any = [];
 
         created() {
             // FixMe: Temporadas y competición de verdad, como en /gps
@@ -223,6 +283,15 @@
                     xaxis: {
                         categories: [...this.gps.map(gp => gp.code)],
                     }
+                }
+                this.chartStandingsOptions = {
+                    ...this.chartOptions,
+                    yaxis: {
+                        reversed: true,
+                        title: {
+                            text: 'Posición'
+                        }
+                    },
                 }
             });
 
@@ -289,6 +358,7 @@
 
                                 let chartData = [];
                                 let accumulatedChartData = [];
+                                let standingsChartData = [];
                                 for (let uPoints of entradas.get(username)!.gps.values()) {
                                     chartData.push(uPoints.pointsInGP);
                                 }
@@ -296,6 +366,8 @@
                                     accumulatedChartData.push(uPoints.accumulatedPoints);
                                 }
                                 for (let uPoints of entradas.get(username)!.gps.values()) {
+                                    standingsChartData.push(uPoints.standings);
+                                }
                                 // Agrego a la gráfica de puntos
                                 this.chartSeries = [
                                     ...this.chartSeries,
@@ -309,6 +381,13 @@
                                     {
                                         name: username,
                                         data: accumulatedChartData,
+                                    },
+                                ]
+                                this.chartStandings = [
+                                    ...this.chartStandings,
+                                    {
+                                        name: username,
+                                        data: standingsChartData,
                                     },
                                 ]
                             }
@@ -389,6 +468,7 @@
             },
         };
 
+        private chartStandingsOptions: any = {};
     }
 </script>
 
