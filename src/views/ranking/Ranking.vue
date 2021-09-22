@@ -361,12 +361,10 @@
                                 let standingsChartData = [];
                                 for (let uPoints of entradas.get(username)!.gps.values()) {
                                     chartData.push(uPoints.pointsInGP);
+                                    standingsChartData.push(uPoints.standings);
                                 }
                                 for (let uPoints of entradasAcumuladas.get(username)!.gps.values()) {
                                     accumulatedChartData.push(uPoints.accumulatedPoints);
-                                }
-                                for (let uPoints of entradas.get(username)!.gps.values()) {
-                                    standingsChartData.push(uPoints.standings);
                                 }
                                 // Agrego a la gráfica de puntos
                                 this.chartSeries = [
