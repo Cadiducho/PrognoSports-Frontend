@@ -1,9 +1,9 @@
 PrognoSports - Frontend
 =================
 
-Cliente web de PrgonoSports.com, desarrollado con [Vue](https://vuejs.org/).
+Cliente web de [PrognoSports.com](https://beta.prognosports.com), desarrollado con [Vue](https://vuejs.org/).
 
-Este cliente se conecta con PrognoSports mediante [su API pública](https://docs.prognosports.com/).
+Este cliente se conecta con PrognoSports mediante [su API pública](https://api.prognosports.com/docs).
 
 Servidor de desarrollo
 ----------------
