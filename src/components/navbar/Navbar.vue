@@ -32,6 +32,11 @@
                     <CommunitiesDropdown v-if="currentCommunity"/>
                     <NotificationsDropdown />
                     <AddElementsDropdown />
+                    <a class="navbar-item nav-tag" slot="trigger" role="button" @click="toggleDarkMode">
+                        <span class="icon">
+                            <i class="material-icons display-inline-block align-middle">{{ darkModeToggleIcon }}</i>
+                        </span>
+                    </a>
                     <AvatarComponent/>
                 </div>
             </div>
@@ -49,6 +54,7 @@
     import {User} from "@/types/User";
     import {namespace} from 'vuex-class'
     const Auth = namespace("Auth");
+    const Style = namespace("Style");
 
     @Component({
         components: {
@@ -61,5 +67,11 @@
     export default class Navbar extends Vue {
         @Auth.State("user") private currentUser!: User;
         @Auth.State("community") private currentCommunity!: Community;
+        @Style.Getter private darkModeToggleIcon?: string;
+        @Style.Action darkModeToggle!: () => void;
+
+        public toggleDarkMode() {
+            this.darkModeToggle();
+        }
     }
 </script>

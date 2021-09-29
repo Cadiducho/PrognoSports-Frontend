@@ -41,6 +41,7 @@
     import {User} from "@/types/User";
     import {Community} from "@/types/Community";
     const Auth = namespace("Auth");
+    const Style = namespace("Style");
 
     @Component({
         components: {
@@ -60,6 +61,13 @@
 
         @Auth.Action
         private communityRequest!: (payload: {communityId: number}) => Promise<Community>;
+
+        @Style.Action private setDarkModeStyle!: () => void;
+
+        mounted() {
+            // Activar el modo oscuro, si en sus preferencias en Vuex Store está así puesto
+            this.setDarkModeStyle();
+        }
 
         updated() {
             if (this.isLoggedIn) {
