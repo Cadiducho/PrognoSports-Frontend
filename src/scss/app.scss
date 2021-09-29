@@ -1,5 +1,6 @@
 // Import Bulma's core
 @import "~bulma/sass/utilities/_all";
+@import "theme";
 
 @import "ui/prognosection";
 @import "ui/prognocontainer";
@@ -9,5 +10,7 @@
 @import "~bulma";
 @import "~buefy/src/scss/buefy";
 @import "~bulma-block-list/src/block-list";
+
+@import "dark-mode";
 
 @import '~leaflet/dist/leaflet.css';
