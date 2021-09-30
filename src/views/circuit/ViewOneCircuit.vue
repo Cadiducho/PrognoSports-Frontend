@@ -33,19 +33,19 @@
                         <div class="card-content">
                             <div class="media">
                                 <div class="media-content">
-                                    <p class="title is-4">{{circuit.name}} {{ this.variant.name !== 'GrandPrix' ? ('- ' + circuit.variant.name) : ""}}</p>
+                                    <p class="title is-4">{{circuit.name}} {{ hasVariant(circuit) ? ('- ' + circuit.variant.name) : ""}}</p>
                                     <p class="subtitle is-6">{{circuit.locality}}, {{circuit.country}}</p>
                                 </div>
                             </div>
 
                             <div class="content">
-                                <p v-if="this.variant.name !== 'GrandPrix'" class="card-text">
+                                <p v-if="hasVariant(circuit)" class="card-text">
                                     <i class="fas fa-fw fa-random mr-2"></i>
                                     <b>Variante: </b>{{circuit.variant.name}}
                                 </p>
                                 <p class="card-text">
                                     <i class="fas fa-fw fa-map-marked-alt mr-2"></i>
-                                    <b>Ubicación: </b>{{circuit.latitude}}, {{circuit.longitude}}
+                                    <b>Ubicación: </b>{{circuit.latitude}}º, {{circuit.longitude}}º
                                 </p>
                                 <p class="card-text">
                                     <i class="fas fa-fw fa-ruler mr-2"></i>
@@ -142,6 +142,7 @@ import CircuitCard from "@/components/gps/CircuitCard.vue";
 import { LatLng, latLng} from "leaflet";
 import {LMap, LTileLayer, LMarker, LPopup, LTooltip} from "vue2-leaflet";
 import {GrandPrix} from "@/types/GrandPrix";
+import {hasVariant} from "@/utils";
 
 @Component<ViewOneCircuit>({
     components: {
@@ -174,7 +175,7 @@ export default class ViewOneCircuit extends Vue {
     created() {
         let circuitId = this.$route.params.circuit;
         let variantId = this.$route.params.variant;
-        if (this.thereIsNotVariant(variantId)) {
+        if (!this.thereIsVariant(variantId)) {
             this.variant = {name: "grandprix"} as CircuitVariant;
         } else {
             this.variant = {name: variantId} as CircuitVariant;
@@ -198,13 +199,21 @@ export default class ViewOneCircuit extends Vue {
         })
     }
 
-    private thereIsNotVariant(variantId: string) {
-        return (variantId === undefined || variantId === "grandprix");
+    /**
+     * Comprobar si un texto que debería ser una Variante de Circuito es válida o no
+     * @param variantId la supuesta variante
+     * @return True si el parámetro es undefined o es igual a "grandprix"
+     */
+    private thereIsVariant(variantId: string): boolean {
+        return !(variantId === undefined || variantId === "grandprix");
     }
 
-    get circuitName() {
+    /**
+     * Devuelve el nombre del circuito y, si es necesario, especificando su nombre de variante
+     */
+    get circuitName(): string {
         if (this.thereIsCircuit) {
-            if (this.variant.name !== "GrandPrix") {
+            if (hasVariant(this.circuit)) {
                 return this.circuit.name + " (" + this.variant.name + ")";
             }
             return this.circuit.name;
@@ -214,7 +223,7 @@ export default class ViewOneCircuit extends Vue {
     }
 
     get getRawCircuitName() {
-        let variant = !this.thereIsNotVariant(this.$route.params.variant) ? ' y la variante ' + this.$route.params.variant : "";
+        let variant = this.thereIsVariant(this.$route.params.variant) ? ' y la variante ' + this.$route.params.variant : "";
         return this.$route.params.circuit + variant;
     }
 

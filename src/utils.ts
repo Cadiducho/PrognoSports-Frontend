@@ -12,14 +12,29 @@ import {RaceSession} from "@/types/RaceSession";
 import dayjs from "dayjs";
 import {GrandPrix} from "@/types/GrandPrix";
 
+/**
+ * Compara un {@link UserRank} para determinar si es administrador o no
+ * @param rank El rango a comparar
+ * @return True si es administrador
+ */
 export function isAdmin(rank: UserRank): boolean {
     return rank.name.toLowerCase() === "admin";
 }
 
+/**
+ * Comprobar si un circuito tiene una variante válida y diferente a la por defecto, "grandprix"
+ * @param circuit El circuito
+ * @return True si es una variante válida y diferente
+ */
 export function hasVariant(circuit: Circuit): boolean {
-    return circuit.variant.name !== "grandprix";
+    return circuit.variant !== undefined && circuit.variant.name !== "grandprix";
 }
 
+/**
+ * Obtener la cantidad de posiciones a pronosticar para una comunidad y sesión de Gran Premio concreta
+ * @param currentCommunity La comunidad
+ * @param session La sesión de Gran Premio
+ */
 export function cantidadPilotosPronosticados(currentCommunity: Community, session: RaceSession): number {
     switch (session) {
         case RaceSession.QUALIFY:
@@ -30,6 +45,12 @@ export function cantidadPilotosPronosticados(currentCommunity: Community, sessio
     return 0;
 }
 
+/**
+ * Comprobar si el momento actual es anterior a la fecha de cierre de un Gran Premio en una sesión concreta
+ * @param grandPrix El gran premio
+ * @param session La sesión
+ * @return True si es antes del cierre de la sesión
+ */
 export function isBeforeEndDate(grandPrix: GrandPrix, session: RaceSession): boolean {
     if (session === "QUALIFY") {
         return dayjs().isBefore(grandPrix.qualiTime);
