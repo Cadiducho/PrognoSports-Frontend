@@ -189,11 +189,16 @@
                                         {{ props.row.gps.get(gp.name).standings }}
                                     </b-tag>
                                     <template v-else>
-                                        {{ props.row.gps.get(gp.name).standings }}
+                                        <template v-if="props.row.gps.get(gp.name).standings >= 1">
+                                            {{ props.row.gps.get(gp.name).standings }}
+                                        </template>
+                                        <template v-else>
+                                            --
+                                        </template>
                                     </template>
                                 </template>
                                 <template v-else>
-                                    0 :(
+                                    :(
                                 </template>
 
                             </template>
@@ -282,7 +287,7 @@
                     ...this.chartOptions,
                     xaxis: {
                         categories: [...this.gps.map(gp => gp.code)],
-                    }
+                    },
                 }
                 this.chartStandingsOptions = {
                     ...this.chartOptions,
@@ -290,6 +295,13 @@
                         reversed: true,
                         title: {
                             text: 'Posición'
+                        },
+                        min: 1,
+                        tickAmount: 1,
+                        labels: {
+                            formatter: function (val: number) {
+                                return val.toFixed(0) + "º"; // Sin decimal y con símbolo de ordinario
+                            }
                         }
                     },
                 }
@@ -361,7 +373,10 @@
                                 let standingsChartData = [];
                                 for (let uPoints of entradas.get(username)!.gps.values()) {
                                     chartData.push(uPoints.pointsInGP);
-                                    standingsChartData.push(uPoints.standings);
+
+                                    // Null para no mostrar si no existe una standing, por ejemplo, no tiene resultados las primeras carreras
+                                    let standing = (uPoints.standings > 0) ? uPoints.standings : null;
+                                    standingsChartData.push(standing);
                                 }
                                 for (let uPoints of entradasAcumuladas.get(username)!.gps.values()) {
                                     accumulatedChartData.push(uPoints.accumulatedPoints);
