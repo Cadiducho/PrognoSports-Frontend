@@ -8,5 +8,6 @@ export interface UserPoints {
     pointsInRace: number;
     pointsInGP: number;
     standings: number,
+    previousStandings: number;
     accumulatedPoints: number;
 }
