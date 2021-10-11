@@ -135,9 +135,16 @@ import EventBus from "@/plugins/eventbus";
 const Auth = namespace('Auth')
 
 interface TableType {
-    'user': User;
-    'tipps': Array<RaceResult>;
-    'score': {'qualify': number, 'race': number, 'gp': number, 'accumulated': number}
+    user: User;
+    tipps: Array<RaceResult>;
+    score: {
+        qualify: number,
+        race: number,
+        gp: number,
+        accumulated: number,
+        standings: number,
+        previousStandings: number
+    }
 }
 
 @Component({
@@ -198,13 +205,15 @@ export default class ScoreComponents extends Vue {
 
                 this.communityMembers.forEach(comUser => {
                     let rowData: TableType = {
-                        'user': comUser.user,
-                        'tipps': [],
-                        'score': {
-                            'qualify': 0,
-                            'race': 0,
-                            'gp': 0,
-                            'accumulated': 0,
+                        user: comUser.user,
+                        tipps: [],
+                        score: {
+                            qualify: 0,
+                            race: 0,
+                            gp: 0,
+                            accumulated: 0,
+                            standings: 0,
+                            previousStandings: 0,
                         },
                     }
 
@@ -220,6 +229,9 @@ export default class ScoreComponents extends Vue {
 
                         rowData.score.gp = this.userPoints[comUser.user.id]!.pointsInGP || 0;
                         rowData.score.accumulated = this.userPoints[comUser.user.id]!.accumulatedPoints || 0;
+
+                        rowData.score.standings = this.userPoints[comUser.user.id]!.standings || Number.MAX_SAFE_INTEGER;
+                        rowData.score.previousStandings = this.userPoints[comUser.user.id]!.previousStandings || 0;
                     }
 
                     this.tableData.push(rowData);
