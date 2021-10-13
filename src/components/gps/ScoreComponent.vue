@@ -25,6 +25,25 @@
                      :row-class="(row, index) => checkRowClass(row, index)"
             >
 
+                <b-table-column field="score.standings" label="Pos." width="70" sortable numeric>
+                    <template v-slot="props">
+                        <!-- Compruebo si ya tiene un nuevo ranking para este GP. En caso de tenerlo, lo comparo con el anterior y añado una flecha de cambio si es necesario -->
+                        <!-- Mostrar ranking, si lo tiene (menor que Number.MAX_SAFE_INTEGER) -->
+                        <span v-if="props.row.score.standings < Number.MAX_SAFE_INTEGER"
+                              class="">
+                            {{ props.row.score.standings }}º
+                        </span>
+                        <!-- Si no hay standings actuales en este gp, pero existe un previo, mostrar ese -->
+                        <span v-else-if="props.row.score.previousStandings > 0">
+                            {{ props.row.score.previousStandings }}º
+                        </span>
+                        <!-- en caso contrario no mostrar ningún número, Number.MAX_SAFE_INTEGERº queda raro -->
+                        <template v-else>
+                            -
+                        </template>
+                    </template>
+                </b-table-column>
+
                 <b-table-column field="user.username" label="Nombre" sortable>
                     <template v-slot="props">
                         <b-tooltip
