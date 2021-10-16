@@ -25,6 +25,11 @@ const routes = [
         component: () => import('@/views/circuit/ViewOneCircuit.vue'),
     },
     {
+        path: '/new/circuit',
+        name: 'circuitCreate',
+        component: () => import('@/views/circuit/CreateCircuit.vue'),
+    },
+    {
         path: '/communities',
         name: 'communitiesList',
         component: () => import('@/views/communities/ViewCommunitiesList.vue'),
