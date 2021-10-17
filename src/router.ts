@@ -76,6 +76,11 @@ const routes = [
         component: () => import('@/views/communities/CreateCommunity.vue'),
     },
     {
+        path: '/new/season',
+        name: 'seasonCreate',
+        component: () => import('@/views/seasons/CreateSeason.vue'),
+    },
+    {
         path: '/register',
         name: 'register',
         component: () => import('@/views/login/Register.vue'),

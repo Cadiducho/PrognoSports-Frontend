@@ -9,6 +9,7 @@ import {DriversService} from "@/_services/drivers.service";
 import {CircuitService} from './circuit.service';
 import {AuthService} from "@/_services/auth.service";
 import {ScoreService} from "@/_services/score.service";
+import {CompetitionService} from "@/_services/competition.service";
 
 function authHeader() {
     let token = localStorage.getItem('user-token');
@@ -51,9 +52,10 @@ axios.interceptors.response.use(function (response) {
 export const authService = new AuthService();
 export const userService = new UserService();
 export const communityService = new CommunityService();
+export const competitionService = new CompetitionService();
+export const circuitService = new CircuitService();
 export const notificationService = new NotificationService();
 export const grandPrixService = new GrandprixService();
 export const driversService = new DriversService();
 export const seasonService = new SeasonService();
 export const scoreService = new ScoreService();
-export const circuitService = new CircuitService();
