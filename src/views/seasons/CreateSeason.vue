@@ -1,5 +1,5 @@
 <template>
-    <div id="createCommunity" class="box">
+    <div id="createSeason" class="box">
         <PrognoPageTitle class="mb-5" name="Crear temporada" />
 
         <section v-if="isAdmin(currentUser.rank)">
@@ -37,14 +37,14 @@
                     <AlertInvalidData :object="createdSeason.totalEvents" message="No has introducido número de eventos para esta temporada" />
                     <AlertInvalidData :object="createdSeason.competition" message="No has introducido competición para esta temporada" />
 
+                    <div class="notification has-background-primary">
+                        Revisa los datos, se va a crear la siguiente temporada
+                    </div>
+
                     <div class="content">
                         <p class="card-text"><b>Nombre de la temporada: </b>{{ createdSeason.name }}</p>
                         <p class="card-text"><b>Eventos de la temporada: </b>{{ createdSeason.totalEvents }}</p>
                         <p class="card-text" v-if="createdSeason.competition"><b>Competición: </b>{{ createdSeason.competition.name}}</p>
-                    </div>
-
-                    <div class="notification has-background-primary">
-                        Revisa los datos, se va a crear la siguiente temporada
                     </div>
 
                     <hr/>

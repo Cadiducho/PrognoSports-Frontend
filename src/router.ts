@@ -81,6 +81,11 @@ const routes = [
         component: () => import('@/views/seasons/CreateSeason.vue'),
     },
     {
+        path: '/new/driver',
+        name: 'driverCreate',
+        component: () => import('@/views/drivers/CreateDriver.vue'),
+    },
+    {
         path: '/register',
         name: 'register',
         component: () => import('@/views/login/Register.vue'),
