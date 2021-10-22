@@ -120,7 +120,7 @@ export default class CreateSeason extends Vue {
             });
 
             this.$router.push({
-                name: 'home'
+                name: 'adminSeasons'
             })
         }).catch((error) => {
             this.$buefy.toast.open({

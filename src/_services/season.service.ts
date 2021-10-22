@@ -9,7 +9,7 @@ export class SeasonService {
         return await axios.get(`/seasons/current/f1`); //fixme
     }
 
-    public async getSeason(seasonId: number): Promise<Season> {
+    public async getSeason(seasonId: string): Promise<Season> {
         return await axios.get(`/seasons/${seasonId}`)
     }
 
@@ -19,5 +19,13 @@ export class SeasonService {
 
     public async createSeason(data: any): Promise<Season> {
         return await axios.post(`/seasons`, data)
+    }
+
+    public async editSeason(season: Season, data: { totalEvents: number; name: string; competition: number }): Promise<Season> {
+        return await axios.put(`/seasons/${season.id}`, data)
+    }
+
+    public async deleteSeason(season: Season): Promise<boolean> {
+        return await axios.delete(`/seasons/${season.id}`)
     }
 }

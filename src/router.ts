@@ -4,6 +4,8 @@ import store from '@/_store';
 Vue.use(VueRouter);
 
 const routes = [
+
+    // Landing
     {
         path: '/',
         name: 'landing',
@@ -13,6 +15,18 @@ const routes = [
         path: '/home',
         name: 'home',
         component: () => import('@/views/home/Home.vue'),
+    },
+
+    // Admin
+    {
+        path: '/admin',
+        name: 'admin',
+        component: () => import('@/views/admin/AdminPage.vue'),
+    },
+    {
+        path: '/admin/seasons',
+        name: 'adminSeasons',
+        component: () => import('@/views/admin/seasons/SeasonsList.vue'),
     },
     {
         path: '/circuits',

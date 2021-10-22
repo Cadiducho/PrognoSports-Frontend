@@ -26,6 +26,9 @@
                     <router-link class="navbar-item" to="/ranking">
                         Ranking
                     </router-link>
+                    <router-link v-if="isAdmin(currentUser.rank)" class="navbar-item" to="/admin">
+                        Admin
+                    </router-link>
                 </div>
 
                 <div class="navbar-end" v-if="currentUser">
