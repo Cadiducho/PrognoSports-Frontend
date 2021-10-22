@@ -103,7 +103,7 @@
                                             {{gp.circuit.name}}, {{gp.circuit.locality}} ({{gp.circuit.country}})
                                         </p>
                                         <p class="subtitle">
-                                            Carrera del {{gp.raceTime | humanDate}} ({{gp.raceTime | dateDiff }})
+                                            Carrera del {{gp.raceTime | humanDateTime}} ({{gp.raceTime | dateDiff }})
                                         </p>
                                     </div>
 

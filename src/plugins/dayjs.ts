@@ -17,9 +17,12 @@ export function loadFilters(Vue: any) {
         return dayjs(date).fromNow();
     });
     Vue.filter('humanDate', function (date: Date, timezone: string = "Europe/Madrid"): string {
+        return dayjs.tz(date, timezone).format('D/M/YYYY');
+    });
+    Vue.filter('humanDateTime', function (date: Date, timezone: string = "Europe/Madrid"): string {
         return dayjs.tz(date, timezone).format('D/M/YY [a las] H:mm');
     });
-    Vue.filter('humanDateMinusFiveMinutes', function (date: Date, timezone: string = "Europe/Madrid"): string {
+    Vue.filter('humanDateTimeMinusFiveMinutes', function (date: Date, timezone: string = "Europe/Madrid"): string {
         return dayjs.tz(date, timezone).subtract(5, 'minute').format('D/M/YY [a las] H:mm');
     });
     Vue.filter('isBefore', function (date: Date): boolean {

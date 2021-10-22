@@ -22,7 +22,7 @@
                             </div>
 
                             <div class="content">
-                                <p class="card-text"><b>Fecha de creación: </b>{{community.created | humanDate}}</p>
+                                <p class="card-text"><b>Fecha de creación: </b>{{community.created | humanDateTime}}</p>
                                 <p class="card-text">
                                     <b>Creador: </b>
                                     <router-link :to="{name: 'user', params: { user: community.owner.username}}">
@@ -100,7 +100,7 @@
                                                             <span class="icon">
                                                                 <i class="fas fa-calendar"></i>
                                                             </span>
-                                                            <span>Se unió el {{ cu.user.created | humanDate }}</span>
+                                                            <span>Se unió el {{ cu.user.created | humanDateTime }}</span>
                                                         </span>
                                                     </p>
                                                 </div>

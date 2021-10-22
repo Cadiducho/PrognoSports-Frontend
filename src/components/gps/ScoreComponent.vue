@@ -11,7 +11,7 @@
             </p>
 
             <b-notification v-if="currentUser.preferences['hide-tipps-until-start'] === true" type="is-info is-light" aria-close-label="Close notification">
-                Tus pronósticos están ocultos al resto de usuarios hasta {{ (this.session === "RACE" ? gp.raceTime : gp.qualiTime) | humanDateMinusFiveMinutes}}
+                Tus pronósticos están ocultos al resto de usuarios hasta {{ (this.session === "RACE" ? gp.raceTime : gp.qualiTime) | humanDateTimeMinusFiveMinutes}}
             </b-notification>
             <b-notification v-if="!thereAreFinishResults" type="is-info is-light" aria-close-label="Close notification">
                 Aún no hay resultados confirmados para esta sesión

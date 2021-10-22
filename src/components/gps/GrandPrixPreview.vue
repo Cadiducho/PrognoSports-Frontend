@@ -13,8 +13,8 @@
                 </div>
             </div>
             <p class="content block">
-                Clasificación: {{gp.qualiTime | humanDate }} ({{gp.qualiTime | dateDiff }}) <br>
-                Carrera: {{gp.raceTime | humanDate}} ({{gp.raceTime | dateDiff }})
+                Clasificación: {{gp.qualiTime | humanDateTime }} ({{gp.qualiTime | dateDiff }}) <br>
+                Carrera: {{gp.raceTime | humanDateTime}} ({{gp.raceTime | dateDiff }})
             </p>
             <footer class="card-footer">
                 <b-button tag="router-link"

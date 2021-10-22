@@ -25,7 +25,7 @@
                 Número de apuestas en la quali: {{ community.qualify_positions_predicted }} <br/>
                 Número de apuestas en carera: {{ community.race_positions_predicted }} <br/>
                 <br>
-                <i>Comunidad creada el <time :datetime="community.created">{{ community.created | humanDate }}</time></i>
+                <i>Comunidad creada el <time :datetime="community.created">{{ community.created | humanDateTime }}</time></i>
                 <br />
                 <div class="buttons mt-2">
                     <b-button v-if="community.open && !isUserInCommunity" type="is-success" @click="tryJoinCommunity">Unirse</b-button>

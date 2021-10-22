@@ -19,8 +19,8 @@
                     {{nextGp.laps}} vueltas a {{nextGp.circuit.name}}.
                 </p>
                 <p class="content block">
-                    Clasificación: {{nextGp.qualiTime | humanDate }} ({{nextGp.qualiTime | dateDiff }}) <br>
-                    Carrera: {{nextGp.raceTime | humanDate }} ({{nextGp.raceTime | dateDiff }})
+                    Clasificación: {{nextGp.qualiTime | humanDateTime }} ({{nextGp.qualiTime | dateDiff }}) <br>
+                    Carrera: {{nextGp.raceTime | humanDateTime }} ({{nextGp.raceTime | dateDiff }})
                 </p>
                 <footer class="card-footer">
                     <b-button tag="router-link"

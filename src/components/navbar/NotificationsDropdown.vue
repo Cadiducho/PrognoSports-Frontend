@@ -28,7 +28,7 @@
                                 <br />
                                 <span class="has-text-info is-italic">Recibida el
                                     <b-tooltip :label="noti.data.time | dateDiff" position="is-right">
-                                        {{ noti.data.time | humanDate }}
+                                        {{ noti.data.time | humanDateTime }}
                                     </b-tooltip>
                                 </span>
                             </div>

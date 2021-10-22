@@ -17,12 +17,12 @@
                 <div v-bind:class="thereIsGrid ? 'column is-6' : 'column is-9'">
                     <b-tabs v-model="activeTab">
                         <b-tab-item label="Clasificación">
-                            <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>clasificación</strong> es {{grandPrix.qualiTime | humanDateMinusFiveMinutes}}</h6>
+                            <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>clasificación</strong> es {{grandPrix.qualiTime | humanDateTimeMinusFiveMinutes}}</h6>
                             <SelectTipps session="QUALIFY"
                                         :grand-prix="grandPrix"/>
                         </b-tab-item>
                         <b-tab-item label="Carrera">
-                            <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>carrera</strong> es {{grandPrix.raceTime | humanDateMinusFiveMinutes}}</h6>
+                            <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>carrera</strong> es {{grandPrix.raceTime | humanDateTimeMinusFiveMinutes}}</h6>
                             <SelectTipps session="RACE"
                                          :grand-prix="grandPrix"/>
                         </b-tab-item>
