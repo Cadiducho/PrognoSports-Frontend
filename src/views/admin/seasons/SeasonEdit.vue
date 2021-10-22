@@ -58,13 +58,11 @@ import {namespace} from "vuex-class";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {competitionService, seasonService} from "@/_services";
 import {Season} from "@/types/Season";
-import TableList from "@/components/admin/PrognoTableList.vue";
 import {Competition} from "@/types/Competition";
 const Auth = namespace('Auth')
 
 @Component({
         components: {
-            TableList,
             AlertNoPermission,
             PrognoPageTitle,
         }
