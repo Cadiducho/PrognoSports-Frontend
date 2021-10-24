@@ -24,6 +24,21 @@ const routes = [
         component: () => import('@/views/admin/AdminPage.vue'),
     },
     {
+        path: '/admin/competitions',
+        name: 'adminCompetitions',
+        component: () => import('@/views/admin/competitions/CompetitionsList.vue'),
+    },
+    {
+        path: '/admin/competitions/:competition',
+        name: 'adminCompetitionEdit',
+        component: () => import('@/views/admin/competitions/CompetitionEdit.vue'),
+    },
+    {
+        path: '/new/competition',
+        name: 'competitionCreate',
+        component: () => import('@/views/admin/competitions/CompetitionCreate.vue'),
+    },
+    {
         path: '/admin/seasons',
         name: 'adminSeasons',
         component: () => import('@/views/admin/seasons/SeasonsList.vue'),

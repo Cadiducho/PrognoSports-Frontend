@@ -82,7 +82,7 @@ const Auth = namespace('Auth')
         }
     }
 )
-export default class CreateSeason extends Vue {
+export default class SeasonCreate extends Vue {
     @Auth.State("user") private currentUser!: User;
 
     private activeStep = 0;
