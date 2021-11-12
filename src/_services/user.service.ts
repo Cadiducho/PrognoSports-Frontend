@@ -18,6 +18,10 @@ export class UserService {
         return await axios.get(`/communities/${communityId}/members`);
     }
 
+    public async getAllUsers(): Promise<Array<User>> {
+        return await axios.get(`/user`);
+    }
+
     public async sendForgotPassword(email: string) {
         return await axios.post("/auth/forgotpassword", {"email": email});
     }

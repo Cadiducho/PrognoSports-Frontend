@@ -24,6 +24,21 @@ const routes = [
         component: () => import('@/views/admin/AdminPage.vue'),
     },
     {
+        path: '/admin/drivers',
+        name: 'adminDrivers',
+        component: () => import('@/views/admin/DriversAdmin.vue'),
+    },
+    {
+        path: '/admin/constructors',
+        name: 'adminConstructors',
+        component: () => import('@/views/admin/ConstructorsAdmin.vue'),
+    },
+    {
+        path: '/admin/users',
+        name: 'adminUsers',
+        component: () => import('@/views/admin/UsersAdmin.vue'),
+    },
+    {
         path: '/admin/competitions',
         name: 'adminCompetitions',
         component: () => import('@/views/admin/competitions/CompetitionsList.vue'),
@@ -43,6 +58,17 @@ const routes = [
         name: 'adminSeasons',
         component: () => import('@/views/admin/seasons/SeasonsList.vue'),
     },
+    {
+        path: '/admin/seasons/:season',
+        name: 'adminSeasonsEdit',
+        component: () => import('@/views/admin/seasons/SeasonEdit.vue'),
+    },
+    {
+        path: '/new/season',
+        name: 'seasonCreate',
+        component: () => import('@/views/admin/seasons/SeasonCreate.vue'),
+    },
+
     {
         path: '/circuits',
         name: 'circuitlist',
@@ -103,11 +129,6 @@ const routes = [
         path: '/new/community',
         name: 'communitiesCreate',
         component: () => import('@/views/communities/CreateCommunity.vue'),
-    },
-    {
-        path: '/new/season',
-        name: 'seasonCreate',
-        component: () => import('@/views/seasons/CreateSeason.vue'),
     },
     {
         path: '/new/driver',

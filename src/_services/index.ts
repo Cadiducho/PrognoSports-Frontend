@@ -10,6 +10,7 @@ import {CircuitService} from './circuit.service';
 import {AuthService} from "@/_services/auth.service";
 import {ScoreService} from "@/_services/score.service";
 import {CompetitionService} from "@/_services/competition.service";
+import {ConstructorService} from "@/_services/constructor.service";
 
 function authHeader() {
     let token = localStorage.getItem('user-token');
@@ -53,6 +54,7 @@ export const authService = new AuthService();
 export const userService = new UserService();
 export const communityService = new CommunityService();
 export const competitionService = new CompetitionService();
+export const constructorService = new ConstructorService();
 export const circuitService = new CircuitService();
 export const notificationService = new NotificationService();
 export const grandPrixService = new GrandprixService();
