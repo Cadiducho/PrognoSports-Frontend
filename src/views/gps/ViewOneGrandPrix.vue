@@ -72,6 +72,7 @@
     import {UserPoints} from "@/types/UserPoints";
     import {Dictionary} from "@/types/Dictionary";
     import EventBus from "@/plugins/eventbus";
+    import dayjs from "dayjs";
     const Auth = namespace('Auth')
 
     @Component({
@@ -128,6 +129,14 @@
                         communityService.getMembers(this.currentCommunity).then((members) => {
                             EventBus.$emit('sendCommunityMembers', members);
                         });
+
+
+                        // Colocar la tab correcta según si es día de clasificación o carrera
+                        let raceTime = dayjs(this.grandPrix.raceTime);
+                        if (raceTime.isToday()) {
+                            this.activeTab = 1;
+                            this.activeTabResults = 1;
+                        }
                     }
                 });
         }

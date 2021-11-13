@@ -5,12 +5,14 @@ import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import relativeTime from'dayjs/plugin/relativeTime'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
+import isToday from 'dayjs/plugin/isToday';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.locale('es');
 dayjs.extend(relativeTime);
-dayjs.extend(customParseFormat)
+dayjs.extend(customParseFormat);
+dayjs.extend(isToday);
 
 export function loadFilters(Vue: any) {
     Vue.filter('dateDiff', function (date: Date): string {
