@@ -16,6 +16,7 @@
                             <b-radio v-model='orderType' :native-value='0'>Orden arfabético</b-radio>
                             <b-radio v-model='orderType' :native-value='1'>Por equipos</b-radio>
                             <b-radio v-model='orderType' :native-value='2'>Por dorsal</b-radio>
+                            <b-radio v-model='orderType' :native-value='3' v-if="this.startGrid.length > 0">Por parrilla de salida</b-radio>
                         </b-field>
                         <b-field>
                             <b-switch v-model="orderAscendent">
@@ -107,7 +108,7 @@ import {namespace} from "vuex-class";
 import {RaceResult} from "@/types/RaceResult";
 import {User} from "@/types/User";
 import EventBus from "@/plugins/eventbus";
-import dayjs from "dayjs";
+import {StartGridPosition} from "@/types/StartGridPosition";
 const Auth = namespace('Auth')
 
 @Component({
@@ -118,6 +119,7 @@ const Auth = namespace('Auth')
 export default class SelectTipps extends Vue {
     @Prop({required: true}) session!: RaceSession;
     @Prop({required: true}) grandPrix!: GrandPrix;
+    @Prop({required: false}) startGrid!: Array<StartGridPosition>;
 
     @Auth.State("user") private currentUser!: User;
     @Auth.State("community") private currentCommunity!: Community;
@@ -125,11 +127,12 @@ export default class SelectTipps extends Vue {
     private drag: boolean = false;
     private filtroPiloto: string = '';
     private orderType: number = 1;
-    private orderAscendent: boolean = true;
+    private orderAscendent: boolean = false;
 
     private pilotosPronosticados: Array<Driver> = [];
     private pilotosDisponibles: Array<Driver> = [];
     private originalPilotos: Array<Driver> = [];
+    private indexedGrid: Map<number, number> = new Map(); // Dorsal del piloto -> Posicion en la grid
 
     mounted() {
 
@@ -151,6 +154,10 @@ export default class SelectTipps extends Vue {
                     this.pilotosPronosticados.push(value.driver);
                 }
             }
+        }).then(() => {
+            this.startGrid.forEach(gpos => {
+                this.indexedGrid.set(gpos.driver.number, gpos.position);
+            });
         });
     }
 
@@ -177,7 +184,17 @@ export default class SelectTipps extends Vue {
         let sortAlfabetico = (d1: Driver, d2: Driver) => (d1.lastname < d2.lastname ? -1 : 1);
         let sortEquipos = (d1: Driver, d2: Driver) => (d1.team.name < d2.team.name ? -1 : 1);
         let sortDorsal = (d1: Driver, d2: Driver) => (d1.number < d2.number ? -1 : 1);
-        let listaOrdenada = this.pilotosDisponibles.sort(this.orderType === 0 ? sortAlfabetico : (this.orderType === 1 ? sortEquipos : sortDorsal));
+        let sortParrilla = (d1: Driver, d2: Driver) => (this.indexedGrid.get(d1.number)! < this.indexedGrid.get(d2.number)! ? -1 : 1);
+
+
+        let pickedSort: (d1: Driver, d2: Driver) => (number);
+        switch (this.orderType) {
+            case 1: pickedSort = sortEquipos; break;
+            case 2: pickedSort = sortDorsal; break;
+            case 3: pickedSort = sortParrilla; break;
+            default: pickedSort = sortAlfabetico;
+        }
+        let listaOrdenada = this.pilotosDisponibles.sort(pickedSort);
 
         if (this.orderAscendent) {
             listaOrdenada = listaOrdenada.reverse();

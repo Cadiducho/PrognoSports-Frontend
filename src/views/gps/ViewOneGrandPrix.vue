@@ -19,12 +19,12 @@
                         <b-tab-item label="Clasificación">
                             <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>clasificación</strong> es {{grandPrix.qualiTime | humanDateTimeMinusFiveMinutes}}</h6>
                             <SelectTipps session="QUALIFY"
-                                        :grand-prix="grandPrix"/>
+                                        :grand-prix="grandPrix" :start-grid="startGrid"/>
                         </b-tab-item>
                         <b-tab-item label="Carrera">
                             <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>carrera</strong> es {{grandPrix.raceTime | humanDateTimeMinusFiveMinutes}}</h6>
                             <SelectTipps session="RACE"
-                                         :grand-prix="grandPrix"/>
+                                         :grand-prix="grandPrix" :start-grid="startGrid"/>
                         </b-tab-item>
                     </b-tabs>
                 </div>
@@ -71,8 +71,6 @@
     import {namespace} from "vuex-class";
     import {UserPoints} from "@/types/UserPoints";
     import {Dictionary} from "@/types/Dictionary";
-    import {CommunityUser} from "@/types/CommunityUser";
-    import {Driver} from "@/types/Driver";
     import EventBus from "@/plugins/eventbus";
     const Auth = namespace('Auth')
 
