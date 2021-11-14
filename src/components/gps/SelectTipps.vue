@@ -119,7 +119,6 @@ const Auth = namespace('Auth')
 export default class SelectTipps extends Vue {
     @Prop({required: true}) session!: RaceSession;
     @Prop({required: true}) grandPrix!: GrandPrix;
-    @Prop({required: false}) startGrid!: Array<StartGridPosition>;
 
     @Auth.State("user") private currentUser!: User;
     @Auth.State("community") private currentCommunity!: Community;
@@ -132,6 +131,8 @@ export default class SelectTipps extends Vue {
     private pilotosPronosticados: Array<Driver> = [];
     private pilotosDisponibles: Array<Driver> = [];
     private originalPilotos: Array<Driver> = [];
+
+    private startGrid: Array<StartGridPosition> = [];
     private indexedGrid: Map<number, number> = new Map(); // Dorsal del piloto -> Posicion en la grid
 
     mounted() {
@@ -139,6 +140,13 @@ export default class SelectTipps extends Vue {
         EventBus.$on('sendDriversInGrandPrix', (drivers: Array<Driver>) => {
             this.originalPilotos.push(...drivers);
             this.pilotosDisponibles.push(...drivers);
+        });
+
+        EventBus.$on('sendStartGrid', (grid: Array<StartGridPosition>) => {
+            grid.forEach(gpos => {
+                this.startGrid.push(gpos);
+                this.indexedGrid.set(gpos.driver.number, gpos.position);
+            })
         });
 
         grandPrixService.getUserTipps(this.grandPrix, this.session, this.currentCommunity, this.currentUser).then((userTipps) => {
@@ -154,10 +162,6 @@ export default class SelectTipps extends Vue {
                     this.pilotosPronosticados.push(value.driver);
                 }
             }
-        }).then(() => {
-            this.startGrid.forEach(gpos => {
-                this.indexedGrid.set(gpos.driver.number, gpos.position);
-            });
         });
     }
 

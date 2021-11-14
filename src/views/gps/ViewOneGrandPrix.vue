@@ -18,13 +18,11 @@
                     <b-tabs v-model="activeTab">
                         <b-tab-item label="Clasificación">
                             <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>clasificación</strong> es {{grandPrix.qualiTime | humanDateTimeMinusFiveMinutes}}</h6>
-                            <SelectTipps session="QUALIFY"
-                                        :grand-prix="grandPrix" :start-grid="startGrid"/>
+                            <SelectTipps session="QUALIFY" :grand-prix="grandPrix" />
                         </b-tab-item>
                         <b-tab-item label="Carrera">
                             <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>carrera</strong> es {{grandPrix.raceTime | humanDateTimeMinusFiveMinutes}}</h6>
-                            <SelectTipps session="RACE"
-                                         :grand-prix="grandPrix" :start-grid="startGrid"/>
+                            <SelectTipps session="RACE" :grand-prix="grandPrix"/>
                         </b-tab-item>
                     </b-tabs>
                 </div>
@@ -118,6 +116,7 @@
                             if (this.startGrid.length !== 0) {
                                 this.thereIsGrid = true;
                             }
+                            EventBus.$emit('sendStartGrid', grid);
                         });
 
                         scoreService.getPointsInGrandPrix(this.currentCommunity, this.grandPrix!).then((points) => {
