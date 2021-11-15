@@ -35,7 +35,7 @@
                 </div>
             </div>
 
-            <b-tabs v-model="activeTabResults">
+            <b-tabs v-model="activeTab">
                 <b-tab-item label="Clasificación">
                    <ScoreComponents :gp="grandPrix"
                                     session="QUALIFY"
@@ -98,7 +98,6 @@
         private userPoints: Dictionary<number, UserPoints> = {};
 
         private activeTab: number = 0;
-        private activeTabResults: number = 0;
 
         mounted() {
             grandPrixService.getGrandPrix(this.competition, this.season, this.id)
