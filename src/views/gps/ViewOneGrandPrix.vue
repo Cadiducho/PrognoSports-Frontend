@@ -133,7 +133,6 @@
                         let raceTime = dayjs(this.grandPrix.raceTime);
                         if (raceTime.isToday()) {
                             this.activeTab = 1;
-                            this.activeTabResults = 1;
                         }
                     }
                 });
