@@ -23,7 +23,6 @@ Vue.use(Buefy, {
 Vue.use(VueClipboard);
 Vue.config.productionTip = false;
 
-Vue.component('vue-headful', VueHeadful);
 Vue.component("Loading", Loading);
 Vue.mixin(mixin);
 

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import Vue from "vue";
 import {SeasonService} from "@/_services/season.service";
 import {UserService} from "@/_services/user.service";
 import {CommunityService} from "@/_services/community.service";
@@ -28,7 +27,7 @@ axios.defaults.baseURL = process.env.NODE_ENV === 'production'
 
 axios.interceptors.request.use(function (config) {
     const token = authHeader();
-    config.headers.Authorization =  token;
+    config.headers!.Authorization = token;
 
     return config;
 });

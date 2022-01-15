@@ -115,16 +115,18 @@
         }
 
         mounted() {
-            let competition = this.currentCommunity.competition;
-            let season: Season;
-            seasonService.getCurrentSeason(competition).then((seasonFetched) => {
-                season = seasonFetched;
-                //ToDo: Poder especificar "current" como Season en el servidor? Evitaría hacer dos peticiones, una para la season y otra la realmente importante
-            }).then(() => {
-                userService.getUserResume(this.currentUser, this.currentCommunity, competition, season).then((resume) => {
-                    this.userResume = resume;
+            if (this.currentCommunity) {
+                let competition = this.currentCommunity.competition;
+                let season: Season;
+                seasonService.getCurrentSeason(competition).then((seasonFetched) => {
+                    season = seasonFetched;
+                    //ToDo: Poder especificar "current" como Season en el servidor? Evitaría hacer dos peticiones, una para la season y otra la realmente importante
+                }).then(() => {
+                    userService.getUserResume(this.currentUser, this.currentCommunity, competition, season).then((resume) => {
+                        this.userResume = resume;
+                    })
                 })
-            })
+            }
         }
 
         private breadcumbItems = [

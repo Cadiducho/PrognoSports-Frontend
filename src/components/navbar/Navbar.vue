@@ -23,10 +23,10 @@
                     <router-link class="navbar-item" to="/circuits">
                         Circuitos
                     </router-link>
-                    <router-link class="navbar-item" to="/ranking">
+                    <router-link v-if="currentUser" class="navbar-item" to="/ranking">
                         Ranking
                     </router-link>
-                    <router-link v-if="isAdmin(currentUser.rank)" class="navbar-item" to="/admin">
+                    <router-link v-if="currentUser && isAdmin(currentUser.rank)" class="navbar-item" to="/admin">
                         Admin
                     </router-link>
                 </div>
