@@ -66,22 +66,24 @@ import {Component, Vue, Watch} from "vue-property-decorator";
 
             if (this.competition.code == undefined) {
                 this.shouldSearchDefaultCompetition = true;
-                this.searchDefaultCompetition();
             } else {
                 this.competitionReady = true;
             }
 
             if (this.season.name == undefined) {
                 this.shouldSearchDefaultSeason = true;
-                this.searchDefaultSeason();
             } else {
                 this.seasonReady = true;
             }
+
+            this.searchDefaultCompetition();
+            this.searchDefaultSeason();
         }
 
         @Watch('currentCommunity')
         onCurrentCommunityChange(community: Community) {
             this.searchDefaultCompetition();
+            this.searchDefaultSeason();
         }
 
         /**
@@ -91,7 +93,6 @@ import {Component, Vue, Watch} from "vue-property-decorator";
             if (this.shouldSearchDefaultCompetition) {
                 this.competition = this.currentCommunity.competition;
                 this.competitionReady = true;
-                this.searchDefaultSeason();
             }
         }
 

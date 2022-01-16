@@ -77,7 +77,7 @@
     import {Component, Vue} from "vue-property-decorator";
     import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
     import NextGrandPrix from "@/components/gps/NextGrandPrix.vue";
-    import PointsAccumulated from "@/components/user/PointsAccumulated.vue";
+    import PointsAccumulated from "@/components/home/PointsAccumulated.vue";
     import {User, UserResume} from "@/types/User";
     import {namespace} from 'vuex-class'
     import {seasonService, userService} from "@/_services";

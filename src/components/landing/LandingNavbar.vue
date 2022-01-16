@@ -7,24 +7,13 @@
             </b-navbar-item>
         </template>
         <template slot="start">
-            <!--<b-navbar-item href="#">
-                Home
+            <b-navbar-item v-if="isLoggedIn" tag="router-link" to="/home">
+                Inicio
             </b-navbar-item>
-            <b-navbar-item href="#">
-                Documentation
-            </b-navbar-item>
-            <b-navbar-dropdown label="Info">
-                <b-navbar-item href="#">
-                    About
-                </b-navbar-item>
-                <b-navbar-item href="#">
-                    Contact
-                </b-navbar-item>
-            </b-navbar-dropdown>-->
         </template>
 
         <template slot="end">
-            <b-navbar-item tag="div">
+            <b-navbar-item tag="div" v-if="!isLoggedIn">
                 <div class="buttons">
                     <router-link class="button is-primary" to="/register">
                         <strong>Registrarse</strong>
@@ -34,25 +23,26 @@
                     </router-link>
                 </div>
             </b-navbar-item>
+            <b-navbar-item v-else>
+                <AvatarComponent/>
+            </b-navbar-item>
         </template>
     </b-navbar>
 </template>
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
+    import {namespace} from "vuex-class";
+    import AvatarComponent from "@/components/navbar/AvatarComponent.vue";
 
-    @Component
+    const Auth = namespace("Auth");
+
+    @Component({
+        components: {
+            AvatarComponent,
+        }
+    })
     export default class LandingNavbar extends Vue {
-
+        @Auth.Getter private isLoggedIn!: boolean;
     }
 </script>
-
-<style scoped>
-.navbar-prognosports {
-    font-size: 1.25rem;
-    white-space: nowrap;
-    line-height: inherit;
-    font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-weight: 700;
-}
-</style>

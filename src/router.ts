@@ -2,6 +2,9 @@ import Vue from 'vue'
 import VueRouter, {NavigationGuardNext, Route} from 'vue-router'
 import store from '@/_store';
 import LandingView from "@/views/landing/LandingView.vue";
+import PrognoView from "@/views/PrognoView.vue";
+import EmptyRoutedView from "@/views/EmptyRoutedView.vue";
+
 Vue.use(VueRouter);
 
 const routes = [
@@ -13,6 +16,7 @@ const routes = [
         children: [
             {
                 name: 'landing',
+                alias: ['/landing'],
                 path: '',
                 component: () => import('@/components/landing/LandingHome.vue'),
             },
@@ -80,137 +84,187 @@ const routes = [
     // Páginas de dentro de la aplicación iniciadas sesión
     {
         path: '/home',
-        name: 'home',
         meta: { requiresAuth: true },
-        component: () => import('@/views/home/Home.vue'),
+        component: PrognoView,
+        children: [{
+            path: '',
+            name: 'home',
+            component: () => import('@/components/home/HomeComponent.vue'),
+        }]
     },
 
     // Admin
     {
         path: '/admin',
-        name: 'admin',
         meta: { requiresAuth: true },
-        component: () => import('@/views/admin/AdminPage.vue'),
-    },
-    {
-        path: '/admin/drivers',
-        name: 'adminDrivers',
-        meta: { requiresAuth: true },
-        component: () => import('@/views/admin/DriversAdmin.vue'),
-    },
-    {
-        path: '/admin/constructors',
-        name: 'adminConstructors',
-        meta: { requiresAuth: true },
-        component: () => import('@/views/admin/ConstructorsAdmin.vue'),
-    },
-    {
-        path: '/admin/users',
-        name: 'adminUsers',
-        meta: { requiresAuth: true },
-        component: () => import('@/views/admin/UsersAdmin.vue'),
-    },
-    {
-        path: '/admin/competitions',
-        name: 'adminCompetitions',
-        meta: { requiresAuth: true },
-        component: () => import('@/views/admin/competitions/CompetitionsList.vue'),
-    },
-    {
-        path: '/admin/competitions/:competition',
-        name: 'adminCompetitionEdit',
-        meta: { requiresAuth: true },
-        component: () => import('@/views/admin/competitions/CompetitionEdit.vue'),
-    },
-    {
-        path: '/new/competition',
-        name: 'competitionCreate',
-        meta: { requiresAuth: true },
-        component: () => import('@/views/admin/competitions/CompetitionCreate.vue'),
-    },
-    {
-        path: '/admin/seasons',
-        name: 'adminSeasons',
-        meta: { requiresAuth: true },
-        component: () => import('@/views/admin/seasons/SeasonsList.vue'),
-    },
-    {
-        path: '/admin/seasons/:season',
-        name: 'adminSeasonsEdit',
-        meta: { requiresAuth: true },
-        component: () => import('@/views/admin/seasons/SeasonEdit.vue'),
-    },
-    {
-        path: '/new/season',
-        name: 'seasonCreate',
-        meta: { requiresAuth: true },
-        component: () => import('@/views/admin/seasons/SeasonCreate.vue'),
+        component: PrognoView,
+        children: [
+            {
+                path: '',
+                name: 'admin',
+                component: () => import('@/components/admin/AdminPage.vue'),
+            },
+            {
+                path: 'drivers',
+                name: 'adminDrivers',
+                component: () => import('@/components/admin/driver/DriversAdmin.vue'),
+            },
+            {
+                path: 'constructors',
+                name: 'adminConstructors',
+                component: () => import('@/components/admin/ConstructorsAdmin.vue'),
+            },
+            {
+                path: 'users',
+                name: 'adminUsers',
+                component: () => import('@/components/admin/UsersAdmin.vue'),
+            },
+            {
+                path: 'competitions',
+                component: EmptyRoutedView,
+                children: [
+                    {
+                        path: '',
+                        name: 'adminCompetitions',
+                        component: () => import('@/components/admin/competitions/CompetitionsList.vue'),
+                    },
+                    {
+                        path: ':competition',
+                        name: 'adminCompetitionEdit',
+                        component: () => import('@/components/admin/competitions/CompetitionEdit.vue'),
+                    },
+                ],
+            },
+            {
+                path: 'seasons',
+                component: EmptyRoutedView,
+                children: [
+                    {
+                        path: '',
+                        name: 'adminSeasons',
+                        component: () => import('@/components/admin/seasons/SeasonsList.vue'),
+                    },
+                    {
+                        path: ':season',
+                        name: 'adminSeasonsEdit',
+                        component: () => import('@/components/admin/seasons/SeasonEdit.vue'),
+                    },
+                ],
+            },
+        ]
     },
 
+    // Creaciones de objetos / news
+    {
+        path: '/new',
+        meta: {requiresAuth: true},
+        component: PrognoView,
+        children: [
+            {
+                path: 'competition',
+                name: 'competitionCreate',
+                component: () => import('@/components/admin/competitions/CompetitionCreate.vue'),
+            },
+            {
+                path: 'season',
+                name: 'seasonCreate',
+                component: () => import('@/components/admin/seasons/SeasonCreate.vue'),
+            },
+            {
+                path: 'circuit',
+                name: 'circuitCreate',
+                component: () => import('@/components/admin/circuit/CreateCircuit.vue'),
+            },
+            {
+                path: 'driver',
+                name: 'driverCreate',
+                component: () => import('@/components/admin/driver/CreateDriver.vue'),
+            },
+            {
+                path: 'community',
+                name: 'communitiesCreate',
+                component: () => import('@/components/communities/CreateCommunity.vue'),
+            },
+        ]
+    },
+
+    // Circuitos
     {
         path: '/circuits',
-        name: 'circuitlist',
-        component: () => import('@/views/circuit/ViewCircuitList.vue'),
+        component: PrognoView,
+        children: [
+            {
+                path: '',
+                name: 'circuitlist',
+                component: () => import('@/components/circuits/ViewCircuitList.vue'),
+            },
+            {
+                path: ':circuit/:variant?',
+                name: 'circuitDetails',
+                component: () => import('@/components/circuits/ViewOneCircuit.vue'),
+            },
+        ]
     },
+
+    // Ranking
     {
-        path: '/circuits/:circuit/:variant?',
-        name: 'circuitDetails',
-        component: () => import('@/views/circuit/ViewOneCircuit.vue'),
-    },
-    {
-        path: '/new/circuit',
-        name: 'circuitCreate',
+        path: '/ranking',
         meta: { requiresAuth: true },
-        component: () => import('@/views/circuit/CreateCircuit.vue'),
+        component: PrognoView,
+        children: [{
+            path: '',
+            name: 'ranking',
+            component: () => import('@/components/ranking/Ranking.vue'),
+        }]
     },
+
+    // Comunidades
     {
         path: '/communities',
-        name: 'communitiesList',
         meta: { requiresAuth: true },
-        component: () => import('@/views/communities/ViewCommunitiesList.vue'),
+        component: PrognoView,
+        children: [
+            {
+                path: '',
+                name: 'communitiesList',
+                component: () => import('@/components/communities/ViewCommunitiesList.vue'),
+            },
+            {
+                path: ':community',
+                name: 'communitiesDetails',
+                component: () => import('@/components/communities/ViewOneCommunity.vue'),
+            }
+        ]
     },
     {
         path: '/invitation/:community?/:code?',
-        name: 'invitation',
-        meta: { requiresAuth: true },
-        component: () => import('@/views/communities/InvitationToCommunity.vue'),
+        meta: { requiresAuth: true }, //FixMe: Si invitaciones requiere auth, el login y registro deben matener la redirección a la invitación
+        component: PrognoView,
+        children: [{
+            path: '',
+            name: 'invitation',
+            component: () => import('@/components/communities/InvitationToCommunity.vue'),
+        }]
     },
+
+    // Grandes Premios
     {
-        path: '/communities/:community',
-        name: 'communitiesDetails',
+        path: '/gps',
         meta: { requiresAuth: true },
-        component: () => import('@/views/communities/ViewOneCommunity.vue'),
-    },
-    {
-        path: '/gps/:competition?/:season?',
-        name: 'gplist',
-        alias: ['/gps/:competition?', '/gps'],
-        meta: { requiresAuth: true },
-        component: () => import('@/views/gps/ViewGrandPrixList.vue'),
-    },
-    {
-        path: '/gps/:competition/:season/:id',
-        name: 'gpdetails',
-        meta: { requiresAuth: true },
-        component: () => import('@/views/gps/ViewOneGrandPrix.vue'),
-    },
-    {
-        path: '/ranking',
-        name: 'ranking',
-        meta: { requiresAuth: true },
-        component: () => import('@/views/ranking/Ranking.vue'),
-    },
-    {
-        path: '/new/community',
-        name: 'communitiesCreate',
-        meta: { requiresAuth: true },
-        component: () => import('@/views/communities/CreateCommunity.vue'),
-    },
-    {
-        path: '/new/driver',
-        name: 'driverCreate',
-        meta: { requiresAuth: true },
-        component: () => import('@/views/drivers/CreateDriver.vue'),
+        component: PrognoView,
+        children: [
+            {
+                path: ':competition?/:season?',
+                alias: ['', ':competition?'],
+                name: 'gplist',
+                component: () => import('@/components/gps/ViewGrandPrixList.vue'),
+            },
+            {
+                path: ':competition/:season/:id',
+                name: 'gpdetails',
+                component: () => import('@/components/gps/ViewOneGrandPrix.vue'),
+            }
+        ]
     },
 
     // Fallback
@@ -220,7 +274,7 @@ const routes = [
         children: [{
             name: 'Not Found',
             path: '',
-            component: () => import('@/views/error/ErrorNotFound.vue'),
+            component: () => import('@/components/error/ErrorNotFound.vue'),
         }]
     },
     {

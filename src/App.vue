@@ -1,29 +1,11 @@
 <template>
   <div id="app">
-    <div v-if="this.isLoggedIn">
-      <!-- App cargada e iniciada sesión -->
+      <!-- La app siempre cargará router-view -->
+      <!-- Las nested routes se encargarán de hacer aparecer unos u otros componentes, -->
+      <!-- según si está iniciado sesión o la url solicitada -->
 
-        <navbar />
+      <router-view :key="$route.fullPath"/>
 
-        <section class="section is-tiny">
-            <div class="container prognocontainer">
-                <nav class="breadcrumb" aria-label="breadcrumbs">
-                    <ul>
-                        <li><a href="#">PrognoSports</a></li>
-                        <li class="is-active"><a href="#" aria-current="page">Inicio</a></li>
-                    </ul>
-                </nav>
-                <div class="notification has-background-warning">Estás utilizando PrognoSports Beta, la experiencia puede verse afectada</div>
-
-                <router-view :key="$route.fullPath"/>
-            </div>
-        </section>
-    </div>
-
-    <div v-else>
-      <!-- Resto de paginas -->
-      <router-view/>
-    </div>
   </div>
 </template>
 
@@ -74,7 +56,7 @@
                         console.log("Error solicitando al usuario: ", error)
                         console.log("Mandando a login");
                         this.$router.push('/login');
-                });
+                    });
             }
         }
     }
