@@ -1,7 +1,5 @@
 <template>
-    <div id="landing">
-
-        <LandingNavbar />
+    <div>
         <header class="masthead has-text-light has-text-centered has-text-weight-semibold">
             <div class="section">
                 <h1 class="heading mb-5">
@@ -118,25 +116,14 @@
                 <button class="btn call-to-action-btn" @click="btn">Registrarse</button>
             </div>
         </div>
-
-        <LandingFooter/>
     </div>
 </template>
 
-<style lang="scss" scoped>
-    @import "landing";
-</style>
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
-    import LandingNavbar from "@/components/landing/LandingNavbar.vue";
-    import LandingFooter from "@/components/landing/LandingFooter.vue";
+import {Component, Vue} from "vue-property-decorator";
 
-    @Component({
-        components: {LandingFooter, LandingNavbar}
-    })
-    export default class Landing extends Vue {
-        btn() {
-            this.$router.push("/register");
-        }
-    }
+@Component
+export default class LandingHome extends Vue {
+
+}
 </script>
