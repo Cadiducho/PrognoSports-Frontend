@@ -1,13 +1,8 @@
-import Vue from 'vue'
-import VueRouter, {NavigationGuardNext, Route} from 'vue-router'
-import store from '@/_store';
 import LandingView from "@/views/landing/LandingView.vue";
 import PrognoView from "@/views/PrognoView.vue";
 import EmptyRoutedView from "@/views/EmptyRoutedView.vue";
 
-Vue.use(VueRouter);
-
-const routes = [
+export const routes = [
 
     // Landing, about y demás páginas genéricas
     {
@@ -282,60 +277,3 @@ const routes = [
         redirect: { path: "/404" }
     }
 ];
-
-export const router = new VueRouter({
-    mode: 'history',
-    base: process.env.BASE_URL,
-    routes
-});
-
-// Si está iniciado sesión y va a /, mandar a /home
-router.beforeEach((to, from, next) => {
-    checkLoggedIn(to, from, next);
-    checkCommunity(to, from, next);
-    sendToHome(to, from, next);
-});
-
-function sendToHome(to: Route, from: Route, next: NavigationGuardNext) {
-    // Si está iniciado sesión y entra a /, redirigir a /home
-    const loggedIn = store.getters['Auth/isLoggedIn'];
-    if (to.path === "/" && loggedIn) {
-        next('/home');
-    } else {
-        next();
-    }
-}
-
-// Requerir login cuando sea necesario
-function checkLoggedIn(to: Route, from: Route, next: NavigationGuardNext) {
-    if (to.matched.some(record => record.meta.requiresAuth)) {
-        // Si no está logged in y la ruta lo requiere, mandar al login
-        const loggedIn = store.getters['Auth/isLoggedIn'];
-        if (!loggedIn) {
-            next({
-                path: '/login',
-                query: { redirect: to.fullPath }
-            })
-        } else {
-            next();
-        }
-    } else {
-        next();
-    }
-}
-
-// Asegurar que el usuario está en una comunidad si esa ruta lo requiere
-function checkCommunity(to: Route, from: Route, next: NavigationGuardNext) {
-    if (!to.name?.startsWith('/gps') && !to.name?.startsWith('/ranking') && !to.name?.startsWith('/rules')) {
-        // Si no es ninguna de estas rutas, no hacer nada
-        next();
-    } else {
-        const hasCommunity = store.getters['Auth/thereIsCurrentCommunity'];
-        if (!hasCommunity) {
-            // Si es una de esas rutas que necesitan comunidad, y no la tiene, mandar a /communities
-            next('/communities');
-        } else {
-            next();
-        }
-    }
-}
