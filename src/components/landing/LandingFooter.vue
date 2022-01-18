@@ -52,6 +52,15 @@
                             </a>
                         </li>
                         <li>
+                            <a href="https://twitch.tv/PrognoSports" class="list-item">
+                                <b-icon
+                                    pack="fab"
+                                    icon="twitch"
+                                    size="is-small">
+                                </b-icon> Twitch
+                            </a>
+                        </li>
+                        <li>
                             <a href="https://instagram.com/PrognoSports" class="list-item">
                                 <b-icon
                                     pack="fab"
@@ -71,6 +80,9 @@
                         <li>
                             <router-link to="/privacy" class="list-item">Política de privacidad</router-link>
                         </li>
+                        <li>
+                            <router-link to="/rules" class="list-item">Normativa</router-link>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -79,15 +91,72 @@
     </div>
 </template>
 
-<script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
-
-@Component
-export default class LandingFooter extends Vue {
-
-}
-</script>
-
 <style lang="scss" scoped>
-@import "footer";
+* {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+a {
+    text-decoration: none;
+    cursor: pointer;
+}
+.landing-footer {
+    background-color: #f6f9fc;
+    display: flex;
+    min-height: 50vh;
+}
+.base-footer {
+    margin: 0 auto;
+    max-width: 1280px;
+    padding: 50px 20px 20px;
+    flex: 1;
+    // background-color: #f6f9fc;
+}
+.footer-top {
+    display: flex;
+    margin-bottom: 1rem;
+}
+.footer-div {
+    flex-grow: 1;
+    padding: 1rem;
+    flex-basis: 0;
+}
+.footer-left {
+    margin-left: 20%;
+}
+.footer-ul {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    list-style: none;
+}
+.footer-title {
+    text-align: left;
+    font-size: 16px;
+    color: #76808d;
+    margin-bottom: 12px;
+}
+.list-item {
+    color: #999;
+    text-align: left;
+    font-size: 14px;
+    line-height: 30px
+}
+.list-item:hover {
+    color: #333;
+}
+.footer-small {
+    display: block;
+    font-size: 12px;
+    color: #b9b9b9;
+}
+@media screen and (max-width: 798px) {
+    .footer-top {
+        flex-direction: column;
+    }
+    .footer-left {
+        margin-left: 0;
+    }
+}
 </style>

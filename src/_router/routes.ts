@@ -35,6 +35,11 @@ export const routes = [
                 path: '/privacy',
                 component: () => import('@/components/landing/PrivacyComponent.vue'),
             },
+            {
+                name: 'rules',
+                path: '/rules',
+                component: () => import('@/components/landing/RulesComponent.vue'),
+            },
         ]
     },
 
