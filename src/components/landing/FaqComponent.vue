@@ -43,7 +43,7 @@
         </section>
         <section class="content">
             <strong>¿Qué más puedo personalizar?</strong>
-            <p>En tus ajustes de perfil podrás cambiar la zona horaria, si mostrar nombres largos o cortos de equipos y otros datos personales como tu localización, cumpleaños, biografía o foto de perfil. Sobre la gestión de estos últimos datos, revisa <router-link :to="{name: 'privacidad'}">Políticas de Privacidad</router-link>.</p>
+            <p>En tus ajustes de perfil podrás cambiar la zona horaria, si mostrar nombres largos o cortos de equipos y otros datos personales como tu localización, cumpleaños, biografía o foto de perfil. Sobre la gestión de estos últimos datos, revisa <router-link :to="{name: 'privacy'}">Políticas de Privacidad</router-link>.</p>
         </section>
     </div>
 </template>

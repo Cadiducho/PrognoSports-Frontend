@@ -12,7 +12,3 @@
         @Prop() private name!: string;
     }
 </script>
-
-<style scoped>
-
-</style>

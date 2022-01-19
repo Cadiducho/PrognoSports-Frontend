@@ -43,13 +43,8 @@
     import {Component, Vue} from "vue-property-decorator";
     import {notificationService} from "@/_services";
     import {Notification} from "@/types/Notification";
-    import vswitch from "../lib/v-switch.vue";
 
-    @Component({
-        components: {
-            vswitch
-        },
-    })
+    @Component
     export default class NotificationsDropdown extends Vue {
         private unreadNotificationsCount = 0;
         private notificationList: Array<Notification> = [];

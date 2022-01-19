@@ -69,9 +69,7 @@
 import { Circuit } from "@/types/Circuit";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
-@Component<ViewCircuitItem>({
-    components: {},
-})
+@Component
 export default class ViewCircuitItem extends Vue {
     @Prop() circuit!: Circuit;
 }

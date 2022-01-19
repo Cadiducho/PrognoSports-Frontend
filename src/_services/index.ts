@@ -23,7 +23,7 @@ function authHeader() {
 
 axios.defaults.baseURL = process.env.NODE_ENV === 'production'
     ? 'https://api.prognosports.com/v2'
-    : 'https://nightly.prognosports.com/v2';
+    : 'https://api.prognosports.com/v2';
 
 axios.interceptors.request.use(function (config) {
     const token = authHeader();
