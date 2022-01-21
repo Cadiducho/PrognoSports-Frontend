@@ -16,14 +16,11 @@ export class GrandprixService {
     }
 
     public async getGrandPrixesList(searchType: string, competition: Competition, season: Season): Promise<Array<GrandPrix>> {
-        switch (searchType) {
-            case "next":
-                return await axios.get(`/gps/${competition.id}/${season.id}/next`);
-            case "past":
-                return await axios.get(`/gps/${competition.id}/${season.id}/past`);
-            default:
-                return await axios.get(`/gps/${competition.id}/${season.id}`);
-        }
+        let comp = competition.id ?? competition.code;
+        let seas = season.id ?? season.name;
+        let searchParameter = (searchType === "all" ? "" : `/${searchType}` );
+
+        return await axios.get(`/gps/${comp}/${seas}${searchParameter}`);
     }
 
     public async getGrandPrix(competition: Competition, season: Season, id: string): Promise<GrandPrix> {
