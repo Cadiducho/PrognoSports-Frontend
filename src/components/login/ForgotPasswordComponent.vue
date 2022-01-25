@@ -22,36 +22,45 @@
                             </p>
                         </div>
                         <form>
-                            <div class="field">
-                                <label class="label"
-                                >Correo electrónico</label
-                                >
-                                <div
-                                    class="control has-icons-left has-icons-right"
-                                >
-                                    <input
-                                        v-model="email"
-                                        id="email"
-                                        required
-                                        class="input"
-                                        :class="{
-                                                'is-danger':
-                                                    submitted && !email,
-                                            }"
-                                        type="email"
-                                        name="email"
-                                    />
+                            <div class="field" v-if="!showChangePassword">
+                                <label class="label">Correo electrónico</label>
+                                <div class="control has-icons-left has-icons-right">
+                                    <input v-model="email" required
+                                           class="input"
+                                           type="email" />
                                     <span class="icon is-small is-left">
-                                            <i class="fas fa-at"></i>
-                                        </span>
+                                        <i class="fas fa-at"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="field" v-if="showChangePassword">
+                                <label class="label">Código de verificación</label>
+                                <div class="control has-icons-left has-icons-right">
+                                    <input
+                                        v-model="inputToken" required
+                                        class="input"
+                                        type="text" />
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-qrcode"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="field" v-if="showChangePassword">
+                                <label class="label">Nueva contraseña</label>
+                                <div class="control has-icons-left has-icons-right">
+                                    <input v-model="email" required
+                                           class="input"
+                                           type="password" />
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-lock"></i>
+                                    </span>
                                 </div>
                             </div>
                             <div class="field is-grouped">
                                 <div class="control">
                                     <button
                                         v-on:click.prevent="handleSubmit()"
-                                        class="button is-link"
-                                    >
+                                        class="button is-link">
                                         Solicitar
                                     </button>
                                 </div>
@@ -60,16 +69,10 @@
                     </div>
                     <div class="card-footer">
                         <div class="card-footer-item">
-                            <router-link to="/register"
-                            >Registrarse
-                            </router-link
-                            >
+                            <router-link to="/register">Registrarse</router-link>
                         </div>
                         <div class="card-footer-item">
-                            <router-link to="/login"
-                            >Ya tengo usuario
-                            </router-link
-                            >
+                            <router-link to="/login">Ya tengo usuario</router-link>
                         </div>
                     </div>
                 </div>
