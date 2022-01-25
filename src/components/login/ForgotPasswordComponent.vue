@@ -21,7 +21,7 @@
                                 contraseña para tu cuenta.
                             </p>
                         </div>
-                        <form>
+                        <form @submit="handleSubmit()">
                             <div class="field" v-if="!showChangePassword">
                                 <label class="label">Correo electrónico</label>
                                 <div class="control has-icons-left has-icons-right">
@@ -48,7 +48,7 @@
                             <div class="field" v-if="showChangePassword">
                                 <label class="label">Nueva contraseña</label>
                                 <div class="control has-icons-left has-icons-right">
-                                    <input v-model="email" required
+                                    <input v-model="inputPassword" required
                                            class="input"
                                            type="password" />
                                     <span class="icon is-small is-left">
@@ -58,10 +58,27 @@
                             </div>
                             <div class="field is-grouped">
                                 <div class="control">
+                                    <button type="submit" class="button is-link">
+                                        <span v-if="!showChangePassword">
+                                            Solicitar código
+                                        </span>
+                                        <span v-else type="submit" class="button is-link">
+                                            Cambiar contraseña
+                                        </span>
+                                    </button>
+                                </div>
+                                <div class="control" v-if="!showChangePassword">
                                     <button
-                                        v-on:click.prevent="handleSubmit()"
-                                        class="button is-link">
-                                        Solicitar
+                                        @click="showChangePassword = true"
+                                        class="button is-info">
+                                        Ya tengo un código
+                                    </button>
+                                </div>
+                                <div class="control" v-if="showChangePassword">
+                                    <button
+                                        @click="showChangePassword = false"
+                                        class="button is-info">
+                                        Enviar nuevo código
                                     </button>
                                 </div>
                             </div>
@@ -92,7 +109,7 @@ export default class ForgotPasswordComponent extends Vue {
     private inputPassword: string = "";
     private showChangePassword: boolean = false;
 
-    handleSubmit(e: any) {
+    handleSubmit() {
         if (!this.showChangePassword) {
             const { email } = this;
             if (email) {
