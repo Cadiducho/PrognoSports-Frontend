@@ -10,7 +10,7 @@
 
         <div class="navbar-dropdown is-right">
             <a class="navbar-item is-disabled">
-                {{currentUser.email}} <!--ToDo: Esto pequeño y disabled-->
+                {{currentUser.email}}
             </a>
             <hr class="navbar-divider">
 
@@ -44,3 +44,13 @@
         }
     }
 </script>
+
+<style scoped>
+.navbar-item.is-disabled,
+.navbar-item.is-disabled a {
+    color: #7a7a7a;
+    pointer-events: none;
+    cursor: default;
+    font-size: .72rem;
+}
+</style>
