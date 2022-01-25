@@ -44,3 +44,14 @@
         }
     }
 </script>
+
+
+<style scoped>
+.navbar-item.is-disabled,
+.navbar-item.is-disabled a {
+    color: #7a7a7a;
+    pointer-events: none;
+    cursor: default;
+    font-size: .72rem;
+}
+</style>
