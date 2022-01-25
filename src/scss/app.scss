@@ -11,3 +11,6 @@
 @import "~bulma-block-list/src/block-list";
 
 @import '~leaflet/dist/leaflet.css';
+.leaflet-pane {
+  z-index: 10;
+}

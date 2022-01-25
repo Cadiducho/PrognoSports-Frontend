@@ -1,8 +1,21 @@
 import axios from 'axios';
-import {Notification} from "@/types/Notification";
+import {INotification, Notification} from "@/types/Notification";
 
 export class NotificationService {
+
     public async getNotifications(): Promise<Array<Notification>> {
+        return new Promise(((resolve, reject) => {
+            let lista: Array<Notification> = [];
+            this.getNotificationsJson().then(objects => {
+                objects.forEach(obj => {
+                    lista.push(new Notification(obj));
+                })
+                resolve(lista);
+            }).catch(reason => reject(reason));
+        }));
+    }
+
+    private async getNotificationsJson(): Promise<Array<INotification>> {
         return await axios.get('/notifications');
     }
 
