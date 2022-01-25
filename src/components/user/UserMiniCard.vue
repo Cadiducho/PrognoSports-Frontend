@@ -37,10 +37,6 @@ export default class ScoreComponents extends Vue {
             backgroundColor: '#' + rank.color,
         }
     }
-
-    public userProfileImage(user: User) {
-        return user.profileImageUrl || require('@/assets/default_profile_image.jpg');
-    }
 }
 </script>
 

@@ -3,7 +3,7 @@
 
         <a class="navbar-link nav-tag">
             <figure class="image is-32x32 avatar-figure">
-                <img class="avatar" :src="currentUser.profileImageUrl">
+                <img class="avatar" :src="userProfileImage(currentUser)" alt="Profile image">
             </figure>
             {{ currentUser.username }}
         </a>

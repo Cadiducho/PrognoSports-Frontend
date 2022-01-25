@@ -11,6 +11,7 @@ import {Community} from "@/types/Community";
 import {RaceSession} from "@/types/RaceSession";
 import dayjs from "dayjs";
 import {GrandPrix} from "@/types/GrandPrix";
+import {User} from "@/types/User";
 
 /**
  * Compara un {@link UserRank} para determinar si es administrador o no
@@ -19,6 +20,13 @@ import {GrandPrix} from "@/types/GrandPrix";
  */
 export function isAdmin(rank: UserRank): boolean {
     return rank.name.toLowerCase() === "admin";
+}
+
+/**
+ * Obtener imagen de perfil de un usuario, o la de por defecto
+ */
+export function userProfileImage(user: User) {
+    return user.profileImageUrl || require('@/assets/default_profile_image.jpg');
 }
 
 /**
