@@ -1,5 +1,5 @@
 <template>
-    <div id="avatarComponent" class="navbar-item has-dropdown is-hoverable">
+    <div id="avatarComponent" class="navbar-item has-dropdown is-hoverable" v-if="currentUser">
 
         <a class="navbar-link nav-tag">
             <figure class="image is-32x32 avatar-figure">
@@ -10,7 +10,7 @@
 
         <div class="navbar-dropdown is-right">
             <a class="navbar-item is-disabled">
-                {{currentUser.email}}
+                {{ currentUser.email }}
             </a>
             <hr class="navbar-divider">
 
