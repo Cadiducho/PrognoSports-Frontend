@@ -6,7 +6,7 @@ import {Circuit} from "@/types/Circuit";
 export class SeasonService {
 
     public async getCurrentSeason(competition: Competition) : Promise<Season> {
-        return await axios.get(`/seasons/current/f1`); //fixme
+        return await axios.get(`/seasons/current/${competition.code ?? competition.name ?? competition.id}`);
     }
 
     public async getSeason(seasonId: string): Promise<Season> {

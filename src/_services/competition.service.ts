@@ -16,11 +16,11 @@ export class CompetitionService {
         return await axios.get(`/competitions/${competition.id}/seasons`)
     }
 
-    public async createCompetition(data: { code: string, name: string, fullname: string }): Promise<Competition> {
+    public async createCompetition(data: { code: string, name: string, fullname: string, rules: string }): Promise<Competition> {
         return await axios.post(`/competitions`, data)
     }
 
-    public async editCompetition(competition: Competition, data: { code: string; name: string; fullname: string }): Promise<Competition> {
+    public async editCompetition(competition: Competition, data: { code: string; name: string; fullname: string, rules: string, currentSeason: number }): Promise<Competition> {
         return await axios.put(`/competitions/${competition.id}`, data)
     }
 

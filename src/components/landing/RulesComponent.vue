@@ -13,6 +13,13 @@
             </section>
         </section>
 
+        <section class="content" v-if="currentCommunity && currentCommunity.competition">
+            <h2>Competición {{ currentCommunity.competition.name }}</h2>
+            <section>
+                <p v-html="compiledRules"></p>
+            </section>
+        </section>
+
         <p class="content">
             Más enlaces de interés: <router-link :to="{name: 'terms'}">Términos y Condiciones</router-link> · <router-link :to="{name: 'privacy'}">Políticas de Privacidad</router-link>
         </p>
@@ -21,10 +28,31 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
+import {namespace} from "vuex-class";
+import {Competition} from "@/types/Competition";
+import { marked } from 'marked';
+import {Community} from "@/types/Community";
+import {User} from "@/types/User";
+import {competitionService} from "@/_services";
+
+const Auth = namespace("Auth");
 
 @Component
 export default class RulesComponent extends Vue {
-    // ToDo: Obtener normas de cada competición
-    // ToDo: Obtener el usuario y comunidad actual y, si está iniciado sesión, mostrar las normas correspondientes a la comunidad
+
+    @Auth.State("user") private currentUser!: User;
+    @Auth.State("community") private currentCommunity!: Community;
+    private competition!: Competition;
+    private compiledRules: string = "";
+
+    mounted() {
+        competitionService.getCompetition(this.currentCommunity.competition.code)
+            .then(c => {
+                this.competition = c;
+                this.compiledRules = marked(c.rules ?? "");
+            });
+    }
+
+    // ToDo: Obtener las normas correspondientes a la comunidad
 }
 </script>

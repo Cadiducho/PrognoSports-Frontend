@@ -24,6 +24,7 @@
                 </div>
             </b-navbar-item>
             <b-navbar-item v-else>
+                <CommunitiesDropdown v-if="currentCommunity"/>
                 <AvatarComponent/>
             </b-navbar-item>
         </template>
@@ -34,15 +35,19 @@
     import {Component, Vue} from "vue-property-decorator";
     import {namespace} from "vuex-class";
     import AvatarComponent from "@/components/navbar/AvatarComponent.vue";
+    import {Community} from "@/types/Community";
+    import CommunitiesDropdown from "@/components/navbar/CommunitiesDropdown.vue";
 
     const Auth = namespace("Auth");
 
     @Component({
         components: {
             AvatarComponent,
+            CommunitiesDropdown
         }
     })
     export default class LandingNavbar extends Vue {
         @Auth.Getter private isLoggedIn!: boolean;
+        @Auth.State("community") private currentCommunity!: Community;
     }
 </script>

@@ -6,4 +6,5 @@ export interface Competition {
     name: string;
     fullname: string;
     currentSeason: Season;
+    rules: string;
 }

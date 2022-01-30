@@ -40,6 +40,18 @@
                         </b-select>
                     </b-field>
 
+                    <div class="columns">
+                        <div class="column">
+                            <b-field label="Reglas">
+                                <b-input v-model="competition.rules" type="textarea"></b-input>
+                            </b-field>
+                        </div>
+                        <div class="column content">
+                            <div v-html="previewRules"></div>
+                        </div>
+                    </div>
+
+                    <hr />
                     <b-field>
                         <p class="control">
                             <b-button :disabled="!isDataOk()" label="Editar competición" @click="editCompetition()" type="is-primary" />
@@ -61,9 +73,10 @@ import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import {User} from "@/types/User";
 import {namespace} from "vuex-class";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-import {competitionService, seasonService} from "@/_services";
+import {competitionService} from "@/_services";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
+import {marked} from "marked";
 const Auth = namespace('Auth')
 
 @Component({
@@ -84,7 +97,12 @@ export default class CompetitionEdit extends Vue {
     private compSeasons: Array<Season> = [];
 
     private isDataOk(): boolean {
-        return (this.competition !== undefined) && !(this.competition.id == undefined && this.competition.code == undefined && this.competition.name == undefined && this.competition.fullname == undefined)
+        return (this.competition !== undefined)
+            && !(this.competition.id == undefined
+                && this.competition.code == undefined
+                && this.competition.name == undefined
+                && this.competition.rules == undefined
+                && this.competition.fullname == undefined)
     }
 
     mounted() {
@@ -106,11 +124,16 @@ export default class CompetitionEdit extends Vue {
         })
     }
 
+    get previewRules() {
+        return marked(this.competition?.rules ?? "");
+    }
+
     private editCompetition(): void {
         let data = {
             code: this.competition!.code,
             name: this.competition!.name,
             fullname: this.competition!.fullname,
+            rules: this.competition!.rules,
             currentSeason: this.competition!.currentSeason!.id,
         }
         competitionService.editCompetition(this.competition!, data).then((result) => {

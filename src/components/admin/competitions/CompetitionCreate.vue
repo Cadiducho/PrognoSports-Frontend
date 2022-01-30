@@ -19,6 +19,10 @@
                         <b-input v-model="createdCompetition.code" name="code" expanded lazy></b-input>
                     </b-field>
 
+                    <b-field label="Reglas">
+                        <b-input v-model="createdCompetition.rules" type="textarea" expanded lazy></b-input>
+                    </b-field>
+
                     <hr/>
 
                 </b-step-item>
@@ -29,6 +33,7 @@
                     <AlertInvalidData :object="createdCompetition.name" message="No has introducido nombre para esta competición" />
                     <AlertInvalidData :object="createdCompetition.code" message="No has introducido código para esta competición" />
                     <AlertInvalidData :object="createdCompetition.fullname" message="No has introducido nombre completo para esta competición" />
+                    <AlertInvalidData :object="createdCompetition.rules" message="No has reglas para esta competición" />
 
                     <div class="notification has-background-primary">
                         Revisa los datos, se va a crear la siguiente competición
@@ -39,6 +44,9 @@
                         <p class="card-text"><b>Nombre completo de la competición: </b>{{ createdCompetition.fullname }}</p>
                         <p class="card-text"><b>Code de la competición: </b>{{ createdCompetition.code }}</p>
                     </div>
+                    <section class="content">
+                        <div v-html="compiledRules"></div>
+                    </section>
 
                     <hr/>
                     <b-field>
@@ -60,11 +68,11 @@ import {Component, Vue} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import {User} from "@/types/User";
 import {namespace} from "vuex-class";
-import {competitionService, seasonService} from "@/_services";
+import {competitionService} from "@/_services";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-import {Season} from "@/types/Season";
 import {Competition} from "@/types/Competition";
+import {marked} from "marked";
 const Auth = namespace('Auth')
 
 @Component({
@@ -85,14 +93,20 @@ export default class SeasonCreate extends Vue {
         code: undefined!,
         name: undefined!,
         fullname: undefined!,
-        currentSeason: undefined!
+        currentSeason: undefined!,
+        rules: undefined!
     }
 
-    mounted() {
+    get compiledRules() {
+        return marked(this.createdCompetition?.rules ?? "");
     }
 
     private isDataOk(): boolean {
-        return !(this.createdCompetition.id == undefined && this.createdCompetition.code == undefined && this.createdCompetition.name == undefined && this.createdCompetition.fullname == undefined)
+        return !(this.createdCompetition.id == undefined
+            && this.createdCompetition.code == undefined
+            && this.createdCompetition.name == undefined
+            && this.createdCompetition.fullname == undefined
+            && this.createdCompetition.rules == undefined)
     }
 
     private registerCompetition(): void {
@@ -100,6 +114,7 @@ export default class SeasonCreate extends Vue {
             code: this.createdCompetition!.code,
             name: this.createdCompetition!.name,
             fullname: this.createdCompetition!.fullname,
+            rules: this.createdCompetition!.rules,
         }
 
         competitionService.createCompetition(data).then((result) => {

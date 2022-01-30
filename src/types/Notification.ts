@@ -16,8 +16,7 @@ enum NotificationType {
 export interface INotification {
     id: string;
     to: User;
-    senderUser: User;
-    readAt: Date;
+    readAt: Date | undefined;
     type: NotificationType;
     data: NotificationData;
     createdAt: Date;
@@ -26,8 +25,7 @@ export interface INotification {
 export class Notification implements INotification {
     data: NotificationData;
     id: string;
-    readAt: Date;
-    senderUser: User;
+    readAt: Date | undefined;
     to: User;
     type: NotificationType;
     createdAt: Date;
@@ -36,7 +34,6 @@ export class Notification implements INotification {
         this.data = notification.data;
         this.id = notification.id;
         this.readAt = notification.readAt;
-        this.senderUser = notification.senderUser;
         this.to = notification.to;
         this.type = notification.type;
         this.createdAt = notification.createdAt;
