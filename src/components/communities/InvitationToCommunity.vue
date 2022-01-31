@@ -1,9 +1,8 @@
 <template>
     <div id="circuitDetails" class="box">
         <PrognoPageTitle class="mb-5" :name="communityName" />
-        <div v-if="isLoading">
-            <loading />
-        </div>
+
+        <loading v-if="isLoading"/>
 
         <p v-if="!thereIsCommunity">La comunidad con nombre <i>{{ this.$route.params.community }}</i> no ha sido encontrada</p>
         <template v-else>

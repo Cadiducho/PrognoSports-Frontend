@@ -9,58 +9,35 @@
                         </div>
                     </div>
                     <div class="card-content">
-                        <form>
+                        <form @submit.prevent="handleSubmit()">
                             <div class="field">
                                 <label class="label">Usuario</label>
-                                <div
-                                    class="control has-icons-left has-icons-right"
-                                >
-                                    <input
-                                        v-model="username"
-                                        id="username"
-                                        autofocus
-                                        required
-                                        class="input"
-                                        :class="{
-                                                'is-danger':
-                                                    submitted && !username,
-                                            }"
-                                        type="text"
-                                        name="username"
-                                    />
-                                    <span class="icon is-small is-left">
-                                            <i class="fas fa-user"></i>
-                                        </span>
+                                <div class="control has-icons-left has-icons-right">
+
+                                    <span class="icon is-small">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+
+                                    <input v-model="username" type="text" autofocus required
+                                        class="input" :class="{ 'is-danger': submitted && !username }" />
+
                                 </div>
                             </div>
                             <div class="field">
                                 <label class="label">Contraseña</label>
-                                <div
-                                    class="control has-icons-left has-icons-right"
-                                >
-                                    <input
-                                        v-model="password"
-                                        id="password"
-                                        required
-                                        class="input"
-                                        :class="{
-                                                'is-danger':
-                                                    submitted && !password,
-                                            }"
-                                        type="password"
-                                        name="password"
-                                    />
-                                    <span class="icon is-small is-left">
-                                            <i class="fas fa-lock"></i>
-                                        </span>
+                                <div class="control has-icons-left has-icons-right">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-lock"></i>
+                                    </span>
+
+                                    <input v-model="password" type="password" required
+                                        class="input" :class="{ 'is-danger': submitted && !password }" />
+
                                 </div>
                             </div>
                             <div class="field is-grouped">
                                 <div class="control">
-                                    <button
-                                        v-on:click.prevent="handleSubmit()"
-                                        class="button is-link"
-                                    >
+                                    <button type="submit" class="button is-link">
                                         Acceder
                                     </button>
                                 </div>
@@ -69,14 +46,10 @@
                     </div>
                     <div class="card-footer">
                         <div class="card-footer-item">
-                            <router-link to="/register"
-                            >Registrarse</router-link
-                            >
+                            <router-link :to="{ path: '/register', query: { redirect: this.$route.query.redirect }}">Registrarse</router-link>
                         </div>
                         <div class="card-footer-item">
-                            <router-link to="/forgotpassword"
-                            >He olvidado mi contraseña</router-link
-                            >
+                            <router-link :to="{ path: '/forgotpassword', query: { redirect: this.$route.query.redirect }}">He olvidado mi contraseña</router-link>
                         </div>
                     </div>
                 </div>
@@ -86,17 +59,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import {Component, Vue} from "vue-property-decorator";
 import {namespace} from "vuex-class";
+
 const Auth = namespace("Auth");
 
 @Component
 export default class LoginComponent extends Vue {
-    username: string = "";
-    password: string = "";
-    submitted: boolean = false;
+    private username: string = "";
+    private password: string = "";
+    private submitted: boolean = false;
+    private redirectTo = this.$route.query.redirect;
 
-    @Auth.Action private login!: (payload: {username: string, password: string}) => Promise<string>;
+    @Auth.Action private login!: (payload: { username: string, password: string }) => Promise<string>;
     @Auth.State("mail") private registeredMail!: string;
 
     created() {
@@ -118,7 +93,13 @@ export default class LoginComponent extends Vue {
                         type: "is-success",
                     });
 
-                    this.$router.push({ name: "home" });
+                    if (this.redirectTo !== undefined) {
+                        // Enviar a la redirección
+                        this.$router.push(this.redirectTo as string);
+                    } else {
+                        // Redirigir al home en caso normal
+                        this.$router.push({ name: "home" });
+                    }
                 },
                 (error: any) => {
                     let message: string;

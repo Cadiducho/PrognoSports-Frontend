@@ -4,101 +4,61 @@
             <div class="column is-two-fifths">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-header-title">Registro</div>
+                        <div class="card-header-title">Registro en PrognoSports</div>
                     </div>
                     <div class="card-content">
-                        <form>
+                        <form @submit.prevent="handleSubmit()">
                             <div class="field">
                                 <label class="label">Usuario</label>
-                                <div
-                                    class="control has-icons-left has-icons-right"
-                                >
-                                    <input
-                                        v-model="username"
-                                        id="username"
-                                        autofocus
-                                        required
-                                        class="input"
-                                        :class="{
-                                                'is-danger':
-                                                    submitted && !username,
-                                            }"
-                                        type="text"
-                                        name="username"
-                                    />
+                                <div class="control has-icons-left has-icons-right">
+
                                     <span class="icon is-small is-left">
-                                            <i class="fas fa-user"></i>
-                                        </span>
+                                        <i class="fas fa-user"></i>
+                                    </span>
+
+                                    <input v-model="username" type="text" autofocus required
+                                        class="input" :class="{ 'is-danger': submitted && !username }" />
                                 </div>
                             </div>
                             <div class="field">
                                 <label class="label">Contraseña</label>
-                                <div
-                                    class="control has-icons-left has-icons-right"
-                                >
-                                    <input
-                                        v-model="password"
-                                        id="password"
-                                        required
-                                        class="input"
-                                        :class="{
-                                                'is-danger':
-                                                    submitted && !password,
-                                            }"
-                                        type="password"
-                                        name="password"
-                                    />
+                                <div class="control has-icons-left has-icons-right">
+
                                     <span class="icon is-small is-left">
-                                            <i class="fas fa-lock"></i>
-                                        </span>
+                                        <i class="fas fa-lock"></i>
+                                    </span>
+
+                                    <input v-model="password" type="password" required
+                                           class="input" :class="{ 'is-danger': submitted && !password }" />
+
                                 </div>
                             </div>
                             <div class="field">
-                                <label class="label"
-                                >Correo electrónico</label
-                                >
-                                <div
-                                    class="control has-icons-left has-icons-right"
-                                >
-                                    <input
-                                        v-model="email"
-                                        id="email"
-                                        required
-                                        class="input"
-                                        :class="{
-                                                'is-danger':
-                                                    submitted && !email,
-                                            }"
-                                        type="email"
-                                        name="email"
-                                    />
+                                <label class="label">Correo electrónico</label>
+                                <div class="control has-icons-left has-icons-right">
+
                                     <span class="icon is-small is-left">
-                                            <i class="fas fa-at"></i>
-                                        </span>
+                                        <i class="fas fa-at"></i>
+                                    </span>
+
+                                    <input v-model="email" type="email" required
+                                        class="input" :class="{ 'is-danger': submitted && !email }" />
+
                                 </div>
                             </div>
                             <div class="field is-grouped">
                                 <div class="control">
-                                    <button
-                                        v-on:click.prevent="handleSubmit()"
-                                        class="button is-link"
-                                    >
-                                        Regístrate
-                                    </button>
+                                    <button class="button is-link">Regístrate</button>
                                 </div>
                             </div>
                         </form>
                     </div>
                     <div class="card-footer">
                         <div class="card-footer-item">
-                            <router-link to="/login"
-                            >Ya tengo usuario</router-link
-                            >
+                            <router-link :to="{ path: '/login', query: { redirect: this.$route.query.redirect }}">Ya tengo usuario</router-link>
                         </div>
                         <div class="card-footer-item">
-                            <router-link to="/forgotpassword"
-                            >He olvidado mi contraseña</router-link
-                            >
+                            <router-link :to="{ path: '/forgotpassword', query: { redirect: this.$route.query.redirect }}">He olvidado mi contraseña</router-link>
                         </div>
                     </div>
                 </div>
@@ -120,17 +80,19 @@ export default class RegisterComponent extends Vue {
     private submitted: boolean = false;
     @Auth.Action private register!: (payload: {username: string, email: string, password: string}) => Promise<any>;
 
-    public handleSubmit(e: any) {
+    public handleSubmit() {
         this.submitted = true;
-        const { email, username, password } = this;
-        if (email && username && password) {
+        if (this.email && this.username && this.password) {
             this.register({
-                email: email,
-                username: username,
-                password: password,
+                email: this.email,
+                username: this.username,
+                password: this.password,
             }).then(
                 () => {
-                    this.$router.push("/login");
+                    this.$router.push({
+                        path: '/login',
+                        query: { redirect: this.$route.query.redirect }
+                    });
                     this.$buefy.toast.open({
                         message: "Te has registrado con éxito",
                         type: "is-success",

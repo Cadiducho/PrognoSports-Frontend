@@ -10,6 +10,7 @@ const storedCommunity = localStorage.getItem('community');
 
 @Module({ namespaced: true })
 class AuthVuexModule extends VuexModule {
+
     public status = storedUser ? { loggedIn: true } : { loggedIn: false };
     public user = storedUser ? JSON.parse(storedUser) : null;
     public mail = storedMail ? JSON.parse(storedMail) : null;

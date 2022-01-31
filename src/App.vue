@@ -53,9 +53,7 @@
                         }
                     })
                     .catch((error) => {
-                        console.log("Error solicitando al usuario: ", error)
-                        console.log("Mandando a login");
-                        this.$router.push('/login');
+                        console.log("Error solicitando al usuario: ", error);
                     });
             }
         }

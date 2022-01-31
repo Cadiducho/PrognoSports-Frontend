@@ -117,7 +117,6 @@
                             </template>
                             <template v-slot="props">
 
-                                <!-- //ToDo: Tooltip desglosando puntos por sesiones-->
                                 <template v-if="props.row.gps.has(gp.name)">
                                     <b-tag type="is-warning" v-if="checkWinnerCell(gp.name, props.row.gps.get(gp.name).accumulatedPoints)">
                                         <PointsTooltipComponent

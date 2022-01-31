@@ -238,7 +238,7 @@ export const routes = [
     },
     {
         path: '/invitation/:community?/:code?',
-        meta: { requiresAuth: true }, //FixMe: Si invitaciones requiere auth, el login y registro deben matener la redirección a la invitación
+        meta: { requiresAuth: true },
         component: PrognoView,
         children: [{
             path: '',
