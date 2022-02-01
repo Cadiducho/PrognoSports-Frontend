@@ -1,4 +1,5 @@
 import {Season} from "@/types/Season";
+import {RaceSession} from "@/types/RaceSession";
 
 export interface Competition {
     id: number;
@@ -7,4 +8,6 @@ export interface Competition {
     fullname: string;
     currentSeason: Season;
     rules: string;
+
+    availableSessions: RaceSession[];
 }

@@ -15,7 +15,7 @@ class AuthVuexModule extends VuexModule {
     public user = storedUser ? JSON.parse(storedUser) : null;
     public mail = storedMail ? JSON.parse(storedMail) : null;
     public token = storedToken ? JSON.parse(storedToken) : null;
-    public community = storedCommunity ? JSON.parse(storedCommunity) : null;
+    public community = storedCommunity ? new Community(JSON.parse(storedCommunity)) : null;
 
     @Mutation
     public loginSuccess(token: string): void {

@@ -94,7 +94,8 @@ export default class SeasonCreate extends Vue {
         name: undefined!,
         fullname: undefined!,
         currentSeason: undefined!,
-        rules: undefined!
+        rules: undefined!,
+        availableSessions: []
     }
 
     get compiledRules() {

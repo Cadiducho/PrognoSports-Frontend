@@ -1,21 +1,27 @@
 import axios from 'axios';
-import {Community} from "@/types/Community";
+import {Community, ICommunity} from "@/types/Community";
 import {User} from "@/types/User";
 import {CommunityUser} from "@/types/CommunityUser";
 import {RuleSet} from "@/types/RuleSet";
+import {PrognoService} from "@/_services/progno.service";
+import {Notification} from "@/types/Notification";
 
-export class CommunityService {
+export class CommunityService extends PrognoService<ICommunity, Community> {
+
+    factory(data: ICommunity): Community {
+        return new Community(data);
+    }
 
     public async getCommunityById(communityId: string | number): Promise<Community> {
-        return await axios.get(`/communities/${communityId}`);
+        return this.getObjectFromAPI(`/communities/${communityId}`);
     }
 
     public async getAllCommunities(): Promise<Array<Community>> {
-        return await axios.get(`/communities`);
+        return this.getObjectListFromAPI("/communities");
     }
 
     public async getUserCommunities(user: User): Promise<Array<Community>> {
-        return await axios.get(`/user/${user.id}/communities`);
+        return this.getObjectListFromAPI(`/user/${user.id}/communities`);
     }
 
     public async validateUserInCommunity(community: Community): Promise<boolean> {

@@ -9,7 +9,7 @@ export class NotificationService extends PrognoService<INotification, Notificati
     }
 
     public async getNotifications(): Promise<Array<Notification>> {
-        return this.getObjectFromAPI("/notifications");
+        return this.getObjectListFromAPI("/notifications");
     }
 
     public async clearNotifications(): Promise<void> {

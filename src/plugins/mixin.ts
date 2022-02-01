@@ -22,6 +22,13 @@ let mixin = {
         },
         isBeforeEndDate(grandPrix: GrandPrix, session: RaceSession): boolean {
             return isBeforeEndDate(grandPrix, session);
+        },
+        sessionHumanName(session: RaceSession): string {
+            if (session == RaceSession.QUALIFY) return "Clasificación";
+            if (session == RaceSession.SPRINT_RACE) return "Carrera Sprint";
+            if (session == RaceSession.RACE) return "Carrera";
+            return "Sesión desconocida";
+
         }
     }
 }

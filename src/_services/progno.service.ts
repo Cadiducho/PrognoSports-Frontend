@@ -1,4 +1,3 @@
-import {INotification, Notification} from "@/types/Notification";
 import axios from "axios";
 
 export abstract class PrognoService<In, T extends In> {
@@ -13,7 +12,19 @@ export abstract class PrognoService<In, T extends In> {
      * Obtiene la lista de objetos de datos a partir de la API
      * @param endpoint ruta de la API
      */
-    public async getObjectFromAPI(endpoint: string): Promise<Array<T>> {
+    public async getObjectFromAPI(endpoint: string): Promise<T> {
+        return new Promise(((resolve, reject) => {
+            this.getFromAPI(endpoint).then(obj => {
+                resolve(this.factory(obj));
+            }).catch(reason => reject(reason));
+        }));
+    }
+
+    /**
+     * Obtiene la lista de objetos de datos a partir de la API
+     * @param endpoint ruta de la API
+     */
+    public async getObjectListFromAPI(endpoint: string): Promise<Array<T>> {
         return new Promise(((resolve, reject) => {
             const list: Array<T> = [];
             this.getListFromAPI(endpoint).then(objects => {
@@ -23,6 +34,14 @@ export abstract class PrognoService<In, T extends In> {
                 resolve(list);
             }).catch(reason => reject(reason));
         }));
+    }
+
+    /**
+     * Obtiene una interfaz de datos a partir de la API
+     * @param endpoint ruta de la API
+     */
+    private async getFromAPI(endpoint: string): Promise<In> {
+        return await axios.get(endpoint);
     }
 
     /**
