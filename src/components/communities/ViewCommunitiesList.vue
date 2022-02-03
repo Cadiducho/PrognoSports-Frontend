@@ -21,7 +21,7 @@
                     <CommunityListItem
                         v-for="(community, index) in filteredCommunities(this.myCommunityList)"
                         :community="community"
-                        :user-communities="myCommunityList"
+                        :isUserInCommunity="myCommunityList.some(c => c.id === community.id)"
                         v-bind:key="index"
                     />
                 </b-tab-item>
@@ -39,7 +39,7 @@
                     <CommunityListItem
                         v-for="(community, index) in openCommunities"
                         :community="community"
-                        :user-communities="myCommunityList"
+                        :isUserInCommunity="myCommunityList.some(c => c.id === community.id)"
                         v-bind:key="index"
                     />
                 </b-tab-item>
@@ -58,7 +58,7 @@
                     <CommunityListItem
                         v-for="(community, index) in closedCommunities"
                         :community="community"
-                        :user-communities="myCommunityList"
+                        :isUserInCommunity="myCommunityList.some(c => c.id === community.id)"
                         v-bind:key="index"
                     />
                 </b-tab-item>
@@ -76,7 +76,7 @@
                     <CommunityListItem
                         v-for="(community, index) in filteredCommunities(this.communityList)"
                         :community="community"
-                        :user-communities="myCommunityList"
+                        :isUserInCommunity="myCommunityList.some(c => c.id === community.id)"
                         v-bind:key="index"
                     />
                 </b-tab-item>

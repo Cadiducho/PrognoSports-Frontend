@@ -12,6 +12,7 @@ export interface ICommunity {
     owner: User;
     created: Date,
     members_amount: number;
+    user_is_member: boolean;
     invitation: string;
 
     qualify_positions_predicted: number;
@@ -29,6 +30,7 @@ export class Community implements ICommunity {
     image_url: string;
     invitation: string;
     members_amount: number;
+    user_is_member: boolean;
     name: string;
     open: boolean;
     owner: User;
@@ -44,6 +46,7 @@ export class Community implements ICommunity {
         this.image_url = data.image_url;
         this.invitation = data.invitation;
         this.members_amount = data.members_amount;
+        this.user_is_member = data.user_is_member;
         this.name = data.name;
         this.open = data.open;
         this.owner = data.owner;

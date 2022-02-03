@@ -4,7 +4,6 @@ import {User} from "@/types/User";
 import {CommunityUser} from "@/types/CommunityUser";
 import {RuleSet} from "@/types/RuleSet";
 import {PrognoService} from "@/_services/progno.service";
-import {Notification} from "@/types/Notification";
 
 export class CommunityService extends PrognoService<ICommunity, Community> {
 
@@ -24,16 +23,9 @@ export class CommunityService extends PrognoService<ICommunity, Community> {
         return this.getObjectListFromAPI(`/user/${user.id}/communities`);
     }
 
-    public async validateUserInCommunity(community: Community): Promise<boolean> {
-        return await axios.get(`/communities/${community.id}/validate`);
-    }
-
     public async joinCommunity(community: Community, code?: string): Promise<Community> {
-        if (code) {
-            return await axios.post(`/communities/${community.id}/join/${code}`);
-        } else {
-            return await axios.post(`/communities/${community.id}/join`);
-        }
+        const searchParameter = (code ? `/${code}` : "");
+        return await axios.post(`/communities/${community.name}/join${searchParameter}`);
     }
 
     public async quitCommunity(community: Community): Promise<Community> {

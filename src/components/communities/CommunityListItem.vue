@@ -53,7 +53,6 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {Community} from "@/types/Community";
-import {communityService} from "@/_services";
 import ConfirmLeaveCommunityModal from "@/components/communities/ConfirmLeaveCommunityModal.vue";
 import ConfirmJoinCommunityModal from "@/components/communities/ConfirmJoinCommunityModal.vue";
 
@@ -62,18 +61,9 @@ import ConfirmJoinCommunityModal from "@/components/communities/ConfirmJoinCommu
 })
 export default class CommunityListItem extends Vue {
     @Prop() community!: Community;
-    @Prop() userCommunities!: Array<Community>;
-    private isUserInCommunity: boolean = false;
+    @Prop() isUserInCommunity!: boolean;
     private isJoinModalActive: boolean = false;
     private isLeaveModalActive: boolean = false;
-
-    created() {
-        this.validateUserInCommunity();
-    }
-
-    private validateUserInCommunity() {
-        return this.userCommunities.some(c => c.id === this.community.id);
-    }
 
     private tryJoinCommunity() {
         this.$buefy.modal.open({

@@ -237,7 +237,7 @@ export const routes = [
         ]
     },
     {
-        path: '/invitation/:community?/:code?',
+        path: '/invitation/:community/:code?',
         meta: { requiresAuth: true },
         component: PrognoView,
         children: [{

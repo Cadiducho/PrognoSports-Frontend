@@ -174,10 +174,10 @@ export default class ViewOneCommunity extends Vue {
             this.community = community;
             this.thereIsCommunity = true;
 
+            this.isUserInCommunity = community.user_is_member;
             communityService.getMembers(community).then(list => {
                 this.members.push(...list);
-            });
-            communityService.validateUserInCommunity(community).then(bool => this.isUserInCommunity = bool); //FixMe: Revisar este método, eficiencia
+            }).catch(() => {}); // Ignorar si no tiene permisos, simplemente no se rellena
         }).catch((reason) => {
             this.thereIsCommunity = false;
         }).finally(() => {
