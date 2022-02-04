@@ -31,31 +31,5 @@
     })
     export default class App extends Vue {
 
-        @Auth.Getter
-        private isLoggedIn!: boolean;
-
-        @Auth.Action
-        private userRequest!: () => Promise<User>;
-
-        @Auth.State("community")
-        private currentCommunity!: Community;
-
-        @Auth.Action
-        private communityRequest!: (payload: {communityId: number}) => Promise<Community>;
-
-        updated() {
-            if (this.isLoggedIn) {
-                this.userRequest()
-                    .then((user) => {
-                        // Si currentCommunity (del state) es null, no hay comunidad, así que pedimos la por defecto del usuario
-                        if (this.currentCommunity === null) {
-                            this.communityRequest({communityId: user.currentCommunity.id});
-                        }
-                    })
-                    .catch((error) => {
-                        console.log("Error solicitando al usuario: ", error);
-                    });
-            }
-        }
     }
 </script>
