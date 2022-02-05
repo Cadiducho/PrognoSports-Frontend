@@ -13,7 +13,7 @@
 
                     <div class="box">
                         <b-field label="Orderar lista de pilotos">
-                            <b-radio v-model='orderType' :native-value='0'>Orden arfabético</b-radio>
+                            <b-radio v-model='orderType' :native-value='0'>Orden alfabético</b-radio>
                             <b-radio v-model='orderType' :native-value='1'>Por equipos</b-radio>
                             <b-radio v-model='orderType' :native-value='2'>Por dorsal</b-radio>
                             <b-radio v-model='orderType' :native-value='3' v-if="this.startGrid.length > 0">Por parrilla de salida</b-radio>
@@ -185,10 +185,10 @@ export default class SelectTipps extends Vue {
     }
 
     get pilotosDisponiblesFiltrados(): Array<Driver> {
-        let sortAlfabetico = (d1: Driver, d2: Driver) => (d1.lastname < d2.lastname ? -1 : 1);
-        let sortEquipos = (d1: Driver, d2: Driver) => (d1.team.name < d2.team.name ? -1 : 1);
-        let sortDorsal = (d1: Driver, d2: Driver) => (d1.number < d2.number ? -1 : 1);
-        let sortParrilla = (d1: Driver, d2: Driver) => (this.indexedGrid.get(d1.number)! < this.indexedGrid.get(d2.number)! ? -1 : 1);
+        const sortAlfabetico = (d1: Driver, d2: Driver) => (d1.lastname < d2.lastname ? -1 : 1);
+        const sortEquipos = (d1: Driver, d2: Driver) => (d1.team.name < d2.team.name ? -1 : 1);
+        const sortDorsal = (d1: Driver, d2: Driver) => (d1.number < d2.number ? -1 : 1);
+        const sortParrilla = (d1: Driver, d2: Driver) => (this.indexedGrid.get(d1.number)! < this.indexedGrid.get(d2.number)! ? -1 : 1);
 
 
         let pickedSort: (d1: Driver, d2: Driver) => (number);

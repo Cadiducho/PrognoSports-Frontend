@@ -62,8 +62,40 @@
                                 </div>
                             </div>
 
+                            <b-collapse :open="false" class="mb-2">
+                                <template #trigger>
+                                    <b-button
+                                        label="Opciones de ordenado"
+                                        type="is-primary" />
+                                </template>
+
+                                <div class="box">
+                                    <b-field label="Orderar lista de miembros">
+                                        <b-radio v-model='orderType' :native-value='0'>Por nombre de usuario</b-radio>
+                                        <b-radio v-model='orderType' :native-value='1'>Por rango</b-radio>
+                                        <b-radio v-model='orderType' :native-value='2'>Por conexión reciente</b-radio>
+                                        <b-radio v-model='orderType' :native-value='3'>Por fecha de registro</b-radio>
+                                    </b-field>
+                                    <b-field>
+                                        <b-switch v-model="orderAscendent">
+                                            Orden {{ orderAscendent ? "ascendente" : "descendente" }}
+                                        </b-switch>
+                                    </b-field>
+                                </div>
+                            </b-collapse>
+
+                            <b-field>
+                                <b-input
+                                    v-model="searchInput"
+                                    placeholder="Buscar miembro"
+                                    type="search"
+                                    icon-pack="fas"
+                                    icon="search"
+                                />
+                            </b-field>
+
                             <div class="mt-5 columns is-multiline is-4">
-                                <div class="column is-half" v-for="cu in members">
+                                <div class="column is-half" v-for="cu in filteredMembers">
                                     <div class="box">
                                         <article class="media">
                                             <div class="media-left">
@@ -154,6 +186,7 @@ import {communityService} from "@/_services";
 
 import {Community} from "@/types/Community";
 import {CommunityUser} from "@/types/CommunityUser";
+import dayjs from "dayjs";
 
 @Component<ViewOneCommunity>({
     components: {
@@ -166,6 +199,10 @@ export default class ViewOneCommunity extends Vue {
     private thereIsCommunity: boolean = false;
     private members: Array<CommunityUser> = [];
     private isUserInCommunity: boolean = false;
+
+    private searchInput: String = '';
+    private orderType: number = 2;
+    private orderAscendent: boolean = false;
 
     created() {
         let communityId = this.$route.params.community;
@@ -201,6 +238,53 @@ export default class ViewOneCommunity extends Vue {
                 type: "is-success",
             })}
         );
+    }
+
+    get filteredMembers(): Array<CommunityUser> {
+        const sortUsername = (m1: CommunityUser, m2: CommunityUser) => (m1.user.username < m2.user.username ? -1 : 1);
+        const sortRank = (m1: CommunityUser, m2: CommunityUser) => (m1.user.rank.name < m2.user.rank.name ? -1 : 1);
+        const sortRegisterDate = (m1: CommunityUser, m2: CommunityUser) => (dayjs(m1.user.created).isBefore(m2.user.created) ? -1 : 1);
+
+        const sortLastConnect = (m1: CommunityUser, m2: CommunityUser) => {
+            if (m1.user.last_activity === undefined) return 1;
+            if (m2.user.last_activity === undefined) return -1;
+            const d1 = new Date(m1.user.last_activity);
+            const d2 = new Date(m2.user.last_activity);
+            return (d1 < d2 ? 10 : -10);
+        }
+
+        let pickedSort: (m1: CommunityUser, m2: CommunityUser) => (number);
+        switch (this.orderType) {
+            case 1: pickedSort = sortRank; break;
+            case 2: pickedSort = sortLastConnect; break;
+            case 3: pickedSort = sortRegisterDate; break;
+            default: pickedSort = sortUsername;
+        }
+        let listaOrdenada = this.members.sort(pickedSort);
+
+        if (this.orderAscendent) {
+            listaOrdenada = listaOrdenada.reverse();
+        }
+
+        if (!this.searchInput.trim()) {
+            return listaOrdenada;
+        }
+
+        const filtroLowerCase: string = this.searchInput.toLowerCase().trim();
+
+        return listaOrdenada.filter((member) => {
+            return (
+                member.user.username
+                    .toLowerCase()
+                    .includes(filtroLowerCase) ||
+                (member.user.bio ?? "")
+                    .toLowerCase()
+                    .includes(filtroLowerCase) ||
+                member.user.rank.name
+                    .toLowerCase()
+                    .includes(filtroLowerCase)
+            );
+        });
     }
 }
 </script>

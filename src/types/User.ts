@@ -5,7 +5,7 @@ export interface User {
     id: number;
     username: string;
     email: string;
-    bio: string;
+    bio?: string;
     rank: UserRank;
     profileImageUrl: string;
     created: Date,
