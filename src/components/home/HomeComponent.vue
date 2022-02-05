@@ -83,6 +83,7 @@
     import {seasonService, userService} from "@/_services";
     import {Community} from "@/types/Community";
     import {Season} from "@/types/Season";
+    import {isValidCommunity} from "@/utils";
 
     const Auth = namespace('Auth')
 
@@ -115,7 +116,7 @@
         }
 
         mounted() {
-            if (this.currentCommunity) {
+            if (isValidCommunity(this.currentCommunity)) {
                 let competition = this.currentCommunity.competition;
                 let season: Season;
                 seasonService.getCurrentSeason(competition).then((seasonFetched) => {

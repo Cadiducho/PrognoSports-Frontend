@@ -12,7 +12,7 @@ import {CompetitionService} from "@/_services/competition.service";
 import {ConstructorService} from "@/_services/constructor.service";
 
 function authHeader() {
-    let token = localStorage.getItem('user-token');
+    let token = localStorage.getItem('token');
 
     if (token) {
         return token;
@@ -23,7 +23,7 @@ function authHeader() {
 
 axios.defaults.baseURL = process.env.NODE_ENV === 'production'
     ? 'https://api.prognosports.com/v2'
-    : 'http://localhost:8001/v2';
+    : 'https://api.prognosports.com/v2';
 
 axios.interceptors.request.use(function (config) {
     const token = authHeader();

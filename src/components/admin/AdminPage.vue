@@ -2,7 +2,7 @@
     <div id="adminPage" class="box">
         <PrognoPageTitle class="mb-5" name="Administración de PrognoSports" />
 
-        <section v-if="isAdmin(currentUser.rank)">
+        <section v-if="isAdmin(currentUser)">
             <div class="columns">
                 <div class="column">
                     <router-link class="box notification is-info has-text-centered has-text-weight-bold" to="/admin/users">

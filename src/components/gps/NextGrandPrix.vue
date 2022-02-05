@@ -46,6 +46,7 @@
     import {grandPrixService} from "@/_services";
     import {Community} from "@/types/Community";
     import {namespace} from 'vuex-class'
+    import {isValidCommunity} from "@/utils";
     const Auth = namespace('Auth')
 
     @Component
@@ -66,7 +67,7 @@
         }
 
         mounted() {
-            if (this.currentCommunity) {
+            if (isValidCommunity(this.currentCommunity)) {
                 this.fetchNextGrandPrixData();
             }
         }

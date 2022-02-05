@@ -3,16 +3,17 @@ import store from "@/_store";
 
 // Asegurar que el usuario está en una comunidad si esa ruta lo requiere
 export default function checkCommunity(to: Route, from: Route, next: NavigationGuardNext) {
-    if (!to.name?.startsWith('/gps') && !to.name?.startsWith('/ranking') && !to.name?.startsWith('/rules')) {
-        // Si no es ninguna de estas rutas, no hacer nada
-        next();
-    } else {
-        const hasCommunity = store.getters['Auth/thereIsCurrentCommunity'];
+    if (to.matched.some(record => record.meta.requiresCommunity)) {
+        // Si no está logged in y la ruta lo requiere, mandar al login
+        let hasCommunity = store.getters['Auth/thereIsCurrentCommunity'];
         if (!hasCommunity) {
-            // Si es una de esas rutas que necesitan comunidad, y no la tiene, mandar a /communities
-            next('/communities');
+            next({
+                path: '/communities'
+            });
         } else {
             next();
         }
+    } else {
+        next();
     }
 }

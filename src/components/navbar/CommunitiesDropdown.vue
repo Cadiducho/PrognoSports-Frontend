@@ -1,5 +1,5 @@
 <template>
-    <div id="communtiesDropdown" class="navbar-item has-dropdown is-hoverable">
+    <div id="communtiesDropdown" class="navbar-item has-dropdown is-hoverable" v-if="currentCommunity.id !== 0">
         <a class="navbar-link">
             {{ currentCommunity.name }}
         </a>
@@ -27,12 +27,12 @@
     import {namespace} from "vuex-class";
     import {User} from "@/types/User";
     import EventBus from "@/plugins/eventbus";
+    import {isValidCommunity} from "@/utils";
     const Auth = namespace('Auth')
 
     @Component
     export default class CommunitiesDropdown extends Vue {
         @Auth.State("user") private currentUser!: User;
-        @Auth.Getter private isProfileLoaded?: boolean;
         @Auth.State("community") private currentCommunity!: Community;
         @Auth.Action setCommunity!: (community: Community) => void;
         private communitiesList: Array<Community> = [];
@@ -42,7 +42,7 @@
                 this.getCommunityList();
             });
 
-            if (this.currentCommunity) {
+            if (isValidCommunity(this.currentCommunity)) {
                 this.getCommunityList();
             }
         }

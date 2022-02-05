@@ -84,7 +84,7 @@ export const routes = [
     // Páginas de dentro de la aplicación iniciadas sesión
     {
         path: '/home',
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, requiresCommunity: true },
         component: PrognoView,
         children: [{
             path: '',
@@ -209,7 +209,7 @@ export const routes = [
     // Ranking
     {
         path: '/ranking',
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, requiresCommunity: true },
         component: PrognoView,
         children: [{
             path: '',

@@ -2,7 +2,7 @@
     <div id="createCompetition" class="box">
         <PrognoPageTitle class="mb-5" name="Crear competición" />
 
-        <section v-if="isAdmin(currentUser.rank)">
+        <section v-if="isAdmin(currentUser)">
             <b-steps v-model="activeStep">
                 <b-step-item step="1" label="Datos de la competición">
                     <h2 class="title">Datos de la competición</h2>

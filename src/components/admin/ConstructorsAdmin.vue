@@ -2,7 +2,7 @@
     <div id="adminConstructor" class="box">
         <PrognoPageTitle class="mb-5" name="Administración de Constructores" />
 
-        <section v-if="isAdmin(currentUser.rank)">
+        <section v-if="isAdmin(currentUser)">
 
             <div class="block">
                 <b-button type="is-link" to="/new/constructor" tag="router-link">Nuevo constructor</b-button>

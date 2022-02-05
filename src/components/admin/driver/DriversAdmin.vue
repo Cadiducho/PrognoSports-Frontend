@@ -2,7 +2,7 @@
     <div id="adminDrivers" class="box">
         <PrognoPageTitle class="mb-5" name="Administración de pilotos" />
 
-        <section v-if="isAdmin(currentUser.rank)">
+        <section v-if="isAdmin(currentUser)">
 
             <div class="block">
                 <b-button type="is-link" to="/new/driver" tag="router-link">Nuevo piloto</b-button>

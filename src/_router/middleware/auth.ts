@@ -10,7 +10,7 @@ export default function checkLoggedIn(to: Route, from: Route, next: NavigationGu
             next({
                 path: '/login',
                 query: { redirect: to.fullPath }
-            })
+            });
         } else {
             next();
         }

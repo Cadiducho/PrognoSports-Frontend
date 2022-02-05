@@ -109,6 +109,7 @@ import {Community} from "@/types/Community";
 import {User} from "@/types/User";
 import {competitionService} from "@/_services";
 import {RuleSet} from "@/types/RuleSet";
+import {isValidCommunity} from "@/utils";
 
 const Auth = namespace("Auth");
 
@@ -121,7 +122,7 @@ export default class RulesComponent extends Vue {
     private compiledRules: string = "";
 
     mounted() {
-        if (this.currentCommunity) {
+        if (isValidCommunity(this.currentCommunity)) {
             competitionService.getCompetition(this.currentCommunity.competition.code)
                 .then(c => {
                     this.competition = c;

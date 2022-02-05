@@ -2,45 +2,37 @@ import { VuexModule, Module, Mutation, Action } from 'vuex-module-decorators';
 import {authService, communityService, userService} from "@/_services";
 import {User} from "@/types/User";
 import {Community} from "@/types/Community";
+import {isValidCommunity, isValidUser} from "@/utils";
 
-const storedUser = localStorage.getItem('user');
-const storedMail = localStorage.getItem('mail');
 const storedToken = localStorage.getItem('token');
-const storedCommunity = localStorage.getItem('community');
+const storedCommunityId = localStorage.getItem('community');
 
 @Module({ namespaced: true })
 class AuthVuexModule extends VuexModule {
 
-    public status = storedUser ? { loggedIn: true } : { loggedIn: false };
-    public user = storedUser ? JSON.parse(storedUser) : null;
-    public mail = storedMail ? JSON.parse(storedMail) : null;
-    public token = storedToken ? JSON.parse(storedToken) : null;
-    public community = storedCommunity ? new Community(JSON.parse(storedCommunity)) : null;
+    public user: User = {id: 0} as User;
+    public mail: string | null = null;
+    public token: string | null = storedToken ?? null;
+    public community: Community = new Community({id: 0} as Community);
+    public communityId = storedCommunityId ?? 0;
 
     @Mutation
     public loginSuccess(token: string): void {
-        this.status.loggedIn = true;
         this.token = token;
     }
 
     @Mutation
-    public userRequestSuccess(user: User): void {
-        this.status.loggedIn = true;
-        this.user = user;
-    }
-
-    @Mutation
-    public loginFailure(): void {
-        this.status.loggedIn = false;
-        this.user = null;
-        this.token = null;
-    }
-
-    @Mutation
     public logout(): void {
-        this.status.loggedIn = false;
-        this.user = null;
+        this.user = {id: 0} as User;
         this.token = null;
+    }
+
+    @Mutation
+    public userRequestSuccess(user: User): void {
+        this.user = user;
+        if (this.communityId === 0) {
+            this.communityId = this.user.currentCommunity.id;
+        }
     }
 
     @Mutation
@@ -49,27 +41,19 @@ class AuthVuexModule extends VuexModule {
     }
 
     @Mutation
-    public registerSuccess(): void {
-        this.status.loggedIn = false;
-    }
-
-    @Mutation
-    public registerFailure(): void {
-        this.status.loggedIn = false;
-    }
-
-    @Mutation
     public setCurrentCommunity(community: Community): void {
         this.user.currentCommunity = community;
         this.community = community;
+        this.communityId = community.id;
     }
 
     @Mutation
     public removeCurrentCommunity(): void {
-        if (this.user) {
-            this.user.currentCommunity = null;
+        if (this.user.id !== 0) {
+            this.user.currentCommunity = {id: 0} as Community;
         }
-        this.community = null;
+        this.community = {id: 0} as Community;
+        this.communityId = this.community.id;
     }
 
     // Actions de Auth
@@ -78,14 +62,14 @@ class AuthVuexModule extends VuexModule {
         let {username, password} = payload;
         return authService.login(username, password).then(
             token => {
-                localStorage.setItem('user-token', token);
                 this.context.commit('loginSuccess', token);
+                localStorage.setItem('token', token);
                 this.context.commit('changeMailState', null); // Ya no guardar el mail state tras el login correcto
-                this.context.dispatch('userRequest');
                 return Promise.resolve(token);
             },
             error => {
-                this.context.commit('loginFailure');
+                localStorage.removeItem('token');
+                this.context.commit('logout');
                 return Promise.reject(error);
             }
         );
@@ -94,9 +78,7 @@ class AuthVuexModule extends VuexModule {
     @Action
     signOut(): Promise<void> {
         return new Promise((resolve => {
-            localStorage.removeItem('user');
-            localStorage.removeItem('user-token');
-            localStorage.removeItem('mail');
+            localStorage.removeItem('token');
             localStorage.removeItem('community');
             this.context.commit('removeCurrentCommunity');
             this.context.commit('logout');
@@ -109,12 +91,10 @@ class AuthVuexModule extends VuexModule {
         let {username, email, password} = payload;
         return authService.register(username, email, password).then(
             response => {
-                this.context.commit('registerSuccess');
                 this.context.commit('changeMailState', email);
                 return Promise.resolve(response);
             },
             error => {
-                this.context.commit('registerFailure');
                 this.context.commit('changeMailState', null);
                 return Promise.reject(error);
             }
@@ -126,13 +106,11 @@ class AuthVuexModule extends VuexModule {
     userRequest(): Promise<User> {
         return userService.getMe().then(
             user => {
-                localStorage.setItem('user', JSON.stringify(user));
                 this.context.commit('userRequestSuccess', user);
                 return Promise.resolve(user);
             },
             error => {
-                console.log("Auth error...", error);
-                this.context.commit('loginFailure');
+                this.context.dispatch('signOut');
                 return Promise.reject(error);
             }
         );
@@ -147,9 +125,7 @@ class AuthVuexModule extends VuexModule {
                 return Promise.resolve(community);
             },
             error => {
-                console.log("Community error...");
-                console.log(error);
-                this.context.dispatch('removeCommunity');
+                this.context.commit('removeCurrentCommunity');
                 return Promise.reject(error);
             }
         );
@@ -157,7 +133,7 @@ class AuthVuexModule extends VuexModule {
 
     @Action
     setCommunity(community: Community): void {
-        localStorage.setItem('community', JSON.stringify(community));
+        localStorage.setItem('community', String(community.id ?? 0));
         this.context.commit('setCurrentCommunity', community);
     }
 
@@ -166,22 +142,23 @@ class AuthVuexModule extends VuexModule {
         localStorage.removeItem('community');
         this.context.commit('removeCurrentCommunity');
     }
+
     // ----
 
     get isLoggedIn(): boolean {
-        return this.status.loggedIn;
+        return isValidUser(this.user);
     }
 
-    get isProfileLoaded(): boolean {
-        if (this.user === null) return false;
-        if (this.user.id === undefined) return false;
-        return !!this.user.username;
+    get loggedUser(): User {
+        return this.user;
     }
 
     get thereIsCurrentCommunity() {
-        if (this.community === null) return false;
-        if (this.community.id === undefined) return false;
-        return this.community.id > 0;
+        return isValidCommunity(this.community);
+    }
+
+    get storedCommunityId() {
+        return this.communityId;
     }
 }
 

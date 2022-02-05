@@ -15,11 +15,14 @@ import {User} from "@/types/User";
 
 /**
  * Compara un {@link UserRank} para determinar si es administrador o no
- * @param rank El rango a comparar
+ * @param user El rango a comparar
  * @return True si es administrador
  */
-export function isAdmin(rank: UserRank): boolean {
-    return rank.name.toLowerCase() === "admin";
+export function isAdmin(user: User): boolean {
+    if (isValidUser(user)) {
+        return user.rank.name.toLowerCase() === "admin";
+    }
+    return false;
 }
 
 /**
@@ -65,4 +68,12 @@ export function isBeforeEndDate(grandPrix: GrandPrix, session: RaceSession): boo
     } else {
         return dayjs().isBefore(grandPrix.raceTime);
     }
+}
+
+export function isValidCommunity(community: Community): boolean {
+    return community.id !== 0;
+}
+
+export function isValidUser(user: User): boolean {
+    return user.id !== 0;
 }

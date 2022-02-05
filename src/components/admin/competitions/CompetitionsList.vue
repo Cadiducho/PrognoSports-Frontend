@@ -2,7 +2,7 @@
     <div id="adminDrivers" class="box">
         <PrognoPageTitle class="mb-5" name="Administración de competiciones" />
 
-        <section v-if="isAdmin(currentUser.rank)">
+        <section v-if="isAdmin(currentUser)">
 
             <div class="block">
                 <b-button type="is-link" to="/new/competition" tag="router-link">Nueva competición</b-button>

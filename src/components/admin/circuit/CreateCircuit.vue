@@ -2,7 +2,7 @@
     <div id="createCommunity" class="box">
         <PrognoPageTitle class="mb-5" name="Crear circuito" />
 
-        <section v-if="isAdmin(currentUser.rank)">
+        <section v-if="isAdmin(currentUser)">
             <b-steps v-model="activeStep">
                 <b-step-item step="1" label="Datos del circuito">
                     <h2 class="title">Datos del circuito</h2>

@@ -2,7 +2,7 @@
     <div id="adminUsers" class="box">
         <PrognoPageTitle class="mb-5" name="Administración de usuarios" />
 
-        <section v-if="isAdmin(currentUser.rank)">
+        <section v-if="isAdmin(currentUser)">
 
 
             <b-field>

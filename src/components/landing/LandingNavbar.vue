@@ -24,7 +24,7 @@
                 </div>
             </b-navbar-item>
             <b-navbar-item v-else>
-                <CommunitiesDropdown v-if="currentCommunity"/>
+                <CommunitiesDropdown v-if="isValidCommunity(currentCommunity)"/>
                 <AvatarComponent/>
             </b-navbar-item>
         </template>

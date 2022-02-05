@@ -1,6 +1,12 @@
-import {UserRank} from "@/types/UserRank";
 import {Circuit} from "@/types/Circuit";
-import {cantidadPilotosPronosticados, hasVariant, isAdmin, isBeforeEndDate, userProfileImage} from "@/utils";
+import {
+    cantidadPilotosPronosticados,
+    hasVariant,
+    isAdmin,
+    isBeforeEndDate, isValidCommunity,
+    isValidUser,
+    userProfileImage
+} from "@/utils";
 import {RaceSession} from "@/types/RaceSession";
 import {Community} from "@/types/Community";
 import {GrandPrix} from "@/types/GrandPrix";
@@ -8,8 +14,8 @@ import {User} from "@/types/User";
 
 let mixin = {
     methods: {
-        isAdmin(rank: UserRank): boolean {
-            return isAdmin(rank);
+        isAdmin(user: User): boolean {
+            return isAdmin(user);
         },
         userProfileImage(user: User): string {
             return userProfileImage(user);
@@ -28,8 +34,13 @@ let mixin = {
             if (session == RaceSession.SPRINT_RACE) return "Carrera Sprint";
             if (session == RaceSession.RACE) return "Carrera";
             return "Sesión desconocida";
-
-        }
+        },
+        isValidCommunity(community: Community): boolean {
+            return isValidCommunity(community);
+        },
+        isValidUser(user: User): boolean {
+            return isValidUser(user);
+        },
     }
 }
 

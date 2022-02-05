@@ -26,13 +26,13 @@
                     <router-link v-if="currentUser" class="navbar-item" to="/ranking">
                         Ranking
                     </router-link>
-                    <router-link v-if="currentUser && isAdmin(currentUser.rank)" class="navbar-item" to="/admin">
+                    <router-link v-if="currentUser && isAdmin(currentUser)" class="navbar-item" to="/admin">
                         Admin
                     </router-link>
                 </div>
 
-                <div class="navbar-end" v-if="currentUser">
-                    <CommunitiesDropdown v-if="currentCommunity"/>
+                <div class="navbar-end" v-if="isValidUser(currentUser)">
+                    <CommunitiesDropdown v-if="isValidCommunity(currentCommunity)"/>
                     <NotificationsDropdown />
                     <AddElementsDropdown />
                     <AvatarComponent/>

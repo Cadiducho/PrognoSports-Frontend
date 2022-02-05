@@ -2,7 +2,7 @@
     <div id="seasonList" class="box">
         <PrognoPageTitle class="mb-5" name="Administración de temporadas" />
 
-        <section v-if="isAdmin(currentUser.rank)">
+        <section v-if="isAdmin(currentUser)">
 
             <div class="block">
                 <b-button type="is-link" to="/new/season" tag="router-link">Nueva temporada</b-button>

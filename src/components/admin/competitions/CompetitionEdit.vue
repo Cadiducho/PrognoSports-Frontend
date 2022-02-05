@@ -2,7 +2,7 @@
     <div id="adminDrivers" class="box">
         <PrognoPageTitle class="mb-5" name="Administración de competiciones" />
 
-        <section v-if="isAdmin(currentUser.rank)">
+        <section v-if="isAdmin(currentUser)">
 
             <loading v-if="isLoading" />
             <template v-else>

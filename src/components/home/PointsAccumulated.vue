@@ -23,6 +23,7 @@ import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
 import {Community} from "@/types/Community";
 import {namespace} from "vuex-class";
+import {isValidCommunity} from "@/utils";
 const Auth = namespace('Auth')
 
 interface IChartType {
@@ -63,7 +64,7 @@ export default class PointsAccumulated extends Vue {
 
     mounted() {
         this.loading = true;
-        if (this.currentCommunity) {
+        if (isValidCommunity(this.currentCommunity)) {
             this.fetchData();
         }
     }

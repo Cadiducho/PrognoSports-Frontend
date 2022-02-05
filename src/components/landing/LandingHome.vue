@@ -113,8 +113,20 @@
                     <h1 class="call-to-action-h1">¿Preparado para comenzar?</h1>
                     <p class="call-to-action-p">¡Regístrate y prúebalo gratis!</p>
                 </div>
-                <button class="btn call-to-action-btn" @click="btn">Registrarse</button>
+                <button class="btn call-to-action-btn" @click="sendToRegister">Registrarse</button>
             </div>
         </div>
     </div>
 </template>
+
+<script lang="ts">
+import {Component, Vue} from "vue-property-decorator";
+
+@Component
+export default class LandingHome extends Vue {
+
+    sendToRegister() {
+        this.$router.push({path: '/register'});
+    }
+}
+</script>

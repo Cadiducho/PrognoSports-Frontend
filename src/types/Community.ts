@@ -40,7 +40,7 @@ export class Community implements ICommunity {
     constructor(data: ICommunity) {
         this.competition = data.competition;
         this.created = data.created;
-        this.defaultRuleSet = new RuleSet(data.defaultRuleSet);
+        this.defaultRuleSet = data.defaultRuleSet ? new RuleSet(data.defaultRuleSet) : {id: 0} as RuleSet;
         this.description = data.description;
         this.id = data.id;
         this.image_url = data.image_url;
