@@ -8,7 +8,7 @@
             <router-link class="navbar-item is-active":to="{name: 'communitiesDetails', params: { community: currentCommunity.name}}">
                 {{ currentCommunity.name }}
             </router-link>
-            <hr class="navbar-divider">
+            <hr class="navbar-divider" v-if="communitiesList.length > 0">
             <a class="navbar-item" v-for="com in communitiesList" v-bind:key="com.id" @click="switchToCommunity(com)">
                 {{ com.name }}
             </a>
