@@ -30,7 +30,7 @@
 
 
                     <b-field label="Temporada actual">
-                        <b-select v-model="competition.currentSeason.id" placeholder="Selecciona la temporada acutal" expanded>
+                        <b-select v-model="competition.currentSeason.id" placeholder="Selecciona la temporada actual" expanded>
                             <option
                                 v-for="season in compSeasons"
                                 :value="season.id"
