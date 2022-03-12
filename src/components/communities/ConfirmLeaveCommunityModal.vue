@@ -35,23 +35,29 @@ export default class ConfirmLeaveCommunityModal extends Vue {
     @Auth.Action removeCommunity!: () => void;
 
     public leaveCommunity() {
-        communityService.quitCommunity(this.community).then(() => {
+        if (this.community.id == this.currentCommunity.id) {
             this.$buefy.toast.open({
-                message: "¡Has dejado la comunidad " + this.community.name + "!",
-                type: "is-success",
-            });
-            if (this.community.id == this.currentCommunity.id) {
-                this.removeCommunity();
-            }
-        }).catch((error) => {
-            this.$buefy.toast.open({
-                message: "Ha ocurrido un error: " + error.message,
+                message: "No puedes dejar la comunidad en la que estás en este momento",
                 type: "is-warning",
             });
-        }).finally(() => {
-            EventBus.$emit('reloadCommunitiesList');
             this.$emit('close');
-        });
+        } else {
+            communityService.quitCommunity(this.community).then(() => {
+                this.$buefy.toast.open({
+                    message: "¡Has dejado la comunidad " + this.community.name + "!",
+                    type: "is-success",
+                });
+            }).catch((error) => {
+                this.$buefy.toast.open({
+                    message: "Ha ocurrido un error: " + error.message,
+                    type: "is-warning",
+                });
+            }).finally(() => {
+                EventBus.$emit('reloadCommunitiesList');
+                EventBus.$emit('reloadCommunitiesDropdown');
+                this.$emit('close');
+            });
+        }
     }
 }
 </script>
