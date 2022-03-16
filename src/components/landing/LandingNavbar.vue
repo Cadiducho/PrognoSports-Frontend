@@ -23,10 +23,10 @@
                     </router-link>
                 </div>
             </b-navbar-item>
-            <b-navbar-item v-else>
+            <template v-else>
                 <CommunitiesDropdown v-if="isValidCommunity(currentCommunity)"/>
                 <AvatarComponent/>
-            </b-navbar-item>
+            </template>
         </template>
     </b-navbar>
 </template>
