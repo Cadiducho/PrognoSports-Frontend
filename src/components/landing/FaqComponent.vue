@@ -7,7 +7,7 @@
         </section>
         <section class="content">
             <strong>¿Es PrognoSports de pago?</strong>
-            <p>No, PrognoSports es gratuíto y se financia gracias a donaciones de usuarios. Puedes leer más en nuestros  <router-link :to="{name: 'terms'}">Términos y Condiciones</router-link>.</p>
+            <p>No, PrognoSports es gratuito y se financia gracias a donaciones de usuarios. Puedes leer más en nuestros  <router-link :to="{name: 'terms'}">Términos y Condiciones</router-link>.</p>
         </section>
         <section class="content">
             <strong>¿Es PrognoSports una platforma de apuestas o juego online?</strong>
