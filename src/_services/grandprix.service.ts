@@ -15,7 +15,7 @@ export class GrandprixService {
         return await axios.get(`/gps/${competition.code}/next`);
     }
 
-    public async getGrandPrixesList(searchType: string, competition: Competition, season: Season): Promise<Array<GrandPrix>> {
+    public async getGrandPrixesList(competition: Competition, season: Season, searchType: string = 'all'): Promise<Array<GrandPrix>> {
         let comp = competition.id ?? competition.code;
         let seas = season.id ?? season.name;
         let searchParameter = (searchType === "all" ? "" : `/${searchType}` );

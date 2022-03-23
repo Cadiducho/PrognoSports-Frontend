@@ -33,7 +33,7 @@
         private gps: Array<GrandPrix> = [];
 
         mounted() {
-            grandPrixService.getGrandPrixesList(this.searchType, this.competition, this.season).then((list) => {
+            grandPrixService.getGrandPrixesList(this.competition, this.season, this.searchType,).then((list) => {
                 this.gps.push(...list);
                 this.isLoading = false;
             });

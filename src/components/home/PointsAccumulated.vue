@@ -118,7 +118,7 @@ export default class PointsAccumulated extends Vue {
             season = seasonFetched;
 
         }).then(() => {
-            grandPrixService.getGrandPrixesList("all", competition, season).then(gplist => {
+            grandPrixService.getGrandPrixesList(competition, season, 'all').then(gplist => {
                 gplist.forEach(gp => this.grandPrixes.set(gp.code, gp.name));
 
                 // Actualizar leyenda con los codigos de los gps
