@@ -29,24 +29,30 @@
                     <template v-slot="props">
                         <!-- Compruebo si ya tiene un nuevo ranking para este GP. En caso de tenerlo, lo comparo con el anterior y añado una flecha de cambio si es necesario -->
                         <!-- Mostrar ranking, si lo tiene (menor que Number.MAX_SAFE_INTEGER) -->
-                        <span v-if="props.row.score.standings < Number.MAX_SAFE_INTEGER"
-                              class="">
+                        <span v-if="props.row.score.standings < Number.MAX_SAFE_INTEGER">
 
-                            <!-- Solo puedo añadir flechas si existe un previous -->
-                            <template v-if="props.row.score.previousStandings > 0">
-                                <b-tooltip v-if="props.row.score.previousStandings > props.row.score.standings"
-                                           :label="'Asciende de ' + props.row.score.previousStandings + 'º a ' + props.row.score.standings + 'º'"
-                                           type="is-success is-small">
-                                    <b-icon pack="fas" type="is-success" icon="arrow-up"></b-icon>
-                                </b-tooltip>
-                                <b-tooltip v-if="props.row.score.previousStandings < props.row.score.standings"
-                                           :label="'Desciende de ' + props.row.score.previousStandings + 'º a ' + props.row.score.standings + 'º'"
-                                           type="is-danger is-small">
-                                    <b-icon pack="fas" type="is-danger" icon="arrow-down"></b-icon>
-                                </b-tooltip>
-                            </template>
 
-                            {{ props.row.score.standings }}º
+                            <template v-if="props.row.score.standings > 0">
+                                <!-- Solo puedo añadir flechas si existe un previous -->
+                                <template v-if="props.row.score.previousStandings > 0">
+                                    <b-tooltip v-if="props.row.score.previousStandings > props.row.score.standings"
+                                               :label="'Asciende de ' + props.row.score.previousStandings + 'º a ' + props.row.score.standings + 'º'"
+                                               type="is-success is-small">
+                                        <b-icon pack="fas" type="is-success" icon="arrow-up"></b-icon>
+                                    </b-tooltip>
+                                    <b-tooltip v-if="props.row.score.previousStandings < props.row.score.standings"
+                                               :label="'Desciende de ' + props.row.score.previousStandings + 'º a ' + props.row.score.standings + 'º'"
+                                               type="is-danger is-small">
+                                        <b-icon pack="fas" type="is-danger" icon="arrow-down"></b-icon>
+                                    </b-tooltip>
+                                </template>
+
+                                {{ props.row.score.standings }}º
+
+                                </template>
+                                <template v-else>
+                                -
+                                </template>
                         </span>
                         <!-- Si no hay standings actuales en este gp, pero existe un previo, mostrar ese -->
                         <span v-else-if="props.row.score.previousStandings > 0">
