@@ -1,0 +1,203 @@
+<template>
+    <div id="adminGps" class="box">
+        <PrognoPageTitle class="mb-5" name="Administración de Grandes Premios" />
+
+        <section v-if="isAdmin(currentUser)">
+
+            <nav class="block is-flex is-justify-content-space-between">
+                <p class="control">
+                    <b-button type="is-link" to="/new/grandprix" tag="router-link">Nuevo Gran Premio</b-button>
+                </p>
+                <b-select v-if="seasonList" v-model="chosenSeason" placeholder="Selecciona la temporada"  @input="changeSeason()" >
+                    <option
+                        v-for="season in seasonList"
+                        :value="season"
+                        :key="season.id">
+                        {{ season.name }} (#{{ season.id }}) - {{ season.competition.name }}
+                    </option>
+                </b-select>
+            </nav>
+
+
+            <b-field class="block">
+                <b-input
+                    v-model="filtroGrandprix"
+                    placeholder="Buscar gran premio"
+                    type="search"
+                    icon-pack="fas"
+                    icon="search"
+                ></b-input>
+            </b-field>
+
+            <b-switch v-model="isPaginated">Paginated</b-switch>
+
+            <b-table :data="filteredGps"
+                    hoverable striped
+                     :paginated="isPaginated"
+                     per-page="15">
+
+                <b-table-column field="round" label="Round" width="40" sortable v-slot="props">
+                    #{{ props.row.round }}
+                </b-table-column>
+
+                <b-table-column field="name" label="Name" sortable  v-slot="props">
+                    {{ props.row.name }}
+                </b-table-column>
+
+                <b-table-column field="season" label="Season" sortable v-slot="props">
+                    {{ props.row.season.name }}
+                </b-table-column>
+
+                <b-table-column field="code" label="Code" sortable v-slot="props">
+                    {{ props.row.code }}
+                </b-table-column>
+
+                <b-table-column field="laps" label="Laps" width="40" sortable v-slot="props">
+                    {{ props.row.laps }}
+                </b-table-column>
+
+                <b-table-column field="circuit" label="Circuit" sortable v-slot="props">
+                    {{ props.row.circuit.name }}
+                    <span v-if="hasVariant(props.row.circuit)"
+                        class="tag is-info">
+                        {{ props.row.circuit.variant.name }}
+                    </span>
+                </b-table-column>
+
+                <b-table-column label="Actions" v-slot="props">
+                    <span class="tags">
+                        <router-link class="tag is-info" :to="`/gps/${getSlug(props.row)}`">Ver</router-link>
+                        <router-link class="tag is-warning" :to="`/admin/gps/${getSlug(props.row)}`">Editar</router-link>
+                        <span class="tag is-danger" @click="confirmDeleteGrandPrix(props.row)">Eliminar</span>
+                    </span>
+                </b-table-column>
+
+            </b-table>
+
+        </section>
+        <section v-else>
+            <AlertNoPermission />
+        </section>
+    </div>
+</template>
+
+<script lang="ts">
+import {Component, Vue} from "vue-property-decorator";
+import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import {User} from "@/types/User";
+import {namespace} from "vuex-class";
+import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
+import {competitionService, grandPrixService, seasonService} from "@/_services";
+import {Competition} from "@/types/Competition";
+import {GrandPrix} from "@/types/GrandPrix";
+import {Community} from "@/types/Community";
+import {Season} from "@/types/Season";
+const Auth = namespace('Auth')
+
+@Component({
+        components: {
+            AlertNoPermission,
+            PrognoPageTitle,
+        }
+    }
+)
+export default class GrandPrixList extends Vue {
+    @Auth.State("user") private currentUser!: User;
+    @Auth.State("community") private currentCommunity!: Community;
+
+    private isPaginated: boolean = true;
+    private filtroGrandprix: String = '';
+
+    private gps: Array<GrandPrix> = [];
+    private seasonList: Array<Season> = [];
+
+    private chosenSeason?: Season;
+
+    mounted() {
+        this.loadGrandPrixes(this.currentCommunity.competition, this.currentCommunity.competition.currentSeason);
+
+        seasonService.getSeasonList().then((seasons) => {
+            this.seasonList = [];
+            this.seasonList.push(...seasons);
+        });
+    }
+
+    private changeSeason() {
+        this.loadGrandPrixes(this.chosenSeason!.competition, this.chosenSeason!);
+    }
+
+    loadGrandPrixes(competition: Competition, season: Season) {
+        grandPrixService.getGrandPrixesList(competition, season)
+            .then((gpsList) => {
+                this.gps = [];
+                this.gps.push(...gpsList);
+            })
+    }
+
+    get filteredGps(): Array<GrandPrix> {
+        if (!this.filtroGrandprix.trim()) {
+            return this.gps;
+        }
+
+        const filtroLowerCase: string = this.filtroGrandprix.toLowerCase().trim();
+
+        return this.gps.filter((gp) => {
+            return (
+                gp.id
+                    .toString()
+                    .includes(filtroLowerCase) ||
+                gp.name
+                    .toLowerCase()
+                    .includes(filtroLowerCase) ||
+                gp.code
+                    .toLowerCase()
+                    .includes(filtroLowerCase) ||
+                gp.circuit.name
+                    .toLowerCase()
+                    .includes(filtroLowerCase) ||
+                gp.circuit.locality
+                    .toLowerCase()
+                    .includes(filtroLowerCase) ||
+                gp.circuit.country
+                    .toLowerCase()
+                    .includes(filtroLowerCase)
+            );
+        });
+    }
+
+    private confirmDeleteGrandPrix(gp: GrandPrix) {
+        this.$buefy.dialog.confirm({
+            title: 'Eliminar gran premio',
+            message: `¿Estás seguro de que quieres <b>eliminar</b> el Gran Premio ${gp.name} #${gp.season.name}? <br/>Esta acción se puede deshacer.`,
+            confirmText: 'Eliminar gran premio',
+            type: 'is-danger',
+            hasIcon: true,
+            onConfirm: () => this.deleteCompetition(gp),
+        })
+    }
+
+    private getSlug(gp: GrandPrix): string {
+        return `${gp.competition.code}/${gp.season.name}/${gp.id}`;
+    }
+
+    private deleteCompetition(gp: GrandPrix) {
+/*
+        grandPrixService.deleteGranPrix(gp).then((ok) => {
+
+            // Elimino de la lista y por lo tanto de la tabla
+            this.gps.splice(this.gps.findIndex(s => s.id === gp.id),1);
+
+            this.$buefy.toast.open({
+                message: `Se ha eliminado correctamente el gran premio ${gp.name} #${gp.season.name}`,
+                type: "is-danger",
+            });
+        }).catch((error) => {
+            this.$buefy.toast.open({
+                message: error.message,
+                type: "is-danger",
+            });
+        });*/
+    }
+}
+
+</script>

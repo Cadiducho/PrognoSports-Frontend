@@ -136,6 +136,22 @@ export const routes = [
                 ],
             },
             {
+                path: 'gps',
+                component: EmptyRoutedView,
+                children: [
+                    {
+                        path: '',
+                        name: 'adminGps',
+                        component: () => import('@/components/admin/gps/GrandPrixList.vue'),
+                    },
+                    {
+                        path: ':competition/:season/:id',
+                        name: 'adminGpEdit',
+                        component: () => import('@/components/admin/gps/GrandPrixEdit.vue'),
+                    },
+                ],
+            },
+            {
                 path: 'seasons',
                 component: EmptyRoutedView,
                 children: [
