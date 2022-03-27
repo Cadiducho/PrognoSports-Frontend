@@ -1,6 +1,17 @@
 <template>
     <div id="rankingComponent" class="box">
-        <PrognoPageTitle name="Ranking" />
+        <nav class="block is-flex is-justify-content-space-between">
+
+            <PrognoPageTitle name="Ranking" />
+            <b-select v-if="seasonList" v-model="chosenSeason" placeholder="Selecciona la temporada"  @input="changeSeason()" >
+                <option
+                    v-for="season in seasonList"
+                    :value="season"
+                    :key="season.id">
+                    {{ season.competition.name }} {{ season.name }}
+                </option>
+            </b-select>
+        </nav>
 
         <template v-if="rankingBusy">
 
@@ -216,18 +227,15 @@
                 </b-tab-item>
             </b-tabs>
 
-
-
         </template>
-        <template v-else><loading /></template>
-
+        <loading v-else />
     </div>
 </template>
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
     import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-    import {communityService, grandPrixService, scoreService} from "@/_services";
+    import {communityService, grandPrixService, scoreService, seasonService} from "@/_services";
     import {GrandPrix} from "@/types/GrandPrix";
     import {Competition} from "@/types/Competition";
     import {Season} from "@/types/Season";
@@ -235,7 +243,6 @@
     import {User} from "@/types/User";
     import {Community} from "@/types/Community";
     import {namespace} from "vuex-class";
-    import {Dictionary} from "@/types/Dictionary";
     import VueApexCharts from "vue-apexcharts";
     import {UserPoints} from "@/types/UserPoints";
     import PointsTooltipComponent from "@/components/ranking/PointsTooltipComponent.vue";
@@ -258,6 +265,8 @@
 
         private activeTab: number = 0;
         private rankingBusy: boolean = true;
+        private chosenSeason?: Season;
+        private seasonList: Array<Season> = [];
         private gps: Array<GrandPrix> = [];
         private gpsWithPoints: Array<string> = []; // Only names
 
@@ -273,40 +282,60 @@
         private chartSeriesAcumuladas: any = [];
         private chartStandings: any = [];
 
-        created() {
-            // FixMe: Temporadas y competición de verdad, como en /gps
-            let competition = { id: 1} as Competition;
-            let season = { id: 4} as Season;
 
-            grandPrixService.getGrandPrixesList('all', competition, season).then(gps => {
+        created() {
+            seasonService.getSeasonList().then((seasons) => {
+                this.seasonList = [];
+                this.seasonList.push(...seasons);
+            });
+
+            this.chartOptions = {
+                ...this.chartOptions,
+                xaxis: {
+                    categories: [...this.gps.map(gp => gp.code)],
+                },
+            }
+            this.chartStandingsOptions = {
+                ...this.chartOptions,
+                yaxis: {
+                    reversed: true,
+                    title: {
+                        text: 'Posición'
+                    },
+                    min: 1,
+                    tickAmount: 1,
+                    labels: {
+                        formatter: function (val: number) {
+                            return val.toFixed(0) + "º"; // Sin decimal y con símbolo de ordinario
+                        }
+                    }
+                },
+            }
+
+            this.loadRanking(this.currentCommunity.competition, this.currentCommunity.competition.currentSeason);
+        }
+
+        private changeSeason() {
+            this.loadRanking(this.chosenSeason!.competition, this.chosenSeason!);
+        }
+
+        loadRanking(competition: Competition, season: Season) {
+            this.rankingBusy = true;
+
+            this.tableData = [];
+            this.tableDataAcumulada = [];
+
+            this.chartSeries = [];
+            this.chartSeriesAcumuladas = [];
+            this.chartStandings = [];
+
+            grandPrixService.getGrandPrixesList(competition, season, 'all').then(gps => {
                 this.gps = gps;
                 this.checkRankingLoaded();
-
-                this.chartOptions = {
-                    ...this.chartOptions,
-                    xaxis: {
-                        categories: [...this.gps.map(gp => gp.code)],
-                    },
-                }
-                this.chartStandingsOptions = {
-                    ...this.chartOptions,
-                    yaxis: {
-                        reversed: true,
-                        title: {
-                            text: 'Posición'
-                        },
-                        min: 1,
-                        tickAmount: 1,
-                        labels: {
-                            formatter: function (val: number) {
-                                return val.toFixed(0) + "º"; // Sin decimal y con símbolo de ordinario
-                            }
-                        }
-                    },
-                }
             });
 
             communityService.getMembers(this.currentCommunity).then((members) => {
+                this.communityMembers = new Map<string, User>();
                 members.forEach(miembro => {
                     this.communityMembers.set(miembro.user.username, miembro.user);
                 });
