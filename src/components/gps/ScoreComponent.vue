@@ -25,7 +25,7 @@
                      :row-class="(row, index) => checkRowClass(row, index)"
             >
 
-                <b-table-column field="score.standings" label="Pos." width="70" sortable numeric>
+                <b-table-column field="score.standings" label="Pos." width="80" sortable numeric>
                     <template v-slot="props">
                         <!-- Compruebo si ya tiene un nuevo ranking para este GP. En caso de tenerlo, lo comparo con el anterior y añado una flecha de cambio si es necesario -->
                         <!-- Mostrar ranking, si lo tiene (menor que Number.MAX_SAFE_INTEGER) -->
