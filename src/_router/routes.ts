@@ -90,13 +90,14 @@ export const routes = [
             path: '',
             name: 'home',
             component: () => import('@/components/home/HomeComponent.vue'),
+            meta: { title: "Inicio" }
         }]
     },
 
     // Admin
     {
         path: '/admin',
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, title: "Admin" },
         component: PrognoView,
         children: [
             {
@@ -108,20 +109,24 @@ export const routes = [
                 path: 'drivers',
                 name: 'adminDrivers',
                 component: () => import('@/components/admin/driver/DriversAdmin.vue'),
+                meta: { title: "Pilotos" }
             },
             {
                 path: 'constructors',
                 name: 'adminConstructors',
                 component: () => import('@/components/admin/ConstructorsAdmin.vue'),
+                meta: { title: "Constructores" }
             },
             {
                 path: 'users',
                 name: 'adminUsers',
                 component: () => import('@/components/admin/UsersAdmin.vue'),
+                meta: { title: "Usuarios" }
             },
             {
                 path: 'competitions',
                 component: EmptyRoutedView,
+                meta: { title: "Competiciones" },
                 children: [
                     {
                         path: '',
@@ -132,12 +137,14 @@ export const routes = [
                         path: ':competition',
                         name: 'adminCompetitionEdit',
                         component: () => import('@/components/admin/competitions/CompetitionEdit.vue'),
+                        meta: { title: "Editar competición" }
                     },
                 ],
             },
             {
                 path: 'gps',
                 component: EmptyRoutedView,
+                meta: { title: "Grandes Premios" },
                 children: [
                     {
                         path: '',
@@ -148,12 +155,14 @@ export const routes = [
                         path: ':competition/:season/:id',
                         name: 'adminGpEdit',
                         component: () => import('@/components/admin/gps/GrandPrixEdit.vue'),
+                        meta: { title: "Editar Gran Premio" }
                     },
                 ],
             },
             {
                 path: 'seasons',
                 component: EmptyRoutedView,
+                meta: { title: "Temporadas" },
                 children: [
                     {
                         path: '',
@@ -164,6 +173,7 @@ export const routes = [
                         path: ':season',
                         name: 'adminSeasonsEdit',
                         component: () => import('@/components/admin/seasons/SeasonEdit.vue'),
+                        meta: { title: "Editar temporada" }
                     },
                 ],
             },
@@ -180,26 +190,37 @@ export const routes = [
                 path: 'competition',
                 name: 'competitionCreate',
                 component: () => import('@/components/admin/competitions/CompetitionCreate.vue'),
+                meta: { title: "Nueva competición" }
             },
             {
                 path: 'season',
                 name: 'seasonCreate',
                 component: () => import('@/components/admin/seasons/SeasonCreate.vue'),
+                meta: { title: "Nueva temporada" }
             },
             {
                 path: 'circuit',
                 name: 'circuitCreate',
                 component: () => import('@/components/admin/circuit/CreateCircuit.vue'),
-            },
-            {
-                path: 'driver',
-                name: 'driverCreate',
-                component: () => import('@/components/admin/driver/CreateDriver.vue'),
+                meta: { title: "Nuevo circuito" }
             },
             {
                 path: 'community',
                 name: 'communitiesCreate',
                 component: () => import('@/components/communities/CreateCommunity.vue'),
+                meta: { title: "Nueva comunidad" }
+            },
+            {
+                path: 'driver',
+                name: 'driverCreate',
+                component: () => import('@/components/admin/driver/CreateDriver.vue'),
+                meta: { title: "Nuevo piloto" }
+            },
+            {
+                path: 'gp',
+                name: 'gpCreate',
+                component: () => import('@/components/admin/gps/GrandPrixCreate.vue'),
+                meta: { title: "Nuevo gran premio" }
             },
         ]
     },
@@ -208,6 +229,7 @@ export const routes = [
     {
         path: '/circuits',
         component: PrognoView,
+        meta: { title: "Circuitos" },
         children: [
             {
                 path: '',
@@ -218,6 +240,7 @@ export const routes = [
                 path: ':circuit/:variant?',
                 name: 'circuitDetails',
                 component: () => import('@/components/circuits/ViewOneCircuit.vue'),
+                meta: { title: "Detalles de circuito" }
             },
         ]
     },
@@ -228,16 +251,18 @@ export const routes = [
         meta: { requiresAuth: true, requiresCommunity: true },
         component: PrognoView,
         children: [{
-            path: '',
+            path: ':competition?/:season?',
+            alias: ['', ':competition?'],
             name: 'ranking',
             component: () => import('@/components/ranking/Ranking.vue'),
+            meta: { title: "Ranking" }
         }]
     },
 
     // Comunidades
     {
         path: '/communities',
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, title: "Comunidades" },
         component: PrognoView,
         children: [
             {
@@ -249,12 +274,13 @@ export const routes = [
                 path: ':community',
                 name: 'communitiesDetails',
                 component: () => import('@/components/communities/ViewOneCommunity.vue'),
+                meta: { title: "Detalles de la comunidad" }
             }
         ]
     },
     {
         path: '/invitation/:community/:code?',
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, title: "Invitación a una comunidad" },
         component: PrognoView,
         children: [{
             path: '',
@@ -266,7 +292,7 @@ export const routes = [
     // Grandes Premios
     {
         path: '/gps',
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, title: "Grandes Premios" },
         component: PrognoView,
         children: [
             {
@@ -279,6 +305,7 @@ export const routes = [
                 path: ':competition/:season/:id',
                 name: 'gpdetails',
                 component: () => import('@/components/gps/ViewOneGrandPrix.vue'),
+                meta: { title: "Gran Premio"}
             }
         ]
     },

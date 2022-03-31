@@ -143,6 +143,7 @@ import { LatLng, latLng} from "leaflet";
 import {LMap, LTileLayer, LMarker, LPopup, LTooltip} from "vue2-leaflet";
 import {GrandPrix} from "@/types/GrandPrix";
 import {hasVariant} from "@/utils";
+import EventBus from "@/plugins/eventbus";
 
 @Component<ViewOneCircuit>({
     components: {
@@ -196,6 +197,7 @@ export default class ViewOneCircuit extends Vue {
             this.thereIsCircuit = false;
         }).finally(() => {
             this.isLoading = false;
+            EventBus.$emit('breadcrumbLastname', this.circuitName);
         })
     }
 

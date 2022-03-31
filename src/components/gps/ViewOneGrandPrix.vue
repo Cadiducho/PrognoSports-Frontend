@@ -106,6 +106,8 @@
                     this.isLoadingGrandPrix = false;
                 }).then(() => {
                     if (this.grandPrix) {
+                        EventBus.$emit('breadcrumbLastname', this.grandPrix.name + ' de ' + this.grandPrix.season.name);
+
                         driversService.getDriversInGrandPrix(this.grandPrix!).then((drivers) => {
                             EventBus.$emit('sendDriversInGrandPrix', drivers);
                         });

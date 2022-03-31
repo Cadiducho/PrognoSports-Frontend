@@ -15,7 +15,7 @@
                 <b-notification v-if="!betaAceptada" type="is-warning" aria-close-label="Close notification" @close="acceptBeta()">
                     Estás utilizando PrognoSports Beta, la experiencia puede verse afectada
                 </b-notification>
-                
+
                 <router-view :key="$route.fullPath"/>
             </div>
         </section>
@@ -25,12 +25,12 @@
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
 import Navbar from "@/components/navbar/Navbar.vue";
-import {namespace} from "vuex-class";
-const Auth = namespace("Auth");
+import Breadcrumb from "@/components/lib/Breadcrumb.vue";
 
 @Component({
     components: {
         Navbar,
+        Breadcrumb
     }
 })
 export default class PrognoView extends Vue {
