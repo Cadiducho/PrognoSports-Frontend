@@ -25,6 +25,7 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import {Community} from "@/types/Community";
 import {communityService} from "@/_services";
 import {namespace} from "vuex-class";
+import EventBus from "@/plugins/eventbus";
 const Auth = namespace("Auth");
 
 @Component
@@ -47,6 +48,8 @@ export default class ConfirmJoinCommunityModal extends Vue {
                 type: "is-warning",
             });
         }).finally(() => {
+            EventBus.$emit('reloadCommunitiesList');
+            EventBus.$emit('reloadCommunitiesDropdown');
             this.$emit('close');
         });
     }
