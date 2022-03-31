@@ -10,8 +10,12 @@
                         <li class="is-active"><a href="#" aria-current="page">Inicio</a></li>
                     </ul>
                 </nav>
-                <div class="notification has-background-warning">Estás utilizando PrognoSports Beta, la experiencia puede verse afectada</div>
 
+
+                <b-notification v-if="!betaAceptada" type="is-warning" aria-close-label="Close notification" @close="acceptBeta()">
+                    Estás utilizando PrognoSports Beta, la experiencia puede verse afectada
+                </b-notification>
+                
                 <router-view :key="$route.fullPath"/>
             </div>
         </section>
@@ -31,5 +35,10 @@ const Auth = namespace("Auth");
 })
 export default class PrognoView extends Vue {
 
+    betaAceptada: boolean = localStorage.getItem("beta-accepted") === "true";
+
+    acceptBeta() {
+        localStorage.setItem("beta-accepted", "true");
+    }
 }
 </script>
