@@ -4,13 +4,8 @@
 
         <section class="section is-tiny">
             <div class="container prognocontainer">
-                <nav class="breadcrumb" aria-label="breadcrumbs">
-                    <ul>
-                        <li><a href="#">PrognoSports</a></li>
-                        <li class="is-active"><a href="#" aria-current="page">Inicio</a></li>
-                    </ul>
-                </nav>
 
+                <Breadcrumb />
 
                 <b-notification v-if="!betaAceptada" type="is-warning" aria-close-label="Close notification" @close="acceptBeta()">
                     Estás utilizando PrognoSports Beta, la experiencia puede verse afectada
