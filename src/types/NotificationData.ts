@@ -1,6 +1,6 @@
-import {Community} from "@/types/Community";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import {UserPoints} from "@/types/UserPoints";
+import {Dictionary} from "@/types/Dictionary";
 
 export interface NotificationData {
     gpName: string;
@@ -8,7 +8,7 @@ export interface NotificationData {
     gpRound: number;
     gpSeason: string;
     time: Date;
-    points: Map<Community, UserPoints>;
+    points: Dictionary<string, UserPoints>;
     startGrid: Array<StartGridPosition>;
     info: string;
     href: string;

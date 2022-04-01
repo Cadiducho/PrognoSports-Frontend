@@ -74,17 +74,35 @@ export class Notification implements INotification {
             case 'GRID_CHANGES':
                 return "Se han producido cambios en la parrilla de salida de " + this.data.gpName;
             case 'QUALI_POINTS': {
+                if (Object.keys(this.data.points).length == 0) {
+                    return "No has recibido puntos";
+                }
                 let mensaje = "";
-                this.data.points.forEach((points, community) => {
-                    mensaje += `<strong class='has-text-info'>${community.name}</strong>: ${points.pointsInQualify} puntos. <br/>Acumulados un total de ${points.accumulatedPoints} puntos esta temporada`;
-                })
+                for (let communityName in this.data.points) {
+                    mensaje += communityName;
+                    let points = this.data.points[communityName];
+                    if (points) {
+                        mensaje += `<strong class='has-text-info'>${communityName}</strong>: ${points.pointsInQualify} puntos. <br/>Acumulados un total de ${points.accumulatedPoints} puntos esta temporada`;
+                    } else {
+                        mensaje += "No has recibido puntos";
+                    }
+                }
                 return mensaje;
             }
             case 'RACE_POINTS':
+                if (Object.keys(this.data.points).length == 0) {
+                    return "No has recibido puntos";
+                }
                 let mensaje = "";
-                this.data.points.forEach((points, community) => {
-                    mensaje += `<strong class='has-text-info'>${community.name}</strong>: ${points.pointsInRace} puntos. <br/>Acumulados un total de ${points.accumulatedPoints} puntos esta temporada`;
-                })
+                for (let communityName in this.data.points) {
+                    mensaje += communityName;
+                    let points = this.data.points[communityName];
+                    if (points) {
+                        mensaje += `<strong class='has-text-info'>${communityName}</strong>: ${points.pointsInRace} puntos. <br/>Acumulados un total de ${points.accumulatedPoints} puntos esta temporada`;
+                    } else {
+                        mensaje += "No has recibido puntos";
+                    }
+                }
                 return mensaje;
             default:
                 return "Notificación deconocida";
