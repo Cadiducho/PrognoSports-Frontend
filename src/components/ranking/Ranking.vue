@@ -3,14 +3,16 @@
         <nav class="block is-flex is-justify-content-space-between">
 
             <PrognoPageTitle name="Ranking" />
-            <b-select v-if="seasonList" v-model="chosenSeason" placeholder="Selecciona la temporada"  @input="changeSeason()" >
-                <option
-                    v-for="season in seasonList"
-                    :value="season"
-                    :key="season.id">
-                    {{ season.competition.name }} {{ season.name }}
-                </option>
-            </b-select>
+            <b-field label="Temporada" :label-position="'on-border'">
+                <b-select v-if="Object.keys(chosenSeason).length" v-model="chosenSeason" placeholder="Selecciona la temporada"  @input="changeSeason()" >
+                    <option
+                        v-for="season in seasonList"
+                        :value="season"
+                        :key="season.id">
+                        {{ season.competition.name }} {{ season.name }}
+                    </option>
+                </b-select>
+            </b-field>
         </nav>
 
         <template v-if="rankingBusy">
@@ -265,7 +267,7 @@
 
         private activeTab: number = 0;
         private rankingBusy: boolean = true;
-        private chosenSeason?: Season;
+        private chosenSeason: Season = {} as Season;
         private seasonList: Array<Season> = [];
         private gps: Array<GrandPrix> = [];
         private gpsWithPoints: Array<string> = []; // Only names
@@ -287,6 +289,7 @@
             seasonService.getSeasonList().then((seasons) => {
                 this.seasonList = [];
                 this.seasonList.push(...seasons);
+                this.chosenSeason = this.seasonList[this.seasonList.length - 1];
             });
 
             this.chartOptions = {
