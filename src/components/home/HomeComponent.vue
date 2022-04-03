@@ -11,59 +11,7 @@
                 <div class="tile">
                     <article class="tile is-child box">
                         <p class="title">Resumen</p>
-                        <nav class="level is-mobile">
-                            <div class="level-item has-text-centered">
-                                <b-tooltip multilined type="is-light">
-                                    <template v-slot:content>
-                                        Eres el {{ userResume.standing }}º en el ranking de esta comunidad
-                                    </template>
-
-                                    <p class="heading">Puesto</p>
-                                    <p class="title">{{ userResume.standing }}º</p>
-                                </b-tooltip>
-                            </div>
-                            <div class="level-item has-text-centered">
-                                <div>
-                                    <b-tooltip multilined>
-                                        <template v-slot:content>
-                                            <ul>
-                                                <li>
-                                                    <b>Carreras</b>: {{ userResume.pointsInRaces }}
-                                                </li>
-                                                <li>
-                                                    <b>Clasificaciones</b>: {{ userResume.pointsInQualis }}
-                                                </li>
-                                            </ul>
-                                        </template>
-
-                                        <p class="heading">Puntos</p>
-                                        <p class="title">
-                                            {{ userResume.points }}
-                                        </p>
-                                    </b-tooltip>
-                                </div>
-                            </div>
-                            <div class="level-item has-text-centered">
-                                <b-tooltip multilined type="is-light">
-                                    <template v-slot:content>
-                                        Esta funcionalidad aún no está implementada
-                                    </template>
-
-                                    <p class="heading">Sesiones ganadas</p>
-                                    <p class="title">?</p>
-                                </b-tooltip>
-                            </div>
-                            <div class="level-item has-text-centered">
-                                <b-tooltip multilined type="is-light">
-                                    <template v-slot:content>
-                                        Esta funcionalidad aún no está implementada
-                                    </template>
-
-                                    <p class="heading">Grandes Premios ganados</p>
-                                    <p class="title">?</p>
-                                </b-tooltip>
-                            </div>
-                        </nav>
+                        <UserLevelResume :user-resume="userResume" />
                         <PointsAccumulated :user="currentUser" />
                     </article>
                 </div>
@@ -84,11 +32,13 @@
     import {Community} from "@/types/Community";
     import {Season} from "@/types/Season";
     import {isValidCommunity} from "@/utils";
+    import UserLevelResume from "@/components/user/UserLevelResume.vue";
 
     const Auth = namespace('Auth')
 
     @Component({
         components: {
+            UserLevelResume,
             PointsAccumulated,
             NextGrandPrix,
             PrognoPageTitle,
@@ -118,26 +68,11 @@
         mounted() {
             if (isValidCommunity(this.currentCommunity)) {
                 let competition = this.currentCommunity.competition;
-                let season: Season;
-                seasonService.getCurrentSeason(competition).then((seasonFetched) => {
-                    season = seasonFetched;
-                }).then(() => {
-                    userService.getUserResume(this.currentUser, this.currentCommunity, competition, season).then((resume) => {
-                        this.userResume = resume;
-                    })
-                })
+                let season: Season = competition.currentSeason;
+                userService.getUserResume(this.currentUser, this.currentCommunity, competition, season).then((resume) => {
+                    this.userResume = resume;
+                });
             }
         }
-
-        private breadcumbItems = [
-            {
-                text: 'Inicio',
-                to: '/home'
-            },
-            {
-                text: 'Dashboard',
-                active: true
-            }
-        ];
     }
 </script>

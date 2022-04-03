@@ -93,6 +93,18 @@ export const routes = [
             meta: { title: "Inicio" }
         }]
     },
+    {
+        path: '/user/:user?',
+        alias: ['/u/:user?'],
+        meta: { requiresAuth: true, requiresCommunity: true, title: "Usuarios" },
+        component: PrognoView,
+        children: [{
+            path: '',
+            name: 'user',
+            component: () => import('@/components/user/UserProfile.vue'),
+            meta: { title: "Usuario" }
+        }]
+    },
 
     // Admin
     {

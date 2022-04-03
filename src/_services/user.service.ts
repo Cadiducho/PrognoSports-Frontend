@@ -10,7 +10,7 @@ export class UserService {
         return await axios.get('/user/me');
     }
 
-    public async getUser(user: number): Promise<User> {
+    public async getUser(user: string): Promise<User> {
         return await axios.get(`/user/${user}`);
     }
 

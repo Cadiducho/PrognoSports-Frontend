@@ -31,12 +31,6 @@ import {UserRank} from "@/types/UserRank";
 @Component
 export default class ScoreComponents extends Vue {
     @Prop({required: true}) user!: User;
-
-    public styleRankTag(rank: UserRank) {
-        return {
-            backgroundColor: '#' + rank.color,
-        }
-    }
 }
 </script>
 

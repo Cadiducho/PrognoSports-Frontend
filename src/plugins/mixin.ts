@@ -11,6 +11,7 @@ import {RaceSession} from "@/types/RaceSession";
 import {Community} from "@/types/Community";
 import {GrandPrix} from "@/types/GrandPrix";
 import {User} from "@/types/User";
+import {UserRank} from "@/types/UserRank";
 
 let mixin = {
     methods: {
@@ -19,6 +20,12 @@ let mixin = {
         },
         userProfileImage(user: User): string {
             return userProfileImage(user);
+        },
+        styleRankTag(rank: UserRank) {
+            return {
+                backgroundColor: '#' + rank.color,
+                color: 'white',
+            }
         },
         hasVariant(circuit: Circuit): boolean {
             return hasVariant(circuit);
