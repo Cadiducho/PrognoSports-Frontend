@@ -1,6 +1,8 @@
+import {GrandPrix} from "@/types/GrandPrix";
 
-export enum RaceSession {
-    QUALIFY = "QUALIFY",
-    SPRINT_RACE = "SPRINT_RACE",
-    RACE = "RACE",
+export interface RaceSession {
+    name: string;
+    code: string
+    grandPrix: GrandPrix;
+    date: Date;
 }

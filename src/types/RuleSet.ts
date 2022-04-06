@@ -12,13 +12,13 @@ export interface IRuleSet {
 }
 
 export interface IRuleSetData {
-    pointsByEqualsPosition: Dictionary<RaceSession, Dictionary<number, number>>;
-    pointsByNextPosition: Dictionary<RaceSession, number>;
-    pointsByNextOfFollowingPosition: Dictionary<RaceSession, number>;
-    pointsByPreviousPosition: Dictionary<RaceSession, number>;
-    pointsByPreviousOfPreviousPosition: Dictionary<RaceSession, number>;
-    pointsIfIsNotInPodium: Dictionary<RaceSession, number>;
-    pointsIfIsNotInResults: Dictionary<RaceSession, number>;
+    pointsByEqualsPosition: Dictionary<string, Dictionary<number, number>>;
+    pointsByNextPosition: Dictionary<string, number>;
+    pointsByNextOfFollowingPosition: Dictionary<string, number>;
+    pointsByPreviousPosition: Dictionary<string, number>;
+    pointsByPreviousOfPreviousPosition: Dictionary<string, number>;
+    pointsIfIsNotInPodium: Dictionary<string, number>;
+    pointsIfIsNotInResults: Dictionary<string, number>;
 }
 
 export class RuleSet implements IRuleSet {
@@ -40,13 +40,13 @@ export class RuleSet implements IRuleSet {
 }
 
 export class RuleSetData implements IRuleSetData {
-    pointsByEqualsPosition: Dictionary<RaceSession, Dictionary<number, number>>;
-    pointsByNextOfFollowingPosition: Dictionary<RaceSession, number>;
-    pointsByNextPosition: Dictionary<RaceSession, number>;
-    pointsByPreviousOfPreviousPosition: Dictionary<RaceSession, number>;
-    pointsByPreviousPosition: Dictionary<RaceSession, number>;
-    pointsIfIsNotInPodium: Dictionary<RaceSession, number>;
-    pointsIfIsNotInResults: Dictionary<RaceSession, number>;
+    pointsByEqualsPosition: Dictionary<string, Dictionary<number, number>>;
+    pointsByNextOfFollowingPosition: Dictionary<string, number>;
+    pointsByNextPosition: Dictionary<string, number>;
+    pointsByPreviousOfPreviousPosition: Dictionary<string, number>;
+    pointsByPreviousPosition: Dictionary<string, number>;
+    pointsIfIsNotInPodium: Dictionary<string, number>;
+    pointsIfIsNotInResults: Dictionary<string, number>;
 
     constructor(data: IRuleSetData) {
         this.pointsByEqualsPosition = data.pointsByEqualsPosition;

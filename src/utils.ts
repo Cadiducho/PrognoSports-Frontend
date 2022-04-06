@@ -47,10 +47,12 @@ export function hasVariant(circuit: Circuit): boolean {
  * @param session La sesión de Gran Premio
  */
 export function cantidadPilotosPronosticados(currentCommunity: Community, session: RaceSession): number {
-    switch (session) {
-        case RaceSession.QUALIFY:
+    // FixMe: Hardcoded sessions
+    // Esto debería estar en el ruleset
+    switch (session.name) {
+        case "QUALIFY":
             return currentCommunity.qualify_positions_predicted;
-        case RaceSession.RACE:
+        case "RACE":
             return currentCommunity.race_positions_predicted;
     }
     return 0;
@@ -62,8 +64,9 @@ export function cantidadPilotosPronosticados(currentCommunity: Community, sessio
  * @param session La sesión
  * @return True si es antes del cierre de la sesión
  */
+// FixMe: Hardcoded sessions
 export function isBeforeEndDate(grandPrix: GrandPrix, session: RaceSession): boolean {
-    if (session === "QUALIFY") {
+    if (session.name === "QUALIFY") {
         return dayjs().isBefore(grandPrix.qualiTime);
     } else {
         return dayjs().isBefore(grandPrix.raceTime);

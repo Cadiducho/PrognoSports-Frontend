@@ -8,6 +8,5 @@ export interface Competition {
     fullname: string;
     currentSeason: Season;
     rules: string;
-
-    availableSessions: RaceSession[];
+    availableSessions: Array<RaceSession>;
 }

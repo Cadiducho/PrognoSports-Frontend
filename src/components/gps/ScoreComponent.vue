@@ -278,8 +278,9 @@ export default class ScoreComponents extends Vue {
 
                 });
 
-                this.winnersOfQualify = this.findWinnerUserOfSession(RaceSession.QUALIFY);
-                this.winnersOfRace = this.findWinnerUserOfSession(RaceSession.RACE);
+                // FixMe: Hardcoded sessions
+                this.winnersOfQualify = this.findWinnerUserOfSession({name: 'QUALIFY'} as RaceSession);
+                this.winnersOfRace = this.findWinnerUserOfSession({name: 'RACE'} as RaceSession);
                 this.winnersOfGrandPrix = this.findWinnerUserOfSession(undefined);
 
                 this.loaded = true;
@@ -300,7 +301,9 @@ export default class ScoreComponents extends Vue {
 
             if (session === undefined) {
                 pointsOfUser = value.pointsInGP;
-            } else if (session == "RACE") {
+
+            // FixMe: Hardcoded sessions
+            } else if (session.name === "RACE") {
                 pointsOfUser = value.pointsInRace;
             } else {
                 pointsOfUser = value.pointsInQualify;
@@ -341,8 +344,9 @@ export default class ScoreComponents extends Vue {
         return driver.firstname + ' ' + driver.lastname + ' (' + driver.team.name + ')';
     }
 
+    // FixMe: Hardcoded sessions
     get sessionName() {
-        return this.session == "RACE" ? "Carrera" : "Clasificación";
+        return this.session.name === "RACE" ? "Carrera" : "Clasificación";
     }
 }
 </script>
