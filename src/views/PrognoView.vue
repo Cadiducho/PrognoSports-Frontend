@@ -14,6 +14,8 @@
                 <router-view :key="$route.fullPath"/>
             </div>
         </section>
+
+        <LandingFooter/>
     </div>
 </template>
 
@@ -21,11 +23,13 @@
 import {Component, Vue} from "vue-property-decorator";
 import Navbar from "@/components/navbar/Navbar.vue";
 import Breadcrumb from "@/components/lib/Breadcrumb.vue";
+import LandingFooter from "@/components/landing/LandingFooter.vue";
 
 @Component({
     components: {
         Navbar,
-        Breadcrumb
+        Breadcrumb,
+        LandingFooter
     }
 })
 export default class PrognoView extends Vue {
