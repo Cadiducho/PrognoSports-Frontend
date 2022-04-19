@@ -9,14 +9,16 @@
             <div class="content">
                 <p class="overflow">
                     <strong>{{ user.username }}  <b-tag v-bind:style="styleRankTag(user.rank)">{{ user.rank.name }}</b-tag></strong>
-                    <span class="icon-text is-size-7">
+
+                    <br/>
+                    {{ user.bio }}
+                    <br/>
+                    <span class="mt-1 icon-text is-size-7">
                         <span class="icon">
                             <i class="fas fa-clock"></i>
                         </span>
                         {{ user.last_activity | dateDiff }}
                     </span>
-                    <br>
-                    {{ user.bio }}
                 </p>
             </div>
         </div>
