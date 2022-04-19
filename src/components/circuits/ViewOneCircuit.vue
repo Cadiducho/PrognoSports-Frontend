@@ -103,7 +103,9 @@
                                             {{gp.circuit.name}}, {{gp.circuit.locality}} ({{gp.circuit.country}})
                                         </p>
                                         <p class="subtitle">
-                                            Carrera del {{gp.raceTime | humanDateTime}} ({{gp.raceTime | dateDiff }})
+                                            <span v-for="session in gp.sessions">
+                                                {{ session.humanName() }}: {{ session.date | humanDate }} ({{ session.date | dateDiff }}) <br />
+                                            </span>
                                         </p>
                                     </div>
 
@@ -136,7 +138,7 @@ import { Component, Vue } from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import { Circuit } from "@/types/Circuit";
 import { CircuitVariant } from "@/types/CircuitVariant";
-import { circuitService } from "@/_services";
+import {circuitService, grandPrixService} from "@/_services";
 import CircuitCard from "@/components/gps/CircuitCard.vue";
 
 import { LatLng, latLng} from "leaflet";
@@ -187,7 +189,7 @@ export default class ViewOneCircuit extends Vue {
             this.thereIsCircuit = true;
             this.center = latLng(circuit.latitude, circuit.longitude);
 
-            circuitService.getGPThatUsesCircuit(circuit, this.variant).then((gps) => {
+            grandPrixService.getGPThatUsesCircuit(circuit, this.variant).then((gps) => {
                 this.grandPrixesUsingCircuit = gps;
             });
             circuitService.listCircuitVariant(circuit).then((vars) => {

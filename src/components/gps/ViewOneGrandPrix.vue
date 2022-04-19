@@ -16,13 +16,12 @@
             <div class="columns">
                 <div v-bind:class="thereIsGrid ? 'column is-6' : 'column is-9'">
                     <b-tabs v-model="activeTab">
-                        <b-tab-item label="Clasificación">
-                            <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>clasificación</strong> es {{grandPrix.qualiTime | humanDateTimeMinusFiveMinutes}}</h6>
-                            <SelectTipps session="QUALIFY" :grand-prix="grandPrix" />
-                        </b-tab-item>
-                        <b-tab-item label="Carrera">
-                            <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>carrera</strong> es {{grandPrix.raceTime | humanDateTimeMinusFiveMinutes}}</h6>
-                            <SelectTipps session="RACE" :grand-prix="grandPrix"/>
+                        <b-tab-item v-for="session in grandPrix.sessions"
+                                    :label="session.humanName()"
+                                    :key="session.name">
+                            <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
+                                es {{session.date | humanDateTimeMinusFiveMinutes}}</h6>
+                            <SelectTipps :session="session" :grand-prix="grandPrix" />
                         </b-tab-item>
                     </b-tabs>
                 </div>
@@ -36,15 +35,14 @@
             </div>
 
             <b-tabs v-model="activeTab">
-                <b-tab-item label="Clasificación">
-                   <ScoreComponents :gp="grandPrix"
-                                    session="QUALIFY"
-                                    :user-points="userPoints"/>
-                </b-tab-item>
-                <b-tab-item label="Carrera">
-                   <ScoreComponents :gp="grandPrix"
-                                    session="RACE"
-                                    :user-points="userPoints"/>
+                <b-tab-item v-for="session in grandPrix.sessions"
+                            :label="session.humanName()"
+                            :key="session.name">
+                    <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
+                        es {{session.date | humanDateTimeMinusFiveMinutes}}</h6>
+                    <ScoreComponents :gp="grandPrix"
+                                     :session="session"
+                                     :user-points="userPoints"/>
                 </b-tab-item>
             </b-tabs>
         </div>
@@ -71,6 +69,7 @@
     import {Dictionary} from "@/types/Dictionary";
     import EventBus from "@/plugins/eventbus";
     import dayjs from "dayjs";
+    import {RaceSession} from "@/types/RaceSession";
     const Auth = namespace('Auth')
 
     @Component({

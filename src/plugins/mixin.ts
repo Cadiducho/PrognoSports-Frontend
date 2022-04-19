@@ -33,8 +33,8 @@ let mixin = {
         cantidadPilotosPronosticados(currentCommunity: Community, session: RaceSession): number {
             return cantidadPilotosPronosticados(currentCommunity, session);
         },
-        isBeforeEndDate(grandPrix: GrandPrix, session: RaceSession): boolean {
-            return isBeforeEndDate(grandPrix, session);
+        isBeforeEndDate(session: RaceSession): boolean {
+            return isBeforeEndDate(session);
         },
         sessionHumanName(session: RaceSession): string {
             if (session.name === "QUALIFY") return "Clasificación";

@@ -64,13 +64,8 @@ export function cantidadPilotosPronosticados(currentCommunity: Community, sessio
  * @param session La sesión
  * @return True si es antes del cierre de la sesión
  */
-// FixMe: Hardcoded sessions
-export function isBeforeEndDate(grandPrix: GrandPrix, session: RaceSession): boolean {
-    if (session.name === "QUALIFY") {
-        return dayjs().isBefore(grandPrix.qualiTime);
-    } else {
-        return dayjs().isBefore(grandPrix.raceTime);
-    }
+export function isBeforeEndDate(session: RaceSession): boolean {
+    return dayjs().isBefore(session.date);
 }
 
 export function isValidCommunity(community: Community): boolean {

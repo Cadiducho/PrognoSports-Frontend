@@ -18,10 +18,6 @@ export class CircuitService {
         return await axios.get(`/circuits/${circuitId}/${variantId}`);
     }
 
-    public async getGPThatUsesCircuit(circuit: Circuit, variant: CircuitVariant): Promise<Array<GrandPrix>> {
-        return await axios.get(`/circuits/${circuit.id}/${variant.name}/gps`);
-    }
-
     public async listCircuitVariant(circuit: Circuit): Promise<Array<CircuitVariant>> {
         return await axios.get(`/circuits/${circuit.id}/variants`);
     }

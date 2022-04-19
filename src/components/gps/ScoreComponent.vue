@@ -2,7 +2,7 @@
     <div>
         <loading v-if="!loaded" />
         <template v-else>
-            <span class="title is-5">Puntuaciones de {{ sessionName }} </span> <br/>
+            <span class="title is-5">Puntuaciones de {{ session.humanName() }} </span> <br/>
             <span class="title is-6">Leyenda</span>
             <p class="content">
                 Tus puntuaciones salen reflejadas con color <b-tag type="is-primary">verde</b-tag> <br/>
@@ -11,7 +11,7 @@
             </p>
 
             <b-notification v-if="currentUser.preferences['hide-tipps-until-start'] === true" type="is-info is-light" aria-close-label="Close notification">
-                Tus pronósticos están ocultos al resto de usuarios hasta {{ (this.session === "RACE" ? gp.raceTime : gp.qualiTime) | humanDateTimeMinusFiveMinutes}}
+                Tus pronósticos están ocultos al resto de usuarios hasta {{ session.date | humanDateTimeMinusFiveMinutes}}
             </b-notification>
             <b-notification v-if="!thereAreFinishResults" type="is-info is-light" aria-close-label="Close notification">
                 Aún no hay resultados confirmados para esta sesión
@@ -237,7 +237,7 @@ export default class ScoreComponents extends Vue {
             grandPrixService.getAllTipps(this.gp, this.session, this.currentCommunity).then((tipps) => {
 
                 // Si ya se ha cerrado el pronóstico para esta sesión, quizás hay puntos
-                if (!isBeforeEndDate(this.gp, this.session)) {
+                if (!isBeforeEndDate(this.session)) {
                     scoreService.getPointsByPositionInGrandPrix(this.currentCommunity, this.gp, this.session).then(points => {
                         this.pointsByPosition = points;
                     }).catch(() => {}); // Capturar el error de pronósticos antes de tiempo, ignorarlo
@@ -278,10 +278,10 @@ export default class ScoreComponents extends Vue {
 
                 });
 
-                // FixMe: Hardcoded sessions
+                /* // FixMe: ARREGLAR CON ARRAY DE SESSIONES
                 this.winnersOfQualify = this.findWinnerUserOfSession({name: 'QUALIFY'} as RaceSession);
                 this.winnersOfRace = this.findWinnerUserOfSession({name: 'RACE'} as RaceSession);
-                this.winnersOfGrandPrix = this.findWinnerUserOfSession(undefined);
+                this.winnersOfGrandPrix = this.findWinnerUserOfSession(undefined);*/
 
                 this.loaded = true;
             });
@@ -301,9 +301,7 @@ export default class ScoreComponents extends Vue {
 
             if (session === undefined) {
                 pointsOfUser = value.pointsInGP;
-
-            // FixMe: Hardcoded sessions
-            } else if (session.name === "RACE") {
+            } else if (session.isRace()) {
                 pointsOfUser = value.pointsInRace;
             } else {
                 pointsOfUser = value.pointsInQualify;
@@ -342,11 +340,6 @@ export default class ScoreComponents extends Vue {
     private driverTooltip(driver: Driver) {
         if (driver.code === "???") return "Pronóstico Oculto"; // Si hay pronóstico, pero este esta oculto, informar de eso
         return driver.firstname + ' ' + driver.lastname + ' (' + driver.team.name + ')';
-    }
-
-    // FixMe: Hardcoded sessions
-    get sessionName() {
-        return this.session.name === "RACE" ? "Carrera" : "Clasificación";
     }
 }
 </script>
