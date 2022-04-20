@@ -9,15 +9,13 @@
                 </div>
                 <hr />
                 <div class="media-content">
-                    <div style="display: flex; justify-content: space-between">
+                    <div style="media-content-header">
                         <span class="title is-4 multiline-text">{{ user.username }}</span>
 
                         <span class="content-rank">
-                            <span
-                                :style="{ color: `#${user.rank.color}`, 'border-color': `#${user.rank.color}` }"
-                                class="content-rank-name"
-                                >{{ user.rank.name }}</span
-                            >
+                            <span :style="{ color: `#${user.rank.color}`, 'border-color': `#${user.rank.color}` }" class="content-rank-name">
+                                {{ user.rank.name }}
+                            </span>
                         </span>
                     </div>
                     <p v-if="user.bio" class="subtitle is-6 multiline-text">{{ user.bio }}</p>
@@ -85,6 +83,11 @@ export default class ScoreComponents extends Vue {
     margin-bottom: 0.5rem;
 }
 
+.media-content-header {
+    display: flex; 
+    justify-content: space-between;
+}
+
 .content {
     margin-top: 0.5rem;
 }
@@ -116,7 +119,7 @@ export default class ScoreComponents extends Vue {
     object-fit: contain;
 }
 
-.zuga{
+.zuga {
     display: flex;
     align-items: center;
     justify-content: center;
