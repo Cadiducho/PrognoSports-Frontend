@@ -48,14 +48,13 @@
                             </div>
                             <div class="field">
                                 <label class="checkbox">
-                                    <input type="checkbox" required>
+                                    <input type="checkbox" v-model="tos" required>
                                     Acepto los <a href="/terms" target="_blank">términos de servicio</a> y las <a href="/privacy" target="_blank">políticas de privacidad</a>.
                                 </label>
-
                             </div>
                             <div class="field is-grouped">
                                 <div class="control">
-                                    <button class="button is-link">Regístrate</button>
+                                    <button :disabled="!tos" class="button is-link">Regístrate</button>
                                 </div>
                             </div>
                         </form>
@@ -84,6 +83,7 @@ export default class RegisterComponent extends Vue {
     private email: string = "";
     private username: string = "";
     private password: string = "";
+    private tos: boolean = false;
     private submitted: boolean = false;
     @Auth.Action private register!: (payload: {username: string, email: string, password: string}) => Promise<any>;
 
