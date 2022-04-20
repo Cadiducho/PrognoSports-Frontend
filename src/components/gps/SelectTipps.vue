@@ -73,7 +73,7 @@
                         </li>
                     </transition-group>
                 </draggable>
-                <template v-if="isBeforeEndDate(this.grandPrix, this.session)">
+                <template v-if="isBeforeEndDate(this.session)">
                     <b-button v-if="pilotosPronosticados.length === cantidadPilotosPronosticados(currentCommunity, session)"
                               type="is-success is-fullwidth"
                               @click="enviarPronostico">Enviar pronóstico
@@ -142,11 +142,13 @@ export default class SelectTipps extends Vue {
             this.pilotosDisponibles.push(...drivers);
         });
 
-        EventBus.$on('sendStartGrid', (grid: Array<StartGridPosition>) => {
-            grid.forEach(gpos => {
-                this.startGrid.push(gpos);
-                this.indexedGrid.set(gpos.driver.number, gpos.position);
-            })
+        EventBus.$on('sendStartGrid', (payload: {session: RaceSession, grid: Array<StartGridPosition>}) => {
+            if (payload.session.name === this.session.name) {
+                payload.grid.forEach(gpos => {
+                    this.startGrid.push(gpos);
+                    this.indexedGrid.set(gpos.driver.number, gpos.position);
+                })
+            }
         });
 
         grandPrixService.getUserTipps(this.grandPrix, this.session, this.currentCommunity, this.currentUser).then((userTipps) => {

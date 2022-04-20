@@ -30,7 +30,7 @@
                 </div>
                 <div class="column is-3">
                     <CircuitCard :circuit="grandPrix.circuit" :laps="grandPrix.laps" />
-                    <PitLaneStartGrid :grid="startGrid"/>
+                    <PitLaneStartGrid v-if="thereIsGrid" :grid="startGrid"/>
                 </div>
             </div>
 
@@ -93,7 +93,7 @@
         private grandPrix?: GrandPrix;
         private isLoadingGrandPrix: boolean = true;
         private thereIsGrid: boolean = false;
-        private startGrid: Array<StartGridPosition> = [];
+        private startGrid: Map<RaceSession, Array<StartGridPosition>> = new Map();
         private userPoints: Dictionary<number, UserPoints> = {};
 
         private activeTab: number = 0;
@@ -111,13 +111,7 @@
                             EventBus.$emit('sendDriversInGrandPrix', drivers);
                         });
 
-                        grandPrixService.getGrandPrixGrid(this.competition, this.season, this.id).then((grid) => {
-                            this.startGrid.push(...grid);
-                            if (this.startGrid.length !== 0) {
-                                this.thereIsGrid = true;
-                            }
-                            EventBus.$emit('sendStartGrid', grid);
-                        });
+                        this.getStartGrids(this.grandPrix);
 
                         scoreService.getPointsInGrandPrix(this.currentCommunity, this.grandPrix!).then((points) => {
                             points.forEach((userPoints) => {
@@ -131,12 +125,35 @@
 
 
                         // Colocar la tab correcta según si es día de clasificación o carrera
-                        let raceTime = dayjs(this.grandPrix.raceTime);
-                        if (raceTime.isToday()) {
-                            this.activeTab = 1;
-                        }
+                        this.grandPrix.sessions.forEach((ses, index) => {
+                            if (dayjs(ses.date).isToday()) {
+                                this.activeTab = index;
+                                return;
+                            }
+                        })
                     }
                 });
+        }
+
+        async getStartGrids(grandPrix: GrandPrix) {
+            const request = [];
+            for await (const session of grandPrix.sessions) {
+                request.push(grandPrixService.getGrandPrixGrid(this.grandPrix!, session));
+            }
+
+            Promise.all(request).then((result) => {
+                result.forEach((grid, index) => {
+                    const session = grandPrix.sessions[index];
+                    if (grid.length > 0) {
+                        this.startGrid.set(session, grid);
+                    }
+                    EventBus.$emit('sendStartGrid', {session, grid});
+                });
+
+                if (this.startGrid.size !== 0) {
+                    this.thereIsGrid = true;
+                }
+            });
         }
     }
 </script>
