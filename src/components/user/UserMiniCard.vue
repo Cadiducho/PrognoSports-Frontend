@@ -9,7 +9,7 @@
                 </div>
                 <hr />
                 <div class="media-content">
-                    <div style="media-content-header">
+                    <div class="media-content-header">
                         <span class="title is-4 multiline-text">{{ user.username }}</span>
 
                         <span class="content-rank">
