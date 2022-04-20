@@ -46,6 +46,13 @@
 
                                 </div>
                             </div>
+                            <div class="field">
+                                <label class="checkbox">
+                                    <input type="checkbox" required>
+                                    Acepto los <a href="/terms" target="_blank">términos de servicio</a> y las <a href="/privacy" target="_blank">políticas de privacidad</a>.
+                                </label>
+
+                            </div>
                             <div class="field is-grouped">
                                 <div class="control">
                                     <button class="button is-link">Regístrate</button>
