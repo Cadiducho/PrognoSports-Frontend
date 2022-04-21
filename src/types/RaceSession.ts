@@ -29,7 +29,7 @@ export class RaceSession implements IRaceSession {
         switch (this.name) {
             case "RACE": return "Carrera";
             case "QUALIFY": return "Clasificación";
-            case "FRIDAY_QUALIFY": return "Clasif. de Sprint";
+            case "SPRINT_QUALIFY": return "Clasif. de Sprint";
             case "SPRINT_RACE": return "Carrera Sprint";
             default: return this.name;
         }

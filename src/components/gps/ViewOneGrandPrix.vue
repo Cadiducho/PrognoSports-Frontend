@@ -122,10 +122,6 @@ const Auth = namespace('Auth')
                             this.ruleSet = result[1];
                             this.isLoadingGrandPrix = false;
                             EventBus.$emit('sendDriversInGrandPrix', this.drivers);
-
-                            console.log("He gestionado drivers y ruleset")
-                            console.log(this.ruleSet);
-                            console.log(this.drivers)
                         });
 
                         this.getStartGrids(this.grandPrix);
