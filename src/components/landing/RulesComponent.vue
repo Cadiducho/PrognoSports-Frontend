@@ -27,11 +27,24 @@
                 </p>
 
                 <div class="content">
+                    <h5>Cantidad de posiciones pronosticadas:</h5>
+                </div>
+
+                <div class="content">
+                    <h4>Reparto de puntos</h4>
+                    <ul>
+                        <li v-for="session in competition.availableSessions" :key="session.name">
+                            <b>{{ session.humanName() }}:</b> {{ currentCommunity.defaultRuleSet.data.predictedPositions[session.name] || 4 }} posiciones.
+                        </li>
+                    </ul>
+                    <hr/>
+
+                    <h6>Puntos Acertar posición exacta:</h6>
                     <table class="table is-hoverable is-striped">
                         <thead>
                             <tr>
                                 <th>Posición</th>
-                                <th v-for="session in competition.availableSessions">{{ sessionHumanName(session) }}</th>
+                                <th v-for="session in competition.availableSessions">{{ session.humanName() }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -45,16 +58,17 @@
                         <tfoot>
                             <tr>
                                 <th>Posición</th>
-                                <th v-for="session in competition.availableSessions">{{ sessionHumanName(session) }}</th>
+                                <th v-for="session in competition.availableSessions">{{ session.humanName() }}</th>
                             </tr>
                         </tfoot>
                     </table>
 
+                    <h6>Puntos por otra combinación:</h6>
                     <table class="table is-hoverable">
                         <thead>
                             <tr>
                                 <th></th>
-                                <th v-for="session in competition.availableSessions">{{ sessionHumanName(session) }}</th>
+                                <th v-for="session in competition.availableSessions">{{ session.humanName() }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -86,7 +100,7 @@
                         <tfoot>
                             <tr>
                                 <th></th>
-                                <th v-for="session in competition.availableSessions">{{ sessionHumanName(session) }}</th>
+                                <th v-for="session in competition.availableSessions">{{ session.humanName() }}</th>
                             </tr>
                         </tfoot>
                     </table>

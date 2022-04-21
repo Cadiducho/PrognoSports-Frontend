@@ -37,12 +37,6 @@ let mixin = {
         isBeforeEndDate(session: RaceSession): boolean {
             return isBeforeEndDate(session);
         },
-        sessionHumanName(session: RaceSession): string {
-            if (session.name === "QUALIFY") return "Clasificación";
-            if (session.name === "SPRINT_RACE") return "Carrera Sprint";
-            if (session.name === "RACE") return "Carrera";
-            return "Sesión desconocida";
-        },
         isValidCommunity(community: Community): boolean {
             return isValidCommunity(community);
         },

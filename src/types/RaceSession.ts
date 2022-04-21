@@ -24,16 +24,14 @@ export class RaceSession implements IRaceSession {
         this.code = data.code;
     }
 
+    // ToDo: i18n
     public humanName(): string {
         switch (this.name) {
             case "RACE": return "Carrera";
             case "QUALIFY": return "Clasificación";
+            case "FRIDAY_QUALIFY": return "Clasif. de Sprint";
             case "SPRINT_RACE": return "Carrera Sprint";
             default: return this.name;
         }
     }
-
-    public static RACE = {name: "RACE"} as RaceSession;
-    public static QUALIFY = {name: "QUALIFY"} as RaceSession;
-    public static SPRINT_RACE = {name: "SPRINT_RACE"} as RaceSession;
 }
