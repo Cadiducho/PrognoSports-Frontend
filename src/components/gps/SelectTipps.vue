@@ -51,7 +51,7 @@
                 </draggable>
             </div>
             <div class="column is-6">
-                <h3>Pilotos pronosticados ({{ cantidadPilotosPronosticados(currentCommunity, session) }})</h3>
+                <h3>Pilotos pronosticados ({{ cantidadPilotosPronosticados(ruleSet, session) }})</h3>
                 <draggable class="block-list has-radius is-highlighted is-primary"
                            :list="pilotosPronosticados" group="people"
                            :emptyInsertThreshold="1000">
@@ -74,7 +74,7 @@
                     </transition-group>
                 </draggable>
                 <template v-if="isBeforeEndDate(this.session)">
-                    <b-button v-if="pilotosPronosticados.length === cantidadPilotosPronosticados(currentCommunity, session)"
+                    <b-button v-if="pilotosPronosticados.length === cantidadPilotosPronosticados(ruleSet, session)"
                               type="is-success is-fullwidth"
                               @click="enviarPronostico">Enviar pronóstico
                     </b-button>
@@ -85,7 +85,7 @@
 
 
                 <div v-else class="notification is-warning is-light">
-                    El pronóstico debe tener {{ cantidadPilotosPronosticados(currentCommunity, session) }} pilotos escogidos y ordenados.
+                    El pronóstico debe tener {{ cantidadPilotosPronosticados(ruleSet, session) }} pilotos escogidos y ordenados.
                 </div>
 
                 <hr v-if="pilotosPronosticados.length > 0"/>
@@ -109,6 +109,7 @@ import {RaceResult} from "@/types/RaceResult";
 import {User} from "@/types/User";
 import EventBus from "@/plugins/eventbus";
 import {StartGridPosition} from "@/types/StartGridPosition";
+import {RuleSet} from "@/types/RuleSet";
 const Auth = namespace('Auth')
 
 @Component({
@@ -119,6 +120,8 @@ const Auth = namespace('Auth')
 export default class SelectTipps extends Vue {
     @Prop({required: true}) session!: RaceSession;
     @Prop({required: true}) grandPrix!: GrandPrix;
+    @Prop({required: true}) ruleSet!: RuleSet;
+    @Prop({required: true}) drivers!: Array<Driver>;
 
     @Auth.State("user") private currentUser!: User;
     @Auth.State("community") private currentCommunity!: Community;
@@ -137,10 +140,8 @@ export default class SelectTipps extends Vue {
 
     mounted() {
 
-        EventBus.$on('sendDriversInGrandPrix', (drivers: Array<Driver>) => {
-            this.originalPilotos.push(...drivers);
-            this.pilotosDisponibles.push(...drivers);
-        });
+        this.originalPilotos.push(...this.drivers);
+        this.pilotosDisponibles.push(...this.drivers);
 
         EventBus.$on('sendStartGrid', (payload: {session: RaceSession, grid: Array<StartGridPosition>}) => {
             if (payload.session.name === this.session.name) {

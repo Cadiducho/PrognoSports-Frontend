@@ -41,6 +41,6 @@ export class ScoreService {
     }
 
     public async getPointsByPositionInGrandPrix(community: Community, gp: GrandPrix, session: RaceSession): Promise<Dictionary<number, Dictionary<number, number>>> {
-        return await axios.get(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/${session}/tipps/${community.id}/calculations`);
+        return await axios.get(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/${session.name}/tipps/${community.id}/calculations`);
     }
 }

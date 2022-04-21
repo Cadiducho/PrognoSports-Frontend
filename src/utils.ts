@@ -12,6 +12,7 @@ import {RaceSession} from "@/types/RaceSession";
 import dayjs from "dayjs";
 import {GrandPrix} from "@/types/GrandPrix";
 import {User} from "@/types/User";
+import {RuleSet} from "@/types/RuleSet";
 
 /**
  * Compara un {@link UserRank} para determinar si es administrador o no
@@ -43,24 +44,15 @@ export function hasVariant(circuit: Circuit): boolean {
 
 /**
  * Obtener la cantidad de posiciones a pronosticar para una comunidad y sesión de Gran Premio concreta
- * @param currentCommunity La comunidad
+ * @param ruleSet La normas para este Gran Premio
  * @param session La sesión de Gran Premio
  */
-export function cantidadPilotosPronosticados(currentCommunity: Community, session: RaceSession): number {
-    // FixMe: Hardcoded sessions
-    // Esto debería estar en el ruleset
-    switch (session.name) {
-        case "QUALIFY":
-            return currentCommunity.qualify_positions_predicted;
-        case "RACE":
-            return currentCommunity.race_positions_predicted;
-    }
-    return 0;
+export function cantidadPilotosPronosticados(ruleSet: RuleSet, session: RaceSession): number {
+    return ruleSet?.data?.predictedPositions[session.name] || 0;
 }
 
 /**
  * Comprobar si el momento actual es anterior a la fecha de cierre de un Gran Premio en una sesión concreta
- * @param grandPrix El gran premio
  * @param session La sesión
  * @return True si es antes del cierre de la sesión
  */

@@ -350,7 +350,7 @@ import {Component, Vue, Watch} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import {User} from "@/types/User";
 import {namespace} from "vuex-class";
-import {communityService} from "@/_services";
+import {communityService, rulesetService} from "@/_services";
 import {Community} from "@/types/Community";
 import EventBus from "@/plugins/eventbus";
 const Auth = namespace('Auth')
@@ -451,7 +451,7 @@ export default class ViewCommunitiesList extends Vue {
         };
 
         // Primero se crea el RuleSet
-        communityService.createRuleSet(rulesetData).then((ruleset) => {
+        rulesetService.createRuleSet(rulesetData).then((ruleset) => {
             communityData.default_rule_set = ruleset.id; // y se asigna este rule set por defecto a la nueva comunidad
 
             communityService.createCommunity(communityData).then((community) => {
@@ -474,7 +474,7 @@ export default class ViewCommunitiesList extends Vue {
                     message: error.message,
                     type: "is-danger",
                 });
-                communityService.removeRuleSet(ruleset).then(e => {
+                rulesetService.removeRuleSet(ruleset).then(e => {
                     console.log(e);
                 }).catch(e => {
                     console.log(e);

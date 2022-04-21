@@ -15,9 +15,6 @@ export interface ICommunity {
     user_is_member: boolean;
     invitation: string;
 
-    qualify_positions_predicted: number;
-    race_positions_predicted: number;
-
     defaultRuleSet: RuleSet;
 }
 
@@ -34,8 +31,6 @@ export class Community implements ICommunity {
     name: string;
     open: boolean;
     owner: User;
-    qualify_positions_predicted: number;
-    race_positions_predicted: number;
 
     constructor(data: ICommunity) {
         this.competition = data.competition;
@@ -50,7 +45,5 @@ export class Community implements ICommunity {
         this.name = data.name;
         this.open = data.open;
         this.owner = data.owner;
-        this.qualify_positions_predicted = data.qualify_positions_predicted;
-        this.race_positions_predicted = data.race_positions_predicted;
     }
 }

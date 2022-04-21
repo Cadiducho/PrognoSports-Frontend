@@ -3,6 +3,7 @@ import {GrandPrix} from "@/types/GrandPrix";
 
 export interface IRaceSession {
     name: string;
+    code: string;
     competition: Competition;
     grandPrix: GrandPrix;
     date: Date;
@@ -13,16 +14,14 @@ export class RaceSession implements IRaceSession {
     date: Date;
     grandPrix: GrandPrix;
     name: string;
+    code: string;
 
     constructor(data: IRaceSession) {
         this.competition = data.competition;
         this.date = data.date;
         this.grandPrix = data.grandPrix;
         this.name = data.name;
-    }
-
-    public isRace(): boolean {
-        return this.name.toUpperCase() === "RACE";
+        this.code = data.code;
     }
 
     public humanName(): string {

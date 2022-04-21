@@ -1,5 +1,4 @@
 import {User} from "@/types/User";
-import {RaceSession} from "@/types/RaceSession";
 import {Dictionary} from "@/types/Dictionary";
 
 export interface IRuleSet {
@@ -12,6 +11,7 @@ export interface IRuleSet {
 }
 
 export interface IRuleSetData {
+    predictedPositions: Dictionary<string, number>;
     pointsByEqualsPosition: Dictionary<string, Dictionary<number, number>>;
     pointsByNextPosition: Dictionary<string, number>;
     pointsByNextOfFollowingPosition: Dictionary<string, number>;
@@ -40,6 +40,7 @@ export class RuleSet implements IRuleSet {
 }
 
 export class RuleSetData implements IRuleSetData {
+    predictedPositions: Dictionary<string, number>;
     pointsByEqualsPosition: Dictionary<string, Dictionary<number, number>>;
     pointsByNextOfFollowingPosition: Dictionary<string, number>;
     pointsByNextPosition: Dictionary<string, number>;
@@ -49,6 +50,7 @@ export class RuleSetData implements IRuleSetData {
     pointsIfIsNotInResults: Dictionary<string, number>;
 
     constructor(data: IRuleSetData) {
+        this.predictedPositions = data.predictedPositions;
         this.pointsByEqualsPosition = data.pointsByEqualsPosition;
         this.pointsByNextOfFollowingPosition = data.pointsByNextOfFollowingPosition;
         this.pointsByNextPosition = data.pointsByNextPosition;

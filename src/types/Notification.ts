@@ -82,7 +82,7 @@ export class Notification implements INotification {
                     mensaje += communityName;
                     let points = this.data.points[communityName];
                     if (points) {
-                        mensaje += `<strong class='has-text-info'>${communityName}</strong>: ${points.pointsInQualify} puntos. <br/>Acumulados un total de ${points.accumulatedPoints} puntos esta temporada`;
+                        mensaje += `<strong class='has-text-info'>${communityName}</strong>: ${points.pointsBySession["QUALIFY"]}  puntos. <br/>Acumulados un total de ${points.accumulatedPoints} puntos esta temporada`;
                     } else {
                         mensaje += "No has recibido puntos";
                     }
@@ -98,7 +98,7 @@ export class Notification implements INotification {
                     mensaje += communityName;
                     let points = this.data.points[communityName];
                     if (points) {
-                        mensaje += `<strong class='has-text-info'>${communityName}</strong>: ${points.pointsInRace} puntos. <br/>Acumulados un total de ${points.accumulatedPoints} puntos esta temporada`;
+                        mensaje += `<strong class='has-text-info'>${communityName}</strong>: ${points.pointsBySession["RACE"]} puntos. <br/>Acumulados un total de ${points.accumulatedPoints} puntos esta temporada`;
                     } else {
                         mensaje += "No has recibido puntos";
                     }
