@@ -57,6 +57,7 @@
             qualiParticipations: 0,
             raceParticipations: 0,
             standing: 0,
+            // FixMe: won sessions
             wonGrandPrixes: 0, wonQualifySessions: 0, wonRaceSessions: 0,
             points: 0
         };

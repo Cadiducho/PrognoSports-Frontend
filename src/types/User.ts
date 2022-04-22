@@ -27,6 +27,7 @@ export interface UserResume {
     raceParticipations: number;
     qualiParticipations: number;
     standing: number;
+    //Fixme: wonSessions: Map<string, number>;
     wonQualifySessions: number;
     wonRaceSessions: number;
     wonGrandPrixes: number;

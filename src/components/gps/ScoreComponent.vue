@@ -271,7 +271,6 @@ export default class ScoreComponents extends Vue {
 
                 });
 
-                // FixMe: ARREGLAR CON ARRAY DE SESSIONES
                 this.gp.sessions.forEach((ses) => {
                     this.winnersBySession.set(ses, this.findWinnerUserOfSession(ses));
                 })
