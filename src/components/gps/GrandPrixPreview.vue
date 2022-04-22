@@ -13,8 +13,9 @@
                 </div>
             </div>
             <p class="content block">
-                Clasificación: {{gp.qualiTime | humanDateTime }} ({{gp.qualiTime | dateDiff }}) <br>
-                Carrera: {{gp.raceTime | humanDateTime}} ({{gp.raceTime | dateDiff }})
+                <span v-for="session in gp.sessions">
+                    {{ session.humanName() }}: {{ session.date | humanDate }} ({{ session.date | dateDiff }}) <br />
+                </span>
             </p>
             <footer class="card-footer">
                 <b-button tag="router-link"

@@ -36,6 +36,7 @@
                 <b-step-item step="2" label="Reglas">
                     <h1 class="title has-text-centered">Reglas</h1>
 
+                    <!-- FixMe: al creador de rulesets -->
                     <div class="columns">
                         <div class="column">
                             <b-field label="Posiciones pronosticadas en clasificación">
@@ -350,7 +351,7 @@ import {Component, Vue, Watch} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import {User} from "@/types/User";
 import {namespace} from "vuex-class";
-import {communityService} from "@/_services";
+import {communityService, rulesetService} from "@/_services";
 import {Community} from "@/types/Community";
 import EventBus from "@/plugins/eventbus";
 const Auth = namespace('Auth')
@@ -443,15 +444,13 @@ export default class ViewCommunitiesList extends Vue {
             name: this.name,
             description: this.description,
             image_url: this.imageUrl,
-            qualify_positions_predicted: this.numberQualify,
-            race_positions_predicted: this.numberRace,
             owner: this.currentUser.id,
             open: !this.privacy,
             default_rule_set: 1, //FixMe: Creador de rulesets
         };
 
         // Primero se crea el RuleSet
-        communityService.createRuleSet(rulesetData).then((ruleset) => {
+        rulesetService.createRuleSet(rulesetData).then((ruleset) => {
             communityData.default_rule_set = ruleset.id; // y se asigna este rule set por defecto a la nueva comunidad
 
             communityService.createCommunity(communityData).then((community) => {
@@ -474,7 +473,7 @@ export default class ViewCommunitiesList extends Vue {
                     message: error.message,
                     type: "is-danger",
                 });
-                communityService.removeRuleSet(ruleset).then(e => {
+                rulesetService.removeRuleSet(ruleset).then(e => {
                     console.log(e);
                 }).catch(e => {
                     console.log(e);

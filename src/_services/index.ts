@@ -10,6 +10,7 @@ import {AuthService} from "@/_services/auth.service";
 import {ScoreService} from "@/_services/score.service";
 import {CompetitionService} from "@/_services/competition.service";
 import {ConstructorService} from "@/_services/constructor.service";
+import {RuleSetService} from "@/_services/ruleset.service";
 
 function authHeader() {
     let token = localStorage.getItem('token');
@@ -23,7 +24,8 @@ function authHeader() {
 
 axios.defaults.baseURL = process.env.NODE_ENV === 'production'
     ? 'https://api.prognosports.com/v2'
-    : 'https://api.prognosports.com/v2';
+   // : 'https://api.prognosports.com/v2';
+     : 'http://localhost:8001/v2';
 
 axios.interceptors.request.use(function (config) {
     const token = authHeader();
@@ -52,6 +54,7 @@ axios.interceptors.response.use(function (response) {
 export const authService = new AuthService();
 export const userService = new UserService();
 export const communityService = new CommunityService();
+export const rulesetService = new RuleSetService();
 export const competitionService = new CompetitionService();
 export const constructorService = new ConstructorService();
 export const circuitService = new CircuitService();

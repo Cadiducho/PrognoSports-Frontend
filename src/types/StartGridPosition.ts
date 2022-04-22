@@ -6,5 +6,5 @@ export interface StartGridPosition {
     driver: Driver;
     position: number;
     isFromPit: boolean;
-    note: string;
+    note?: string;
 }

@@ -22,8 +22,6 @@
                 <span v-bind:class="[community.open ? 'has-text-success' : 'has-text-danger']">
                     Comunidad {{ community.open ? "abierta" : "cerrada" }} con {{ community.members_amount }} participantes
                 </span><br />
-                Número de apuestas en la quali: {{ community.qualify_positions_predicted }} <br/>
-                Número de apuestas en carera: {{ community.race_positions_predicted }} <br/>
                 <br>
                 <i>Comunidad creada el <time :datetime="community.created">{{ community.created | humanDateTime }}</time></i>
                 <br />

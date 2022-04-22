@@ -12,6 +12,7 @@ import {Community} from "@/types/Community";
 import {GrandPrix} from "@/types/GrandPrix";
 import {User} from "@/types/User";
 import {UserRank} from "@/types/UserRank";
+import {RuleSet} from "@/types/RuleSet";
 
 let mixin = {
     methods: {
@@ -30,17 +31,11 @@ let mixin = {
         hasVariant(circuit: Circuit): boolean {
             return hasVariant(circuit);
         },
-        cantidadPilotosPronosticados(currentCommunity: Community, session: RaceSession): number {
-            return cantidadPilotosPronosticados(currentCommunity, session);
+        cantidadPilotosPronosticados(ruleSet: RuleSet, session: RaceSession): number {
+            return cantidadPilotosPronosticados(ruleSet, session);
         },
-        isBeforeEndDate(grandPrix: GrandPrix, session: RaceSession): boolean {
-            return isBeforeEndDate(grandPrix, session);
-        },
-        sessionHumanName(session: RaceSession): string {
-            if (session == RaceSession.QUALIFY) return "Clasificación";
-            if (session == RaceSession.SPRINT_RACE) return "Carrera Sprint";
-            if (session == RaceSession.RACE) return "Carrera";
-            return "Sesión desconocida";
+        isBeforeEndDate(session: RaceSession): boolean {
+            return isBeforeEndDate(session);
         },
         isValidCommunity(community: Community): boolean {
             return isValidCommunity(community);

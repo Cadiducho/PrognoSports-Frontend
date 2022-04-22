@@ -45,10 +45,6 @@
                                         </b-field>
 
                                 <p class="card-text"><b>Usuarios apuntados: </b> {{ community.members_amount }}</p>
-                                <p class="card-text"><b>Posiciones de clasificación pronosticadas</b>:
-                                    {{ community.qualify_positions_predicted }}</p>
-                                <p class="card-text"><b>Posiciones de carrera pronosticadas</b>:
-                                    {{ community.race_positions_predicted }}</p>
                             </div>
                         </div>
                     </div>

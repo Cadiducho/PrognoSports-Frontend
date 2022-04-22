@@ -27,66 +27,80 @@
                 </p>
 
                 <div class="content">
+                    <h5>Cantidad de posiciones pronosticadas:</h5>
+                </div>
+
+                <div class="content">
+                    <h4>Reparto de puntos</h4>
+                    <ul>
+                        <li v-for="session in competition.availableSessions" :key="session.name">
+                            <b>{{ session.humanName() }}:</b> {{ currentCommunity.defaultRuleSet.data.predictedPositions[session.name] || 4 }} posiciones.
+                        </li>
+                    </ul>
+                    <hr/>
+
+                    <h6>Puntos Acertar posición exacta:</h6>
                     <table class="table is-hoverable is-striped">
                         <thead>
                             <tr>
                                 <th>Posición</th>
-                                <th v-for="session in competition.availableSessions">{{ sessionHumanName(session) }}</th>
+                                <th v-for="session in competition.availableSessions">{{ session.humanName() }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="pos in positionsInRuleSet">
                                 <th>{{ pos }}º</th>
                                 <td v-for="session in competition.availableSessions">
-                                    {{ (ruleSet.data.pointsByEqualsPosition[session] || 0)[pos] || 0}}
+                                    {{ (ruleSet.data.pointsByEqualsPosition[session.name] || 0)[pos] || 0}}
                                 </td>
                             </tr>
                         </tbody>
                         <tfoot>
                             <tr>
                                 <th>Posición</th>
-                                <th v-for="session in competition.availableSessions">{{ sessionHumanName(session) }}</th>
+                                <th v-for="session in competition.availableSessions">{{ session.humanName() }}</th>
                             </tr>
                         </tfoot>
                     </table>
 
+                    <h6>Puntos por otra combinación:</h6>
                     <table class="table is-hoverable">
                         <thead>
                             <tr>
                                 <th></th>
-                                <th v-for="session in competition.availableSessions">{{ sessionHumanName(session) }}</th>
+                                <th v-for="session in competition.availableSessions">{{ session.humanName() }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>Posición siguiente</td>
-                                <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsByNextPosition[session] || 0 }}</td>
+                                <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsByNextPosition[session.name] || 0 }}</td>
                             </tr>
                             <tr>
                                 <td>Posición siguiente de la siguiente</td>
-                                <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsByNextOfFollowingPosition[session] || 0 }}</td>
+                                <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsByNextOfFollowingPosition[session.name] || 0 }}</td>
                             </tr>
                             <tr>
                                 <td>Posición anterior</td>
-                                <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsByPreviousPosition[session] || 0 }}</td>
+                                <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsByPreviousPosition[session.name] || 0 }}</td>
                             </tr>
                             <tr>
                                 <td>Posición anterior de la anterior</td>
-                                <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsByPreviousOfPreviousPosition[session] || 0 }}</td>
+                                <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsByPreviousOfPreviousPosition[session.name] || 0 }}</td>
                             </tr>
                             <tr>
                                 <td>No en el podio</td>
-                                <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsIfIsNotInPodium[session] || 0 }}</td>
+                                <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsIfIsNotInPodium[session.name] || 0 }}</td>
                             </tr>
                             <tr>
                                 <td>No en los resultados</td>
-                                <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsIfIsNotInResults[session] || 0 }}</td>
+                                <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsIfIsNotInResults[session.name] || 0 }}</td>
                             </tr>
                         </tbody>
                         <tfoot>
                             <tr>
                                 <th></th>
-                                <th v-for="session in competition.availableSessions">{{ sessionHumanName(session) }}</th>
+                                <th v-for="session in competition.availableSessions">{{ session.humanName() }}</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -138,7 +152,7 @@ export default class RulesComponent extends Vue {
     get maxPosInRuleSet(): number {
         let max = 0;
         this.competition.availableSessions.forEach(session => {
-            let map = this.ruleSet.data.pointsByEqualsPosition[session];
+            let map = this.ruleSet.data.pointsByEqualsPosition[session.name];
             if (map !== undefined) {
                 for (let kPos of Object.keys(map)) {
                     const pos = Number.parseInt(kPos);
@@ -159,9 +173,5 @@ export default class RulesComponent extends Vue {
 }
 </script>
 <style scoped>
-.card-header {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-}
 </style>
 
