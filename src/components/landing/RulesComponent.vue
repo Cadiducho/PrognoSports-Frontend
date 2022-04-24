@@ -31,7 +31,6 @@
                 </div>
 
                 <div class="content">
-                    <h4>Reparto de puntos</h4>
                     <ul>
                         <li v-for="session in competition.availableSessions" :key="session.name">
                             <b>{{ session.humanName() }}:</b> {{ currentCommunity.defaultRuleSet.data.predictedPositions[session.name] || 4 }} posiciones.
@@ -39,6 +38,7 @@
                     </ul>
                     <hr/>
 
+                    <h4>Reparto de puntos</h4>
                     <h6>Puntos Acertar posición exacta:</h6>
                     <table class="table is-hoverable is-striped">
                         <thead>
