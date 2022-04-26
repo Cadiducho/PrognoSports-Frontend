@@ -13,7 +13,7 @@
             <b-notification v-if="currentUser.preferences['hide-tipps-until-start'] === true" type="is-info is-light" aria-close-label="Close notification">
                 Tus pronósticos están ocultos al resto de usuarios hasta {{ session.date | humanDateTimeMinusFiveMinutes}}
             </b-notification>
-            <b-notification v-if="!thereAreFinishResults" type="is-info is-light" aria-close-label="Close notification">
+            <b-notification v-if="!thereAreFinishResults" type="is-primary is-light" aria-close-label="Close notification">
                 Aún no hay resultados confirmados para esta sesión
             </b-notification>
 

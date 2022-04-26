@@ -3,12 +3,12 @@
         <div class="columns is-mobile">
             <div class="column is-6">
                 <h3>Lista de pilotos</h3>
-                <b-collapse :open="false" aria-id="contentIdForA11y1" class="mb-2">
+                <b-collapse :open="false" aria-id="opcionesOrdenado" class="mb-2">
                     <template #trigger>
                         <b-button
                             label="Opciones de ordenado"
                             type="is-primary"
-                            aria-controls="contentIdForA11y1" />
+                            aria-controls="opcionesOrdenado" />
                     </template>
 
                     <div class="box">
@@ -30,7 +30,7 @@
                     <b-input v-model="filtroPiloto" placeholder="Buscar piloto" type="search" icon-pack="fas" icon="search"></b-input>
                 </b-field>
                 <draggable class="block-list has-radius is-highlighted is-info"
-                           :list="pilotosDisponiblesFiltrados" group="people">
+                           :list="pilotosDisponiblesFiltrados" :group="session.name">
                     <transition-group type="transition" :name="!drag ? 'flip-list' : null">
                         <li
                             class="is-highlighted has-text-weight-semibold"
@@ -53,7 +53,7 @@
             <div class="column is-6">
                 <h3>Pilotos pronosticados ({{ cantidadPilotosPronosticados(ruleSet, session) }})</h3>
                 <draggable class="block-list has-radius is-highlighted is-primary"
-                           :list="pilotosPronosticados" group="people"
+                           :list="pilotosPronosticados" :group="session.name"
                            :emptyInsertThreshold="1000">
                     <transition-group type="transition" tag="div" :name="!drag ? 'flip-list' : null">
                         <li
@@ -88,8 +88,8 @@
                     El pronóstico debe tener {{ cantidadPilotosPronosticados(ruleSet, session) }} pilotos escogidos y ordenados.
                 </div>
 
-                <hr v-if="pilotosPronosticados.length > 0"/>
-                <b-button v-if="pilotosPronosticados.length > 0" type="is-danger is-light is-fullwidth" @click="reiniciarPronostico">Limpiar pronóstico</b-button>
+                <hr v-if="(pilotosPronosticados.length > 0) && isBeforeEndDate(this.session)"/>
+                <b-button v-if="(pilotosPronosticados.length > 0) && isBeforeEndDate(this.session)" type="is-danger is-light is-fullwidth" @click="reiniciarPronostico">Limpiar pronóstico</b-button>
 
             </div>
         </div>
@@ -258,6 +258,9 @@ export default class SelectTipps extends Vue {
     padding:1rem;
     border: 1px solid #dbdbdb;
     border-radius: 4px;
+}
+.block-list li {
+    padding: 0.75rem;
 }
 
 .block-list:empty:before,
