@@ -10,7 +10,7 @@ export interface ICommunity {
     image_url: string;
     open: boolean;
     owner: User;
-    created: Date,
+    created: Date | string,
     members_amount: number;
     user_is_member: boolean;
     invitation: string;
@@ -34,7 +34,7 @@ export class Community implements ICommunity {
 
     constructor(data: ICommunity) {
         this.competition = data.competition;
-        this.created = data.created;
+        this.created = new Date(data.created);
         this.defaultRuleSet = data.defaultRuleSet ? new RuleSet(data.defaultRuleSet) : {id: 0} as RuleSet;
         this.description = data.description;
         this.id = data.id;

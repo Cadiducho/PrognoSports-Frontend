@@ -6,6 +6,7 @@ import timezone from 'dayjs/plugin/timezone'
 import relativeTime from'dayjs/plugin/relativeTime'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import isToday from 'dayjs/plugin/isToday';
+import {VueConstructor} from "vue/types/vue";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -14,7 +15,7 @@ dayjs.extend(relativeTime);
 dayjs.extend(customParseFormat);
 dayjs.extend(isToday);
 
-export function loadFilters(Vue: any) {
+export function loadFilters(Vue: VueConstructor) {
     Vue.filter('dateDiff', function (date: Date): string {
         return dayjs(date).fromNow();
     });
