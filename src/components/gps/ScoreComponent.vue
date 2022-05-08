@@ -186,6 +186,7 @@ export default class ScoreComponents extends Vue {
     @Prop({required: true}) gp!: GrandPrix;
     @Prop({required: true}) ruleSet!: RuleSet;
     @Prop({required: true}) session!: RaceSession;
+    @Prop({required: true}) communityMembers!: Array<CommunityUser>;
     @Prop({required: true}) userPoints!: Dictionary<number, UserPoints>;
     @Auth.State("user") private currentUser!: User;
     @Auth.State("community") private currentCommunity!: Community;
@@ -193,7 +194,6 @@ export default class ScoreComponents extends Vue {
     private loaded = false;
     private thereAreFinishResults = false;
     private sessionResults: Array<RaceResult> = [];
-    private communityMembers: Array<CommunityUser> = [];
     private pointsByPosition: Dictionary<number, Dictionary<number, number>> = {};
     private tableData: TableType[] = [];
 
@@ -201,10 +201,6 @@ export default class ScoreComponents extends Vue {
     private winnersOfGrandPrix: Array<string> = [];
 
     mounted() {
-        EventBus.$on('sendCommunityMembers', (members: Array<CommunityUser>) => {
-            this.communityMembers.push(...members);
-        });
-
         grandPrixService.getResults(this.gp, this.session).then((results) => {
 
             this.thereAreFinishResults = results.length > 0;

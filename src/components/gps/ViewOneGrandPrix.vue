@@ -43,6 +43,7 @@
                     <ScoreComponents :gp="grandPrix"
                                      :rule-set="ruleSet"
                                      :session="session"
+                                     :communityMembers="communityMembers"
                                      :user-points="userPoints"/>
                 </b-tab-item>
             </b-tabs>
@@ -73,6 +74,7 @@ import dayjs from "dayjs";
 import {RaceSession} from "@/types/RaceSession";
 import {RuleSet} from "@/types/RuleSet";
 import {Driver} from "@/types/Driver";
+import {CommunityUser} from "@/types/CommunityUser";
 
 const Auth = namespace('Auth')
 
@@ -97,6 +99,7 @@ const Auth = namespace('Auth')
         private grandPrix?: GrandPrix;
         private ruleSet?: RuleSet;
         private drivers?: Array<Driver> = [];
+        private communityMembers?: Array<CommunityUser> = [];
 
         private isLoadingGrandPrix: boolean = true;
         private thereIsGrid: boolean = false;
@@ -115,27 +118,23 @@ const Auth = namespace('Auth')
 
                         Promise.all([
                             driversService.getDriversInGrandPrix(this.grandPrix!),
-                            rulesetService.getRuleSetInGrandPrix(this.currentCommunity, this.grandPrix)
+                            rulesetService.getRuleSetInGrandPrix(this.currentCommunity, this.grandPrix),
+                            scoreService.getPointsInGrandPrix(this.currentCommunity, this.grandPrix!),
+                            communityService.getMembers(this.currentCommunity),
                         ]).then(result => {
                             this.drivers = result[0];
-
                             this.ruleSet = result[1];
+                            const points = result[2];
+                            this.communityMembers = result[3];
+
+                            points.forEach((points) => {
+                                this.userPoints[points.user.id] = points;
+                            });
+
                             this.isLoadingGrandPrix = false;
-                            EventBus.$emit('sendDriversInGrandPrix', this.drivers);
                         });
 
                         this.getStartGrids(this.grandPrix);
-
-                        scoreService.getPointsInGrandPrix(this.currentCommunity, this.grandPrix!).then((points) => {
-                            points.forEach((userPoints) => {
-                                this.userPoints[userPoints.user.id] = userPoints;
-                            });
-                        });
-
-                        communityService.getMembers(this.currentCommunity).then((members) => {
-                            EventBus.$emit('sendCommunityMembers', members);
-                        });
-
 
                         // Colocar la tab correcta según si es día de clasificación o carrera
                         this.grandPrix.sessions.forEach((ses, index) => {
