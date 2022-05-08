@@ -2,8 +2,10 @@
     <div id="startGridComponent" class="box" v-if="grid !== undefined">
         <nav class="is-flex is-justify-content-space-between">
             <h3>Parrilla de Salida</h3>
-            <b-field label="Sesión" :label-position="'on-border'">
-                <b-select v-if="Object.keys(chosenSession).length && availableSessions.length > 1" v-model="chosenSession" placeholder="Selecciona la sesión" @input="changeGridSession()">
+
+            <b-field v-if="Object.keys(chosenSession).length && availableSessions.length > 1"
+                     label="Sesión" :label-position="'on-border'">
+                <b-select v-model="chosenSession" placeholder="Selecciona la sesión" @input="changeGridSession()">
                     <option
                         v-for="session in availableSessions"
                         :value="session"
