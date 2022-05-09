@@ -16,7 +16,7 @@
                             <b-radio v-model='orderType' :native-value='0'>Orden alfabético</b-radio>
                             <b-radio v-model='orderType' :native-value='1'>Por equipos</b-radio>
                             <b-radio v-model='orderType' :native-value='2'>Por dorsal</b-radio>
-                            <b-radio v-model='orderType' :native-value='3' v-if="this.startGrid.length > 0">Por parrilla de salida</b-radio>
+                            <b-radio v-model='orderType' :native-value='3' v-if="this.indexedGrid.size > 0">Por parrilla de salida</b-radio>
                         </b-field>
                         <b-field>
                             <b-switch v-model="orderAscendent">
@@ -122,6 +122,7 @@ export default class SelectTipps extends Vue {
     @Prop({required: true}) grandPrix!: GrandPrix;
     @Prop({required: true}) ruleSet!: RuleSet;
     @Prop({required: true}) drivers!: Array<Driver>;
+    @Prop({required: true}) startGrids!: Map<RaceSession, Array<StartGridPosition>>;
 
     @Auth.State("user") private currentUser!: User;
     @Auth.State("community") private currentCommunity!: Community;
@@ -135,7 +136,6 @@ export default class SelectTipps extends Vue {
     private pilotosDisponibles: Array<Driver> = [];
     private originalPilotos: Array<Driver> = [];
 
-    private startGrid: Array<StartGridPosition> = [];
     private indexedGrid: Map<number, number> = new Map(); // Dorsal del piloto -> Posicion en la grid
 
     mounted() {
@@ -143,14 +143,13 @@ export default class SelectTipps extends Vue {
         this.originalPilotos.push(...this.drivers);
         this.pilotosDisponibles.push(...this.drivers);
 
-        EventBus.$on('sendStartGrid', (payload: {session: RaceSession, grid: Array<StartGridPosition>}) => {
-            if (payload.session.name === this.session.name) {
-                payload.grid.forEach(gpos => {
-                    this.startGrid.push(gpos);
+        for (let [session, grid] of this.startGrids) {
+            if (session.name === this.session.name) {
+                grid.forEach(gpos => {
                     this.indexedGrid.set(gpos.driver.number, gpos.position);
                 })
             }
-        });
+        }
 
         grandPrixService.getUserTipps(this.grandPrix, this.session, this.currentCommunity, this.currentUser).then((userTipps) => {
             for (let key in userTipps) {

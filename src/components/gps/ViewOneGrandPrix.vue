@@ -21,7 +21,12 @@
                                     :key="session.name">
                             <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
                                 es {{session.date | humanDateTimeMinusFiveMinutes}}</h6>
-                            <SelectTipps :session="session" :grand-prix="grandPrix" :rule-set="ruleSet" :drivers="drivers" />
+                            <SelectTipps :session="session"
+                                         :grand-prix="grandPrix"
+                                         :rule-set="ruleSet"
+                                         :drivers="drivers"
+                                         :startGrids="startGrid"
+                            />
                         </b-tab-item>
                     </b-tabs>
                 </div>
@@ -102,7 +107,6 @@ const Auth = namespace('Auth')
         private communityMembers?: Array<CommunityUser> = [];
 
         private isLoadingGrandPrix: boolean = true;
-        private thereIsGrid: boolean = false;
         private startGrid: Map<RaceSession, Array<StartGridPosition>> = new Map();
         private userPoints: Dictionary<number, UserPoints> = {};
 
@@ -121,20 +125,27 @@ const Auth = namespace('Auth')
                             rulesetService.getRuleSetInGrandPrix(this.currentCommunity, this.grandPrix),
                             scoreService.getPointsInGrandPrix(this.currentCommunity, this.grandPrix!),
                             communityService.getMembers(this.currentCommunity),
+                            this.getStartGrids(this.grandPrix)
                         ]).then(result => {
                             this.drivers = result[0];
                             this.ruleSet = result[1];
                             const points = result[2];
                             this.communityMembers = result[3];
+                            const rawStartGrids = result[4];
 
                             points.forEach((points) => {
                                 this.userPoints[points.user.id] = points;
                             });
 
+                            rawStartGrids.forEach((grid, index) => {
+                                const session = this.grandPrix!.sessions[index];
+                                if (grid.length > 0) {
+                                    this.startGrid.set(session, grid);
+                                }
+                            });
+
                             this.isLoadingGrandPrix = false;
                         });
-
-                        this.getStartGrids(this.grandPrix);
 
                         // Colocar la tab correcta según si es día de clasificación o carrera
                         this.grandPrix.sessions.forEach((ses, index) => {
@@ -152,20 +163,11 @@ const Auth = namespace('Auth')
             for await (const session of grandPrix.sessions) {
                 request.push(grandPrixService.getGrandPrixGrid(this.grandPrix!, session));
             }
+            return Promise.all(request);
+        }
 
-            Promise.all(request).then((result) => {
-                result.forEach((grid, index) => {
-                    const session = grandPrix.sessions[index];
-                    if (grid.length > 0) {
-                        this.startGrid.set(session, grid);
-                    }
-                    EventBus.$emit('sendStartGrid', {session, grid});
-                });
-
-                if (this.startGrid.size !== 0) {
-                    this.thereIsGrid = true;
-                }
-            });
+        get thereIsGrid() {
+            return this.startGrid.size !== 0
         }
     }
 </script>
