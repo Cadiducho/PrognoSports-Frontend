@@ -14,6 +14,7 @@ export interface IGrandPrix {
     promo_image_url: string;
     sessions: Array<IRaceSession>
     laps: number;
+    suspended: boolean;
 }
 
 export class GrandPrix implements IGrandPrix {
@@ -27,6 +28,7 @@ export class GrandPrix implements IGrandPrix {
     sessions: Array<RaceSession>;
     round: number;
     season: Season;
+    suspended: boolean;
 
     constructor(data: IGrandPrix) {
         this.circuit = data.circuit;
@@ -38,6 +40,7 @@ export class GrandPrix implements IGrandPrix {
         this.promo_image_url = data.promo_image_url;
         this.round = data.round;
         this.season = data.season;
+        this.suspended = data.suspended;
 
         this.sessions = [];
         data.sessions.forEach(session => {

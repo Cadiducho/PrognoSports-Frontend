@@ -104,7 +104,7 @@ import {User} from "@/types/User";
 import {namespace} from "vuex-class";
 import {circuitService} from "@/_services";
 import ViewCircuitItem from "@/components/circuits/ViewCircuitItem.vue";
-import {Circuit} from "@/types/Circuit";
+import {ICircuit} from "@/types/Circuit";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 const Auth = namespace('Auth')
@@ -123,7 +123,7 @@ export default class CreateCircuit extends Vue {
 
     private activeStep = 0;
 
-    private createdCircuit: Circuit = {
+    private createdCircuit: ICircuit = {
         country: undefined!,
         id: undefined!,
         latitude: undefined!,
