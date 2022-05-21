@@ -1,5 +1,5 @@
 <template>
-    <div id="createCompetition" class="box">
+    <div id="createGrandPrix" class="box">
         <PrognoPageTitle class="mb-5" name="Crear gran premio" />
 
         <section v-if="isAdmin(currentUser)">
@@ -7,20 +7,55 @@
                 <b-step-item step="1" label="Datos del gran premio">
                     <h2 class="title">Datos del gran premio</h2>
 
-                    <b-field label="Nombre de la competición">
-                        <b-input v-model="createdCompetition.name" name="name" expanded lazy></b-input>
+                    <b-field label="ID del Gran Premio">
+                        <b-input v-model="createdGrandPrix.id" name="id" expanded lazy></b-input>
                     </b-field>
 
-                    <b-field label="Nombre completo y con patrocinadores">
-                        <b-input v-model="createdCompetition.fullname" name="fullname" expanded lazy></b-input>
+                    <b-field label="Nombre del Gran Premio">
+                        <b-input v-model="createdGrandPrix.name" name="name" expanded lazy></b-input>
                     </b-field>
 
-                    <b-field label="Código de la competición">
-                        <b-input v-model="createdCompetition.code" name="code" expanded lazy></b-input>
+                    <b-field label="Código del Gran Premio">
+                        <b-input v-model="createdGrandPrix.code" name="code" expanded lazy></b-input>
                     </b-field>
 
-                    <b-field label="Reglas">
-                        <b-input v-model="createdCompetition.rules" type="textarea" expanded lazy></b-input>
+                    <b-field label="Circuito del Gran Premio">
+                        <b-select v-model:class="createdGrandPrix.circuit" placeholder="Selecciona un circuito" expanded>
+                            <option
+                                v-for="circuit in circuits"
+                                :value="circuit"
+                                :key="circuit.id">
+                                {{ circuit.nameWithVariant() }}
+                            </option>
+                        </b-select>
+                    </b-field>
+
+                    <div class="columns">
+                        <div class="column">
+                            <b-field label="Ronda del Gran Premio">
+                                <b-input v-model="createdGrandPrix.round" name="round" expanded lazy :min=0 type="number"></b-input>
+                            </b-field>
+                        </div>
+                        <div class="column">
+                            <b-field label="Vueltas del Gran Premio">
+                                <b-input v-model="createdGrandPrix.laps" name="laps" expanded lazy :min=0 type="number"></b-input>
+                            </b-field>
+                        </div>
+                    </div>
+
+                    <b-field label="Imagen promocional del Gran Premio">
+                        <b-input v-model="createdGrandPrix.promo_image_url" name="promo_image_url" expanded lazy></b-input>
+                    </b-field>
+
+                    <b-field label="Temporada del Gran Premio">
+                        <b-select v-model:class="createdGrandPrix.season" placeholder="Selecciona una temporada" expanded>
+                            <option
+                                v-for="ses in seasons"
+                                :value="ses"
+                                :key="ses.id">
+                                {{ ses.name }} (#{{ ses.id }}) - {{ ses.competition.name }}
+                            </option>
+                        </b-select>
                     </b-field>
 
                     <hr/>
@@ -30,28 +65,33 @@
                 <b-step-item step="2" label="Finalizar">
                     <h2 class="title">Finalizar</h2>
 
-                    <AlertInvalidData :object="createdCompetition.name" message="No has introducido nombre para esta competición" />
-                    <AlertInvalidData :object="createdCompetition.code" message="No has introducido código para esta competición" />
-                    <AlertInvalidData :object="createdCompetition.fullname" message="No has introducido nombre completo para esta competición" />
-                    <AlertInvalidData :object="createdCompetition.rules" message="No has reglas para esta competición" />
+                    <AlertInvalidData :object="createdGrandPrix.id" message="No has introducido ID para este gran premio" />
+                    <AlertInvalidData :object="createdGrandPrix.name" message="No has introducido nombre para este gran premio" />
+                    <AlertInvalidData :object="createdGrandPrix.code" message="No has introducido código para este gran premio" />
+                    <AlertInvalidData :object="createdGrandPrix.round" message="No has introducido ronda para este gran premio" />
+                    <AlertInvalidData :object="createdGrandPrix.laps" message="No has introducido laps para este gran premio" />
+                    <AlertInvalidData :object="createdGrandPrix.promo_image_url" message="No has introducido imagen para este gran premio" />
+                    <AlertInvalidData :object="createdGrandPrix.season" message="No has introducido temporada para este gran premio" />
 
                     <div class="notification has-background-primary">
                         Revisa los datos, se va a crear la siguiente competición
                     </div>
 
                     <div class="content">
-                        <p class="card-text"><b>Nombre de la competición: </b>{{ createdCompetition.name }}</p>
-                        <p class="card-text"><b>Nombre completo de la competición: </b>{{ createdCompetition.fullname }}</p>
-                        <p class="card-text"><b>Code de la competición: </b>{{ createdCompetition.code }}</p>
+                        <p class="card-text"><b>ID del Gran Premio: </b>{{ createdGrandPrix.id }}</p>
+                        <p class="card-text"><b>Nombre del Gran Premio: </b>{{ createdGrandPrix.name }}</p>
+                        <p class="card-text"><b>Código del Gran Premio: </b>{{ createdGrandPrix.code }}</p>
+                        <p class="card-text"><b>Circuito del Gran Premio: </b>{{ createdGrandPrix.circuit }}</p>
+                        <p class="card-text"><b>Ronda del Gran Premio: </b>{{ createdGrandPrix.round }}</p>
+                        <p class="card-text"><b>Vueltas al Gran Premio: </b>{{ createdGrandPrix.laps }}</p>
+                        <p class="card-text"><b>Imagen del Gran Premio: </b>{{ createdGrandPrix.code }}</p>
+                        <p class="card-text"><b>Temporada del Gran Premio: </b>{{ createdGrandPrix.season }}</p>
                     </div>
-                    <section class="content">
-                        <div v-html="compiledRules"></div>
-                    </section>
 
                     <hr/>
                     <b-field>
                         <p class="control">
-                            <b-button :disabled="!isDataOk()" label="Crear competición" @click="registerCompetition()" type="is-primary" />
+                            <b-button :disabled="!isDataOk()" label="Crear Gran Premio" @click="registerGrandPrix()" type="is-primary" />
                         </p>
                     </b-field>
                 </b-step-item>
@@ -68,11 +108,14 @@ import {Component, Vue} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import {User} from "@/types/User";
 import {namespace} from "vuex-class";
-import {competitionService} from "@/_services";
+import {circuitService, competitionService, grandPrixService, seasonService} from "@/_services";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {Competition} from "@/types/Competition";
 import {marked} from "marked";
+import {GrandPrix} from "@/types/GrandPrix";
+import {Season} from "@/types/Season";
+import {Circuit} from "@/types/Circuit";
 const Auth = namespace('Auth')
 
 @Component({
@@ -87,45 +130,68 @@ export default class SeasonCreate extends Vue {
     @Auth.State("user") private currentUser!: User;
 
     private activeStep = 0;
+    private circuits: Array<Circuit> = [];
+    private seasons: Array<Season> = [];
 
-    private createdCompetition: Competition = {
+    private createdGrandPrix: GrandPrix = {
         id: undefined!,
         code: undefined!,
         name: undefined!,
-        fullname: undefined!,
-        currentSeason: undefined!,
-        rules: undefined!,
-        availableSessions: []
+        circuit: undefined!,
+        competition: undefined!,
+        laps: undefined!,
+        promo_image_url: undefined!,
+        round: undefined!,
+        season: undefined!,
+        suspended: false,
+        sessions: [],
     }
 
-    get compiledRules() {
-        return marked(this.createdCompetition?.rules ?? "");
+    mounted() {
+        circuitService.getCircuitList().then((list) => {
+            this.circuits = [];
+            this.circuits.push(...list);
+        });
+        seasonService.getSeasonList().then((list) => {
+            this.seasons = [];
+            this.seasons.push(...list);
+        });
     }
 
     private isDataOk(): boolean {
-        return !(this.createdCompetition.id == undefined
-            && this.createdCompetition.code == undefined
-            && this.createdCompetition.name == undefined
-            && this.createdCompetition.fullname == undefined
-            && this.createdCompetition.rules == undefined)
+        return !(this.createdGrandPrix.id == undefined
+            && this.createdGrandPrix.code == undefined
+            && this.createdGrandPrix.name == undefined
+            && this.createdGrandPrix.circuit == undefined
+            && this.createdGrandPrix.laps == undefined
+            && this.createdGrandPrix.promo_image_url == undefined
+            && this.createdGrandPrix.round == undefined
+            && this.createdGrandPrix.season == undefined
+        )
     }
 
-    private registerCompetition(): void {
+    private registerGrandPrix(): void {
         let data = {
-            code: this.createdCompetition!.code,
-            name: this.createdCompetition!.name,
-            fullname: this.createdCompetition!.fullname,
-            rules: this.createdCompetition!.rules,
+            id: this.createdGrandPrix.id,
+            season: this.createdGrandPrix.season.id,
+            competition: this.createdGrandPrix.season.competition.id,
+            round: this.createdGrandPrix.round,
+            name: this.createdGrandPrix.name,
+            code: this.createdGrandPrix.code,
+            circuit: this.createdGrandPrix.circuit.id,
+            variant: this.createdGrandPrix.circuit.variant.name,
+            promo_image_url: this.createdGrandPrix.promo_image_url,
+            laps: this.createdGrandPrix.laps
         }
 
-        competitionService.createCompetition(data).then((result) => {
+        grandPrixService.createGrandPrix(data).then((result) => {
             this.$buefy.toast.open({
-                message: "Se ha registrado correctamente la competición `" + result.name + "`",
+                message: "Se ha registrado correctamente el Gran Premio `" + result.id + "`",
                 type: "is-success",
             });
 
             this.$router.push({
-                name: 'adminCompetitions'
+                name: 'adminGps'
             })
         }).catch((error) => {
             this.$buefy.toast.open({

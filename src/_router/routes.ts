@@ -229,7 +229,7 @@ export const routes = [
                 meta: { title: "Nuevo piloto" }
             },
             {
-                path: 'gp',
+                path: 'grandprix',
                 name: 'gpCreate',
                 component: () => import('@/components/admin/gps/GrandPrixCreate.vue'),
                 meta: { title: "Nuevo gran premio" }

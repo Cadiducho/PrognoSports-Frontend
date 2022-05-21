@@ -38,6 +38,15 @@ export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
         return this.getObjectFromAPI(`/gps/${competition.code}/${season.name}/${id}`);
     }
 
+    public async createGrandPrix(data: { code: string; circuit: string; round: number; promo_image_url: string; name: string; variant: string; season: number; competition: number; laps: number; id: string }): Promise<GrandPrix> {
+        return await axios.post(`/gps/`, data);
+    }
+
+    public async editGrandPrix(data: {id: string, season: number, competition: number, round: number, name: string, code: string,
+        circuit: string, variant: string, promo_image_url: string, laps: number}): Promise<GrandPrix> {
+        return await axios.put(`/gps/${data.competition}/${data.season}/${data.id}/`, data);
+    }
+
     public async getGrandPrixGrid(grandPrix: GrandPrix, session: RaceSession): Promise<Array<StartGridPosition>> {
         return await axios.get(`/gps/${grandPrix.competition.code}/${grandPrix.season.name}/${grandPrix.id}/grid/${session.name}`);
     }

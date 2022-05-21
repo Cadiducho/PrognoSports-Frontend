@@ -11,44 +11,59 @@
                     <b-button type="is-link" to="/admin/gps" tag="router-link">Lista de grandes premios</b-button>
                 </div>
 
-                <p v-if="!thereIsGrandPrix">El Gran Premio {{ grandprixId }} no ha sido encontrado</p>
+                <p v-if="!thereIsGrandPrix">El Gran Premio {{ id }} no ha sido encontrado</p>
                 <template v-else>
 
                     <h2 class="title">Datos del Gran Premio</h2>
 
-                    <b-field label="Nombre">
-                        <b-input v-model="grandPrix.name" name="name" expanded lazy></b-input>
-                    </b-field>
+                    <div class="columns">
+                        <div class="column is-four-fifths">
+                            <b-field label="Nombre">
+                                <b-input v-model="grandPrix.name" name="name" expanded lazy></b-input>
+                            </b-field>
+                        </div>
+                        <div class="column">
+                            <b-field label="Gran Premio suspendido">
+                                <b-switch
+                                    class="mt-2"
+                                    v-model="grandPrix.suspended"
+                                    passive-type='is-success'
+                                    type='is-danger'>
+                                </b-switch> {{ grandPrix.suspended }}
+                            </b-field>
+                        </div>
+                    </div>
 
-                    <b-field label="Código de la competición">
+                    <b-field label="Código del Gran Premio">
                         <b-input v-model="grandPrix.code" name="code" expanded lazy></b-input>
                     </b-field>
 
-                    <b-field label="Ronda">
-                        <b-input v-model="grandPrix.round" name="round" type="number" min="1" expanded lazy></b-input>
-                    </b-field>
-
-                    <b-field label="Promo URL">
-                        <b-input v-model="grandPrix.promo_image_url" name="promo_image_url" expanded lazy></b-input>
-                    </b-field>
-
-                    <b-field label="Circuito" grouped>
-                        <b-select v-model="grandPrix.circuit.id" placeholder="Selecciona el circuito" expanded @input="changeCircuit()">
+                    <b-field label="Circuito del Gran Premio">
+                        <b-select v-model:class="grandPrix.circuit" placeholder="Selecciona un circuito" expanded>
                             <option
                                 v-for="circuit in circuitList"
-                                :value="circuit.id"
-                                :key="circuit.id">
-                                {{ circuit.name }}
+                                :value="circuit"
+                                :key="circuit.id + '-' + circuit.variant.name">
+                                {{ circuit.nameWithVariant() }}
                             </option>
                         </b-select>
-                        <b-select v-model="grandPrix.circuit.variant.name" placeholder="Selecciona la variante" expanded>
-                            <option
-                                v-for="variant in variantsList"
-                                :value="variant.name"
-                                :key="variant.name">
-                                {{ variant.name }}
-                            </option>
-                        </b-select>
+                    </b-field>
+
+                    <div class="columns">
+                        <div class="column">
+                            <b-field label="Ronda del Gran Premio">
+                                <b-input v-model="grandPrix.round" name="round" expanded lazy :min=0 type="number"></b-input>
+                            </b-field>
+                        </div>
+                        <div class="column">
+                            <b-field label="Vueltas del Gran Premio">
+                                <b-input v-model="grandPrix.laps" name="laps" expanded lazy :min=0 type="number"></b-input>
+                            </b-field>
+                        </div>
+                    </div>
+
+                    <b-field label="Imagen promocional del Gran Premio">
+                        <b-input v-model="grandPrix.promo_image_url" name="promo_image_url" expanded lazy></b-input>
                     </b-field>
 
                     <hr />
@@ -79,7 +94,7 @@ import {
     competitionService,
     driversService,
     grandPrixService,
-    scoreService
+    scoreService, seasonService
 } from "@/_services";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
@@ -110,15 +125,18 @@ export default class CompetitionEdit extends Vue {
     private isLoadingGrandPrix: boolean = true;
 
     private circuitList: Array<Circuit> = [];
-    private variantsList: Array<CircuitVariant> = [];
+    private seasonList: Array<Season> = [];
 
     private isDataOk(): boolean {
-        return (this.competition !== undefined)
-            && !(this.competition.id == undefined
-                && this.competition.code == undefined
-                && this.competition.name == undefined
-                && this.competition.rules == undefined
-                && this.competition.fullname == undefined)
+        return !(this.grandPrix!.id == undefined
+            && this.grandPrix!.code == undefined
+            && this.grandPrix!.name == undefined
+            && this.grandPrix!.circuit!.id == undefined
+            && this.grandPrix!.laps == undefined
+            && this.grandPrix!.promo_image_url == undefined
+            && this.grandPrix!.round == undefined
+            && this.grandPrix!.season!.id == undefined
+        )
     }
 
     mounted() {
@@ -131,38 +149,40 @@ export default class CompetitionEdit extends Vue {
                     this.circuitList = [];
                     this.circuitList.push(...new Set(list));
                 });
-                circuitService.listCircuitVariant(gp.circuit).then((list) => {
-                    this.variantsList = [];
-                    this.variantsList.push(...list);
-                })
+                seasonService.getSeasonList().then((list) => {
+                    this.seasonList = [];
+                    this.seasonList.push(...list);
+                });
+                this.competition = gp.competition;
+                this.season = gp.season;
             }).finally(() => {
                 this.isLoadingGrandPrix = false;
             });
     }
 
-    private changeCircuit() {
-        circuitService.listCircuitVariant(this.grandPrix!.circuit).then((list) => {
-            this.variantsList = [];
-            this.variantsList.push(...list);
-        })
-    }
-
     private editGrandPrix(): void {
         let data = {
-            code: this.competition!.code,
-            name: this.competition!.name,
-            fullname: this.competition!.fullname,
-            rules: this.competition!.rules,
-            currentSeason: this.competition!.currentSeason!.id,
-        }
-        competitionService.editCompetition(this.competition!, data).then((result) => {
+            id: this.grandPrix!.id,
+            season: this.season.id,
+            competition: this.competition.id,
+            round: this.grandPrix!.round,
+            name: this.grandPrix!.name,
+            code: this.grandPrix!.code,
+            circuit: this.grandPrix!.circuit.id,
+            variant: this.grandPrix!.circuit.variant.name,
+            promo_image_url: this.grandPrix!.promo_image_url,
+            laps: this.grandPrix!.laps,
+            suspended: this.grandPrix!.suspended
+        };
+
+        grandPrixService.editGrandPrix(data).then((result) => {
             this.$buefy.toast.open({
-                message: "Se ha editado correctamente la competición `" + result.name + "`",
+                message: "Se ha editado correctamente el gran premio `" + result.name + "`",
                 type: "is-success",
             });
 
             this.$router.push({
-                name: 'adminCompetitions'
+                name: 'adminGps'
             })
         }).catch((error) => {
             this.$buefy.toast.open({
