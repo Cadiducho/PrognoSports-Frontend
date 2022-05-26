@@ -30,46 +30,57 @@
                     <o-input v-model="filtroPiloto" placeholder="Buscar piloto" type="search" icon-pack="fas" icon="search"></o-input>
                 </o-field>
                 <draggable class="block-list has-radius is-highlighted is-info"
+                <draggable class="block-list has-radius is-highlighted is-info no-select"
                            :list="pilotosDisponiblesFiltrados" :group="session.name">
                     <transition-group type="transition" :name="!drag ? 'flip-list' : null">
                         <li
-                            class="is-highlighted has-text-weight-semibold"
-                            v-bind:style="styleDriverCard(element)"
-                            v-for="element in pilotosDisponiblesFiltrados"
+                            class="is-highlighted has-text-weight-semibold is-flex is-justify-content-space-between"
+                            :style="styleDriverCard(element)"
+                            v-for="(element, index) in pilotosDisponiblesFiltrados"
                             :key="element.number">
-                            <i @click="element.fixed = !element.fixed"
-                                aria-hidden="true"
-                            ></i>
+
+                            <span>
                                 {{ element.firstname }} {{ element.lastname }}
                                 <span class="tag is-rounded" v-bind:style="styleDorsal(element)">#{{ element.number }}</span>
                                 <o-tooltip class="ml-1" :label="element.team.longname">
                                     {{ element.team.name }}
                                 </o-tooltip>
                                 ({{element.team.carname}})
+                            </span>
+
+                            <a @click="moveToTippList(element, index)" class="pl-3 pr-3">
+                                <i class="mr-0 fas fa-angle-right has-text-primary"></i>
+                                <i class="ml-0 fas fa-angle-right has-text-primary"></i>
+                            </a>
                         </li>
                     </transition-group>
                 </draggable>
             </div>
             <div class="column is-6">
                 <h3>Pilotos pronosticados ({{ cantidadPilotosPronosticados(ruleSet, session) }})</h3>
-                <draggable class="block-list has-radius is-highlighted is-primary"
+                <draggable class="block-list has-radius is-highlighted is-primary no-select"
                            :list="pilotosPronosticados" :group="session.name"
                            :emptyInsertThreshold="1000">
                     <transition-group type="transition" tag="div" :name="!drag ? 'flip-list' : null">
                         <li
-                            class="is-highlighted has-text-weight-semibold"
+                            class="is-highlighted has-text-weight-semibold is-flex is-justify-content-left"
                             v-bind:style="styleDriverCard(element)"
                             v-for="(element, index)  in pilotosPronosticados"
                             :key="element.number">
-                            <i @click="element.fixed = !element.fixed"
-                               aria-hidden="true"
-                            ></i>
+
+                            <a @click="moveToAvailableList(element, index)" class="mr-3 pl-3">
+                                <i class="mr-0 fas fa-angle-left has-text-primary"></i>
+                                <i class="ml-0 fas fa-angle-left has-text-primary"></i>
+                            </a>
+
+                            <span>
                                 <b>{{ index + 1 }}º.</b> {{ element.firstname }} {{ element.lastname }}
                                 <span class="tag is-rounded" v-bind:style="styleDorsal(element)">#{{ element.number }}</span>
                                 <o-tooltip class="ml-1" :label="element.team.longname">
                                     {{ element.team.name }}
                                 </o-tooltip>
                                 ({{element.team.carname}})
+                            </span>
                         </li>
                     </transition-group>
                 </draggable>
@@ -107,7 +118,6 @@ import {Community} from "@/types/Community";
 import {namespace} from "vuex-class";
 import {RaceResult} from "@/types/RaceResult";
 import {User} from "@/types/User";
-import EventBus from "@/plugins/eventbus";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import {RuleSet} from "@/types/RuleSet";
 const Auth = namespace('Auth')
@@ -167,12 +177,24 @@ export default class SelectTipps extends Vue {
         });
     }
 
+    public moveToTippList(driver: Driver, index: number) {
+        console.log("Moviendo a pronosticados " + driver.code);
+        this.pilotosDisponibles.splice(index, 1);
+        this.pilotosPronosticados.push(driver);
+    }
+
+    public moveToAvailableList(driver: Driver, index: number) {
+        console.log("Moviendo a disponibles " + driver.code);
+        this.pilotosPronosticados.splice(index, 1);
+        this.pilotosDisponibles.push(driver);
+    }
+
     public styleDriverCard(driver: Driver) {
         return {
             color: 'black',
             'border': '1px solid #'+ driver.team.teamcolor,
             'border-left': '10px #'+ driver.team.teamcolor + ' solid',
-           // 'border-right': '30px #'+ driver.team.teamcolor + ' solid',
+            // 'border-right': '30px #'+ driver.team.teamcolor + ' solid',
             'border-right-image-source': 'linear-gradient(to left, #'+ driver.team.teamcolor + ', #ffffff)',
             opacity: 0.9,
         }
@@ -265,5 +287,8 @@ export default class SelectTipps extends Vue {
 .block-list:empty:before,
 .block-list > div:empty:before {
     content: 'Coloca aquí tus pilotos en orden';
+}
+.no-select {
+    user-select: none;
 }
 </style>
