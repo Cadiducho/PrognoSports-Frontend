@@ -5,13 +5,16 @@
                 <img src="@/assets/logo_navbar.png" class="mr-3 ml-2" alt="PrognoSports.com">
                 PrognoSports
             </router-link>
-            <a role="button" aria-label="menu" tabindex="0" class="navbar-burger burger">
+
+            <a role="button" class="navbar-burger" :class="{ 'is-active': isActive }" @click="isActive = !isActive"
+               aria-label="menu" aria-expanded="false" data-target="prognoLandingNavbar">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
             </a>
         </div>
-        <div class="navbar-menu">
+
+        <div id="prognoLandingNavbar" class="navbar-menu" :class="{ 'is-active': isActive }">
             <div class="navbar-start">
                 <a href="/home" class="navbar-item">
                     Inicio
@@ -57,5 +60,7 @@
     export default class LandingNavbar extends Vue {
         @Auth.Getter private isLoggedIn!: boolean;
         @Auth.State("community") private currentCommunity!: Community;
+
+        isActive: boolean = false;
     }
 </script>

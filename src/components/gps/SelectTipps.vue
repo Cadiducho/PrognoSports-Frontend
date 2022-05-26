@@ -1,35 +1,39 @@
 <template>
     <div class="content mt-5">
-        <div class="columns is-mobile">
+        <div class="columns listas">
             <div class="column is-6">
                 <h3>Lista de pilotos</h3>
-                <o-collapse :open="false" aria-id="opcionesOrdenado" class="mb-2">
-                    <template #trigger>
-                        <o-button
-                            label="Opciones de ordenado"
-                            variant="primary"
-                            aria-controls="opcionesOrdenado" />
-                    </template>
 
-                    <div class="box">
-                        <o-field label="Orderar lista de pilotos">
-                            <o-radio v-model='orderType' :native-value='0'>Orden alfabético</o-radio>
-                            <o-radio v-model='orderType' :native-value='1'>Por equipos</o-radio>
-                            <o-radio v-model='orderType' :native-value='2'>Por dorsal</o-radio>
-                            <o-radio v-model='orderType' :native-value='3' v-if="this.indexedGrid.size > 0">Por parrilla de salida</o-radio>
-                        </o-field>
-                        <o-field>
-                            <o-switch v-model="orderAscendent">
-                                Orden {{ orderAscendent ? "ascendente" : "descendente" }}
-                            </o-switch>
-                        </o-field>
-                    </div>
-                </o-collapse>
+                <div class="is-flex">
+                    <o-collapse :open="false" aria-id="opcionesOrdenado" class="mb-2">
+                        <template #trigger>
+                            <o-button label="Ordenar"
+                                      variant="primary"
+                                      aria-controls="opcionesOrdenado"/>
+                        </template>
 
-                <o-field>
-                    <o-input v-model="filtroPiloto" placeholder="Buscar piloto" type="search" icon-pack="fas" icon="search"></o-input>
-                </o-field>
-                <draggable class="block-list has-radius is-highlighted is-info"
+                        <div class="box mt-1">
+                            <o-field label="Orderar lista de pilotos">
+                                <o-radio v-model='orderType' :native-value='0'>Orden alfabético</o-radio>
+                                <o-radio v-model='orderType' :native-value='1'>Por equipos</o-radio>
+                                <o-radio v-model='orderType' :native-value='2'>Por dorsal</o-radio>
+                                <o-radio v-model='orderType' :native-value='3' v-if="this.indexedGrid.size > 0">Por
+                                    parrilla de salida
+                                </o-radio>
+                            </o-field>
+                            <o-field>
+                                <o-switch v-model="orderAscendent">
+                                    Orden {{ orderAscendent ? "ascendente" : "descendente" }}
+                                </o-switch>
+                            </o-field>
+                        </div>
+                    </o-collapse>
+                    <o-field class="ml-1 is-fullwidth">
+                        <o-input v-model="filtroPiloto" placeholder="Buscar piloto" type="search" icon-pack="fas"
+                                 icon="search"></o-input>
+                    </o-field>
+                </div>
+
                 <draggable class="block-list has-radius is-highlighted is-info no-select"
                            :list="pilotosDisponiblesFiltrados" :group="session.name">
                     <transition-group type="transition" :name="!drag ? 'flip-list' : null">
@@ -273,7 +277,9 @@ export default class SelectTipps extends Vue {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "~bulma/sass/utilities/_all";
+
 .block-list:empty,
 .block-list > div:empty {
     padding:1rem;
@@ -290,5 +296,12 @@ export default class SelectTipps extends Vue {
 }
 .no-select {
     user-select: none;
+}
+
+@media (max-width: $desktop) {
+    .listas {
+        display: flex;
+        flex-direction: column-reverse;
+    }
 }
 </style>

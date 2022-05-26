@@ -5,7 +5,7 @@
             <span class="title is-5">Puntuaciones de {{ session.humanName() }} </span> <br/>
             <span class="title is-6">Leyenda</span>
             <p class="content">
-                Tus puntuaciones salen reflejadas con color <span class="tag is-previous">verde</span> <br/>
+                Tus puntuaciones salen reflejadas con color <span class="tag is-primary">verde</span> <br/>
                 El ganador del Gran Premio es reflejado con color <span class="tag is-warning">dorado</span> <br/>
                 Los ganadores de cada sesión tendrán representado un <o-icon pack="fas" icon="trophy"></o-icon>
             </p>
