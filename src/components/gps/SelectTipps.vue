@@ -3,32 +3,32 @@
         <div class="columns is-mobile">
             <div class="column is-6">
                 <h3>Lista de pilotos</h3>
-                <b-collapse :open="false" aria-id="opcionesOrdenado" class="mb-2">
+                <o-collapse :open="false" aria-id="opcionesOrdenado" class="mb-2">
                     <template #trigger>
-                        <b-button
+                        <o-button
                             label="Opciones de ordenado"
-                            type="is-primary"
+                            variant="primary"
                             aria-controls="opcionesOrdenado" />
                     </template>
 
                     <div class="box">
-                        <b-field label="Orderar lista de pilotos">
-                            <b-radio v-model='orderType' :native-value='0'>Orden alfabético</b-radio>
-                            <b-radio v-model='orderType' :native-value='1'>Por equipos</b-radio>
-                            <b-radio v-model='orderType' :native-value='2'>Por dorsal</b-radio>
-                            <b-radio v-model='orderType' :native-value='3' v-if="this.indexedGrid.size > 0">Por parrilla de salida</b-radio>
-                        </b-field>
-                        <b-field>
-                            <b-switch v-model="orderAscendent">
+                        <o-field label="Orderar lista de pilotos">
+                            <o-radio v-model='orderType' :native-value='0'>Orden alfabético</o-radio>
+                            <o-radio v-model='orderType' :native-value='1'>Por equipos</o-radio>
+                            <o-radio v-model='orderType' :native-value='2'>Por dorsal</o-radio>
+                            <o-radio v-model='orderType' :native-value='3' v-if="this.indexedGrid.size > 0">Por parrilla de salida</o-radio>
+                        </o-field>
+                        <o-field>
+                            <o-switch v-model="orderAscendent">
                                 Orden {{ orderAscendent ? "ascendente" : "descendente" }}
-                            </b-switch>
-                        </b-field>
+                            </o-switch>
+                        </o-field>
                     </div>
-                </b-collapse>
+                </o-collapse>
 
-                <b-field>
-                    <b-input v-model="filtroPiloto" placeholder="Buscar piloto" type="search" icon-pack="fas" icon="search"></b-input>
-                </b-field>
+                <o-field>
+                    <o-input v-model="filtroPiloto" placeholder="Buscar piloto" type="search" icon-pack="fas" icon="search"></o-input>
+                </o-field>
                 <draggable class="block-list has-radius is-highlighted is-info"
                            :list="pilotosDisponiblesFiltrados" :group="session.name">
                     <transition-group type="transition" :name="!drag ? 'flip-list' : null">
@@ -42,9 +42,9 @@
                             ></i>
                                 {{ element.firstname }} {{ element.lastname }}
                                 <span class="tag is-rounded" v-bind:style="styleDorsal(element)">#{{ element.number }}</span>
-                                <b-tooltip class="ml-1" :label="element.team.longname">
+                                <o-tooltip class="ml-1" :label="element.team.longname">
                                     {{ element.team.name }}
-                                </b-tooltip>
+                                </o-tooltip>
                                 ({{element.team.carname}})
                         </li>
                     </transition-group>
@@ -66,22 +66,22 @@
                             ></i>
                                 <b>{{ index + 1 }}º.</b> {{ element.firstname }} {{ element.lastname }}
                                 <span class="tag is-rounded" v-bind:style="styleDorsal(element)">#{{ element.number }}</span>
-                                <b-tooltip class="ml-1" :label="element.team.longname">
+                                <o-tooltip class="ml-1" :label="element.team.longname">
                                     {{ element.team.name }}
-                                </b-tooltip>
+                                </o-tooltip>
                                 ({{element.team.carname}})
                         </li>
                     </transition-group>
                 </draggable>
                 <template v-if="isBeforeEndDate(this.session)">
-                    <b-button v-if="pilotosPronosticados.length === cantidadPilotosPronosticados(ruleSet, session)"
-                              type="is-success is-fullwidth"
+                    <o-button v-if="pilotosPronosticados.length === cantidadPilotosPronosticados(ruleSet, session)"
+                              variant="success is-fullwidth"
                               @click="enviarPronostico">Enviar pronóstico
-                    </b-button>
+                    </o-button>
                 </template>
-                <b-button v-else disabled type="is-success is-fullwidth">
+                <o-button v-else disabled variant="success is-fullwidth">
                     Ya no se puede pronosticar
-                </b-button>
+                </o-button>
 
 
                 <div v-else class="notification is-warning is-light">
@@ -89,7 +89,7 @@
                 </div>
 
                 <hr v-if="(pilotosPronosticados.length > 0) && isBeforeEndDate(this.session)"/>
-                <b-button v-if="(pilotosPronosticados.length > 0) && isBeforeEndDate(this.session)" type="is-danger is-light is-fullwidth" @click="reiniciarPronostico">Limpiar pronóstico</b-button>
+                <o-button v-if="(pilotosPronosticados.length > 0) && isBeforeEndDate(this.session)" variant="danger is-light is-fullwidth" @click="reiniciarPronostico">Limpiar pronóstico</o-button>
 
             </div>
         </div>
@@ -233,18 +233,18 @@ export default class SelectTipps extends Vue {
         });
         grandPrixService.postUserTipps(this.grandPrix, this.session, this.currentCommunity, tipps).then(
             () => {
-                this.$buefy.toast.open({
+                this.$oruga.notification.open({
                     message: "¡Has guardado tus pronósticos!",
-                    type: "is-success",
+                    variant: "success",
                 });
             },
             (error: any) => {
                 let message = "Error guardando tus pronósticos: " + error.message;
 
-                this.$buefy.toast.open({
+                this.$oruga.notification.open({
                     duration: 5000,
                     message: message,
-                    type: "is-danger",
+                    variant: "danger",
                 });
             });
     }

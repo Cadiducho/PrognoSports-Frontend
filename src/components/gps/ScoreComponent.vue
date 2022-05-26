@@ -5,19 +5,19 @@
             <span class="title is-5">Puntuaciones de {{ session.humanName() }} </span> <br/>
             <span class="title is-6">Leyenda</span>
             <p class="content">
-                Tus puntuaciones salen reflejadas con color <b-tag type="is-primary">verde</b-tag> <br/>
-                El ganador del Gran Premio es reflejado con color <b-tag type="is-warning">dorado</b-tag> <br/>
-                Los ganadores de cada sesión tendrán representado un <b-icon pack="fas" icon="trophy"></b-icon>
+                Tus puntuaciones salen reflejadas con color <span class="tag is-previous">verde</span> <br/>
+                El ganador del Gran Premio es reflejado con color <span class="tag is-warning">dorado</span> <br/>
+                Los ganadores de cada sesión tendrán representado un <o-icon pack="fas" icon="trophy"></o-icon>
             </p>
 
-            <b-notification v-if="currentUser.preferences['hide-tipps-until-start'] === true" type="is-info is-light" aria-close-label="Close notification">
+            <o-notification v-if="currentUser.preferences['hide-tipps-until-start'] === true" variant="info is-light" aria-close-label="Close notification">
                 Tus pronósticos están ocultos al resto de usuarios hasta {{ session.date | humanDateTimeMinusFiveMinutes}}
-            </b-notification>
-            <b-notification v-if="!thereAreFinishResults" type="is-primary is-light" aria-close-label="Close notification">
+            </o-notification>
+            <o-notification v-if="!thereAreFinishResults" variant="primary is-light" aria-close-label="Close notification">
                 Aún no hay resultados confirmados para esta sesión
-            </b-notification>
+            </o-notification>
 
-            <b-table :data="tableData"
+            <o-table :data="tableData"
                      hoverable
                      mobile-cards
                      default-sort="score.accumulated"
@@ -25,7 +25,7 @@
                      :row-class="(row, index) => checkRowClass(row)"
             >
 
-                <b-table-column field="score.standings" label="Pos." width="80" sortable numeric>
+                <o-table-column field="score.standings" label="Pos." width="80" sortable numeric>
                     <template v-slot="props">
                         <!-- Compruebo si ya tiene un nuevo ranking para este GP. En caso de tenerlo, lo comparo con el anterior y añado una flecha de cambio si es necesario -->
                         <!-- Mostrar ranking, si lo tiene (menor que Number.MAX_SAFE_INTEGER) -->
@@ -35,16 +35,16 @@
                             <template v-if="props.row.score.standings > 0">
                                 <!-- Solo puedo añadir flechas si existe un previous -->
                                 <template v-if="props.row.score.previousStandings > 0">
-                                    <b-tooltip v-if="props.row.score.previousStandings > props.row.score.standings"
+                                    <o-tooltip v-if="props.row.score.previousStandings > props.row.score.standings"
                                                :label="'Asciende de ' + props.row.score.previousStandings + 'º a ' + props.row.score.standings + 'º'"
-                                               type="is-success is-small">
-                                        <b-icon pack="fas" type="is-success" icon="arrow-up"></b-icon>
-                                    </b-tooltip>
-                                    <b-tooltip v-if="props.row.score.previousStandings < props.row.score.standings"
+                                               variant="success is-small">
+                                        <o-icon pack="fas" variant="success" icon="arrow-up"></o-icon>
+                                    </o-tooltip>
+                                    <o-tooltip v-if="props.row.score.previousStandings < props.row.score.standings"
                                                :label="'Desciende de ' + props.row.score.previousStandings + 'º a ' + props.row.score.standings + 'º'"
-                                               type="is-danger is-small">
-                                        <b-icon pack="fas" type="is-danger" icon="arrow-down"></b-icon>
-                                    </b-tooltip>
+                                               variant="danger is-small">
+                                        <o-icon pack="fas" variant="danger" icon="arrow-down"></o-icon>
+                                    </o-tooltip>
                                 </template>
 
                                 {{ props.row.score.standings }}º
@@ -63,13 +63,13 @@
                             -
                         </template>
                     </template>
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column field="user.username" label="Nombre" sortable>
+                <o-table-column field="user.username" label="Nombre" sortable>
                     <template v-slot="props">
-                        <b-tooltip
+                        <o-tooltip
                             position="is-right"
-                            type="is-light"
+                            variant="light"
                             append-to-body>
                             <template v-slot:content>
                                 <!-- User mini card -->
@@ -77,24 +77,24 @@
                             </template>
 
                             <span class="has-text-weight-bold">{{ props.row.user.username }}</span>
-                        </b-tooltip>
+                        </o-tooltip>
                     </template>
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column v-for="(position, index) in sessionResults" v-bind:key="position.position" :field="position.driver.code">
+                <o-table-column v-for="(position, index) in sessionResults" v-bind:key="position.position" :field="position.driver.code">
                     <template v-slot:header="{ column }">
-                        <b-tooltip v-if="position.driver.code !== '---'"
+                        <o-tooltip v-if="position.driver.code !== '---'"
                                    :label="driverTooltip(position.driver)"
                                    append-to-body>
                             {{ index + 1 }}. {{ position.driver.code }}
-                        </b-tooltip>
+                        </o-tooltip>
                         <template v-else>
                             {{ index + 1 }}. ---
                         </template>
                     </template>
                     <template v-slot="props">
 
-                        <b-tooltip
+                        <o-tooltip
                             v-if="props.row.tipps[index] !== undefined"
                             :label="driverTooltip(props.row.tipps[index].driver)"
                             append-to-body>
@@ -108,41 +108,41 @@
                                  }">
                                 {{ pointsByPosition[props.row.user.id][index + 1] }}
                             </sub>
-                        </b-tooltip>
+                        </o-tooltip>
 
                         <!-- Si no hay pronóstico para este usuario y posición, se coloca un "---" -->
                         <template v-else>
                             ---
                         </template>
                     </template>
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column v-for="session in gp.sessions" :key="session.code"
+                <o-table-column v-for="session in gp.sessions" :key="session.code"
                                 field="score.pointsBySession[session.name]" :label="session.code" sortable numeric v-slot="props">
-                    <b-tooltip v-if="checkAndInsertTrophy(props.row.user.username, session)"
+                    <o-tooltip v-if="checkAndInsertTrophy(props.row.user.username, session)"
                                :label="'Ganador de la sesión de ' + session.humanName()"
-                               type="is-light">
-                        <b-icon pack="fas" type="is-info" icon="trophy"></b-icon>
-                    </b-tooltip>
+                               variant="light">
+                        <o-icon pack="fas" variant="info" icon="trophy"></o-icon>
+                    </o-tooltip>
 
                     <span v-bind:class="{'has-text-danger': (props.row.score.bySession[session.name] || 0) < 0}">
                         {{ props.row.score.bySession[session.name] || 0 }}
                     </span>
 
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column field="score.gp" label="GP" sortable numeric v-slot="props">
-                    <b-tooltip v-if="checkAndInsertTrophy(props.row.user.username, undefined)"
+                <o-table-column field="score.gp" label="GP" sortable numeric v-slot="props">
+                    <o-tooltip v-if="checkAndInsertTrophy(props.row.user.username, undefined)"
                                label="Ganador del Gran Premio"
-                               type="is-light">
-                        <b-icon pack="fas" type="is-purple" icon="trophy"></b-icon>
-                    </b-tooltip>
+                               variant="light">
+                        <o-icon pack="fas" variant="purple" icon="trophy"></o-icon>
+                    </o-tooltip>
                     {{ props.row.score.gp }}
-                </b-table-column>
-                <b-table-column field="score.accumulated" label="TOT" sortable numeric v-slot="props">
+                </o-table-column>
+                <o-table-column field="score.accumulated" label="TOT" sortable numeric v-slot="props">
                     <span class="has-text-weight-bold">{{ props.row.score.accumulated }}</span>
-                </b-table-column>
-            </b-table>
+                </o-table-column>
+            </o-table>
         </template>
     </div>
 </template>

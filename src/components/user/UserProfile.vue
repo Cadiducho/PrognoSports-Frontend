@@ -8,9 +8,9 @@
                         <h1 class="title">Perfil no encontrado</h1>
                         <p class="subtitle">Este perfil no existe o no ha sido encontrado. Vuelve a inicio o inténtalo de nuevo.</p>
 
-                        <b-button @click="$router.go(-1)" class="mr-2" type="is-danger" outlined>Atrás</b-button>
-                        <b-button tag="router-link" class="mr-2" type="is-primary" to="/">Inicio</b-button>
-                        <b-button tag="router-link" type="is-info" :to="'/u/'+currentUser.id">Mi perfil</b-button>
+                        <o-button @click="$router.go(-1)" class="mr-2" variant="danger" outlined>Atrás</o-button>
+                        <o-button tag="router-link" class="mr-2" variant="primary" to="/">Inicio</o-button>
+                        <o-button tag="router-link" variant="info" :to="'/u/'+currentUser.id">Mi perfil</o-button>
                     </div>
                 </div>
             </div>
@@ -32,13 +32,13 @@
                                     <span class="title is-bold">
                                         {{ profile.username }}
 
-                                        <b-tag v-bind:style="styleRankTag(profile.rank)">{{ profile.rank.name }}</b-tag>
+                                        <span class="tag" :style="styleRankTag(profile.rank)">{{ profile.rank.name }}</span>
                                     </span>
 
-                                    <b-button v-if="profile.id === currentUser.id"
-                                        type="is-primary" icon-left="cog" tag="router-link" to="/settings">
+                                    <o-button v-if="profile.id === currentUser.id"
+                                        variant="primary" icon-left="cog" tag="router-link" to="/settings">
                                         Ajustes
-                                    </b-button>
+                                    </o-button>
                                 </p>
                                 <p v-if="profile.bio">
                                     <span class="subtitle">

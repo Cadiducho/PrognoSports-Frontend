@@ -3,44 +3,44 @@
         <PrognoPageTitle class="mb-5" name="Crear piloto" />
 
         <section v-if="isAdmin(currentUser)">
-            <b-steps v-model="activeStep">
-                <b-step-item step="1" label="Datos del piloto">
+            <o-steps v-model="activeStep">
+                <o-step-item step="1" label="Datos del piloto">
                     <h2 class="title">Datos del piloto</h2>
 
-                    <b-field label="ID del piloto">
-                        <b-input v-model="createdDriver.id" name="id" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="ID del piloto">
+                        <o-input v-model="createdDriver.id" name="id" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Nombre del piloto">
-                        <b-input v-model="createdDriver.firstname" name="firstname" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Nombre del piloto">
+                        <o-input v-model="createdDriver.firstname" name="firstname" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Apellido del piloto">
-                        <b-input v-model="createdDriver.lastname" name="lastname" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Apellido del piloto">
+                        <o-input v-model="createdDriver.lastname" name="lastname" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Código del piloto">
-                        <b-input v-model="createdDriver.code" name="code" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Código del piloto">
+                        <o-input v-model="createdDriver.code" name="code" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Nacionalidad del piloto">
-                        <b-input v-model="createdDriver.nationality" name="nationality" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Nacionalidad del piloto">
+                        <o-input v-model="createdDriver.nationality" name="nationality" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Fecha de nacimiento">
-                        <b-datepicker
+                    <o-field label="Fecha de nacimiento">
+                        <o-datepicker
                             v-model="createdDriver.birth"
                             placeholder="Click para escoger..."
                             icon="calendar"
                             trap-focus>
-                        </b-datepicker>
-                    </b-field>
+                        </o-datepicker>
+                    </o-field>
 
                     <hr/>
 
-                </b-step-item>
+                </o-step-item>
 
-                <b-step-item step="2" label="Finalizar">
+                <o-step-item step="2" label="Finalizar">
                     <h2 class="title">Finalizar</h2>
 
                     <AlertInvalidData :object="createdDriver.id" message="No has introducido ID para este piloto" />
@@ -62,13 +62,13 @@
                     </div>
 
                     <hr/>
-                    <b-field>
+                    <o-field>
                         <p class="control">
-                            <b-button :disabled="!isDataOk()" label="Crear piloto" @click="registerDriver()" type="is-primary" />
+                            <o-button :disabled="!isDataOk()" label="Crear piloto" @click="registerDriver()" variant="primary" />
                         </p>
-                    </b-field>
-                </b-step-item>
-            </b-steps>
+                    </o-field>
+                </o-step-item>
+            </o-steps>
         </section>
         <section v-else>
             <AlertNoPermission />
@@ -129,9 +129,9 @@ export default class createDriver extends Vue {
         }
 
         driversService.createDriver(rawDriver).then((result) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: "Se ha registrado correctamente el piloto `" + result.firstname + " " + result.lastname + "`",
-                type: "is-success",
+                variant: "success",
             });
 
             this.$router.push({
@@ -141,9 +141,9 @@ export default class createDriver extends Vue {
                 }
             })
         }).catch((error) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: error.message,
-                type: "is-danger",
+                variant: "danger",
             });
         });
     }

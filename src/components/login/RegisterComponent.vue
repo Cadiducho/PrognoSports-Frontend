@@ -100,48 +100,48 @@ export default class RegisterComponent extends Vue {
                         path: '/login',
                         query: { redirect: this.$route.query.redirect }
                     });
-                    this.$buefy.toast.open({
+                    this.$oruga.notification.open({
                         message: "Te has registrado con éxito",
-                        type: "is-success",
+                        variant: "success",
                     });
                 },
                 (error) => {
                     //ToDo: usar los códigos de error, no comparar mensajes
                     if (error === "Email cannot be null") {
-                        this.$buefy.toast.open({
+                        this.$oruga.notification.open({
                             duration: 5000,
                             message: "Debes introducir una dirección de email",
-                            type: "is-danger",
+                            variant: "danger",
                         });
                     } else if (error === "Username cannot be null") {
-                        this.$buefy.toast.open({
+                        this.$oruga.notification.open({
                             duration: 5000,
                             message: "Debes introducir un nombre de usuario",
-                            type: "is-danger",
+                            variant: "danger",
                         });
                     } else if (error === "Password cannot be null") {
-                        this.$buefy.toast.open({
+                        this.$oruga.notification.open({
                             duration: 5000,
                             message: "Debes introducir una contraseña",
-                            type: "is-danger",
+                            variant: "danger",
                         });
                     } else if (error === "Email in use") {
-                        this.$buefy.toast.open({
+                        this.$oruga.notification.open({
                             duration: 5000,
                             message: "Ya existe un usuario con ese email",
-                            type: "is-danger",
+                            variant: "danger",
                         });
                     } else if (error === "Username in use") {
-                        this.$buefy.toast.open({
+                        this.$oruga.notification.open({
                             duration: 5000,
                             message: "Ya existe un usuario con ese nombre",
-                            type: "is-danger",
+                            variant: "danger",
                         });
                     } else if (error === "database error") {
-                        this.$buefy.toast.open({
+                        this.$oruga.notification.open({
                             duration: 5000,
                             message: "Error inesperado registrando tus datos",
-                            type: "is-danger",
+                            variant: "danger",
                         });
                     }
                 }

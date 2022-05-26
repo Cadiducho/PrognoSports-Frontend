@@ -1,34 +1,42 @@
 <template>
-    <b-navbar type="is-light">
-        <template slot="brand">
-            <b-navbar-item tag="router-link" :to="{ path: '/' }">
+    <nav role="navigation" aria-label="main navigation" class="navbar is-light">
+        <div class="navbar-brand">
+            <router-link to="/" class="navbar-item router-link-active">
                 <img src="@/assets/logo_navbar.png" class="mr-3 ml-2" alt="PrognoSports.com">
                 PrognoSports
-            </b-navbar-item>
-        </template>
-        <template slot="start">
-            <b-navbar-item v-if="isLoggedIn" tag="router-link" to="/home">
-                Inicio
-            </b-navbar-item>
-        </template>
-
-        <template slot="end">
-            <b-navbar-item tag="div" v-if="!isLoggedIn">
-                <div class="buttons">
-                    <router-link class="button is-primary" to="/register">
-                        <strong>Registrarse</strong>
-                    </router-link>
-                    <router-link class="button is-primary is-outlined" to="/login">
-                        Iniciar sesión
-                    </router-link>
+            </router-link>
+            <a role="button" aria-label="menu" tabindex="0" class="navbar-burger burger">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <a href="/home" class="navbar-item">
+                    Inicio
+                </a>
+            </div>
+            <div class="navbar-end">
+                <div v-if="!isLoggedIn" class="navbar-item">
+                    <div class="buttons">
+                        <router-link class="button is-primary" to="/register">
+                            <strong>Registrarse</strong>
+                        </router-link>
+                        <router-link class="button is-primary is-outlined" to="/login">
+                            Iniciar sesión
+                        </router-link>
+                    </div>
                 </div>
-            </b-navbar-item>
-            <template v-else>
-                <CommunitiesDropdown v-if="isValidCommunity(currentCommunity)"/>
-                <AvatarComponent/>
-            </template>
-        </template>
-    </b-navbar>
+                <div v-else class="navbar-item">
+                    <div class="buttons">
+                        <CommunitiesDropdown v-if="isValidCommunity(currentCommunity)"/>
+                        <AvatarComponent/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
 </template>
 
 <script lang="ts">

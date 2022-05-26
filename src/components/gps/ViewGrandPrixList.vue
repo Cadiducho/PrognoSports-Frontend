@@ -5,19 +5,19 @@
 
         <div class="columns is-variable is-5">
             <div class="column is-8">
-                <b-tabs v-model="activeTab" v-if="seasonReady && competitionReady">
-                    <b-tab-item label="Próximos">
+                <o-tabs v-model="activeTab" v-if="seasonReady && competitionReady">
+                    <o-tab-item label="Próximos" :value="0">
                         <GrandPrixesList :competition="competition" :season="season" searchType="next"/>
-                    </b-tab-item>
+                    </o-tab-item>
 
-                    <b-tab-item label="Pasados">
+                    <o-tab-item label="Pasados" :value="1">
                         <GrandPrixesList :competition="competition" :season="season" searchType="past"/>
-                    </b-tab-item>
+                    </o-tab-item>
 
-                    <b-tab-item label="Todos">
+                    <o-tab-item label="Todos" :value="2">
                         <GrandPrixesList :competition="competition" :season="season" searchType="all"/>
-                    </b-tab-item>
-                </b-tabs>
+                    </o-tab-item>
+                </o-tabs>
                 <loading v-else />
             </div>
             <div class="column is-4">

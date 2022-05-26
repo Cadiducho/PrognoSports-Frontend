@@ -13,7 +13,7 @@ export default class LogoutComponent extends Vue {
     created() {
         this.signOut().then(() => {
             this.$router.push({name: 'login'});
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: 'Has cerrado sesión correctamente',
                 type: 'is-info'
             });

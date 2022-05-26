@@ -31,18 +31,18 @@
                                 </p>
                                 <p v-if="community.open" class="card-text has-text-success">Comunidad abierta/pública</p>
                                 <p v-else class="card-text has-text-danger">Comunidad cerrada/privada</p>
-                                        <b-field
+                                        <o-field
                                             v-if="!community.open && isUserInCommunity"
                                             grouped
                                             label="URL de Invitación:"
-                                            type="is-rounded is-info">
-                                            <b-input placeholder="URL"
+                                            variant="rounded is-info">
+                                            <o-input placeholder="URL"
                                                      :value="community.name + '/' + community.invitation ">
-                                            </b-input>
+                                            </o-input>
                                             <p class="control">
-                                                <b-button class="button is-info" @click="clickInvitation">Copiar</b-button>
+                                                <o-button class="button is-info" @click="clickInvitation">Copiar</o-button>
                                             </p>
-                                        </b-field>
+                                        </o-field>
 
                                 <p class="card-text"><b>Usuarios apuntados: </b> {{ community.members_amount }}</p>
                             </div>
@@ -58,37 +58,37 @@
                                 </div>
                             </div>
 
-                            <b-collapse :open="false" class="mb-2">
+                            <o-collapse :open="false" class="mb-2">
                                 <template #trigger>
-                                    <b-button
+                                    <o-button
                                         label="Opciones de ordenado"
-                                        type="is-primary" />
+                                        variant="primary" />
                                 </template>
 
                                 <div class="box">
-                                    <b-field label="Orderar lista de miembros">
-                                        <b-radio v-model='orderType' :native-value='0'>Por nombre de usuario</b-radio>
-                                        <b-radio v-model='orderType' :native-value='1'>Por rango</b-radio>
-                                        <b-radio v-model='orderType' :native-value='2'>Por conexión reciente</b-radio>
-                                        <b-radio v-model='orderType' :native-value='3'>Por fecha de registro</b-radio>
-                                    </b-field>
-                                    <b-field>
-                                        <b-switch v-model="orderAscendent">
+                                    <o-field label="Orderar lista de miembros">
+                                        <o-radio v-model='orderType' :native-value='0'>Por nombre de usuario</o-radio>
+                                        <o-radio v-model='orderType' :native-value='1'>Por rango</o-radio>
+                                        <o-radio v-model='orderType' :native-value='2'>Por conexión reciente</o-radio>
+                                        <o-radio v-model='orderType' :native-value='3'>Por fecha de registro</o-radio>
+                                    </o-field>
+                                    <o-field>
+                                        <o-switch v-model="orderAscendent">
                                             Orden {{ orderAscendent ? "ascendente" : "descendente" }}
-                                        </b-switch>
-                                    </b-field>
+                                        </o-switch>
+                                    </o-field>
                                 </div>
-                            </b-collapse>
+                            </o-collapse>
 
-                            <b-field>
-                                <b-input
+                            <o-field>
+                                <o-input
                                     v-model="searchInput"
                                     placeholder="Buscar miembro"
                                     type="search"
                                     icon-pack="fas"
                                     icon="search"
                                 />
-                            </b-field>
+                            </o-field>
 
                             <div class="mt-5 columns is-multiline is-4">
                                 <div class="column is-half" v-for="cu in filteredMembers">
@@ -114,9 +114,9 @@
                                                                     <i class="fas fa-clock"></i>
                                                                 </span>
                                                                 <span>
-                                                                    <b-tooltip label="Última conexión">
+                                                                    <o-tooltip label="Última conexión">
                                                                         {{ cu.user.last_activity | dateDiff }}
-                                                                    </b-tooltip>
+                                                                    </o-tooltip>
                                                                 </span>
                                                             </span>
                                                         </small>
@@ -229,9 +229,9 @@ export default class ViewOneCommunity extends Vue {
     clickInvitation() {
         let invitation = "https://prognosports.com/invitation/" + this.community.name + "/" + this.community.invitation;
         this.$copyText(invitation).then(() => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: "Se te ha copiado la invitación al portapapeles",
-                type: "is-success",
+                variant: "success",
             })}
         );
     }

@@ -3,27 +3,27 @@
         <nav class="block is-flex is-justify-content-space-between">
 
             <PrognoPageTitle name="Ranking" />
-            <b-field label="Temporada" :label-position="'on-border'">
-                <b-select v-if="Object.keys(chosenSeason).length" v-model="chosenSeason" placeholder="Selecciona la temporada"  @input="changeSeason()" >
+            <o-field label="Temporada" :label-position="'on-border'">
+                <o-select v-if="Object.keys(chosenSeason).length" v-model="chosenSeason" placeholder="Selecciona la temporada"  @input="changeSeason()" >
                     <option
                         v-for="season in seasonList"
                         :value="season"
                         :key="season.id">
                         {{ season.competition.name }} {{ season.name }}
                     </option>
-                </b-select>
-            </b-field>
+                </o-select>
+            </o-field>
         </nav>
 
         <template v-if="rankingBusy">
 
-            <b-tabs v-model="activeTab">
-                <b-tab-item label="Ranking por Gran Premio">
+            <o-tabs v-model="activeTab">
+                <o-tab-item label="Ranking por Gran Premio" :value="0">
                     <h1 class="title is-4">Ranking por Gran Premio</h1>
                     <p class="content">
-                        Los ganadores de cada Gran Premio tendrán representado un <b-icon pack="fas" type="is-info" icon="trophy"></b-icon>
+                        Los ganadores de cada Gran Premio tendrán representado un <o-icon pack="fas" variant="info" icon="trophy"></o-icon>
                     </p>
-                    <b-table :data="tableData"
+                    <o-table :data="tableData"
                              hoverable
                              mobile-cards
                              default-sort="totalScore"
@@ -31,38 +31,38 @@
                              :row-class="(row, index) => checkRowClass(row, index)"
                     >
 
-                        <b-table-column label="Pos." sortable numeric v-slot="props">
+                        <o-table-column label="Pos." sortable numeric v-slot="props">
                             <span class="has-text-weight-bold">#{{ props.index + 1 }}</span>
-                        </b-table-column>
+                        </o-table-column>
 
-                        <b-table-column field="user.username" label="Nombre" sortable>
+                        <o-table-column field="user.username" label="Nombre" sortable>
                             <template v-slot="props">
-                                <b-tooltip
+                                <o-tooltip
                                     position="is-right"
-                                    type="is-light"
+                                    variant="light"
                                     append-to-body>
                                     <template v-slot:content>
                                         <UserMiniCard :user="communityMembers.get(props.row.user.username)" />
                                     </template>
 
                                     <span class="has-text-weight-bold">{{ props.row.user.username }}</span>
-                                </b-tooltip>
+                                </o-tooltip>
                             </template>
-                        </b-table-column>
+                        </o-table-column>
 
-                        <b-table-column v-for="gp in grandPrixList()" v-bind:key="gp.code" field="pointsInGP" sortable numeric>
+                        <o-table-column v-for="gp in grandPrixList()" v-bind:key="gp.code" field="pointsInGP" sortable numeric>
                             <template v-slot:header="{ column }">
-                                <b-tooltip :label="gp.name">
+                                <o-tooltip :label="gp.name">
                                     {{ gp.code }}
-                                </b-tooltip>
+                                </o-tooltip>
                             </template>
                             <template v-slot="props">
 
-                                <b-tooltip v-if="checkAndInsertTrophy(gp.name, props.row.gps.get(gp.name).pointsInGP)"
+                                <o-tooltip v-if="checkAndInsertTrophy(gp.name, props.row.gps.get(gp.name).pointsInGP)"
                                            :label="'Ganador de ' + gp.name"
-                                           type="is-light">
-                                    <b-icon pack="fas" type="is-info" icon="trophy"></b-icon>
-                                </b-tooltip>
+                                           variant="light">
+                                    <o-icon pack="fas" variant="info" icon="trophy"></o-icon>
+                                </o-tooltip>
 
                                 <PointsTooltipComponent
                                     v-if="props.row.gps.has(gp.name)"
@@ -73,12 +73,12 @@
                                     0 :(
                                 </template>
                             </template>
-                        </b-table-column>
+                        </o-table-column>
 
-                        <b-table-column field="totalScore" label="Total" sortable numeric v-slot="props">
+                        <o-table-column field="totalScore" label="Total" sortable numeric v-slot="props">
                             <span class="has-text-weight-bold">{{ props.row.totalScore }}</span>
-                        </b-table-column>
-                    </b-table>
+                        </o-table-column>
+                    </o-table>
 
                     <h1 class="title is-4 mt-4">Puntos por Gran Premio</h1>
                     <VueApexCharts
@@ -87,13 +87,13 @@
                         :options="chartOptions"
                         :series="chartSeries">
                     </VueApexCharts>
-                </b-tab-item>
-                <b-tab-item label="Ranking acumulado">
+                </o-tab-item>
+                <o-tab-item label="Ranking acumulado" :value="1">
                     <h1 class="title is-4 mt-4">Ranking acumulado</h1>
                     <p class="content">
-                        La puntuación marcada en <b-tag type="is-warning">dorado</b-tag> es la máxima acumulada para ese Gran Premio<br/>
+                        La puntuación marcada en <span class="tag is-warning">dorado</span> es la máxima acumulada para ese Gran Premio<br/>
                     </p>
-                    <b-table :data="tableDataAcumulada"
+                    <o-table :data="tableDataAcumulada"
                              hoverable
                              mobile-cards
                              default-sort="totalScore"
@@ -101,42 +101,42 @@
                              :row-class="(row, index) => checkRowClass(row, index)"
                     >
 
-                        <b-table-column label="Pos." sortable numeric v-slot="props">
+                        <o-table-column label="Pos." sortable numeric v-slot="props">
                             <span class="has-text-weight-bold">#{{ props.index + 1 }}</span>
-                        </b-table-column>
+                        </o-table-column>
 
-                        <b-table-column field="user.username" label="Nombre" sortable>
+                        <o-table-column field="user.username" label="Nombre" sortable>
                             <template v-slot="props">
-                                <b-tooltip
+                                <o-tooltip
                                     position="is-right"
-                                    type="is-light"
+                                    variant="light"
                                     append-to-body>
                                     <template v-slot:content>
                                         <UserMiniCard :user="communityMembers.get(props.row.user.username)" />
                                     </template>
 
                                     <span class="has-text-weight-bold">{{ props.row.user.username }}</span>
-                                </b-tooltip>
+                                </o-tooltip>
                             </template>
-                        </b-table-column>
+                        </o-table-column>
 
-                        <b-table-column v-for="gp in grandPrixList()" v-bind:key="gp.code"
+                        <o-table-column v-for="gp in grandPrixList()" v-bind:key="gp.code"
                                         :field="gp.code"
                                         sortable numeric>
                             <template v-slot:header="{ column }">
-                                <b-tooltip :label="gp.name">
+                                <o-tooltip :label="gp.name">
                                     {{ gp.code }}
-                                </b-tooltip>
+                                </o-tooltip>
                             </template>
                             <template v-slot="props">
 
                                 <template v-if="props.row.gps.has(gp.name)">
-                                    <b-tag type="is-warning" v-if="checkWinnerCell(gp.name, props.row.gps.get(gp.name).accumulatedPoints)">
+                                    <span class="tag is-warning" v-if="checkWinnerCell(gp.name, props.row.gps.get(gp.name).accumulatedPoints)">
                                         <PointsTooltipComponent
                                             :gp-name="gp.name"
                                             :user-points="props.row.gps.get(gp.name)"
                                             :display-points="props.row.gps.get(gp.name).accumulatedPoints" />
-                                    </b-tag>
+                                    </span>
                                     <template v-else>
                                         <PointsTooltipComponent
                                             :gp-name="gp.name"
@@ -149,8 +149,8 @@
                                 </template>
 
                             </template>
-                        </b-table-column>
-                    </b-table>
+                        </o-table-column>
+                    </o-table>
 
                     <h1 class="title is-4 mt-4">Puntos acumulados</h1>
                     <VueApexCharts
@@ -159,10 +159,10 @@
                         :options="chartOptions"
                         :series="chartSeriesAcumuladas">
                     </VueApexCharts>
-                </b-tab-item>
-                <b-tab-item label="Ranking por clasificación">
+                </o-tab-item>
+                <o-tab-item label="Ranking por clasificación" :value="2">
                     <h1 class="title is-4 mt-4">Clasificaciones</h1>
-                    <b-table :data="tableDataAcumulada"
+                    <o-table :data="tableDataAcumulada"
                              hoverable
                              mobile-cards
                              default-sort="totalScore"
@@ -170,36 +170,36 @@
                              :row-class="(row, index) => checkRowClass(row, index)"
                     >
 
-                        <b-table-column field="user.username" label="Nombre" sortable>
+                        <o-table-column field="user.username" label="Nombre" sortable>
                             <template v-slot="props">
-                                <b-tooltip
+                                <o-tooltip
                                     position="is-right"
-                                    type="is-light"
+                                    variant="light"
                                     append-to-body>
                                     <template v-slot:content>
                                         <UserMiniCard :user="communityMembers.get(props.row.user.username)" />
                                     </template>
 
                                     <span class="has-text-weight-bold">{{ props.row.user.username }}</span>
-                                </b-tooltip>
+                                </o-tooltip>
                             </template>
-                        </b-table-column>
+                        </o-table-column>
 
-                        <b-table-column v-for="gp in grandPrixList()" v-bind:key="gp.code"
+                        <o-table-column v-for="gp in grandPrixList()" v-bind:key="gp.code"
                                         :field="gp.code"
                                         sortable numeric>
                             <template v-slot:header="{ column }">
-                                <b-tooltip :label="gp.name">
+                                <o-tooltip :label="gp.name">
                                     {{ gp.code }}
-                                </b-tooltip>
+                                </o-tooltip>
                             </template>
                             <template v-slot="props">
 
                                 <!-- //ToDo: Tooltip desglosando puntos por sesiones-->
                                 <template v-if="props.row.gps.has(gp.name)">
-                                    <b-tag type="is-warning" v-if="props.row.gps.get(gp.name).standings === 1">
+                                    <span class="tag is-warning" v-if="props.row.gps.get(gp.name).standings === 1">
                                         {{ props.row.gps.get(gp.name).standings }}
-                                    </b-tag>
+                                    </span>
                                     <template v-else>
                                         <template v-if="props.row.gps.get(gp.name).standings >= 1">
                                             {{ props.row.gps.get(gp.name).standings }}
@@ -214,8 +214,8 @@
                                 </template>
 
                             </template>
-                        </b-table-column>
-                    </b-table>
+                        </o-table-column>
+                    </o-table>
 
                     <VueApexCharts
                         height="400"
@@ -223,11 +223,11 @@
                         :options="chartStandingsOptions"
                         :series="chartStandings">
                     </VueApexCharts>
-                </b-tab-item>
-                <b-tab-item label="Estadisticas de usuarios" disabled>
+                </o-tab-item>
+                <o-tab-item label="Estadisticas de usuarios" :value="3" disabled>
 
-                </b-tab-item>
-            </b-tabs>
+                </o-tab-item>
+            </o-tabs>
 
         </template>
         <loading v-else />

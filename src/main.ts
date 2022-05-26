@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import Buefy from 'buefy';
 import App from '@/App.vue'
 import router from '@/_router'
 import store from '@/_store';
@@ -14,12 +13,26 @@ import { loadFilters } from "@/plugins/dayjs";
 import { loadLeaflet } from "@/plugins/leaflet";
 import mixin from "@/plugins/mixin";
 
+import Oruga from '@oruga-ui/oruga'
+import { bulmaConfig } from '@oruga-ui/theme-bulma'
+
 loadFilters(Vue);
 loadLeaflet();
 
-Vue.use(Buefy, {
-    defaultIconPack: 'fa'
-});
+Vue.use(Oruga, {
+    customIconPacks: {
+        fas: {
+            sizes: {
+                default: '',
+                small: 'fa-sm',
+                medium: 'fa-lg',
+                large: 'fa-2x'
+            }
+        }
+    },
+    iconPack: 'fas',
+    ...bulmaConfig
+})
 Vue.use(VueClipboard);
 Vue.config.productionTip = false;
 

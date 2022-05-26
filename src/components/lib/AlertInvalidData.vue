@@ -1,7 +1,7 @@
 <template>
-    <b-notification v-if="object == undefined" type="is-danger" aria-close-label="Close notification" role="alert">
+    <o-notification v-if="object == undefined" variant="danger" aria-close-label="Close notification" role="alert">
         {{ message }}
-    </b-notification>
+    </o-notification>
 </template>
 
 <script lang="ts">

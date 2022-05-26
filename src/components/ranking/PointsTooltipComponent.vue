@@ -1,5 +1,5 @@
 <template>
-    <b-tooltip multilined>
+    <o-tooltip multilined>
         <template v-slot:content>
             <ul>
                 <li><b>{{ gpName }}</b></li>
@@ -19,7 +19,7 @@
         </template>
 
         {{ displayPoints }}
-    </b-tooltip>
+    </o-tooltip>
 </template>
 
 <script lang="ts">

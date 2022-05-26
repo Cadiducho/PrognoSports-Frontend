@@ -133,9 +133,9 @@ export default class ForgotPasswordComponent extends Vue {
                 this.inputPassword
             ).then(
                 () => {
-                    this.$buefy.toast.open({
+                    this.$oruga.notification.open({
                         message: "Tu contraseña ha sido restablecida",
-                        type: "is-success",
+                        variant: "success",
                     });
                     this.$router.push({
                         path: '/login',
@@ -144,44 +144,44 @@ export default class ForgotPasswordComponent extends Vue {
                 },
                 (error) => {
                     if (error === "User email cannot be null") {
-                        this.$buefy.toast.open({
+                        this.$oruga.notification.open({
                             duration: 5000,
                             message:
                                 "Debes introducir tu dirección de email",
-                            type: "is-danger",
+                            variant: "danger",
                         });
                     } else if (error === "User not found") {
-                        this.$buefy.toast.open({
+                        this.$oruga.notification.open({
                             duration: 5000,
                             message: "Usuario no encontrado",
-                            type: "is-danger",
+                            variant: "danger",
                         });
                     } else if (error === "You must send the security token") {
-                        this.$buefy.toast.open({
+                        this.$oruga.notification.open({
                             duration: 5000,
                             message:
                                 "Debes escribir el código de seguridad recibido",
-                            type: "is-danger",
+                            variant: "danger",
                         });
                     } else if (error === "You must send new the password") {
-                        this.$buefy.toast.open({
+                        this.$oruga.notification.open({
                             duration: 5000,
                             message: "Debes escribir tu nueva contraseña",
-                            type: "is-danger",
+                            variant: "danger",
                         });
                     } else if (error === "Token rejected") {
-                        this.$buefy.toast.open({
+                        this.$oruga.notification.open({
                             duration: 5000,
                             message:
                                 "Token rechazado. Compruebalo bien o vuelve a intentarlo en 15 minutos",
-                            type: "is-danger",
+                            variant: "danger",
                         });
                     } else {
                         console.log(error)
-                        this.$buefy.toast.open({
+                        this.$oruga.notification.open({
                             duration: 5000,
                             message: "Ha ocurrido desconocido cambiando la contraseña",
-                            type: "is-danger",
+                            variant: "danger",
                         });
                     }
                 }
@@ -193,32 +193,32 @@ export default class ForgotPasswordComponent extends Vue {
         if (this.email) {
             userService.sendForgotPassword(this.email).then(
                 () => {
-                    this.$buefy.toast.open({
+                    this.$oruga.notification.open({
                         message:
                             "Tu código de verificación ha sido enviado",
-                        type: "is-success",
+                        variant: "success",
                     });
                     this.showChangePasswordForm = true;
                 },
                 (error) => {
                     if (error === "User email cannot be null") {
-                        this.$buefy.toast.open({
+                        this.$oruga.notification.open({
                             duration: 5000,
                             message:
                                 "Debes introducir tu dirección de email",
-                            type: "is-danger",
+                            variant: "danger",
                         });
                     } else if (error === "User not found") {
-                        this.$buefy.toast.open({
+                        this.$oruga.notification.open({
                             duration: 5000,
                             message: "Usuario no encontrado",
-                            type: "is-danger",
+                            variant: "danger",
                         });
                     } else {
-                        this.$buefy.toast.open({
+                        this.$oruga.notification.open({
                             duration: 5000,
                             message: "Ha ocurrido un error solicitando el código",
-                            type: "is-danger",
+                            variant: "danger",
                         });
                     }
                 }

@@ -6,9 +6,10 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@oruga-ui/oruga": "^0.5.5",
+    "@oruga-ui/theme-bulma": "^0.2.5",
     "apexcharts": "^3.35.0",
     "axios": "^0.26.1",
-    "buefy": "^0.9.19",
     "bulma-block-list": "^0.6.0",
     "bulma-css-vars": "^0.8.0",
     "dayjs": "^1.11.0",

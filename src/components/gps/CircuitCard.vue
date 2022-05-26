@@ -26,7 +26,7 @@
                 <p v-if="hasLaps()" class="card-text"><b>Vueltas: </b>{{laps}}</p>
                 <p v-if="hasLaps()" class="card-text"><b>Distancia total: </b>{{laps * circuit.variant.distance}} km</p>
             </div>
-            <b-button type="is-info is-light is-fullwidth" tag="router-link" :to="circuitUrl">Más datos del circuito</b-button>
+            <o-button variant="info is-light is-fullwidth" tag="router-link" :to="circuitUrl">Más datos del circuito</o-button>
         </div>
     </div>
 </template>

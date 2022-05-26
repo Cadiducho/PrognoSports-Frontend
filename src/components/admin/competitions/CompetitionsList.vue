@@ -5,61 +5,61 @@
         <section v-if="isAdmin(currentUser)">
 
             <div class="block">
-                <b-button type="is-link" to="/new/competition" tag="router-link">Nueva competición</b-button>
+                <o-button variant="link" to="/new/competition" tag="router-link">Nueva competición</o-button>
             </div>
 
-            <b-field>
-                <b-input
+            <o-field>
+                <o-input
                     v-model="filtroCompetition"
                     placeholder="Buscar competition"
                     type="search"
                     icon-pack="fas"
                     icon="search"
-                ></b-input>
-            </b-field>
+                ></o-input>
+            </o-field>
 
             <div class="block">
-                <b-switch v-model="isPaginated">Paginated</b-switch>
+                <o-switch v-model="isPaginated">Paginated</o-switch>
             </div>
 
-            <b-table :data="filteredCompetitions"
+            <o-table :data="filteredCompetitions"
                     hoverable striped
                      :paginated="isPaginated"
                      per-page="15">
 
-                <b-table-column field="id" label="ID" width="40" sortable numeric v-slot="props">
+                <o-table-column field="id" label="ID" width="40" sortable numeric v-slot="props">
                     {{ props.row.id }}
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column field="code" label="Code" sortable v-slot="props">
+                <o-table-column field="code" label="Code" sortable v-slot="props">
                     {{ props.row.code }}
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column field="name" label="Name" sortable v-slot="props">
+                <o-table-column field="name" label="Name" sortable v-slot="props">
                     {{ props.row.name }}
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column field="fullname" label="Full Name" sortable v-slot="props">
+                <o-table-column field="fullname" label="Full Name" sortable v-slot="props">
                         {{ props.row.fullname }}
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column field="currentSeason.id" label="Temporada actual" sortable v-slot="props">
+                <o-table-column field="currentSeason.id" label="Temporada actual" sortable v-slot="props">
                     <template v-if="props.row.currentSeason">
                         {{ props.row.currentSeason.name }} (#{{ props.row.currentSeason.id }})
                     </template>
                     <template v-else>
                         <span class="tag is-info">No establecida</span>
                     </template>
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column label="Actions" v-slot="props">
+                <o-table-column label="Actions" v-slot="props">
                     <span class="tags">
                         <router-link class="tag is-warning" :to="'/admin/competitions/' + props.row.id">Editar</router-link>
                         <span class="tag is-danger" @click="confirmDeleteSeason(props.row)">Eliminar</span>
                     </span>
-                </b-table-column>
+                </o-table-column>
 
-            </b-table>
+            </o-table>
 
         </section>
         <section v-else>
@@ -126,7 +126,7 @@ export default class CompetitionsList extends Vue {
     }
 
     private confirmDeleteSeason(competition: Competition) {
-        this.$buefy.dialog.confirm({
+        this.$oruga.dialog.confirm({
             title: 'Eliminar competición',
             message: `¿Estás seguro de que quieres <b>eliminar</b> la competición ${competition.name} (#${competition.id})? <br/>Esta acción se puede deshacer.`,
             confirmText: 'Eliminar competición',
@@ -142,14 +142,14 @@ export default class CompetitionsList extends Vue {
             // Elimino de la lista y por lo tanto de la tabla
             this.competitions.splice(this.competitions.findIndex(s => s.id === competition.id),1);
 
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: `Se ha eliminado correctamente la competition ${competition.name} (#${competition.id})`,
-                type: "is-danger",
+                variant: "danger",
             });
         }).catch((error) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: error.message,
-                type: "is-danger",
+                variant: "danger",
             });
         });
     }

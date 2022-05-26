@@ -73,10 +73,10 @@
                     community: targetCommunity.name,
                 }
             }).then(() => {
-                this.$buefy.toast.open({
+                this.$oruga.notification.open({
                     message:
                         "Has cambiado a la comunidad " + targetCommunity.name,
-                    type: "is-info",
+                    variant: "info",
                 });
                 EventBus.$emit('reloadCommunitiesDropdown'); // Recargar la lista, que previsiblemente quitará la target y añadirá la que estaba originalmente
             })

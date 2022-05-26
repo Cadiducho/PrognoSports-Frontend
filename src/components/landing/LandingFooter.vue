@@ -26,47 +26,47 @@
                     <ul class="footer-ul">
                         <li>
                             <router-link to="/contact" class="list-item">
-                                <b-icon
+                                <o-icon
                                     pack="fas"
                                     icon="envelope"
                                     size="is-small">
-                                </b-icon> Contacta con el equipo
+                                </o-icon> Contacta con el equipo
                             </router-link>
                         </li>
                         <li>
                             <a href="https://twitter.com/PrognoSports" class="list-item">
-                                <b-icon
+                                <o-icon
                                     pack="fab"
                                     icon="twitter"
                                     size="is-small">
-                                </b-icon> Twitter
+                                </o-icon> Twitter
                             </a>
                         </li>
                         <li>
                             <a href="https://telegram.me/PrognoSportsInfo" class="list-item">
-                                <b-icon
+                                <o-icon
                                     pack="fab"
                                     icon="telegram"
                                     size="is-small">
-                                </b-icon> Telegram
+                                </o-icon> Telegram
                             </a>
                         </li>
                         <li>
                             <a href="https://twitch.tv/PrognoSports" class="list-item">
-                                <b-icon
+                                <o-icon
                                     pack="fab"
                                     icon="twitch"
                                     size="is-small">
-                                </b-icon> Twitch
+                                </o-icon> Twitch
                             </a>
                         </li>
                         <li>
                             <a href="https://instagram.com/PrognoSports" class="list-item">
-                                <b-icon
+                                <o-icon
                                     pack="fab"
                                     icon="instagram"
                                     size="is-small">
-                                </b-icon> Instagram
+                                </o-icon> Instagram
                             </a>
                         </li>
                     </ul>

@@ -5,52 +5,52 @@
         <section v-if="isAdmin(currentUser)">
 
             <div class="block">
-                <b-button type="is-link" to="/new/season" tag="router-link">Nueva temporada</b-button>
+                <o-button variant="link" to="/new/season" tag="router-link">Nueva temporada</o-button>
             </div>
 
-            <b-field>
-                <b-input
+            <o-field>
+                <o-input
                     v-model="filtroSeason"
                     placeholder="Buscar temporada"
                     type="search"
                     icon-pack="fas"
                     icon="search"
-                ></b-input>
-            </b-field>
+                ></o-input>
+            </o-field>
 
             <div class="block">
-                <b-switch v-model="isPaginated">Paginated</b-switch>
+                <o-switch v-model="isPaginated">Paginated</o-switch>
             </div>
 
-            <b-table :data="filteredSeasons"
+            <o-table :data="filteredSeasons"
                     hoverable striped
                      :paginated="isPaginated"
                      per-page="15">
 
-                <b-table-column field="id" label="ID" width="40" sortable numeric v-slot="props">
+                <o-table-column field="id" label="ID" width="40" sortable numeric v-slot="props">
                     {{ props.row.id }}
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column field="competition.name" label="Competición" sortable v-slot="props">
+                <o-table-column field="competition.name" label="Competición" sortable v-slot="props">
                     {{ props.row.competition.name }}
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column field="name" label="Name" sortable v-slot="props">
+                <o-table-column field="name" label="Name" sortable v-slot="props">
                     {{ props.row.name }}
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column field="totalEvents" label="Total Events" sortable numeric v-slot="props">
+                <o-table-column field="totalEvents" label="Total Events" sortable numeric v-slot="props">
                         {{ props.row.totalEvents }}
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column label="Actions" v-slot="props">
+                <o-table-column label="Actions" v-slot="props">
                     <span class="tags">
                         <router-link class="tag is-warning" :to="'/admin/seasons/' + props.row.id">Editar</router-link>
                         <span class="tag is-danger" @click="confirmDeleteSeason(props.row)">Eliminar</span>
                     </span>
-                </b-table-column>
+                </o-table-column>
 
-            </b-table>
+            </o-table>
 
         </section>
         <section v-else>
@@ -117,7 +117,7 @@ export default class SeasonsList extends Vue {
     }
 
     private confirmDeleteSeason(season: Season) {
-        this.$buefy.dialog.confirm({
+        this.$oruga.dialog.confirm({
             title: 'Eliminar temporada',
             message: `¿Estás seguro de que quieres <b>eliminar</b> la temporada ${season.name} (#${season.id})? <br/>Esta acción se puede deshacer.`,
             confirmText: 'Eliminar temporada',
@@ -133,14 +133,14 @@ export default class SeasonsList extends Vue {
             // Elimino de la lista y por lo tanto de la tabla
             this.seasons.splice(this.seasons.findIndex(s => s.id === season.id),1);
 
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: `Se ha eliminado correctamente la temporada ${season.name} (#${season.id})`,
-                type: "is-danger",
+                variant: "danger",
             });
         }).catch((error) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: error.message,
-                type: "is-danger",
+                variant: "danger",
             });
         });
     }

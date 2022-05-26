@@ -8,7 +8,7 @@
             <template v-else>
 
                 <div class="block">
-                    <b-button type="is-link" to="/admin/gps" tag="router-link">Lista de grandes premios</b-button>
+                    <o-button variant="link" to="/admin/gps" tag="router-link">Lista de grandes premios</o-button>
                 </div>
 
                 <p v-if="!thereIsGrandPrix">El Gran Premio {{ id }} no ha sido encontrado</p>
@@ -18,60 +18,60 @@
 
                     <div class="columns">
                         <div class="column is-four-fifths">
-                            <b-field label="Nombre">
-                                <b-input v-model="grandPrix.name" name="name" expanded lazy></b-input>
-                            </b-field>
+                            <o-field label="Nombre">
+                                <o-input v-model="grandPrix.name" name="name" expanded lazy></o-input>
+                            </o-field>
                         </div>
                         <div class="column">
-                            <b-field label="Gran Premio suspendido">
-                                <b-switch
+                            <o-field label="Gran Premio suspendido">
+                                <o-switch
                                     class="mt-2"
                                     v-model="grandPrix.suspended"
                                     passive-type='is-success'
                                     type='is-danger'>
-                                </b-switch> {{ grandPrix.suspended }}
-                            </b-field>
+                                </o-switch> {{ grandPrix.suspended }}
+                            </o-field>
                         </div>
                     </div>
 
-                    <b-field label="Código del Gran Premio">
-                        <b-input v-model="grandPrix.code" name="code" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Código del Gran Premio">
+                        <o-input v-model="grandPrix.code" name="code" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Circuito del Gran Premio">
-                        <b-select v-model:class="grandPrix.circuit" placeholder="Selecciona un circuito" expanded>
+                    <o-field label="Circuito del Gran Premio">
+                        <o-select v-model:class="grandPrix.circuit" placeholder="Selecciona un circuito" expanded>
                             <option
                                 v-for="circuit in circuitList"
                                 :value="circuit"
                                 :key="circuit.id + '-' + circuit.variant.name">
                                 {{ circuit.nameWithVariant() }}
                             </option>
-                        </b-select>
-                    </b-field>
+                        </o-select>
+                    </o-field>
 
                     <div class="columns">
                         <div class="column">
-                            <b-field label="Ronda del Gran Premio">
-                                <b-input v-model="grandPrix.round" name="round" expanded lazy :min=0 type="number"></b-input>
-                            </b-field>
+                            <o-field label="Ronda del Gran Premio">
+                                <o-input v-model="grandPrix.round" name="round" expanded lazy :min=0 type="number"></o-input>
+                            </o-field>
                         </div>
                         <div class="column">
-                            <b-field label="Vueltas del Gran Premio">
-                                <b-input v-model="grandPrix.laps" name="laps" expanded lazy :min=0 type="number"></b-input>
-                            </b-field>
+                            <o-field label="Vueltas del Gran Premio">
+                                <o-input v-model="grandPrix.laps" name="laps" expanded lazy :min=0 type="number"></o-input>
+                            </o-field>
                         </div>
                     </div>
 
-                    <b-field label="Imagen promocional del Gran Premio">
-                        <b-input v-model="grandPrix.promo_image_url" name="promo_image_url" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Imagen promocional del Gran Premio">
+                        <o-input v-model="grandPrix.promo_image_url" name="promo_image_url" expanded lazy></o-input>
+                    </o-field>
 
                     <hr />
-                    <b-field>
+                    <o-field>
                         <p class="control">
-                            <b-button :disabled="!isDataOk()" label="Editar gran premio" @click="editGrandPrix()" type="is-primary" />
+                            <o-button :disabled="!isDataOk()" label="Editar gran premio" @click="editGrandPrix()" variant="primary" />
                         </p>
-                    </b-field>
+                    </o-field>
                 </template>
             </template>
 
@@ -176,18 +176,18 @@ export default class CompetitionEdit extends Vue {
         };
 
         grandPrixService.editGrandPrix(data).then((result) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: "Se ha editado correctamente el gran premio `" + result.name + "`",
-                type: "is-success",
+                variant: "success",
             });
 
             this.$router.push({
                 name: 'adminGps'
             })
         }).catch((error) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: error.message,
-                type: "is-danger",
+                variant: "danger",
             });
         });
     }

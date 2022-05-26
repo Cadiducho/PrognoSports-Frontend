@@ -6,73 +6,73 @@
 
             <nav class="block is-flex is-justify-content-space-between">
                 <p class="control">
-                    <b-button type="is-link" to="/new/grandprix" tag="router-link">Nuevo Gran Premio</b-button>
+                    <o-button variant="link" to="/new/grandprix" tag="router-link">Nuevo Gran Premio</o-button>
                 </p>
-                <b-select v-if="seasonList" v-model="chosenSeason" placeholder="Selecciona la temporada"  @input="changeSeason()" >
+                <o-select v-if="seasonList" v-model="chosenSeason" placeholder="Selecciona la temporada"  @input="changeSeason()" >
                     <option
                         v-for="season in seasonList"
                         :value="season"
                         :key="season.id">
                         {{ season.name }} (#{{ season.id }}) - {{ season.competition.name }}
                     </option>
-                </b-select>
+                </o-select>
             </nav>
 
 
-            <b-field class="block">
-                <b-input
+            <o-field class="block">
+                <o-input
                     v-model="filtroGrandprix"
                     placeholder="Buscar gran premio"
                     type="search"
                     icon-pack="fas"
                     icon="search"
-                ></b-input>
-            </b-field>
+                ></o-input>
+            </o-field>
 
-            <b-switch v-model="isPaginated">Paginated</b-switch>
+            <o-switch v-model="isPaginated">Paginated</o-switch>
 
-            <b-table :data="filteredGps"
+            <o-table :data="filteredGps"
                     hoverable striped
                      :paginated="isPaginated"
                      per-page="15">
 
-                <b-table-column field="round" label="Round" width="40" sortable v-slot="props">
+                <o-table-column field="round" label="Round" width="40" sortable v-slot="props">
                     #{{ props.row.round }}
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column field="name" label="Name" sortable  v-slot="props">
+                <o-table-column field="name" label="Name" sortable  v-slot="props">
                     {{ props.row.name }}
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column field="season" label="Season" sortable v-slot="props">
+                <o-table-column field="season" label="Season" sortable v-slot="props">
                     {{ props.row.season.name }}
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column field="code" label="Code" sortable v-slot="props">
+                <o-table-column field="code" label="Code" sortable v-slot="props">
                     {{ props.row.code }}
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column field="laps" label="Laps" width="40" sortable v-slot="props">
+                <o-table-column field="laps" label="Laps" width="40" sortable v-slot="props">
                     {{ props.row.laps }}
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column field="circuit" label="Circuit" sortable v-slot="props">
+                <o-table-column field="circuit" label="Circuit" sortable v-slot="props">
                     {{ props.row.circuit.name }}
                     <span v-if="hasVariant(props.row.circuit)"
                         class="tag is-info">
                         {{ props.row.circuit.variant.name }}
                     </span>
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column label="Actions" v-slot="props">
+                <o-table-column label="Actions" v-slot="props">
                     <span class="tags">
                         <router-link class="tag is-info" :to="`/gps/${getSlug(props.row)}`">Ver</router-link>
                         <router-link class="tag is-warning" :to="`/admin/gps/${getSlug(props.row)}`">Editar</router-link>
                         <span class="tag is-danger" @click="confirmDeleteGrandPrix(props.row)">Eliminar</span>
                     </span>
-                </b-table-column>
+                </o-table-column>
 
-            </b-table>
+            </o-table>
 
         </section>
         <section v-else>
@@ -166,7 +166,7 @@ export default class GrandPrixList extends Vue {
     }
 
     private confirmDeleteGrandPrix(gp: GrandPrix) {
-        this.$buefy.dialog.confirm({
+        this.$oruga.dialog.confirm({
             title: 'Eliminar gran premio',
             message: `¿Estás seguro de que quieres <b>eliminar</b> el Gran Premio ${gp.name} #${gp.season.name}? <br/>Esta acción se puede deshacer.`,
             confirmText: 'Eliminar gran premio',
@@ -187,14 +187,14 @@ export default class GrandPrixList extends Vue {
             // Elimino de la lista y por lo tanto de la tabla
             this.gps.splice(this.gps.findIndex(s => s.id === gp.id),1);
 
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: `Se ha eliminado correctamente el gran premio ${gp.name} #${gp.season.name}`,
-                type: "is-danger",
+                variant: "danger",
             });
         }).catch((error) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: error.message,
-                type: "is-danger",
+                variant: "danger",
             });
         });*/
     }
