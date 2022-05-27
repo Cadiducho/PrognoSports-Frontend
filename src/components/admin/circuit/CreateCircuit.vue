@@ -3,67 +3,67 @@
         <PrognoPageTitle class="mb-5" name="Crear circuito" />
 
         <section v-if="isAdmin(currentUser)">
-            <b-steps v-model="activeStep">
-                <b-step-item step="1" label="Datos del circuito">
+            <o-steps v-model="activeStep">
+                <o-step-item step="1" label="Datos del circuito">
                     <h2 class="title">Datos del circuito</h2>
 
-                    <b-field label="ID" message="ID del circuito">
-                        <b-input v-model="createdCircuit.id" name="id" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="ID" message="ID del circuito">
+                        <o-input v-model="createdCircuit.id" name="id" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Nombre" message="Nombre del circuito">
-                        <b-input v-model="createdCircuit.name" name="name" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Nombre" message="Nombre del circuito">
+                        <o-input v-model="createdCircuit.name" name="name" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="País" message="País del circuito">
-                        <b-input v-model="createdCircuit.country" name="country" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="País" message="País del circuito">
+                        <o-input v-model="createdCircuit.country" name="country" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Localidad" message="Localidad del circuito">
-                        <b-input v-model="createdCircuit.locality" name="locality" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Localidad" message="Localidad del circuito">
+                        <o-input v-model="createdCircuit.locality" name="locality" expanded lazy></o-input>
+                    </o-field>
 
                     <div class="columns">
                         <div class="column">
-                            <b-field label="Latitud">
-                                <b-input v-model="createdCircuit.latitude" name="latitude" expanded lazy type="number" step="any"></b-input>
-                            </b-field>
+                            <o-field label="Latitud">
+                                <o-input v-model="createdCircuit.latitude" name="latitude" expanded lazy type="number" step="any"></o-input>
+                            </o-field>
                         </div>
                         <div class="column">
-                            <b-field label="Longitud">
-                                <b-input v-model="createdCircuit.longitude" name="longitude" expanded lazy type="number" step="any"></b-input>
-                            </b-field>
+                            <o-field label="Longitud">
+                                <o-input v-model="createdCircuit.longitude" name="longitude" expanded lazy type="number" step="any"></o-input>
+                            </o-field>
                         </div>
                     </div>
 
-                    <b-field label="URL del Logo">
-                        <b-input v-model="createdCircuit.logo_url" name="logoUrl" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="URL del Logo">
+                        <o-input v-model="createdCircuit.logo_url" name="logoUrl" expanded lazy></o-input>
+                    </o-field>
 
                     <h2 class="title">Detalles de la variante</h2>
 
-                    <b-field label="URL del Layout">
-                        <b-input v-model="createdCircuit.variant.layout_image" name="layoutImage" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="URL del Layout">
+                        <o-input v-model="createdCircuit.variant.layout_image" name="layoutImage" expanded lazy></o-input>
+                    </o-field>
 
                     <div class="columns">
                         <div class="column">
-                            <b-field label="Distancia">
-                                <b-input v-model="createdCircuit.variant.distance" name="distance" expanded lazy :min=0 type="number" step="any"></b-input>
-                            </b-field>
+                            <o-field label="Distancia">
+                                <o-input v-model="createdCircuit.variant.distance" name="distance" expanded lazy :min=0 type="number" step="any"></o-input>
+                            </o-field>
                         </div>
                         <div class="column">
-                            <b-field label="Curvas">
-                                <b-input v-model="createdCircuit.variant.turns" name="turns" expanded lazy :min=0 type="number"></b-input>
-                            </b-field>
+                            <o-field label="Curvas">
+                                <o-input v-model="createdCircuit.variant.turns" name="turns" expanded lazy :min=0 type="number"></o-input>
+                            </o-field>
                         </div>
                     </div>
 
                     <hr/>
 
-                </b-step-item>
+                </o-step-item>
 
-                <b-step-item step="2" label="Finalizar">
+                <o-step-item step="2" label="Finalizar">
                     <h2 class="title">Finalizar</h2>
 
                     <AlertInvalidData :object="createdCircuit.id" message="No has introducido id del circuito" />
@@ -83,13 +83,13 @@
                     <ViewCircuitItem :circuit="createdCircuit" />
 
                     <hr/>
-                    <b-field>
+                    <o-field>
                         <p class="control">
-                            <b-button :disabled="!isDataOk()" label="Crear circuito" @click="registerCircuit()" type="is-primary" />
+                            <o-button :disabled="!isDataOk()" label="Crear circuito" @click="registerCircuit()" variant="primary" />
                         </p>
-                    </b-field>
-                </b-step-item>
-            </b-steps>
+                    </o-field>
+                </o-step-item>
+            </o-steps>
         </section>
         <section v-else>
             <AlertNoPermission />
@@ -162,9 +162,9 @@ export default class CreateCircuit extends Vue {
 
         // Se envia el circuito, con los datos por defecto para una variante GP que la API también creará
         circuitService.createCircuit(rawCircuit).then((result) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: "Se ha registrado correctamente el circuito `" + result.name + "`",
-                type: "is-success",
+                variant: "success",
             });
 
             this.$router.push({
@@ -176,14 +176,14 @@ export default class CreateCircuit extends Vue {
             })
         }).catch((error) => {
             if (error.code === 705)  {
-                this.$buefy.toast.open({
+                this.$oruga.notification.open({
                     message: "Invalid data for this new circuit",
-                    type: "is-danger",
+                    variant: "danger",
                 });
             } else {
-                this.$buefy.toast.open({
+                this.$oruga.notification.open({
                     message: error.message,
-                    type: "is-danger",
+                    variant: "danger",
                 });
             }
         });

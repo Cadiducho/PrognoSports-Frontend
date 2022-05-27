@@ -15,10 +15,11 @@
 
             <div class="columns">
                 <div v-bind:class="thereIsGrid ? 'column is-6' : 'column is-9'">
-                    <b-tabs v-model="activeTab">
-                        <b-tab-item v-for="session in grandPrix.sessions"
+                    <o-tabs v-model="activeTab">
+                        <o-tab-item v-for="(session, index) in grandPrix.sessions"
                                     :label="session.humanName()"
-                                    :key="session.name">
+                                    :key="session.name"
+                                    :value="index">
                             <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
                                 es {{session.date | humanDateTimeMinusFiveMinutes}}</h6>
                             <SelectTipps :session="session"
@@ -27,8 +28,8 @@
                                          :drivers="drivers"
                                          :startGrids="startGrid"
                             />
-                        </b-tab-item>
-                    </b-tabs>
+                        </o-tab-item>
+                    </o-tabs>
                 </div>
                 <div v-if="thereIsGrid" class="content column">
                     <StartGrid :grid="startGrid"/>
@@ -39,10 +40,11 @@
                 </div>
             </div>
 
-            <b-tabs v-model="activeTab">
-                <b-tab-item v-for="session in grandPrix.sessions"
+            <o-tabs v-model="activeTab">
+                <o-tab-item v-for="(session, index) in grandPrix.sessions"
                             :label="session.humanName()"
-                            :key="session.name">
+                            :key="session.name"
+                            :value="index">
                     <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
                         es {{session.date | humanDateTimeMinusFiveMinutes}}</h6>
                     <ScoreComponents :gp="grandPrix"
@@ -50,8 +52,8 @@
                                      :session="session"
                                      :communityMembers="communityMembers"
                                      :user-points="userPoints"/>
-                </b-tab-item>
-            </b-tabs>
+                </o-tab-item>
+            </o-tabs>
         </div>
     </div>
 </template>

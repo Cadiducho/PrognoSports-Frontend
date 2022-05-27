@@ -1,18 +1,18 @@
 <template>
     <nav class="level">
         <div class="level-item has-text-centered">
-            <b-tooltip multilined type="is-light">
+            <o-tooltip multilined variant="light">
                 <template v-slot:content>
                     {{ userResume.standing }}º en el ranking de esta comunidad
                 </template>
 
                 <p class="heading">Puesto</p>
                 <p class="title">{{ userResume.standing }}º</p>
-            </b-tooltip>
+            </o-tooltip>
         </div>
         <div class="level-item has-text-centered">
             <div>
-                <b-tooltip multilined>
+                <o-tooltip multilined>
                     <template v-slot:content>
                         <ul>
                             <li>
@@ -28,28 +28,28 @@
                     <p class="title">
                         {{ userResume.points }}
                     </p>
-                </b-tooltip>
+                </o-tooltip>
             </div>
         </div>
         <div class="level-item has-text-centered">
-            <b-tooltip multilined type="is-light">
+            <o-tooltip multilined variant="light">
                 <template v-slot:content>
                     Esta funcionalidad aún no está implementada
                 </template>
 
                 <p class="heading">Sesiones ganadas</p>
                 <p class="title">?</p>
-            </b-tooltip>
+            </o-tooltip>
         </div>
         <div class="level-item has-text-centered">
-            <b-tooltip multilined type="is-light">
+            <o-tooltip multilined variant="light">
                 <template v-slot:content>
                     Esta funcionalidad aún no está implementada
                 </template>
 
                 <p class="heading">Grandes Premios ganados</p>
                 <p class="title">?</p>
-            </b-tooltip>
+            </o-tooltip>
         </div>
     </nav>
 

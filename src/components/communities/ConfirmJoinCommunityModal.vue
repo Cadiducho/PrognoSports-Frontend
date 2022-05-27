@@ -7,13 +7,13 @@
             ¿Deseas unirte a la comunidad <span class="has-text-weight-semibold">{{ community.name }}</span>?
         </section>
         <footer class="modal-card-foot">
-            <b-button
+            <o-button
                 label="Unirse a la comunidad"
-                type="is-success"
+                variant="success"
                 @click="joinCommunity()" />
-            <b-button
+            <o-button
                 label="Cancelar"
-                type="is-light"
+                variant="light"
                 @click="$parent.close()"
             />
         </footer>
@@ -35,17 +35,17 @@ export default class ConfirmJoinCommunityModal extends Vue {
 
     public joinCommunity() {
         communityService.joinCommunity(this.community).then(communityRes => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: "¡Te has unido correctamente a " + communityRes.name + "!",
-                type: "is-success",
+                variant: "success",
             });
 
             this.setCommunity(communityRes);
             this.$router.push(`/communities/${communityRes.name}`);
         }).catch((error) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: "Ha ocurrido un error: " + error.message,
-                type: "is-warning",
+                variant: "warning",
             });
         }).finally(() => {
             EventBus.$emit('reloadCommunitiesList');

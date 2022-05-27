@@ -8,14 +8,15 @@
                     PrognoSports
                 </router-link>
 
-                <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                <a role="button" class="navbar-burger" :class="{ 'is-active': isActive }" @click="isActive = !isActive"
+                   aria-label="menu" aria-expanded="false" data-target="prognoNavbar">
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
                 </a>
             </div>
 
-            <div id="navbar" class="navbar-menu">
+            <div id="prognoNavbar" class="navbar-menu" :class="{ 'is-active': isActive }">
                 <div class="navbar-start">
                     <router-link class="navbar-item" to="/gps">
                         Grandes Premios
@@ -64,5 +65,7 @@
     export default class Navbar extends Vue {
         @Auth.State("user") private currentUser!: User;
         @Auth.State("community") private currentCommunity!: Community;
+
+        isActive: boolean = false;
     }
 </script>

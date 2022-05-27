@@ -18,11 +18,11 @@
                 </span>
             </p>
             <footer class="card-footer">
-                <b-button tag="router-link"
+                <o-button tag="router-link"
                           :to="gpLink"
-                          type="is-info is-light" expanded>
+                          variant="info is-light" expanded>
                     Pronosticar
-                </b-button>
+                </o-button>
             </footer>
         </article>
     </div>

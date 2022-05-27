@@ -44,9 +44,9 @@ export default class ViewOneCommunity extends Vue {
 
             communityService.joinCommunity(community, code).then((communityRes) => {
                 setTimeout(() => {
-                    this.$buefy.toast.open({
+                    this.$oruga.notification.open({
                         message: "¡Te has unido correctamente a " + communityRes.name + "!",
-                        type: "is-success",
+                        variant: "success",
                     });
                     this.setCommunity(communityRes);
                     this.$router.push({
@@ -58,9 +58,9 @@ export default class ViewOneCommunity extends Vue {
                 }, 500);
             }).catch((reason => {
                 setTimeout(() => {
-                    this.$buefy.toast.open({
+                    this.$oruga.notification.open({
                         message: "Ha ocurrido un error: " + reason.message,
-                        type: "is-danger",
+                        variant: "danger",
                     });
                     this.$router.push({
                         name: 'communitiesList',

@@ -7,53 +7,53 @@
             <div v-if="!thereIsCurrentCommunity" class="notification has-background-danger">
                 No perteneces aún a ninguna comunidad. Para poder competir, debes unirte a alguna comunidad.
             </div>
-            <b-tabs v-model="activeTab" type="is-boxed">
-                <b-tab-item label="Mis comunidades">
-                    <b-field>
-                        <b-input
+            <o-tabs v-model="activeTab" variant="boxed">
+                <o-tab-item label="Mis comunidades" :value="0">
+                    <o-field>
+                        <o-input
                             v-model="filtroComunidad"
                             placeholder="Buscar comunidad"
                             type="search"
                             icon-pack="fas"
                             icon="search"
-                        ></b-input>
-                    </b-field>
+                        ></o-input>
+                    </o-field>
                     <CommunityListItem
                         v-for="(community, index) in filteredCommunities(this.myCommunityList)"
                         :community="community"
                         :isUserInCommunity="myCommunityList.some(c => c.id === community.id)"
                         v-bind:key="index"
                     />
-                </b-tab-item>
+                </o-tab-item>
 
-                <b-tab-item label="Abiertas">
-                    <b-field>
-                        <b-input
+                <o-tab-item label="Abiertas" :value="1">
+                    <o-field>
+                        <o-input
                             v-model="filtroComunidad"
                             placeholder="Buscar comunidad"
                             type="search"
                             icon-pack="fas"
                             icon="search"
-                        ></b-input>
-                    </b-field>
+                        ></o-input>
+                    </o-field>
                     <CommunityListItem
                         v-for="(community, index) in openCommunities"
                         :community="community"
                         :isUserInCommunity="myCommunityList.some(c => c.id === community.id)"
                         v-bind:key="index"
                     />
-                </b-tab-item>
+                </o-tab-item>
 
-                <b-tab-item label="Cerradas">
-                    <b-field>
-                        <b-input
+                <o-tab-item label="Cerradas" :value="2">
+                    <o-field>
+                        <o-input
                             v-model="filtroComunidad"
                             placeholder="Buscar comunidad"
                             type="search"
                             icon-pack="fas"
                             icon="search"
-                        ></b-input>
-                    </b-field>
+                        ></o-input>
+                    </o-field>
                     <div class="notification has-background-info-light">Para formar parte de comunidades cerradas necesitarás una invitación</div>
                     <CommunityListItem
                         v-for="(community, index) in closedCommunities"
@@ -61,26 +61,26 @@
                         :isUserInCommunity="myCommunityList.some(c => c.id === community.id)"
                         v-bind:key="index"
                     />
-                </b-tab-item>
+                </o-tab-item>
 
-                <b-tab-item label="Todas">
-                    <b-field>
-                        <b-input
+                <o-tab-item label="Todas" :value="3">
+                    <o-field>
+                        <o-input
                             v-model="filtroComunidad"
                             placeholder="Buscar comunidad"
                             type="search"
                             icon-pack="fas"
                             icon="search"
-                        ></b-input>
-                    </b-field>
+                        ></o-input>
+                    </o-field>
                     <CommunityListItem
                         v-for="(community, index) in filteredCommunities(this.communityList)"
                         :community="community"
                         :isUserInCommunity="myCommunityList.some(c => c.id === community.id)"
                         v-bind:key="index"
                     />
-                </b-tab-item>
-            </b-tabs>
+                </o-tab-item>
+            </o-tabs>
 
         </div>
     </div>

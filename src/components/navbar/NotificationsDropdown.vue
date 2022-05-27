@@ -1,5 +1,5 @@
 <template>
-    <b-dropdown id="notificationDropdown" position="is-bottom-left" append-to-body aria-role="menu" trap-focus>
+    <o-dropdown id="notificationDropdown" position="bottom-left" append-to-body aria-role="menu" trap-focus>
         <a class="navbar-item nav-tag" slot="trigger" role="button">
             <span class="icon">
                 <i class="material-icons display-inline-block align-middle">notifications_none</i>
@@ -7,7 +7,7 @@
             <span v-if="unreadNotificationsCount > 0" class="tag is-danger counter">{{unreadNotificationsCount}}</span>
         </a>
 
-        <b-dropdown-item aria-role="menu-item" :focusable="false" custom paddingless>
+        <o-dropdown-item aria-role="menu-item" :focusable="false" custom paddingless>
                 <div class="modal-card" style="width:350px;">
                     <section class="modal-card-body">
                         <div class="level">
@@ -28,22 +28,23 @@
                             </section>
                             <footer class="modal-card-foot">
                                 <span class="has-text-info is-italic has-text-right">Recibida el
-                                    <b-tooltip :label="noti.createdAt | dateDiff" position="is-right">
+                                    <o-tooltip :label="noti.createdAt | dateDiff" position="is-right">
                                         {{ noti.createdAt | humanDateTime }}
-                                    </b-tooltip>
+                                    </o-tooltip>
                                 </span>
                             </footer>
                         </article>
                     </section>
                 </div>
-        </b-dropdown-item>
-    </b-dropdown>
+        </o-dropdown-item>
+    </o-dropdown>
 </template>
 
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";
     import {notificationService} from "@/_services";
     import { Notification } from "@/types/Notification";
+    import Oruga from "@oruga-ui/oruga";
 
     @Component
     export default class NotificationsDropdown extends Vue {
@@ -56,9 +57,9 @@
         }
 
         public clearNotification() {
-            this.$buefy.toast.open({
+            Vue.prototype.$oruga.notification.open({
                 message: "Has limpiado tus notificaciones",
-                type: "is-success",
+                variant: "success",
             });
             notificationService.clearNotifications().then(() => {
                 this.unreadNotificationsCount = 0;

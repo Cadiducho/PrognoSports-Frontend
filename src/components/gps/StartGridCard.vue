@@ -10,9 +10,9 @@
             </header>
             <div class="f1-card-main">
                 <div class="f1-card-main-description">
-                    <b-tooltip :label="fullname(gridPos.driver)" type="is-info" class=f1-card-driver>
+                    <o-tooltip :label="fullname(gridPos.driver)" variant="info" class=f1-card-driver>
                         {{ gridPos.driver.code }}
-                    </b-tooltip>
+                    </o-tooltip>
                 </div>
             </div>
         </div>

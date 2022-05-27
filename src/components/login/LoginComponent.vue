@@ -88,9 +88,9 @@ export default class LoginComponent extends Vue {
                 password: this.password,
             }).then(
                 () => {
-                    this.$buefy.toast.open({
+                    this.$oruga.notification.open({
                         message: "¡Has iniciado sesión correctamente!",
-                        type: "is-success",
+                        variant: "success",
                     });
 
                     if (this.redirectTo !== undefined) {
@@ -109,10 +109,10 @@ export default class LoginComponent extends Vue {
                         message = "Fallo al iniciar sesión: " + error.message;
                     }
 
-                    this.$buefy.toast.open({
+                    this.$oruga.notification.open({
                         duration: 5000,
                         message: message,
-                        type: "is-danger",
+                        variant: "danger",
                     });
                 }
             );

@@ -7,10 +7,14 @@
 @import "ui/navbar";
 
 @import "~bulma";
-@import "~buefy/src/scss/buefy";
+@import '~@oruga-ui/theme-bulma/dist/scss/bulma';
 @import "~bulma-block-list/src/block-list";
 
 @import '~leaflet/dist/leaflet.css';
 .leaflet-pane {
   z-index: 10;
+}
+
+.is-fullwidth {
+  width: 100%;
 }

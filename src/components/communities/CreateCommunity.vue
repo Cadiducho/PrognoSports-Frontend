@@ -3,50 +3,50 @@
         <PrognoPageTitle class="mb-5" name="Crear comunidad" />
 
         <section>
-            <b-steps v-model="activeStep">
-                <b-step-item step="1" label="Descripción">
+            <o-steps v-model="activeStep">
+                <o-step-item step="1" label="Descripción">
                     <h1 class="title has-text-centered">Descripción</h1>
 
-                    <b-field label="Nombre" message="Nombre de la comunidad">
-                        <b-input v-model="name" name="subject" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Nombre" message="Nombre de la comunidad">
+                        <o-input v-model="name" name="subject" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Descripción">
-                        <b-input v-model="description" type="textarea" lazy></b-input>
-                    </b-field>
+                    <o-field label="Descripción">
+                        <o-input v-model="description" type="textarea" lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Imagen" message="Imagen para la comunidad (URL)">
-                        <b-input v-model="imageUrl" name="image" expanded></b-input>
-                    </b-field>
+                    <o-field label="Imagen" message="Imagen para la comunidad (URL)">
+                        <o-input v-model="imageUrl" name="image" expanded></o-input>
+                    </o-field>
 
                     <hr/>
 
                     <p class="block">Con una comunidad cerrada sólo se podrán unir miembros que dispongan del enlace de invitación. <br/>
                         Cualquiera podrá acceder a una comunidad abierta.</p>
-                    <b-field label="Privacidad de la comunidad">
-                        <b-switch
+                    <o-field label="Privacidad de la comunidad">
+                        <o-switch
                             v-model="privacy"
                             passive-type='is-success'
                             type='is-danger'>
                             {{ privacy ? "Cerrada" : "Abierta" }}
-                        </b-switch>
-                    </b-field>
-                </b-step-item>
+                        </o-switch>
+                    </o-field>
+                </o-step-item>
 
-                <b-step-item step="2" label="Reglas">
+                <o-step-item step="2" label="Reglas">
                     <h1 class="title has-text-centered">Reglas</h1>
 
                     <!-- FixMe: al creador de rulesets -->
                     <div class="columns">
                         <div class="column">
-                            <b-field label="Posiciones pronosticadas en clasificación">
-                                <b-slider v-model="numberQualify" :min="3" :max="20" :tooltip="false" indicator ticks></b-slider>
-                            </b-field>
+                            <o-field label="Posiciones pronosticadas en clasificación">
+                                <o-slider v-model="numberQualify" :min="3" :max="20" :tooltip="false" indicator ticks></o-slider>
+                            </o-field>
                         </div>
                         <div class="column">
-                            <b-field label="Posiciones pronosticadas en carrera">
-                                <b-slider v-model="numberRace" :min="3" :max="20" :tooltip="false" indicator ticks></b-slider>
-                            </b-field>
+                            <o-field label="Posiciones pronosticadas en carrera">
+                                <o-slider v-model="numberRace" :min="3" :max="20" :tooltip="false" indicator ticks></o-slider>
+                            </o-field>
                         </div>
                     </div>
 
@@ -54,21 +54,21 @@
 
                     <h2 class="subtitle mb-0">Descripción del conjunto de reglas</h2>
                     <p class="content">Un conjunto de reglas podrá ser utilizado por otra comunidad, o podrás usar otros diferentes en cada carrera. Conviene poner un nombre y descripción</p>
-                    <b-field label="Nombre del conjunto de reglas">
-                        <b-input v-model="rulesetName" name="subject" expanded></b-input>
-                    </b-field>
-                    <b-field label="Descripción de las reglas">
-                        <b-input v-model="rulesetDescription" type="textarea"></b-input>
-                    </b-field>
+                    <o-field label="Nombre del conjunto de reglas">
+                        <o-input v-model="rulesetName" name="subject" expanded></o-input>
+                    </o-field>
+                    <o-field label="Descripción de las reglas">
+                        <o-input v-model="rulesetDescription" type="textarea"></o-input>
+                    </o-field>
 
                     <h2 class="subtitle mb-0">Puntos por acertar la posición</h2>
                     <div class="columns">
                         <div class="column">
                             <p class="content is-italic">Posiciones de clasificación</p>
                             <template v-for="pos in numberQualify">
-                                <b-field :label="pos + 'º puesto de Clasificación'">
-                                    <b-numberinput v-model="pointsByEqualsPosition.QUALIFY[pos]"></b-numberinput>
-                                </b-field>
+                                <o-field :label="pos + 'º puesto de Clasificación'">
+                                    <o-numberinput v-model="pointsByEqualsPosition.QUALIFY[pos]"></o-numberinput>
+                                </o-field>
                             </template>
                         </div>
 
@@ -76,9 +76,9 @@
 
                             <p class="content is-italic">Posiciones de carrera</p>
                             <template v-for="pos in numberRace">
-                                <b-field :label="pos + 'º puesto de Carrera'">
-                                    <b-numberinput v-model="pointsByEqualsPosition.RACE[pos]"></b-numberinput>
-                                </b-field>
+                                <o-field :label="pos + 'º puesto de Carrera'">
+                                    <o-numberinput v-model="pointsByEqualsPosition.RACE[pos]"></o-numberinput>
+                                </o-field>
                             </template>
                         </div>
                     </div>
@@ -91,14 +91,14 @@
                     </p>
                     <div class="columns">
                         <div class="column">
-                            <b-field label="Clasificación">
-                                <b-numberinput v-model="pointsByNextPosition.QUALIFY"></b-numberinput>
-                            </b-field>
+                            <o-field label="Clasificación">
+                                <o-numberinput v-model="pointsByNextPosition.QUALIFY"></o-numberinput>
+                            </o-field>
                         </div>
                         <div class="column">
-                            <b-field label="Carrera">
-                                <b-numberinput v-model="pointsByNextPosition.RACE"></b-numberinput>
-                            </b-field>
+                            <o-field label="Carrera">
+                                <o-numberinput v-model="pointsByNextPosition.RACE"></o-numberinput>
+                            </o-field>
                         </div>
                     </div>
                     <hr/>
@@ -109,14 +109,14 @@
                     </p>
                     <div class="columns">
                         <div class="column">
-                            <b-field label="Clasificación">
-                                <b-numberinput v-model="pointsByNextOfFollowingPosition.QUALIFY"></b-numberinput>
-                            </b-field>
+                            <o-field label="Clasificación">
+                                <o-numberinput v-model="pointsByNextOfFollowingPosition.QUALIFY"></o-numberinput>
+                            </o-field>
                         </div>
                         <div class="column">
-                            <b-field label="Carrera">
-                                <b-numberinput v-model="pointsByNextOfFollowingPosition.RACE"></b-numberinput>
-                            </b-field>
+                            <o-field label="Carrera">
+                                <o-numberinput v-model="pointsByNextOfFollowingPosition.RACE"></o-numberinput>
+                            </o-field>
                         </div>
                     </div>
                     <hr/>
@@ -127,14 +127,14 @@
                     </p>
                     <div class="columns">
                         <div class="column">
-                            <b-field label="Clasificación">
-                                <b-numberinput v-model="pointsByPreviousPosition.QUALIFY"></b-numberinput>
-                            </b-field>
+                            <o-field label="Clasificación">
+                                <o-numberinput v-model="pointsByPreviousPosition.QUALIFY"></o-numberinput>
+                            </o-field>
                         </div>
                         <div class="column">
-                            <b-field label="Carrera">
-                                <b-numberinput v-model="pointsByPreviousPosition.RACE"></b-numberinput>
-                            </b-field>
+                            <o-field label="Carrera">
+                                <o-numberinput v-model="pointsByPreviousPosition.RACE"></o-numberinput>
+                            </o-field>
                         </div>
                     </div>
                     <hr/>
@@ -145,14 +145,14 @@
                     </p>
                     <div class="columns">
                         <div class="column">
-                            <b-field label="Clasificación">
-                                <b-numberinput v-model="pointsByPreviousOfPreviousPosition.QUALIFY"></b-numberinput>
-                            </b-field>
+                            <o-field label="Clasificación">
+                                <o-numberinput v-model="pointsByPreviousOfPreviousPosition.QUALIFY"></o-numberinput>
+                            </o-field>
                         </div>
                         <div class="column">
-                            <b-field label="Carrera">
-                                <b-numberinput v-model="pointsByPreviousOfPreviousPosition.RACE"></b-numberinput>
-                            </b-field>
+                            <o-field label="Carrera">
+                                <o-numberinput v-model="pointsByPreviousOfPreviousPosition.RACE"></o-numberinput>
+                            </o-field>
                         </div>
                     </div>
                     <hr/>
@@ -163,14 +163,14 @@
                     </p>
                     <div class="columns">
                         <div class="column">
-                            <b-field label="Clasificación">
-                                <b-numberinput v-model="pointsIfIsNotInPodium.QUALIFY"></b-numberinput>
-                            </b-field>
+                            <o-field label="Clasificación">
+                                <o-numberinput v-model="pointsIfIsNotInPodium.QUALIFY"></o-numberinput>
+                            </o-field>
                         </div>
                         <div class="column">
-                            <b-field label="Carrera">
-                                <b-numberinput v-model="pointsIfIsNotInPodium.RACE"></b-numberinput>
-                            </b-field>
+                            <o-field label="Carrera">
+                                <o-numberinput v-model="pointsIfIsNotInPodium.RACE"></o-numberinput>
+                            </o-field>
                         </div>
                     </div>
                     <hr/>
@@ -181,36 +181,36 @@
                     </p>
                     <div class="columns">
                         <div class="column">
-                            <b-field label="Clasificación">
-                                <b-numberinput v-model="pointsIfIsNotInResults.QUALIFY"></b-numberinput>
-                            </b-field>
+                            <o-field label="Clasificación">
+                                <o-numberinput v-model="pointsIfIsNotInResults.QUALIFY"></o-numberinput>
+                            </o-field>
                         </div>
                         <div class="column">
-                            <b-field label="Carrera">
-                                <b-numberinput v-model="pointsIfIsNotInResults.RACE"></b-numberinput>
-                            </b-field>
+                            <o-field label="Carrera">
+                                <o-numberinput v-model="pointsIfIsNotInResults.RACE"></o-numberinput>
+                            </o-field>
                         </div>
                     </div>
                     <hr/>
-                    <b-field label="Privacidad del conjunto de reglas">
-                        <b-switch
+                    <o-field label="Privacidad del conjunto de reglas">
+                        <o-switch
                             v-model="rulesetPrivacy"
                             passive-type='is-success'
                             type='is-danger'>
                             {{ rulesetPrivacy ? "Privadas" : "Públicas" }}
-                        </b-switch>
-                    </b-field>
+                        </o-switch>
+                    </o-field>
                     <p class="block">Esta opción determinará si otras comunidades ajenas a ti podrán utilizar tus reglas o no.</p>
-                </b-step-item>
+                </o-step-item>
 
-                <b-step-item step="3" label="Finalizar">
+                <o-step-item step="3" label="Finalizar">
                     <h1 class="title has-text-centered">Finalizar</h1>
-                    <b-notification v-if="!name" type="is-danger" aria-close-label="Close notification" role="alert">
+                    <o-notification v-if="!name" variant="danger" aria-close-label="Close notification" role="alert">
                         No has introducido nombre de la comunidad
-                    </b-notification>
-                    <b-notification v-if="!description" type="is-danger" aria-close-label="Close notification" role="alert">
+                    </o-notification>
+                    <o-notification v-if="!description" variant="danger" aria-close-label="Close notification" role="alert">
                         No has introducido descripción de la comunidad
-                    </b-notification>
+                    </o-notification>
                     <div class="notification has-background-primary">
                         Revisa los datos, se va a registrar la siguiente comunidad
                     </div>
@@ -334,13 +334,13 @@
                     </div>
 
                     <hr/>
-                    <b-field>
+                    <o-field>
                         <p class="control">
-                            <b-button :disabled="!name || !description" label="Registrar comunidad" @click="registerCommunity()" type="is-primary" />
+                            <o-button :disabled="!name || !description" label="Registrar comunidad" @click="registerCommunity()" variant="primary" />
                         </p>
-                    </b-field>
-                </b-step-item>
-            </b-steps>
+                    </o-field>
+                </o-step-item>
+            </o-steps>
 
         </section>
     </div>
@@ -454,9 +454,9 @@ export default class ViewCommunitiesList extends Vue {
             communityData.default_rule_set = ruleset.id; // y se asigna este rule set por defecto a la nueva comunidad
 
             communityService.createCommunity(communityData).then((community) => {
-                this.$buefy.toast.open({
+                this.$oruga.notification.open({
                     message: "Se ha registrado correctamente la comunidad `" + community.name + "`",
-                    type: "is-success",
+                    variant: "success",
                 });
 
                 this.$router.push({
@@ -469,9 +469,9 @@ export default class ViewCommunitiesList extends Vue {
                 this.setCommunity(community); // Establecer en Vuex la comunidad actual
                 EventBus.$emit('reloadCommunitiesDropdown'); // Recargar dropdown del navbar
             }).catch((error) => {
-                this.$buefy.toast.open({
+                this.$oruga.notification.open({
                     message: error.message,
-                    type: "is-danger",
+                    variant: "danger",
                 });
                 rulesetService.removeRuleSet(ruleset).then(e => {
                     console.log(e);
@@ -480,9 +480,9 @@ export default class ViewCommunitiesList extends Vue {
                 });
             })
         }).catch((error) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: error.message,
-                type: "is-danger",
+                variant: "danger",
             });
         })
     }

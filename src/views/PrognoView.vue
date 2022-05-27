@@ -7,9 +7,9 @@
 
                 <Breadcrumb />
 
-                <b-notification v-if="!betaAceptada" type="is-warning" aria-close-label="Close notification" @close="acceptBeta()">
+                <o-notification v-if="!betaAceptada" closable variant="warning" aria-close-label="Close notification" @close="acceptBeta()">
                     Estás utilizando PrognoSports Beta, la experiencia puede verse afectada
-                </b-notification>
+                </o-notification>
 
                 <router-view :key="$route.fullPath"/>
             </div>

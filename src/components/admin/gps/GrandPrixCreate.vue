@@ -3,66 +3,66 @@
         <PrognoPageTitle class="mb-5" name="Crear gran premio" />
 
         <section v-if="isAdmin(currentUser)">
-            <b-steps v-model="activeStep">
-                <b-step-item step="1" label="Datos del gran premio">
+            <o-steps v-model="activeStep">
+                <o-step-item step="1" label="Datos del gran premio">
                     <h2 class="title">Datos del gran premio</h2>
 
-                    <b-field label="ID del Gran Premio">
-                        <b-input v-model="createdGrandPrix.id" name="id" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="ID del Gran Premio">
+                        <o-input v-model="createdGrandPrix.id" name="id" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Nombre del Gran Premio">
-                        <b-input v-model="createdGrandPrix.name" name="name" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Nombre del Gran Premio">
+                        <o-input v-model="createdGrandPrix.name" name="name" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Código del Gran Premio">
-                        <b-input v-model="createdGrandPrix.code" name="code" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Código del Gran Premio">
+                        <o-input v-model="createdGrandPrix.code" name="code" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Circuito del Gran Premio">
-                        <b-select v-model:class="createdGrandPrix.circuit" placeholder="Selecciona un circuito" expanded>
+                    <o-field label="Circuito del Gran Premio">
+                        <o-select v-model:class="createdGrandPrix.circuit" placeholder="Selecciona un circuito" expanded>
                             <option
                                 v-for="circuit in circuits"
                                 :value="circuit"
                                 :key="circuit.id">
                                 {{ circuit.nameWithVariant() }}
                             </option>
-                        </b-select>
-                    </b-field>
+                        </o-select>
+                    </o-field>
 
                     <div class="columns">
                         <div class="column">
-                            <b-field label="Ronda del Gran Premio">
-                                <b-input v-model="createdGrandPrix.round" name="round" expanded lazy :min=0 type="number"></b-input>
-                            </b-field>
+                            <o-field label="Ronda del Gran Premio">
+                                <o-input v-model="createdGrandPrix.round" name="round" expanded lazy :min=0 type="number"></o-input>
+                            </o-field>
                         </div>
                         <div class="column">
-                            <b-field label="Vueltas del Gran Premio">
-                                <b-input v-model="createdGrandPrix.laps" name="laps" expanded lazy :min=0 type="number"></b-input>
-                            </b-field>
+                            <o-field label="Vueltas del Gran Premio">
+                                <o-input v-model="createdGrandPrix.laps" name="laps" expanded lazy :min=0 type="number"></o-input>
+                            </o-field>
                         </div>
                     </div>
 
-                    <b-field label="Imagen promocional del Gran Premio">
-                        <b-input v-model="createdGrandPrix.promo_image_url" name="promo_image_url" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Imagen promocional del Gran Premio">
+                        <o-input v-model="createdGrandPrix.promo_image_url" name="promo_image_url" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Temporada del Gran Premio">
-                        <b-select v-model:class="createdGrandPrix.season" placeholder="Selecciona una temporada" expanded>
+                    <o-field label="Temporada del Gran Premio">
+                        <o-select v-model:class="createdGrandPrix.season" placeholder="Selecciona una temporada" expanded>
                             <option
                                 v-for="ses in seasons"
                                 :value="ses"
                                 :key="ses.id">
                                 {{ ses.name }} (#{{ ses.id }}) - {{ ses.competition.name }}
                             </option>
-                        </b-select>
-                    </b-field>
+                        </o-select>
+                    </o-field>
 
                     <hr/>
 
-                </b-step-item>
+                </o-step-item>
 
-                <b-step-item step="2" label="Finalizar">
+                <o-step-item step="2" label="Finalizar">
                     <h2 class="title">Finalizar</h2>
 
                     <AlertInvalidData :object="createdGrandPrix.id" message="No has introducido ID para este gran premio" />
@@ -89,13 +89,13 @@
                     </div>
 
                     <hr/>
-                    <b-field>
+                    <o-field>
                         <p class="control">
-                            <b-button :disabled="!isDataOk()" label="Crear Gran Premio" @click="registerGrandPrix()" type="is-primary" />
+                            <o-button :disabled="!isDataOk()" label="Crear Gran Premio" @click="registerGrandPrix()" variant="primary" />
                         </p>
-                    </b-field>
-                </b-step-item>
-            </b-steps>
+                    </o-field>
+                </o-step-item>
+            </o-steps>
         </section>
         <section v-else>
             <AlertNoPermission />
@@ -185,18 +185,18 @@ export default class SeasonCreate extends Vue {
         }
 
         grandPrixService.createGrandPrix(data).then((result) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: "Se ha registrado correctamente el Gran Premio `" + result.id + "`",
-                type: "is-success",
+                variant: "success",
             });
 
             this.$router.push({
                 name: 'adminGps'
             })
         }).catch((error) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: error.message,
-                type: "is-danger",
+                variant: "danger",
             });
         });
     }

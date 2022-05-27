@@ -4,15 +4,15 @@
         <progno-page-title class="mb-5" name="Lista de Circuitos" />
         <div v-if="isLoading"><loading /></div>
         <div v-else>
-            <b-field>
-                <b-input
+            <o-field>
+                <o-input
                     v-model="filtroCircuit"
                     placeholder="Buscar circuito"
                     type="search"
                     icon-pack="fas"
                     icon="search"
-                ></b-input>
-            </b-field>
+                ></o-input>
+            </o-field>
             <div class="mt-5 columns is-centered is-multiline">
                 <view-circuit-item
                     v-for="(circuit, index) in filteredCircuits"

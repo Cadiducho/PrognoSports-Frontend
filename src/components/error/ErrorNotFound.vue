@@ -6,8 +6,8 @@
                     <h1 class="title">404 Página no encontrada</h1>
                     <p class="subtitle">Esta página no ha sido encontrada. Vuelve a inicio o inténtalo de nuevo.</p>
 
-                    <b-button @click="back()" class="mr-2" type="is-danger" outlined>Atrás</b-button>
-                    <b-button tag="router-link" type="is-primary" to="/">Inicio</b-button>
+                    <o-button @click="back()" class="mr-2" variant="danger" outlined>Atrás</o-button>
+                    <o-button tag="router-link" variant="primary" to="/">Inicio</o-button>
                 </div>
             </div>
         </div>

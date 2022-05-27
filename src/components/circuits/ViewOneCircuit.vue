@@ -109,7 +109,7 @@
                                         </p>
                                     </div>
 
-                                    <b-button tag="router-link"
+                                    <o-button tag="router-link"
                                               :to="{
                                             name: 'gpdetails',
                                             params: {
@@ -118,9 +118,9 @@
                                                 id: gp.id,
                                             }
                                           }"
-                                              type="is-info is-light" expanded>
+                                              variant="info is-light" expanded>
                                         Detalles
-                                    </b-button>
+                                    </o-button>
                                 </div>
                             </div>
                         </article>

@@ -1,87 +1,102 @@
 <template>
     <div class="content mt-5">
-        <div class="columns is-mobile">
+        <div class="columns listas">
             <div class="column is-6">
                 <h3>Lista de pilotos</h3>
-                <b-collapse :open="false" aria-id="opcionesOrdenado" class="mb-2">
-                    <template #trigger>
-                        <b-button
-                            label="Opciones de ordenado"
-                            type="is-primary"
-                            aria-controls="opcionesOrdenado" />
-                    </template>
 
-                    <div class="box">
-                        <b-field label="Orderar lista de pilotos">
-                            <b-radio v-model='orderType' :native-value='0'>Orden alfabético</b-radio>
-                            <b-radio v-model='orderType' :native-value='1'>Por equipos</b-radio>
-                            <b-radio v-model='orderType' :native-value='2'>Por dorsal</b-radio>
-                            <b-radio v-model='orderType' :native-value='3' v-if="this.indexedGrid.size > 0">Por parrilla de salida</b-radio>
-                        </b-field>
-                        <b-field>
-                            <b-switch v-model="orderAscendent">
-                                Orden {{ orderAscendent ? "ascendente" : "descendente" }}
-                            </b-switch>
-                        </b-field>
-                    </div>
-                </b-collapse>
+                <div class="is-flex">
+                    <o-collapse :open="false" aria-id="opcionesOrdenado" class="mb-2">
+                        <template #trigger>
+                            <o-button label="Ordenar"
+                                      variant="primary"
+                                      aria-controls="opcionesOrdenado"/>
+                        </template>
 
-                <b-field>
-                    <b-input v-model="filtroPiloto" placeholder="Buscar piloto" type="search" icon-pack="fas" icon="search"></b-input>
-                </b-field>
-                <draggable class="block-list has-radius is-highlighted is-info"
+                        <div class="box mt-1">
+                            <o-field label="Orderar lista de pilotos">
+                                <o-radio v-model='orderType' :native-value='0'>Orden alfabético</o-radio>
+                                <o-radio v-model='orderType' :native-value='1'>Por equipos</o-radio>
+                                <o-radio v-model='orderType' :native-value='2'>Por dorsal</o-radio>
+                                <o-radio v-model='orderType' :native-value='3' v-if="this.indexedGrid.size > 0">Por
+                                    parrilla de salida
+                                </o-radio>
+                            </o-field>
+                            <o-field>
+                                <o-switch v-model="orderAscendent">
+                                    Orden {{ orderAscendent ? "ascendente" : "descendente" }}
+                                </o-switch>
+                            </o-field>
+                        </div>
+                    </o-collapse>
+                    <o-field class="ml-1 is-fullwidth">
+                        <o-input v-model="filtroPiloto" placeholder="Buscar piloto" type="search" icon-pack="fas"
+                                 icon="search"></o-input>
+                    </o-field>
+                </div>
+
+                <draggable class="block-list has-radius is-highlighted is-info no-select"
                            :list="pilotosDisponiblesFiltrados" :group="session.name">
                     <transition-group type="transition" :name="!drag ? 'flip-list' : null">
                         <li
-                            class="is-highlighted has-text-weight-semibold"
-                            v-bind:style="styleDriverCard(element)"
-                            v-for="element in pilotosDisponiblesFiltrados"
+                            class="is-highlighted has-text-weight-semibold is-flex is-justify-content-space-between"
+                            :style="styleDriverCard(element)"
+                            v-for="(element, index) in pilotosDisponiblesFiltrados"
                             :key="element.number">
-                            <i @click="element.fixed = !element.fixed"
-                                aria-hidden="true"
-                            ></i>
+
+                            <span>
                                 {{ element.firstname }} {{ element.lastname }}
                                 <span class="tag is-rounded" v-bind:style="styleDorsal(element)">#{{ element.number }}</span>
-                                <b-tooltip class="ml-1" :label="element.team.longname">
+                                <o-tooltip class="ml-1" :label="element.team.longname">
                                     {{ element.team.name }}
-                                </b-tooltip>
+                                </o-tooltip>
                                 ({{element.team.carname}})
+                            </span>
+
+                            <a @click="moveToTippList(element, index)" class="pl-3 pr-3">
+                                <i class="mr-0 fas fa-angle-right has-text-primary"></i>
+                                <i class="ml-0 fas fa-angle-right has-text-primary"></i>
+                            </a>
                         </li>
                     </transition-group>
                 </draggable>
             </div>
             <div class="column is-6">
                 <h3>Pilotos pronosticados ({{ cantidadPilotosPronosticados(ruleSet, session) }})</h3>
-                <draggable class="block-list has-radius is-highlighted is-primary"
+                <draggable class="block-list has-radius is-highlighted is-primary no-select"
                            :list="pilotosPronosticados" :group="session.name"
                            :emptyInsertThreshold="1000">
                     <transition-group type="transition" tag="div" :name="!drag ? 'flip-list' : null">
                         <li
-                            class="is-highlighted has-text-weight-semibold"
+                            class="is-highlighted has-text-weight-semibold is-flex is-justify-content-left"
                             v-bind:style="styleDriverCard(element)"
                             v-for="(element, index)  in pilotosPronosticados"
                             :key="element.number">
-                            <i @click="element.fixed = !element.fixed"
-                               aria-hidden="true"
-                            ></i>
+
+                            <a @click="moveToAvailableList(element, index)" class="mr-3 pl-3">
+                                <i class="mr-0 fas fa-angle-left has-text-primary"></i>
+                                <i class="ml-0 fas fa-angle-left has-text-primary"></i>
+                            </a>
+
+                            <span>
                                 <b>{{ index + 1 }}º.</b> {{ element.firstname }} {{ element.lastname }}
                                 <span class="tag is-rounded" v-bind:style="styleDorsal(element)">#{{ element.number }}</span>
-                                <b-tooltip class="ml-1" :label="element.team.longname">
+                                <o-tooltip class="ml-1" :label="element.team.longname">
                                     {{ element.team.name }}
-                                </b-tooltip>
+                                </o-tooltip>
                                 ({{element.team.carname}})
+                            </span>
                         </li>
                     </transition-group>
                 </draggable>
                 <template v-if="isBeforeEndDate(this.session)">
-                    <b-button v-if="pilotosPronosticados.length === cantidadPilotosPronosticados(ruleSet, session)"
-                              type="is-success is-fullwidth"
+                    <o-button v-if="pilotosPronosticados.length === cantidadPilotosPronosticados(ruleSet, session)"
+                              variant="success is-fullwidth"
                               @click="enviarPronostico">Enviar pronóstico
-                    </b-button>
+                    </o-button>
                 </template>
-                <b-button v-else disabled type="is-success is-fullwidth">
+                <o-button v-else disabled variant="success is-fullwidth">
                     Ya no se puede pronosticar
-                </b-button>
+                </o-button>
 
 
                 <div v-else class="notification is-warning is-light">
@@ -89,7 +104,7 @@
                 </div>
 
                 <hr v-if="(pilotosPronosticados.length > 0) && isBeforeEndDate(this.session)"/>
-                <b-button v-if="(pilotosPronosticados.length > 0) && isBeforeEndDate(this.session)" type="is-danger is-light is-fullwidth" @click="reiniciarPronostico">Limpiar pronóstico</b-button>
+                <o-button v-if="(pilotosPronosticados.length > 0) && isBeforeEndDate(this.session)" variant="danger is-light is-fullwidth" @click="reiniciarPronostico">Limpiar pronóstico</o-button>
 
             </div>
         </div>
@@ -107,7 +122,6 @@ import {Community} from "@/types/Community";
 import {namespace} from "vuex-class";
 import {RaceResult} from "@/types/RaceResult";
 import {User} from "@/types/User";
-import EventBus from "@/plugins/eventbus";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import {RuleSet} from "@/types/RuleSet";
 const Auth = namespace('Auth')
@@ -167,12 +181,24 @@ export default class SelectTipps extends Vue {
         });
     }
 
+    public moveToTippList(driver: Driver, index: number) {
+        console.log("Moviendo a pronosticados " + driver.code);
+        this.pilotosDisponibles.splice(index, 1);
+        this.pilotosPronosticados.push(driver);
+    }
+
+    public moveToAvailableList(driver: Driver, index: number) {
+        console.log("Moviendo a disponibles " + driver.code);
+        this.pilotosPronosticados.splice(index, 1);
+        this.pilotosDisponibles.push(driver);
+    }
+
     public styleDriverCard(driver: Driver) {
         return {
             color: 'black',
             'border': '1px solid #'+ driver.team.teamcolor,
             'border-left': '10px #'+ driver.team.teamcolor + ' solid',
-           // 'border-right': '30px #'+ driver.team.teamcolor + ' solid',
+            // 'border-right': '30px #'+ driver.team.teamcolor + ' solid',
             'border-right-image-source': 'linear-gradient(to left, #'+ driver.team.teamcolor + ', #ffffff)',
             opacity: 0.9,
         }
@@ -233,25 +259,27 @@ export default class SelectTipps extends Vue {
         });
         grandPrixService.postUserTipps(this.grandPrix, this.session, this.currentCommunity, tipps).then(
             () => {
-                this.$buefy.toast.open({
+                this.$oruga.notification.open({
                     message: "¡Has guardado tus pronósticos!",
-                    type: "is-success",
+                    variant: "success",
                 });
             },
             (error: any) => {
                 let message = "Error guardando tus pronósticos: " + error.message;
 
-                this.$buefy.toast.open({
+                this.$oruga.notification.open({
                     duration: 5000,
                     message: message,
-                    type: "is-danger",
+                    variant: "danger",
                 });
             });
     }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "~bulma/sass/utilities/_all";
+
 .block-list:empty,
 .block-list > div:empty {
     padding:1rem;
@@ -265,5 +293,15 @@ export default class SelectTipps extends Vue {
 .block-list:empty:before,
 .block-list > div:empty:before {
     content: 'Coloca aquí tus pilotos en orden';
+}
+.no-select {
+    user-select: none;
+}
+
+@media (max-width: $desktop) {
+    .listas {
+        display: flex;
+        flex-direction: column-reverse;
+    }
 }
 </style>

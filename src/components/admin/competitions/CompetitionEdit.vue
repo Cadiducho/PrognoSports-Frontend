@@ -8,7 +8,7 @@
             <template v-else>
 
                 <div class="block">
-                    <b-button type="is-link" to="/admin/competitions" tag="router-link">Lista de competiciones</b-button>
+                    <o-button variant="link" to="/admin/competitions" tag="router-link">Lista de competiciones</o-button>
                 </div>
 
                 <p v-if="!thereIsCompetition">La competición {{ competitionId }} no ha sido encontrada</p>
@@ -16,35 +16,35 @@
 
                     <h2 class="title">Datos de la competición</h2>
 
-                    <b-field label="Nombre de la competición">
-                        <b-input v-model="competition.name" name="name" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Nombre de la competición">
+                        <o-input v-model="competition.name" name="name" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Nombre completo y con patrocinadores">
-                        <b-input v-model="competition.fullname" name="fullname" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Nombre completo y con patrocinadores">
+                        <o-input v-model="competition.fullname" name="fullname" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Código de la competición">
-                        <b-input v-model="competition.code" name="code" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Código de la competición">
+                        <o-input v-model="competition.code" name="code" expanded lazy></o-input>
+                    </o-field>
 
 
-                    <b-field label="Temporada actual">
-                        <b-select v-model="competition.currentSeason.id" placeholder="Selecciona la temporada actual" expanded>
+                    <o-field label="Temporada actual">
+                        <o-select v-model="competition.currentSeason.id" placeholder="Selecciona la temporada actual" expanded>
                             <option
                                 v-for="season in compSeasons"
                                 :value="season.id"
                                 :key="season.id">
                                 {{ season.name }} (#{{ season.id }})
                             </option>
-                        </b-select>
-                    </b-field>
+                        </o-select>
+                    </o-field>
 
                     <div class="columns">
                         <div class="column">
-                            <b-field label="Reglas">
-                                <b-input v-model="competition.rules" type="textarea"></b-input>
-                            </b-field>
+                            <o-field label="Reglas">
+                                <o-input v-model="competition.rules" type="textarea"></o-input>
+                            </o-field>
                         </div>
                         <div class="column content">
                             <div v-html="previewRules"></div>
@@ -52,11 +52,11 @@
                     </div>
 
                     <hr />
-                    <b-field>
+                    <o-field>
                         <p class="control">
-                            <b-button :disabled="!isDataOk()" label="Editar competición" @click="editCompetition()" type="is-primary" />
+                            <o-button :disabled="!isDataOk()" label="Editar competición" @click="editCompetition()" variant="primary" />
                         </p>
-                    </b-field>
+                    </o-field>
                 </template>
             </template>
 
@@ -137,18 +137,18 @@ export default class CompetitionEdit extends Vue {
             currentSeason: this.competition!.currentSeason!.id,
         }
         competitionService.editCompetition(this.competition!, data).then((result) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: "Se ha editado correctamente la competición `" + result.name + "`",
-                type: "is-success",
+                variant: "success",
             });
 
             this.$router.push({
                 name: 'adminCompetitions'
             })
         }).catch((error) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: error.message,
-                type: "is-danger",
+                variant: "danger",
             });
         });
     }

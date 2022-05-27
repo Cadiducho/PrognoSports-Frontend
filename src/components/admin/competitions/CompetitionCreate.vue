@@ -3,31 +3,31 @@
         <PrognoPageTitle class="mb-5" name="Crear competición" />
 
         <section v-if="isAdmin(currentUser)">
-            <b-steps v-model="activeStep">
-                <b-step-item step="1" label="Datos de la competición">
+            <o-steps v-model="activeStep">
+                <o-step-item step="1" label="Datos de la competición">
                     <h2 class="title">Datos de la competición</h2>
 
-                    <b-field label="Nombre de la competición">
-                        <b-input v-model="createdCompetition.name" name="name" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Nombre de la competición">
+                        <o-input v-model="createdCompetition.name" name="name" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Nombre completo y con patrocinadores">
-                        <b-input v-model="createdCompetition.fullname" name="fullname" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Nombre completo y con patrocinadores">
+                        <o-input v-model="createdCompetition.fullname" name="fullname" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Código de la competición">
-                        <b-input v-model="createdCompetition.code" name="code" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Código de la competición">
+                        <o-input v-model="createdCompetition.code" name="code" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Reglas">
-                        <b-input v-model="createdCompetition.rules" type="textarea" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Reglas">
+                        <o-input v-model="createdCompetition.rules" type="textarea" expanded lazy></o-input>
+                    </o-field>
 
                     <hr/>
 
-                </b-step-item>
+                </o-step-item>
 
-                <b-step-item step="2" label="Finalizar">
+                <o-step-item step="2" label="Finalizar">
                     <h2 class="title">Finalizar</h2>
 
                     <AlertInvalidData :object="createdCompetition.name" message="No has introducido nombre para esta competición" />
@@ -49,13 +49,13 @@
                     </section>
 
                     <hr/>
-                    <b-field>
+                    <o-field>
                         <p class="control">
-                            <b-button :disabled="!isDataOk()" label="Crear competición" @click="registerCompetition()" type="is-primary" />
+                            <o-button :disabled="!isDataOk()" label="Crear competición" @click="registerCompetition()" variant="primary" />
                         </p>
-                    </b-field>
-                </b-step-item>
-            </b-steps>
+                    </o-field>
+                </o-step-item>
+            </o-steps>
         </section>
         <section v-else>
             <AlertNoPermission />
@@ -119,18 +119,18 @@ export default class SeasonCreate extends Vue {
         }
 
         competitionService.createCompetition(data).then((result) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: "Se ha registrado correctamente la competición `" + result.name + "`",
-                type: "is-success",
+                variant: "success",
             });
 
             this.$router.push({
                 name: 'adminCompetitions'
             })
         }).catch((error) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: error.message,
-                type: "is-danger",
+                variant: "danger",
             });
         });
     }

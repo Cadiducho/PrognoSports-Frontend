@@ -7,13 +7,13 @@
             ¿Estás seguro de que deseas abandonar la comunidad <span class="has-text-weight-semibold">{{ community.name }}</span>?
         </section>
         <footer class="modal-card-foot">
-            <b-button
+            <o-button
                 label="Dejar comunidad"
-                type="is-danger"
+                variant="danger"
                 @click="leaveCommunity()" />
-            <b-button
+            <o-button
                 label="Cancelar"
-                type="is-light"
+                variant="light"
                 @click="$parent.close()"
             />
         </footer>
@@ -36,21 +36,21 @@ export default class ConfirmLeaveCommunityModal extends Vue {
 
     public leaveCommunity() {
         if (this.community.id == this.currentCommunity.id) {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: "No puedes dejar la comunidad en la que estás en este momento",
-                type: "is-warning",
+                variant: "warning",
             });
             this.$emit('close');
         } else {
             communityService.quitCommunity(this.community).then(() => {
-                this.$buefy.toast.open({
+                this.$oruga.notification.open({
                     message: "¡Has dejado la comunidad " + this.community.name + "!",
-                    type: "is-success",
+                    variant: "success",
                 });
             }).catch((error) => {
-                this.$buefy.toast.open({
+                this.$oruga.notification.open({
                     message: "Ha ocurrido un error: " + error.message,
-                    type: "is-warning",
+                    variant: "warning",
                 });
             }).finally(() => {
                 EventBus.$emit('reloadCommunitiesList');

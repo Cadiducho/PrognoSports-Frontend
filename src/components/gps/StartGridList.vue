@@ -3,17 +3,17 @@
         <nav class="is-flex is-justify-content-space-between">
             <h3>Parrilla de Salida</h3>
 
-            <b-field v-if="Object.keys(chosenSession).length && availableSessions.length > 1"
+            <o-field v-if="Object.keys(chosenSession).length && availableSessions.length > 1"
                      label="Sesión" :label-position="'on-border'">
-                <b-select v-model="chosenSession" placeholder="Selecciona la sesión" @input="changeGridSession()">
+                <o-select v-model="chosenSession" placeholder="Selecciona la sesión" @input="changeGridSession()">
                     <option
                         v-for="session in availableSessions"
                         :value="session"
                         :key="session.name">
                         {{ session.humanName() }}
                     </option>
-                </b-select>
-            </b-field>
+                </o-select>
+            </o-field>
         </nav>
         <div class="columns">
             <div class="column is-6">

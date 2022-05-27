@@ -5,68 +5,68 @@
         <section v-if="isAdmin(currentUser)">
 
             <div class="block">
-                <b-button type="is-link" to="/new/driver" tag="router-link">Nuevo piloto</b-button>
+                <o-button variant="link" to="/new/driver" tag="router-link">Nuevo piloto</o-button>
             </div>
 
-            <b-field>
-                <b-input
+            <o-field>
+                <o-input
                     v-model="filtroPiloto"
                     placeholder="Buscar piloto"
                     type="search"
                     icon-pack="fas"
                     icon="search"
-                ></b-input>
-            </b-field>
+                ></o-input>
+            </o-field>
 
             <div class="block">
-                <b-switch v-model="isPaginated">Paginated</b-switch>
+                <o-switch v-model="isPaginated">Paginated</o-switch>
             </div>
 
-            <b-table :data="filteredDrivers"
+            <o-table :data="filteredDrivers"
                     hoverable striped
                      :paginated="isPaginated"
                      per-page="15">
 
-                <b-table-column field="id" label="ID" width="40" sortable v-slot="props">
+                <o-table-column field="id" label="ID" width="40" sortable v-slot="props">
                     {{ props.row.id }}
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column field="first_name" label="First Name" sortable v-slot="props">
+                <o-table-column field="first_name" label="First Name" sortable v-slot="props">
                     {{ props.row.firstname }}
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column field="last_name" label="Last Name" sortable v-slot="props">
+                <o-table-column field="last_name" label="Last Name" sortable v-slot="props">
                     {{ props.row.lastname }}
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column field="code" label="Code" sortable v-slot="props" width="60">
+                <o-table-column field="code" label="Code" sortable v-slot="props" width="60">
                     <span class="tag is-primary is-rounded">
                         {{ props.row.code }}
                     </span>
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column field="nationality" label="Nationality" sortable v-slot="props">
+                <o-table-column field="nationality" label="Nationality" sortable v-slot="props">
                     {{ props.row.nationality }}
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column field="birth" label="Birth" centered sortable v-slot="props">
+                <o-table-column field="birth" label="Birth" centered sortable v-slot="props">
                     <span class="tag is-success" v-if="props.row.birth">
                         {{ props.row.birth | humanDate }}
                     </span>
                     <span class="tag is-warning" v-else>
                         Sin fecha
                     </span>
-                </b-table-column>
+                </o-table-column>
 
-                <b-table-column label="Actions" v-slot="props">
+                <o-table-column label="Actions" v-slot="props">
                     <span class="tags">
                         <span class="tag is-link">Ver</span>
                         <span class="tag is-warning">Editar</span>
                         <span class="tag is-danger">Eliminar</span>
                     </span>
-                </b-table-column>
+                </o-table-column>
 
-            </b-table>
+            </o-table>
 
         </section>
         <section v-else>

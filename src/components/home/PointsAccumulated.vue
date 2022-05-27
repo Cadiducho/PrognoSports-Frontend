@@ -7,9 +7,9 @@
                        :options="chartOptions"
                        :series="chartSeries">
         </VueApexCharts>
-        <b-button @click="changeGraphType()" type="is-info is-light" expanded>
+        <o-button @click="changeGraphType()" variant="info is-light" expanded>
             Cambiar tipo de gráfica
-        </b-button>
+        </o-button>
     </div>
 </template>
 

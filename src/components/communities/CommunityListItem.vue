@@ -26,25 +26,25 @@
                 <i>Comunidad creada el <time :datetime="community.created">{{ community.created | humanDateTime }}</time></i>
                 <br />
                 <div class="buttons mt-2">
-                    <b-button v-if="community.open && !isUserInCommunity" type="is-success" @click="tryJoinCommunity">Unirse</b-button>
-                    <b-button v-if="isUserInCommunity" type="is-danger" @click="tryLeaveCommunity">Dejar comunidad</b-button>
-                    <b-button tag="router-link" type="is-link is-light" :to="'/communities/' + community.name">Detalles</b-button>
+                    <o-button v-if="community.open && !isUserInCommunity" variant="success" @click="tryJoinCommunity">Unirse</o-button>
+                    <o-button v-if="isUserInCommunity" variant="danger" @click="tryLeaveCommunity">Dejar comunidad</o-button>
+                    <o-button tag="router-link" variant="link is-light" :to="'/communities/' + community.name">Detalles</o-button>
                 </div>
             </div>
         </div>
 
-        <b-modal
+        <o-modal
             v-model="isJoinModalActive"
             has-modal-card
             :can-cancel="true">
             <ConfirmJoinCommunityModal />
-        </b-modal>
-        <b-modal
+        </o-modal>
+        <o-modal
             v-model="isLeaveModalActive"
             has-modal-card
             :can-cancel="true">
             <ConfirmLeaveCommunityModal />
-        </b-modal>
+        </o-modal>
     </div>
 </template>
 
@@ -64,7 +64,7 @@ export default class CommunityListItem extends Vue {
     private isLeaveModalActive: boolean = false;
 
     private tryJoinCommunity() {
-        this.$buefy.modal.open({
+        this.$oruga.modal.open({
             parent: this,
             component: ConfirmJoinCommunityModal,
             trapFocus: false,
@@ -73,7 +73,7 @@ export default class CommunityListItem extends Vue {
     }
 
     private tryLeaveCommunity() {
-        this.$buefy.modal.open({
+        this.$oruga.modal.open({
             parent: this,
             component: ConfirmLeaveCommunityModal,
             trapFocus: false,

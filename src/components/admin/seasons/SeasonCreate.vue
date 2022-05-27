@@ -3,34 +3,34 @@
         <PrognoPageTitle class="mb-5" name="Crear temporada" />
 
         <section v-if="isAdmin(currentUser)">
-            <b-steps v-model="activeStep">
-                <b-step-item step="1" label="Datos de la temporada">
+            <o-steps v-model="activeStep">
+                <o-step-item step="1" label="Datos de la temporada">
                     <h2 class="title">Datos de la temporada</h2>
 
-                    <b-field label="Nombre de la temporada">
-                        <b-input v-model="createdSeason.name" name="name" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Nombre de la temporada">
+                        <o-input v-model="createdSeason.name" name="name" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Número de eventos">
-                        <b-input v-model="createdSeason.totalEvents" name="longitude" expanded lazy type="number" step="any"></b-input>
-                    </b-field>
+                    <o-field label="Número de eventos">
+                        <o-input v-model="createdSeason.totalEvents" name="longitude" expanded lazy type="number" step="any"></o-input>
+                    </o-field>
 
-                    <b-field label="Competición">
-                        <b-select v-model:class="createdSeason.competition" placeholder="Selecciona una competición" expanded>
+                    <o-field label="Competición">
+                        <o-select v-model:class="createdSeason.competition" placeholder="Selecciona una competición" expanded>
                             <option
                                 v-for="comp in competitions"
                                 :value="comp"
                                 :key="comp.id">
                                 {{ comp.name }} ({{ comp.code }}) - {{ comp.fullname }}
                             </option>
-                        </b-select>
-                    </b-field>
+                        </o-select>
+                    </o-field>
 
                     <hr/>
 
-                </b-step-item>
+                </o-step-item>
 
-                <b-step-item step="2" label="Finalizar">
+                <o-step-item step="2" label="Finalizar">
                     <h2 class="title">Finalizar</h2>
 
                     <AlertInvalidData :object="createdSeason.name" message="No has introducido nombre para esta temporada" />
@@ -48,13 +48,13 @@
                     </div>
 
                     <hr/>
-                    <b-field>
+                    <o-field>
                         <p class="control">
-                            <b-button :disabled="!isDataOk()" label="Crear temporada" @click="registerSeason()" type="is-primary" />
+                            <o-button :disabled="!isDataOk()" label="Crear temporada" @click="registerSeason()" variant="primary" />
                         </p>
-                    </b-field>
-                </b-step-item>
-            </b-steps>
+                    </o-field>
+                </o-step-item>
+            </o-steps>
         </section>
         <section v-else>
             <AlertNoPermission />
@@ -114,18 +114,18 @@ export default class SeasonCreate extends Vue {
         }
 
         seasonService.createSeason(rawSeason).then((result) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: "Se ha registrado correctamente la temporada `" + result.name + "`",
-                type: "is-success",
+                variant: "success",
             });
 
             this.$router.push({
                 name: 'adminSeasons'
             })
         }).catch((error) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: error.message,
-                type: "is-danger",
+                variant: "danger",
             });
         });
     }

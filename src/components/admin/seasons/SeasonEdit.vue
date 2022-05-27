@@ -8,7 +8,7 @@
             <template v-else>
 
                 <div class="block">
-                    <b-button type="is-link" to="/admin/seasons" tag="router-link">Lista de temporada</b-button>
+                    <o-button variant="link" to="/admin/seasons" tag="router-link">Lista de temporada</o-button>
                 </div>
 
                 <p v-if="!thereIsSeason">La temporada {{ seasonId }} no ha sido encontrada</p>
@@ -16,30 +16,30 @@
 
                     <h2 class="title">Datos de la temporada</h2>
 
-                    <b-field label="Nombre de la temporada">
-                        <b-input v-model="season.name" name="name" expanded lazy></b-input>
-                    </b-field>
+                    <o-field label="Nombre de la temporada">
+                        <o-input v-model="season.name" name="name" expanded lazy></o-input>
+                    </o-field>
 
-                    <b-field label="Número de eventos">
-                        <b-input v-model="season.totalEvents" name="longitude" expanded lazy type="number" step="any"></b-input>
-                    </b-field>
+                    <o-field label="Número de eventos">
+                        <o-input v-model="season.totalEvents" name="longitude" expanded lazy type="number" step="any"></o-input>
+                    </o-field>
 
-                    <b-field label="Competición">
-                        <b-select v-model="season.competition.id" placeholder="Selecciona una competición" expanded>
+                    <o-field label="Competición">
+                        <o-select v-model="season.competition.id" placeholder="Selecciona una competición" expanded>
                             <option
                                 v-for="comp in competitions"
                                 :value="comp.id"
                                 :key="comp.id">
                                 {{ comp.name }} ({{ comp.code }}) - {{ comp.fullname }}
                             </option>
-                        </b-select>
-                    </b-field>
+                        </o-select>
+                    </o-field>
 
-                    <b-field>
+                    <o-field>
                         <p class="control">
-                            <b-button :disabled="!isDataOk()" label="Editar temporada" @click="editSeason()" type="is-primary" />
+                            <o-button :disabled="!isDataOk()" label="Editar temporada" @click="editSeason()" variant="primary" />
                         </p>
-                    </b-field>
+                    </o-field>
                 </template>
             </template>
 
@@ -89,18 +89,18 @@ export default class SeasonEdit extends Vue {
             totalEvents: this.season!.totalEvents
         }
         seasonService.editSeason(this.season!, data).then((result) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: "Se ha editado correctamente la temporada `" + result.name + "`",
-                type: "is-success",
+                variant: "success",
             });
 
             this.$router.push({
                 name: 'adminSeasons'
             })
         }).catch((error) => {
-            this.$buefy.toast.open({
+            this.$oruga.notification.open({
                 message: error.message,
-                type: "is-danger",
+                variant: "danger",
             });
         });
     }
