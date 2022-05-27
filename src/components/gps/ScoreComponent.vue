@@ -330,7 +330,7 @@ export default class ScoreComponents extends Vue {
 </script>
 
 <style lang="scss">
-@import "~bulma/sass/utilities/_all";
+@import "bulma/sass/utilities/_all.sass";
 
 tr.is-user {
     background: $primary;

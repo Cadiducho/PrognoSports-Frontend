@@ -9,7 +9,7 @@
 </template>
 
 <style lang="scss">
-    @import "landing";
+    @import "landing.scss";
 </style>
 <script lang="ts">
     import {Component, Vue} from "vue-property-decorator";

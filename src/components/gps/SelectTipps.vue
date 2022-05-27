@@ -278,7 +278,7 @@ export default class SelectTipps extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import "~bulma/sass/utilities/_all";
+@import "bulma/sass/utilities/_all.sass";
 
 .block-list:empty,
 .block-list > div:empty {
