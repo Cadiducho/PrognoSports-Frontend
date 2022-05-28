@@ -120,13 +120,13 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
-
-@Component
-export default class LandingHome extends Vue {
-
-    sendToRegister() {
-        this.$router.push({path: '/register'});
+import {defineComponent} from "@vue/composition-api";
+export default defineComponent({
+    name: "LandingHome",
+    methods: {
+        sendToRegister() {
+            this.$router.push({path: '/register'});
+        }
     }
-}
+});
 </script>

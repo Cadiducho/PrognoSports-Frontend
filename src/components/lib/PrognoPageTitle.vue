@@ -5,10 +5,12 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
+    import {defineComponent} from "@vue/composition-api";
 
-    @Component
-    export default class PrognoPageTitle extends Vue {
-        @Prop() private name!: string;
-    }
+    export default defineComponent({
+        name: "PrognoPageTitle",
+        props: {
+            title: String,
+        }
+    });
 </script>

@@ -9,6 +9,7 @@
   "dependencies": {
     "@oruga-ui/oruga": "^0.5.5",
     "@oruga-ui/theme-bulma": "^0.2.5",
+    "@vue/composition-api": "^1.6.2",
     "apexcharts": "^3.35.0",
     "axios": "^0.26.1",
     "bulma-block-list": "^0.6.0",
