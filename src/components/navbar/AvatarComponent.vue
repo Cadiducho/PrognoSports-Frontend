@@ -29,20 +29,22 @@
 </template>
 
 <script lang="ts">
+    import {defineComponent} from "@vue/composition-api";
+    import {useAuthStore} from "@/pinia/authStore";
 
-    import {Component, Vue} from "vue-property-decorator";
-    import {User} from "@/types/User";
-    import {namespace} from "vuex-class";
-    const Auth = namespace('Auth')
-
-    @Component
-    export default class AvatarComponent extends Vue {
-        @Auth.State("user") private currentUser!: User;
-
-        logout() {
-            this.$router.push('/logout');
+    export default defineComponent({
+        name: "AvatarComponent",
+        setup() {
+            const authStore = useAuthStore();
+            const currentUser = authStore.user;
+            return { currentUser };
+        },
+        methods: {
+            logout() {
+                this.$router.push('/logout');
+            }
         }
-    }
+    });
 </script>
 
 <style scoped>

@@ -22,50 +22,52 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
     import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
     import NextGrandPrix from "@/components/gps/NextGrandPrix.vue";
     import PointsAccumulated from "@/components/home/PointsAccumulated.vue";
-    import {User, UserResume} from "@/types/User";
-    import {namespace} from 'vuex-class'
-    import {seasonService, userService} from "@/_services";
-    import {Community} from "@/types/Community";
+    import {UserResume} from "@/types/User";
+    import {userService} from "@/_services";
     import {Season} from "@/types/Season";
     import {isValidCommunity} from "@/utils";
     import UserLevelResume from "@/components/user/UserLevelResume.vue";
 
-    const Auth = namespace('Auth')
+    import {defineComponent} from "@vue/composition-api";
+    import {useAuthStore} from "@/pinia/authStore";
+    import {useCommunityStore} from "@/pinia/communityStore";
 
-    @Component({
+    export default defineComponent({
+        name: "Home",
         components: {
             UserLevelResume,
             PointsAccumulated,
             NextGrandPrix,
             PrognoPageTitle,
-        }
-    })
-    export default class Home extends Vue {
+        },
+        setup() {
+            const authStore = useAuthStore();
+            const communityStore = useCommunityStore();
 
-        @Auth.State("user") private currentUser!: User;
-        @Auth.State("community") private currentCommunity!: Community;
-        @Auth.Getter private isLoggedIn?: boolean;
-        private userResume: UserResume = {
-            averageInQualis: 0,
-            averageInRaces: 0,
-            pointsInQualis: 0,
-            pointsInRaces: 0,
-            qualiParticipations: 0,
-            raceParticipations: 0,
-            standing: 0,
-            // FixMe: won sessions
-            wonGrandPrixes: 0, wonQualifySessions: 0, wonRaceSessions: 0,
-            points: 0
-        };
-
-        get loading() {
-            return this.isLoggedIn;
-        }
-
+            const currentUser = authStore.user;
+            const isLoggedIn = authStore.isLoggedIn;
+            const currentCommunity = communityStore.community;
+            return { isLoggedIn, currentUser, currentCommunity };
+        },
+        data() {
+            return {
+                userResume: {
+                    averageInQualis: 0,
+                    averageInRaces: 0,
+                    pointsInQualis: 0,
+                    pointsInRaces: 0,
+                    qualiParticipations: 0,
+                    raceParticipations: 0,
+                    standing: 0,
+                    // FixMe: won sessions
+                    wonGrandPrixes: 0, wonQualifySessions: 0, wonRaceSessions: 0,
+                    points: 0
+                } as UserResume,
+            }
+        },
         mounted() {
             if (isValidCommunity(this.currentCommunity)) {
                 let competition = this.currentCommunity.competition;
@@ -75,5 +77,6 @@
                 });
             }
         }
-    }
+    });
+
 </script>

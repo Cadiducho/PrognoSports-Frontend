@@ -46,16 +46,28 @@
     import {GrandPrix} from "@/types/GrandPrix";
     import {grandPrixService} from "@/_services";
     import {Community} from "@/types/Community";
-    import {namespace} from 'vuex-class'
     import {isValidCommunity} from "@/utils";
-    const Auth = namespace('Auth')
 
-    @Component
-    export default class NextGrandPrix extends Vue {
+    import {defineComponent} from "@vue/composition-api";
+    import {useCommunityStore} from "@/pinia/communityStore";
+
+    export default defineComponent({
+        name: "NextGrandPrix",
+        setup() {
+            const communityStore = useCommunityStore();
+
+            const currentCommunity = communityStore.community;
+            return { currentCommunity };
+        },
+        data() {
+            return {
+                nextGp?: GrandPrix,
+            }
+        }
+
         private nextGp?: GrandPrix;
         private noNextGp: boolean = false;
         private loadingGpData: boolean = true;
-        @Auth.State("community") private currentCommunity!: Community;
         get gpLink(): any {
             return {
                 name: "gpdetails",
