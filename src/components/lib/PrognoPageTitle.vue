@@ -10,7 +10,7 @@
     export default defineComponent({
         name: "PrognoPageTitle",
         props: {
-            title: String,
+            name: String,
         }
     });
 </script>

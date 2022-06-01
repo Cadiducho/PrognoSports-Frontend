@@ -28,7 +28,7 @@
                             </section>
                             <footer class="modal-card-foot">
                                 <span class="has-text-info is-italic has-text-right">Recibida el
-                                    <o-tooltip :label="noti.createdAt | dateDiff" position="is-right">
+                                    <o-tooltip :label="noti.createdAt | dateDiff" position="right">
                                         {{ noti.createdAt | humanDateTime }}
                                     </o-tooltip>
                                 </span>
