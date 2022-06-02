@@ -29,6 +29,9 @@
     "vuex": "^3.6.2",
     "vuex-class": "^0.3.2"
   },
+  "resolutions": {
+    "vue-demi": "0.13.1"
+  },
   "devDependencies": {
     "@types/leaflet": "^1.7.5",
     "@types/marked": "^4.0.3",
