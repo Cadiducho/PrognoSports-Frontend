@@ -38,7 +38,7 @@
                         <o-table-column field="user.username" label="Nombre" sortable>
                             <template v-slot="props">
                                 <o-tooltip
-                                    position="is-right"
+                                    position="right"
                                     variant="light"
                                     append-to-body>
                                     <template v-slot:content>
@@ -108,7 +108,7 @@
                         <o-table-column field="user.username" label="Nombre" sortable>
                             <template v-slot="props">
                                 <o-tooltip
-                                    position="is-right"
+                                    position="right"
                                     variant="light"
                                     append-to-body>
                                     <template v-slot:content>
@@ -173,7 +173,7 @@
                         <o-table-column field="user.username" label="Nombre" sortable>
                             <template v-slot="props">
                                 <o-tooltip
-                                    position="is-right"
+                                    position="right"
                                     variant="light"
                                     append-to-body>
                                     <template v-slot:content>

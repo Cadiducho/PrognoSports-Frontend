@@ -50,7 +50,7 @@
         }
 
         public circuitLogoImage(circuit: Circuit) {
-            return circuit?.logo_url ?? require('@/assets/default_profile_image.jpg');
+            return circuit?.logo_url ?? import('@/assets/default_profile_image.jpg');
         }
     }
 </script>

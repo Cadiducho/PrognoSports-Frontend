@@ -30,7 +30,7 @@ export function isAdmin(user: User): boolean {
  * Obtener imagen de perfil de un usuario, o la de por defecto
  */
 export function userProfileImage(user?: User) {
-    return user?.profileImageUrl ?? require('@/assets/default_profile_image.jpg');
+    return user?.profileImageUrl ?? import('@/assets/default_profile_image.jpg');
 }
 
 /**
