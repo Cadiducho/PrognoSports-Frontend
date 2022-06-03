@@ -1,8 +1,7 @@
 import axios from "axios";
 import {Circuit, ICircuit} from '@/types/Circuit';
-import {CircuitVariant, ICircuitVariant} from "@/types/CircuitVariant";
+import {CircuitVariant} from "@/types/CircuitVariant";
 import {PrognoService} from "@/_services/progno.service";
-import {GrandPrix, IGrandPrix} from "@/types/GrandPrix";
 
 export class CircuitService extends PrognoService<ICircuit, Circuit>{
 
@@ -11,11 +10,11 @@ export class CircuitService extends PrognoService<ICircuit, Circuit>{
         return new Circuit(data);
     }
 
-    public async getCircuitList() : Promise<Array<Circuit>> {
+    public async getCircuitList(): Promise<Array<Circuit>> {
         return this.getObjectListFromAPI(`/circuits`);
     }
 
-    public async getCircuit(circuitId: string) : Promise<Circuit> {
+    public async getCircuit(circuitId: string): Promise<Circuit> {
         return this.getObjectFromAPI(`/circuits/${circuitId}`);
     }
 
@@ -24,16 +23,16 @@ export class CircuitService extends PrognoService<ICircuit, Circuit>{
     }
 
     public async listCircuitVariant(circuit: Circuit): Promise<Array<CircuitVariant>> {
-        const variants: Array<CircuitVariant> = [];
-        // @ts-ignore
-        let promise: Promise<ICircuitVariant[]> = await axios.get<ICircuitVariant[]>(`/circuits/${circuit.id}/variants`);
-        promise.then((data => {
-            data.forEach(variant => {
-                variants.push(new CircuitVariant(variant));
-            })
-        }));
-
-        return variants;
+        const variantList: Array<CircuitVariant> = [];
+        return new Promise((resolve, reject) => {
+            axios.get(`/circuits/${circuit.id}/variants`).then((data => {
+                const variantsData = data as unknown as CircuitVariant[];
+                variantsData.forEach(variant => {
+                    variantList.push(new CircuitVariant(variant));
+                })
+                resolve(variantList);
+            }));
+        })
     }
 
     public async createCircuit(data: any): Promise<Circuit> {

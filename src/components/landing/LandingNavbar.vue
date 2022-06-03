@@ -46,7 +46,7 @@
     import AvatarComponent from "@/components/navbar/AvatarComponent.vue";
     import CommunitiesDropdown from "@/components/navbar/CommunitiesDropdown.vue";
 
-    import {defineComponent} from "@vue/composition-api";
+    import {defineComponent} from "vue";
     import {useAuthStore} from "@/pinia/authStore";
     import {useCommunityStore} from "@/pinia/communityStore";
 

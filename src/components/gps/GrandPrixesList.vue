@@ -15,28 +15,52 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
     import GrandPrixPreview from "@/components/gps/GrandPrixPreview.vue";
     import {GrandPrix} from "@/types/GrandPrix";
     import {Season} from "@/types/Season";
     import {Competition} from "@/types/Competition";
     import {grandPrixService} from "@/_services";
 
-    @Component({
-        components: {GrandPrixPreview},
-    })
-    export default class GrandPrixesList extends Vue {
-        @Prop() searchType!: string;
-        @Prop() competition!: Competition;
-        @Prop() season!: Season;
-        private isLoading: boolean = true;
-        private gps: Array<GrandPrix> = [];
+    import {defineComponent, PropType} from "vue";
+    import {useAuthStore} from "@/pinia/authStore";
+    import {useCommunityStore} from "@/pinia/communityStore";
 
+    export default defineComponent({
+        name: "GrandPrixesList",
+        components: {GrandPrixPreview},
+        props: {
+            searchType: {
+                type: String,
+                required: false,
+            },
+            competition: {
+                type: Object as PropType<Competition>,
+                required: true
+            },
+            season: {
+                type: Object as PropType<Season>,
+                required: true
+            }
+        },
+        setup() {
+            const authStore = useAuthStore();
+            const communityStore = useCommunityStore();
+
+            const currentUser = authStore.user;
+            const currentCommunity = communityStore.community;
+            return { currentUser, currentCommunity };
+        },
+        data() {
+            return {
+                isLoading: true,
+                gps: new Array<GrandPrix>(),
+            }
+        },
         mounted() {
             grandPrixService.getGrandPrixesList(this.competition, this.season, this.searchType,).then((list) => {
                 this.gps.push(...list);
                 this.isLoading = false;
             });
         }
-    }
+    });
 </script>

@@ -26,41 +26,58 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import StartGridCard from "@/components/gps/StartGridCard.vue";
 import {RaceSession} from "@/types/RaceSession";
 import EventBus from "@/plugins/eventbus";
-@Component({
-    components: {StartGridCard}
-})
-export default class PitLaneStartGrid extends Vue {
-    @Prop({required: true}) grid!: Map<RaceSession, Array<StartGridPosition>>;
 
-    private chosenSession: RaceSession = {} as RaceSession;
+import {defineComponent, PropType} from "vue";
+import {useAuthStore} from "@/pinia/authStore";
+import {useCommunityStore} from "@/pinia/communityStore";
 
+export default defineComponent({
+    name: "PitLaneStartGrid",
+    components: {StartGridCard},
+    props: {
+        grid: {
+            type: Map as PropType<Map<RaceSession, Array<StartGridPosition>>>,
+            required: true,
+        }
+    },
+    setup() {
+        const authStore = useAuthStore();
+        const communityStore = useCommunityStore();
+
+        const currentUser = authStore.user;
+        const currentCommunity = communityStore.community;
+        return { currentUser, currentCommunity };
+    },
+    data() {
+        return {
+            chosenSession: {} as RaceSession
+        }
+    },
     mounted() {
         this.chosenSession = this.grid.keys().next().value;
 
         EventBus.$on('changeGridSession', (session: RaceSession) => {
             this.chosenSession = session;
         });
+    },
+    methods: {
+        thereIsPitLaneExits() {
+            return this.grid.get(this.chosenSession)?.some((gridPos => gridPos.isFromPit));
+        },
+        thereIsGridChanges() {
+            return this.grid.get(this.chosenSession)?.some((gridPos => gridPos.note !== undefined));
+        }
+    },
+    computed: {
+        parrillaPitLane(): StartGridPosition[] | undefined {
+            return this.grid.get(this.chosenSession)?.filter((gridPos: StartGridPosition) => {
+                return gridPos.isFromPit;
+            });
+        }
     }
-
-
-    get parrillaPitLane() {
-        return this.grid.get(this.chosenSession)?.filter(function (gridPos) {
-            return gridPos.isFromPit;
-        })
-    }
-
-    public thereIsPitLaneExits() {
-        return this.grid.get(this.chosenSession)?.some((gridPos => gridPos.isFromPit));
-    }
-
-    public thereIsGridChanges() {
-        return this.grid.get(this.chosenSession)?.some((gridPos => gridPos.note !== undefined));
-    }
-
-}
+});
 </script>

@@ -42,14 +42,12 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue, Watch} from "vue-property-decorator";
     import {GrandPrix} from "@/types/GrandPrix";
-    import {grandPrixService} from "@/_services";
-    import {Community} from "@/types/Community";
-    import {isValidCommunity} from "@/utils";
 
-    import {defineComponent} from "@vue/composition-api";
+    import {defineComponent} from "vue";
     import {useCommunityStore} from "@/pinia/communityStore";
+    import {isValidCommunity} from "@/utils";
+    import {grandPrixService} from "@/_services";
 
     export default defineComponent({
         name: "NextGrandPrix",
@@ -61,41 +59,41 @@
         },
         data() {
             return {
-                nextGp?: GrandPrix,
+                nextGp: {} as GrandPrix,
+                noNextGp: false,
+                loadingGpData: true,
             }
-        }
-
-        private nextGp?: GrandPrix;
-        private noNextGp: boolean = false;
-        private loadingGpData: boolean = true;
-        get gpLink(): any {
-            return {
-                name: "gpdetails",
-                params: {
-                    competition: this.currentCommunity.competition.code,
-                    season: this.nextGp?.season.name,
-                    id: this.nextGp?.id,
+        },
+        computed: {
+            gpLink(): any {
+                return {
+                    name: "gpdetails",
+                    params: {
+                        competition: this.currentCommunity.competition.code,
+                        season: this.nextGp?.season.name,
+                        id: this.nextGp?.id,
+                    }
                 }
-            };
-        }
-
+            }
+        },
         mounted() {
             if (isValidCommunity(this.currentCommunity)) {
                 this.fetchNextGrandPrixData();
             }
+        },
+        watch: {
+            currentCommunity(newCommunity, oldcommunity) {
+                this.fetchNextGrandPrixData();
+            }
+        },
+        methods: {
+            fetchNextGrandPrixData() {
+                grandPrixService.getNextGrandPrix(this.currentCommunity.competition).then(nextGp => {
+                    this.nextGp = nextGp;
+                }).catch(() => {
+                    this.noNextGp = true;
+                }).finally(() => this.loadingGpData = false);
+            }
         }
-
-        @Watch('currentCommunity')
-        onCurrentCommunityChange(community: Community) {
-            this.fetchNextGrandPrixData();
-        }
-
-        fetchNextGrandPrixData() {
-            grandPrixService.getNextGrandPrix(this.currentCommunity.competition).then(nextGp => {
-                this.nextGp = nextGp;
-            }).catch(() => {
-                this.noNextGp = true;
-            }).finally(() => this.loadingGpData = false);
-        }
-    }
+    });
 </script>

@@ -21,30 +21,45 @@
 
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import {Driver} from "@/types/Driver";
 
-@Component
-export default class StartGridCard extends Vue {
-    @Prop() gridPos!: StartGridPosition;
+import {defineComponent, PropType} from "vue";
+import {useAuthStore} from "@/pinia/authStore";
+import {useCommunityStore} from "@/pinia/communityStore";
 
-    public fullname(driver: Driver) {
-        return driver.firstname + " " + driver.lastname;
-    }
-
-    public gridCardStyle(driver: Driver) {
-        return {
-            'border': '1px solid #'+ driver.team.teamcolor,
+export default defineComponent({
+    name: "StartGridCard",
+    props: {
+        gridPos: {
+            type: Object as PropType<StartGridPosition>,
+            required: true,
         }
-    }
+    },
+    setup() {
+        const authStore = useAuthStore();
+        const communityStore = useCommunityStore();
 
-    public gridCardBackgroundStyle(driver: Driver) {
-        return {
-            'background-color': '#'+ driver.team.teamcolor,
-        }
+        const currentUser = authStore.user;
+        const currentCommunity = communityStore.community;
+        return { currentUser, currentCommunity };
+    },
+    methods: {
+        fullname(driver: Driver) {
+            return driver.firstname + " " + driver.lastname;
+        },
+        gridCardStyle(driver: Driver) {
+            return {
+                'border': '1px solid #' + driver.team.teamcolor,
+            }
+        },
+        gridCardBackgroundStyle(driver: Driver) {
+            return {
+                'background-color': '#'+ driver.team.teamcolor,
+            }
+        },
     }
-}
+});
 </script>
 
 <style scoped>

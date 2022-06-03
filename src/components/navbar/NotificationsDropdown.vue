@@ -41,43 +41,56 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
     import {notificationService} from "@/_services";
     import { Notification } from "@/types/Notification";
-    import Oruga from "@oruga-ui/oruga";
 
-    @Component
-    export default class NotificationsDropdown extends Vue {
-        private unreadNotificationsCount = 0;
-        private notificationList: Array<Notification> = [];
-        private leidas: boolean = false;
+    import {useAuthStore} from "@/pinia/authStore";
+    import {useCommunityStore} from "@/pinia/communityStore";
+    import {defineComponent} from "vue";
 
+    export default defineComponent({
+        name: "NotificationsDropdown",
+        setup() {
+            const authStore = useAuthStore();
+            const communityStore = useCommunityStore();
+
+            const currentUser = authStore.user;
+            const currentCommunity = communityStore.community;
+            return { currentUser, currentCommunity };
+        },
+        data() {
+            return {
+                unreadNotificationsCount: 0,
+                notificationList: [] as Array<Notification>,
+                leidas: false
+            }
+        },
         created() {
             this.getNotifications();
-        }
-
-        public clearNotification() {
-            Vue.prototype.$oruga.notification.open({
-                message: "Has limpiado tus notificaciones",
-                variant: "success",
-            });
-            notificationService.clearNotifications().then(() => {
-                this.unreadNotificationsCount = 0;
-                this.leidas = true;
-            });
-        }
-
-        public getNotifications()  {
-            notificationService.getNotifications().then((result) => {
-                this.notificationList = result;
-                this.notificationList.forEach(notification => {
-                    if (notification.readAt == undefined) {
-                        this.unreadNotificationsCount++;
-                    }
+        },
+        methods: {
+            clearNotification() {
+                this.$oruga.notification.open({
+                    message: "Has limpiado tus notificaciones",
+                    variant: "success",
                 });
-            });
+                notificationService.clearNotifications().then(() => {
+                    this.unreadNotificationsCount = 0;
+                    this.leidas = true;
+                });
+            },
+            getNotifications() {
+                notificationService.getNotifications().then((result) => {
+                    this.notificationList = result;
+                    this.notificationList.forEach(notification => {
+                        if (notification.readAt == undefined) {
+                            this.unreadNotificationsCount++;
+                        }
+                    });
+                });
+            }
         }
-    }
+    });
 </script>
 
 <style lang="css" scoped>

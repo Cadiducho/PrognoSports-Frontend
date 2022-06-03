@@ -80,21 +80,23 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {User} from "@/types/User";
-import {namespace} from "vuex-class";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-const Auth = namespace('Auth')
 
-@Component({
-        components: {
-            AlertNoPermission,
-            PrognoPageTitle,
-        }
-    }
-)
-export default class AdminPage extends Vue {
-    @Auth.State("user") private currentUser!: User;
-}
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/pinia/authStore";
+
+export default defineComponent({
+    name: "LandingNavbar",
+    components: {
+        AlertNoPermission,
+        PrognoPageTitle,
+    },
+    setup() {
+        const authStore = useAuthStore();
+
+        const currentUser = authStore.user;
+        return { currentUser };
+    },
+});
 </script>

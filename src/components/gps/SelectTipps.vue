@@ -112,46 +112,67 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
 import {RaceSession} from "@/types/RaceSession";
 import draggable from "vuedraggable";
 import {grandPrixService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Driver} from "@/types/Driver";
-import {Community} from "@/types/Community";
-import {namespace} from "vuex-class";
 import {RaceResult} from "@/types/RaceResult";
-import {User} from "@/types/User";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import {RuleSet} from "@/types/RuleSet";
-const Auth = namespace('Auth')
 
-@Component({
+import {defineComponent, PropType} from "vue";
+import {useAuthStore} from "@/pinia/authStore";
+import {useCommunityStore} from "@/pinia/communityStore";
+
+export default defineComponent({
+    name: "SelectTipps",
     components: {
         draggable
-    }}
-)
-export default class SelectTipps extends Vue {
-    @Prop({required: true}) session!: RaceSession;
-    @Prop({required: true}) grandPrix!: GrandPrix;
-    @Prop({required: true}) ruleSet!: RuleSet;
-    @Prop({required: true}) drivers!: Array<Driver>;
-    @Prop({required: true}) startGrids!: Map<RaceSession, Array<StartGridPosition>>;
+    },
+    props: {
+        session: {
+            type: Object as PropType<RaceSession>,
+            required: true,
+        },
+        grandPrix: {
+            type: Object as PropType<GrandPrix>,
+            required: true,
+        },
+        ruleSet: {
+            type: Object as PropType<RuleSet>,
+            required: true,
+        },
+        drivers: {
+            type: Array as PropType<Array<Driver>>,
+            required: true,
+        },
+        startGrids: {
+            type: Map as PropType<Map<RaceSession, Array<StartGridPosition>>>,
+            required: true,
+        },
+    },
+    setup() {
+        const authStore = useAuthStore();
+        const communityStore = useCommunityStore();
 
-    @Auth.State("user") private currentUser!: User;
-    @Auth.State("community") private currentCommunity!: Community;
+        const currentUser = authStore.user;
+        const currentCommunity = communityStore.community;
+        return { currentUser, currentCommunity };
+    },
+    data() {
+        return {
+            drag: false,
+            filtroPiloto: '',
+            orderType: 1,
+            orderAscendent: false,
 
-    private drag: boolean = false;
-    private filtroPiloto: string = '';
-    private orderType: number = 1;
-    private orderAscendent: boolean = false;
-
-    private pilotosPronosticados: Array<Driver> = [];
-    private pilotosDisponibles: Array<Driver> = [];
-    private originalPilotos: Array<Driver> = [];
-
-    private indexedGrid: Map<number, number> = new Map(); // Dorsal del piloto -> Posicion en la grid
-
+            pilotosPronosticados: new Array<Driver>(),
+            pilotosDisponibles: new Array<Driver>(),
+            originalPilotos: new Array<Driver>(),
+            indexedGrid: new Map<number, number>(), // Dorsal del piloto -> Posicion en la grid
+        }
+    },
     mounted() {
 
         this.originalPilotos.push(...this.drivers);
@@ -179,102 +200,99 @@ export default class SelectTipps extends Vue {
                 }
             }
         });
-    }
+    },
+    methods: {
+        moveToTippList(driver: Driver, index: number) {
+            console.log("Moviendo a pronosticados " + driver.code);
+            this.pilotosDisponibles.splice(index, 1);
+            this.pilotosPronosticados.push(driver);
+        },
+        moveToAvailableList(driver: Driver, index: number) {
+            console.log("Moviendo a disponibles " + driver.code);
+            this.pilotosPronosticados.splice(index, 1);
+            this.pilotosDisponibles.push(driver);
+        },
+        styleDriverCard(driver: Driver) {
+            return {
+                color: 'black',
+                'border': '1px solid #'+ driver.team.teamcolor,
+                'border-left': '10px #'+ driver.team.teamcolor + ' solid',
+                // 'border-right': '30px #'+ driver.team.teamcolor + ' solid',
+                'border-right-image-source': 'linear-gradient(to left, #'+ driver.team.teamcolor + ', #ffffff)',
+                opacity: 0.9,
+            }
+        },
+        styleDorsal(driver: Driver) {
+            return {
+                color: 'white',
+                textShadow: '0 0 2px #000',
+                backgroundColor: '#' + driver.team.teamcolor,
+            }
+        },
+        reiniciarPronostico() {
+            this.pilotosPronosticados = [];
+            this.pilotosDisponibles = [];
+            this.pilotosDisponibles.push(...this.originalPilotos);
+        },
+        enviarPronostico() {
+            let tipps: Array<RaceResult> = [];
 
-    public moveToTippList(driver: Driver, index: number) {
-        console.log("Moviendo a pronosticados " + driver.code);
-        this.pilotosDisponibles.splice(index, 1);
-        this.pilotosPronosticados.push(driver);
-    }
-
-    public moveToAvailableList(driver: Driver, index: number) {
-        console.log("Moviendo a disponibles " + driver.code);
-        this.pilotosPronosticados.splice(index, 1);
-        this.pilotosDisponibles.push(driver);
-    }
-
-    public styleDriverCard(driver: Driver) {
-        return {
-            color: 'black',
-            'border': '1px solid #'+ driver.team.teamcolor,
-            'border-left': '10px #'+ driver.team.teamcolor + ' solid',
-            // 'border-right': '30px #'+ driver.team.teamcolor + ' solid',
-            'border-right-image-source': 'linear-gradient(to left, #'+ driver.team.teamcolor + ', #ffffff)',
-            opacity: 0.9,
-        }
-    }
-
-    public styleDorsal(driver: Driver) {
-        return {
-            color: 'white',
-            textShadow: '0 0 2px #000',
-            backgroundColor: '#' + driver.team.teamcolor,
-        }
-    }
-
-    get pilotosDisponiblesFiltrados(): Array<Driver> {
-        const sortAlfabetico = (d1: Driver, d2: Driver) => (d1.lastname < d2.lastname ? -1 : 1);
-        const sortEquipos = (d1: Driver, d2: Driver) => (d1.team.name < d2.team.name ? -1 : 1);
-        const sortDorsal = (d1: Driver, d2: Driver) => (d1.number < d2.number ? -1 : 1);
-        const sortParrilla = (d1: Driver, d2: Driver) => (this.indexedGrid.get(d1.number)! < this.indexedGrid.get(d2.number)! ? -1 : 1);
-
-
-        let pickedSort: (d1: Driver, d2: Driver) => (number);
-        switch (this.orderType) {
-            case 1: pickedSort = sortEquipos; break;
-            case 2: pickedSort = sortDorsal; break;
-            case 3: pickedSort = sortParrilla; break;
-            default: pickedSort = sortAlfabetico;
-        }
-        let listaOrdenada = this.pilotosDisponibles.sort(pickedSort);
-
-        if (this.orderAscendent) {
-            listaOrdenada = listaOrdenada.reverse();
-        }
-        if (!this.filtroPiloto.trim()) {
-            return listaOrdenada;
-        }
-
-        let filtroLowerCase = this.filtroPiloto.toLowerCase();
-        return listaOrdenada.filter(driver => {
-            return driver.lastname.toLowerCase().includes(filtroLowerCase)
-                || driver.firstname.toLowerCase().includes(filtroLowerCase)
-                || driver.team.name.toLowerCase().includes(filtroLowerCase)
-                || driver.team.longname.toLowerCase().includes(filtroLowerCase)
-                || driver.team.carname.toLowerCase().includes(filtroLowerCase);
-        })
-    }
-
-    private reiniciarPronostico() {
-        this.pilotosPronosticados = [];
-        this.pilotosDisponibles = [];
-        this.pilotosDisponibles.push(...this.originalPilotos);
-    }
-
-    private enviarPronostico() {
-        let tipps: Array<RaceResult> = [];
-
-        this.pilotosPronosticados.forEach((driver, index, array) => {
-            tipps.push({position: index + 1, driver: {id: driver.id} as Driver} as RaceResult);
-        });
-        grandPrixService.postUserTipps(this.grandPrix, this.session, this.currentCommunity, tipps).then(
-            () => {
-                this.$oruga.notification.open({
-                    message: "¡Has guardado tus pronósticos!",
-                    variant: "success",
-                });
-            },
-            (error: any) => {
-                let message = "Error guardando tus pronósticos: " + error.message;
-
-                this.$oruga.notification.open({
-                    duration: 5000,
-                    message: message,
-                    variant: "danger",
-                });
+            this.pilotosPronosticados.forEach((driver, index, array) => {
+                tipps.push({position: index + 1, driver: {id: driver.id} as Driver} as RaceResult);
             });
+            grandPrixService.postUserTipps(this.grandPrix, this.session, this.currentCommunity, tipps).then(
+                () => {
+                    this.$oruga.notification.open({
+                        message: "¡Has guardado tus pronósticos!",
+                        variant: "success",
+                    });
+                },
+                (error: any) => {
+                    let message = "Error guardando tus pronósticos: " + error.message;
+
+                    this.$oruga.notification.open({
+                        duration: 5000,
+                        message: message,
+                        variant: "danger",
+                    });
+                });
+        }
+    },
+    computed: {
+        pilotosDisponiblesFiltrados(): Array<Driver> {
+            const sortAlfabetico = (d1: Driver, d2: Driver) => (d1.lastname < d2.lastname ? -1 : 1);
+            const sortEquipos = (d1: Driver, d2: Driver) => (d1.team.name < d2.team.name ? -1 : 1);
+            const sortDorsal = (d1: Driver, d2: Driver) => (d1.number < d2.number ? -1 : 1);
+            const sortParrilla = (d1: Driver, d2: Driver) => (this.indexedGrid.get(d1.number)! < this.indexedGrid.get(d2.number)! ? -1 : 1);
+
+
+            let pickedSort: (d1: Driver, d2: Driver) => (number);
+            switch (this.orderType) {
+                case 1: pickedSort = sortEquipos; break;
+                case 2: pickedSort = sortDorsal; break;
+                case 3: pickedSort = sortParrilla; break;
+                default: pickedSort = sortAlfabetico;
+            }
+            let listaOrdenada = this.pilotosDisponibles.sort(pickedSort);
+
+            if (this.orderAscendent) {
+                listaOrdenada = listaOrdenada.reverse();
+            }
+            if (!this.filtroPiloto.trim()) {
+                return listaOrdenada;
+            }
+
+            let filtroLowerCase = this.filtroPiloto.toLowerCase();
+            return listaOrdenada.filter(driver => {
+                return driver.lastname.toLowerCase().includes(filtroLowerCase)
+                    || driver.firstname.toLowerCase().includes(filtroLowerCase)
+                    || driver.team.name.toLowerCase().includes(filtroLowerCase)
+                    || driver.team.longname.toLowerCase().includes(filtroLowerCase)
+                    || driver.team.carname.toLowerCase().includes(filtroLowerCase);
+            })
+        }
     }
-}
+});
 </script>
 
 <style scoped lang="scss">

@@ -67,12 +67,17 @@
 
 <script lang="ts">
 import { Circuit } from "@/types/Circuit";
-import { Component, Prop, Vue } from "vue-property-decorator";
+import {defineComponent, PropType} from "vue";
 
-@Component
-export default class ViewCircuitItem extends Vue {
-    @Prop() circuit!: Circuit;
-}
+export default defineComponent({
+    name: "ViewCircuitItem",
+    props: {
+        circuit: {
+            type: Object as PropType<Circuit>,
+            require: true,
+        }
+    }
+});
 </script>
 
 <style scoped>

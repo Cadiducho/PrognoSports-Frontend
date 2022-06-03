@@ -1,12 +1,10 @@
 import Vue from 'vue'
-import App from '@/App.vue'
-import router from "@/_router";
 import { createPinia, PiniaVuePlugin } from 'pinia'
 Vue.use(PiniaVuePlugin);
 const pinia = createPinia();
 
 // @ts-ignore
-pinia.install(VueCompositionApi); // Hack para crear instancia de pinia en vue2 y que el router en beforeEach lo pueda usar
+pinia.install(PiniaVuePlugin); // Hack para crear instancia de pinia en vue2 y que el router en beforeEach lo pueda usar
 
 // @ts-ignore
 import VueHeadful from 'vue-headful';

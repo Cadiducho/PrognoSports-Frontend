@@ -49,36 +49,48 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
 import {Community} from "@/types/Community";
 import ConfirmLeaveCommunityModal from "@/components/communities/ConfirmLeaveCommunityModal.vue";
 import ConfirmJoinCommunityModal from "@/components/communities/ConfirmJoinCommunityModal.vue";
 
-@Component<CommunityListItem>({
+import {defineComponent, PropType} from "vue";
+
+export default defineComponent({
+    name: "CommunityListItem",
     components: {ConfirmJoinCommunityModal, ConfirmLeaveCommunityModal},
-})
-export default class CommunityListItem extends Vue {
-    @Prop() community!: Community;
-    @Prop() isUserInCommunity!: boolean;
-    private isJoinModalActive: boolean = false;
-    private isLeaveModalActive: boolean = false;
-
-    private tryJoinCommunity() {
-        this.$oruga.modal.open({
-            parent: this,
-            component: ConfirmJoinCommunityModal,
-            trapFocus: false,
-            props: {community: this.community}
-        });
+    props: {
+        community: {
+            type: Object as PropType<Community>,
+            required: true,
+        },
+        isUserInCommunity: {
+            type: Boolean,
+            required: true,
+        }
+    },
+    data() {
+        return {
+            isJoinModalActive: false,
+            isLeaveModalActive: false,
+        }
+    },
+    methods: {
+        tryJoinCommunity() {
+            this.$oruga.modal.open({
+                parent: this,
+                component: ConfirmJoinCommunityModal,
+                trapFocus: false,
+                props: {community: this.community}
+            });
+        },
+        tryLeaveCommunity() {
+            this.$oruga.modal.open({
+                parent: this,
+                component: ConfirmLeaveCommunityModal,
+                trapFocus: false,
+                props: {community: this.community}
+            });
+        }
     }
-
-    private tryLeaveCommunity() {
-        this.$oruga.modal.open({
-            parent: this,
-            component: ConfirmLeaveCommunityModal,
-            trapFocus: false,
-            props: {community: this.community}
-        });
-    }
-}
+});
 </script>

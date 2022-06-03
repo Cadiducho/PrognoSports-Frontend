@@ -20,24 +20,26 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
 import Navbar from "@/components/navbar/Navbar.vue";
 import Breadcrumb from "@/components/lib/Breadcrumb.vue";
 import LandingFooter from "@/components/landing/LandingFooter.vue";
 
-@Component({
+import {defineComponent} from "vue";
+
+export default defineComponent({
+    name: "PrognoView",
     components: {
         Navbar,
         Breadcrumb,
-        LandingFooter
-    }
-})
-export default class PrognoView extends Vue {
+        LandingFooter,
+    },
+    setup() {
+        const betaAceptada: boolean = localStorage.getItem("beta-accepted") === "true";
+        const acceptBeta = () => {
+            localStorage.setItem("beta-accepted", "true");
+        };
 
-    betaAceptada: boolean = localStorage.getItem("beta-accepted") === "true";
-
-    acceptBeta() {
-        localStorage.setItem("beta-accepted", "true");
+        return { betaAceptada, acceptBeta }
     }
-}
+});
 </script>

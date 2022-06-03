@@ -87,31 +87,39 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import {Community} from "@/types/Community";
 import {communityService} from "@/_services";
 import CommunityListItem from "@/components/communities/CommunityListItem.vue";
-import {User} from "@/types/User";
-import {namespace} from "vuex-class";
 import EventBus from "@/plugins/eventbus";
-const Auth = namespace('Auth')
 
-@Component<ViewCommunitiesList>({
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/pinia/authStore";
+import {useCommunityStore} from "@/pinia/communityStore";
+
+export default defineComponent({
+    name: "ViewCommunitiesList",
     components: {
         CommunityListItem,
         PrognoPageTitle,
     },
-})
-export default class ViewCommunitiesList extends Vue {
-    @Auth.State("user") private currentUser!: User;
-    @Auth.Getter private thereIsCurrentCommunity?: boolean;
-    private activeTab: number = 1;
-    private communityList: Array<Community> = [];
-    private myCommunityList: Array<Community> = [];
-    private filtroComunidad: String = '';
-    private isLoading: boolean = true;
+    setup() {
+        const authStore = useAuthStore();
+        const communityStore = useCommunityStore();
 
+        const currentUser = authStore.user;
+        const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
+        return { currentUser, thereIsCurrentCommunity };
+    },
+    data() {
+        return {
+            activeTab: 1,
+            communityList: new Array<Community>(),
+            myCommunityList: new Array<Community>(),
+            filtroComunidad: '',
+            isLoading: true,
+        }
+    },
     mounted() {
         this.loadCommunities();
 
@@ -119,46 +127,46 @@ export default class ViewCommunitiesList extends Vue {
             this.isLoading = true;
             this.loadCommunities();
         });
-    }
+    },
+    methods: {
+        loadCommunities() {
+            communityService.getAllCommunities().then((communities) => {
+                this.communityList = [];
+                this.communityList.push(...communities);
 
-    loadCommunities() {
-        communityService.getAllCommunities().then((communities) => {
-            this.communityList = [];
-            this.communityList.push(...communities);
+                communityService.getUserCommunities(this.currentUser).then(userCommunities => {
+                    this.myCommunityList = [];
+                    this.myCommunityList.push(...userCommunities);
+                    this.isLoading = false;
+                })
+            });
+        },
+        filteredCommunities(orinalList: Array<Community>): Array<Community> {
+            if (!this.filtroComunidad.trim()) {
+                return orinalList;
+            }
 
-            communityService.getUserCommunities(this.currentUser).then(userCommunities => {
-                this.myCommunityList = [];
-                this.myCommunityList.push(...userCommunities);
-                this.isLoading = false;
-            })
-        });
-    }
+            const filtroLowerCase: string = this.filtroComunidad.toLowerCase().trim();
 
-    private filteredCommunities(orinalList: Array<Community>): Array<Community> {
-        if (!this.filtroComunidad.trim()) {
-            return orinalList;
+            return orinalList.filter((community) => {
+                return (
+                    community.name
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    community.owner.username
+                        .toLowerCase()
+                        .includes(filtroLowerCase)
+                );
+            });
         }
-
-        const filtroLowerCase: string = this.filtroComunidad.toLowerCase().trim();
-
-        return orinalList.filter((community) => {
-            return (
-                community.name
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                community.owner.username
-                    .toLowerCase()
-                    .includes(filtroLowerCase)
-            );
-        });
+    },
+    computed: {
+        openCommunities(): Array<Community> {
+            return this.filteredCommunities(this.communityList).filter(({open}) => (open));
+        },
+        closedCommunities(): Array<Community> {
+            return this.filteredCommunities(this.communityList).filter(({open}) => (!open));
+        }
     }
-
-    get openCommunities(): Array<Community> {
-        return this.filteredCommunities(this.communityList).filter(({open}) => (open));
-    }
-
-    get closedCommunities(): Array<Community> {
-        return this.filteredCommunities(this.communityList).filter(({open}) => (!open));
-    }
-}
+});
 </script>

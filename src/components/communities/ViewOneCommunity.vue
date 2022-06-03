@@ -176,7 +176,6 @@
 
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import {communityService} from "@/_services";
 
@@ -184,22 +183,36 @@ import {Community} from "@/types/Community";
 import {CommunityUser} from "@/types/CommunityUser";
 import dayjs from "dayjs";
 
-@Component<ViewOneCommunity>({
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/pinia/authStore";
+import {useCommunityStore} from "@/pinia/communityStore";
+
+export default defineComponent({
+    name: "ViewOneCommunity",
     components: {
         PrognoPageTitle
     },
-})
-export default class ViewOneCommunity extends Vue {
-    private community!: Community;
-    private isLoading: boolean = true;
-    private thereIsCommunity: boolean = false;
-    private members: Array<CommunityUser> = [];
-    private isUserInCommunity: boolean = false;
+    setup() {
+        const authStore = useAuthStore();
+        const communityStore = useCommunityStore();
 
-    private searchInput: String = '';
-    private orderType: number = 2;
-    private orderAscendent: boolean = false;
+        const currentUser = authStore.user;
+        const currentCommunity = communityStore.community;
+        return { currentUser, currentCommunity };
+    },
+    data() {
+        return {
+            community: {} as Community,
+            isLoading: true,
+            thereIsCommunity: false,
+            members: new Array<CommunityUser>(),
+            isUserInCommunity: false,
 
+            searchInput: '',
+            orderType: 2,
+            orderAscendent: false,
+        }
+    },
     created() {
         let communityId = this.$route.params.community;
 
@@ -216,71 +229,72 @@ export default class ViewOneCommunity extends Vue {
         }).finally(() => {
             this.isLoading = false;
         })
-    }
-
-    get communityName() {
-        if (this.thereIsCommunity) {
-            return this.community.name;
-        } else {
-            return "Comunidad no encontrada";
-        }
-    }
-
-    clickInvitation() {
-        let invitation = "https://prognosports.com/invitation/" + this.community.name + "/" + this.community.invitation;
-        this.$copyText(invitation).then(() => {
-            this.$oruga.notification.open({
-                message: "Se te ha copiado la invitación al portapapeles",
-                variant: "success",
-            })}
-        );
-    }
-
-    get filteredMembers(): Array<CommunityUser> {
-        const sortUsername = (m1: CommunityUser, m2: CommunityUser) => (m1.user.username < m2.user.username ? -1 : 1);
-        const sortRank = (m1: CommunityUser, m2: CommunityUser) => (m1.user.rank.name < m2.user.rank.name ? -1 : 1);
-        const sortRegisterDate = (m1: CommunityUser, m2: CommunityUser) => (dayjs(m1.user.created).isBefore(m2.user.created) ? -1 : 1);
-
-        const sortLastConnect = (m1: CommunityUser, m2: CommunityUser) => {
-            if (m1.user.last_activity === undefined) return 1;
-            if (m2.user.last_activity === undefined) return -1;
-            const d1 = new Date(m1.user.last_activity);
-            const d2 = new Date(m2.user.last_activity);
-            return (d1 < d2 ? 10 : -10);
-        }
-
-        let pickedSort: (m1: CommunityUser, m2: CommunityUser) => (number);
-        switch (this.orderType) {
-            case 1: pickedSort = sortRank; break;
-            case 2: pickedSort = sortLastConnect; break;
-            case 3: pickedSort = sortRegisterDate; break;
-            default: pickedSort = sortUsername;
-        }
-        let listaOrdenada = this.members.sort(pickedSort);
-
-        if (this.orderAscendent) {
-            listaOrdenada = listaOrdenada.reverse();
-        }
-
-        if (!this.searchInput.trim()) {
-            return listaOrdenada;
-        }
-
-        const filtroLowerCase: string = this.searchInput.toLowerCase().trim();
-
-        return listaOrdenada.filter((member) => {
-            return (
-                member.user.username
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                (member.user.bio ?? "")
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                member.user.rank.name
-                    .toLowerCase()
-                    .includes(filtroLowerCase)
+    },
+    methods: {
+        clickInvitation() {
+            let invitation = "https://prognosports.com/invitation/" + this.community.name + "/" + this.community.invitation;
+            this.$copyText(invitation).then(() => {
+                this.$oruga.notification.open({
+                    message: "Se te ha copiado la invitación al portapapeles",
+                    variant: "success",
+                })}
             );
-        });
+        },
+    },
+    computed: {
+        communityName() {
+            if (this.thereIsCommunity) {
+                return this.community.name;
+            } else {
+                return "Comunidad no encontrada";
+            }
+        },
+        filteredMembers(): Array<CommunityUser> {
+            const sortUsername = (m1: CommunityUser, m2: CommunityUser) => (m1.user.username < m2.user.username ? -1 : 1);
+            const sortRank = (m1: CommunityUser, m2: CommunityUser) => (m1.user.rank.name < m2.user.rank.name ? -1 : 1);
+            const sortRegisterDate = (m1: CommunityUser, m2: CommunityUser) => (dayjs(m1.user.created).isBefore(m2.user.created) ? -1 : 1);
+
+            const sortLastConnect = (m1: CommunityUser, m2: CommunityUser) => {
+                if (m1.user.last_activity === undefined) return 1;
+                if (m2.user.last_activity === undefined) return -1;
+                const d1 = new Date(m1.user.last_activity);
+                const d2 = new Date(m2.user.last_activity);
+                return (d1 < d2 ? 10 : -10);
+            }
+
+            let pickedSort: (m1: CommunityUser, m2: CommunityUser) => (number);
+            switch (this.orderType) {
+                case 1: pickedSort = sortRank; break;
+                case 2: pickedSort = sortLastConnect; break;
+                case 3: pickedSort = sortRegisterDate; break;
+                default: pickedSort = sortUsername;
+            }
+            let listaOrdenada = this.members.sort(pickedSort);
+
+            if (this.orderAscendent) {
+                listaOrdenada = listaOrdenada.reverse();
+            }
+
+            if (!this.searchInput.trim()) {
+                return listaOrdenada;
+            }
+
+            const filtroLowerCase: string = this.searchInput.toLowerCase().trim();
+
+            return listaOrdenada.filter((member) => {
+                return (
+                    member.user.username
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    (member.user.bio ?? "")
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    member.user.rank.name
+                        .toLowerCase()
+                        .includes(filtroLowerCase)
+                );
+            });
+        }
     }
-}
+});
 </script>

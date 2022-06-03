@@ -41,13 +41,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
 import { User } from "@/types/User";
+import {defineComponent, PropType} from "vue";
 
-@Component
-export default class ScoreComponents extends Vue {
-    @Prop({ required: true }) user!: User;
-}
+export default defineComponent({
+    name: "ScoreComponents",
+    props: {
+        user: {
+            type: Object as PropType<User>,
+            required: true,
+        }
+    }
+});
 </script>
 
 <style lang="css" scoped>

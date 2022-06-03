@@ -120,7 +120,7 @@ import {marked} from 'marked';
 import {competitionService} from "@/_services";
 import {RuleSet} from "@/types/RuleSet";
 import {isValidCommunity} from "@/utils";
-import {defineComponent} from "@vue/composition-api";
+import {defineComponent} from "vue";
 import {useAuthStore} from "@/pinia/authStore";
 import {useCommunityStore} from "@/pinia/communityStore";
 

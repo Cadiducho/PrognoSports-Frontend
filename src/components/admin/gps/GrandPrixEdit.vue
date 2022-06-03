@@ -83,62 +83,87 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {User} from "@/types/User";
-import {namespace} from "vuex-class";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-import {
-    circuitService,
-    communityService,
-    competitionService,
-    driversService,
-    grandPrixService,
-    scoreService, seasonService
-} from "@/_services";
+import {circuitService, grandPrixService, seasonService} from "@/_services";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
-import {marked} from "marked";
 import {GrandPrix} from "@/types/GrandPrix";
-import EventBus from "@/plugins/eventbus";
-import dayjs from "dayjs";
 import {Circuit} from "@/types/Circuit";
-import {CircuitVariant} from "@/types/CircuitVariant";
-const Auth = namespace('Auth')
 
-@Component({
-        components: {
-            AlertNoPermission,
-            PrognoPageTitle,
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/pinia/authStore";
+
+export default defineComponent({
+    name: "CompetitionEdit",
+    components: {
+        AlertNoPermission,
+        PrognoPageTitle,
+    },
+    setup() {
+        const authStore = useAuthStore();
+
+        const currentUser = authStore.user;
+        return {currentUser};
+    },
+    data() {
+        return {
+            competition: {code: this.$route.params.competition} as Competition,
+            season: {name: this.$route.params.season} as Season,
+            id: this.$route.params.id,
+
+            grandPrix: {} as GrandPrix,
+            thereIsGrandPrix: false,
+            isLoadingGrandPrix: true,
+
+            circuitList: new Array<Circuit>(),
+            seasonList: new Array<Season>(),
         }
-    }
-)
-export default class CompetitionEdit extends Vue {
-    @Auth.State("user") private currentUser!: User;
+    },
+    methods: {
+        isDataOk(): boolean {
+            return !(this.grandPrix!.id == undefined
+                && this.grandPrix!.code == undefined
+                && this.grandPrix!.name == undefined
+                && this.grandPrix!.circuit!.id == undefined
+                && this.grandPrix!.laps == undefined
+                && this.grandPrix!.promo_image_url == undefined
+                && this.grandPrix!.round == undefined
+                && this.grandPrix!.season!.id == undefined
+            )
+        },
+        editGrandPrix(): void {
+            let data = {
+                id: this.grandPrix!.id,
+                season: this.season.id,
+                competition: this.competition.id,
+                round: this.grandPrix!.round,
+                name: this.grandPrix!.name,
+                code: this.grandPrix!.code,
+                circuit: this.grandPrix!.circuit.id,
+                variant: this.grandPrix!.circuit.variant.name,
+                promo_image_url: this.grandPrix!.promo_image_url,
+                laps: this.grandPrix!.laps,
+                suspended: this.grandPrix!.suspended
+            };
 
-    private competition: Competition = { code: this.$route.params.competition } as Competition;
-    private season: Season = {name: this.$route.params.season } as Season;
-    private id: string = this.$route.params.id;
+            grandPrixService.editGrandPrix(data).then((result) => {
+                this.$oruga.notification.open({
+                    message: "Se ha editado correctamente el gran premio `" + result.name + "`",
+                    variant: "success",
+                });
 
-    private grandPrix?: GrandPrix;
-    private thereIsGrandPrix: boolean = false;
-    private isLoadingGrandPrix: boolean = true;
-
-    private circuitList: Array<Circuit> = [];
-    private seasonList: Array<Season> = [];
-
-    private isDataOk(): boolean {
-        return !(this.grandPrix!.id == undefined
-            && this.grandPrix!.code == undefined
-            && this.grandPrix!.name == undefined
-            && this.grandPrix!.circuit!.id == undefined
-            && this.grandPrix!.laps == undefined
-            && this.grandPrix!.promo_image_url == undefined
-            && this.grandPrix!.round == undefined
-            && this.grandPrix!.season!.id == undefined
-        )
-    }
-
+                this.$router.push({
+                    name: 'adminGps'
+                })
+            }).catch((error) => {
+                this.$oruga.notification.open({
+                    message: error.message,
+                    variant: "danger",
+                });
+            });
+        }
+    },
     mounted() {
         grandPrixService.getGrandPrix(this.competition, this.season, this.id)
             .then(gp => {
@@ -156,41 +181,8 @@ export default class CompetitionEdit extends Vue {
                 this.competition = gp.competition;
                 this.season = gp.season;
             }).finally(() => {
-                this.isLoadingGrandPrix = false;
-            });
-    }
-
-    private editGrandPrix(): void {
-        let data = {
-            id: this.grandPrix!.id,
-            season: this.season.id,
-            competition: this.competition.id,
-            round: this.grandPrix!.round,
-            name: this.grandPrix!.name,
-            code: this.grandPrix!.code,
-            circuit: this.grandPrix!.circuit.id,
-            variant: this.grandPrix!.circuit.variant.name,
-            promo_image_url: this.grandPrix!.promo_image_url,
-            laps: this.grandPrix!.laps,
-            suspended: this.grandPrix!.suspended
-        };
-
-        grandPrixService.editGrandPrix(data).then((result) => {
-            this.$oruga.notification.open({
-                message: "Se ha editado correctamente el gran premio `" + result.name + "`",
-                variant: "success",
-            });
-
-            this.$router.push({
-                name: 'adminGps'
-            })
-        }).catch((error) => {
-            this.$oruga.notification.open({
-                message: error.message,
-                variant: "danger",
-            });
+            this.isLoadingGrandPrix = false;
         });
     }
-
-}
+});
 </script>

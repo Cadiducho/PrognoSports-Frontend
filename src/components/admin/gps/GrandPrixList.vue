@@ -82,37 +82,40 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {User} from "@/types/User";
-import {namespace} from "vuex-class";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-import {competitionService, grandPrixService, seasonService} from "@/_services";
+import {grandPrixService, seasonService} from "@/_services";
 import {Competition} from "@/types/Competition";
 import {GrandPrix} from "@/types/GrandPrix";
-import {Community} from "@/types/Community";
 import {Season} from "@/types/Season";
-const Auth = namespace('Auth')
 
-@Component({
-        components: {
-            AlertNoPermission,
-            PrognoPageTitle,
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/pinia/authStore";
+import {useCommunityStore} from "@/pinia/communityStore";
+
+export default defineComponent({
+    name: "GrandPrixList",
+    components: {
+        AlertNoPermission,
+        PrognoPageTitle,
+    },
+    setup() {
+        const authStore = useAuthStore();
+        const communityStore = useCommunityStore();
+
+        const currentUser = authStore.user;
+        const currentCommunity = communityStore.community;
+        return {currentUser, currentCommunity};
+    },
+    data() {
+        return {
+            isPaginated: true,
+            filtroGrandprix: '',
+            gps: new Array<GrandPrix>(),
+            seasonList: new Array<Season>(),
+            chosenSeason: {} as Season
         }
-    }
-)
-export default class GrandPrixList extends Vue {
-    @Auth.State("user") private currentUser!: User;
-    @Auth.State("community") private currentCommunity!: Community;
-
-    private isPaginated: boolean = true;
-    private filtroGrandprix: String = '';
-
-    private gps: Array<GrandPrix> = [];
-    private seasonList: Array<Season> = [];
-
-    private chosenSeason?: Season;
-
+    },
     mounted() {
         this.loadGrandPrixes(this.currentCommunity.competition, this.currentCommunity.competition.currentSeason);
 
@@ -120,84 +123,81 @@ export default class GrandPrixList extends Vue {
             this.seasonList = [];
             this.seasonList.push(...seasons);
         });
-    }
-
-    private changeSeason() {
-        this.loadGrandPrixes(this.chosenSeason!.competition, this.chosenSeason!);
-    }
-
-    loadGrandPrixes(competition: Competition, season: Season) {
-        grandPrixService.getGrandPrixesList(competition, season)
-            .then((gpsList) => {
-                this.gps = [];
-                this.gps.push(...gpsList);
+    },
+    methods: {
+        loadGrandPrixes(competition: Competition, season: Season) {
+            grandPrixService.getGrandPrixesList(competition, season)
+                .then((gpsList) => {
+                    this.gps = [];
+                    this.gps.push(...gpsList);
+                })
+        },
+        changeSeason() {
+            this.loadGrandPrixes(this.chosenSeason!.competition, this.chosenSeason!);
+        },
+        confirmDeleteGrandPrix(gp: GrandPrix) {
+            this.$oruga.dialog.confirm({
+                title: 'Eliminar gran premio',
+                message: `¿Estás seguro de que quieres <b>eliminar</b> el Gran Premio ${gp.name} #${gp.season.name}? <br/>Esta acción se puede deshacer.`,
+                confirmText: 'Eliminar gran premio',
+                type: 'is-danger',
+                hasIcon: true,
+                onConfirm: () => this.deleteCompetition(gp),
             })
-    }
+        },
+        getSlug(gp: GrandPrix): string {
+            return `${gp.competition.code}/${gp.season.name}/${gp.id}`;
+        },
+        deleteCompetition(gp: GrandPrix) {
+            /*
+                    grandPrixService.deleteGranPrix(gp).then((ok) => {
 
-    get filteredGps(): Array<GrandPrix> {
-        if (!this.filtroGrandprix.trim()) {
-            return this.gps;
+                        // Elimino de la lista y por lo tanto de la tabla
+                        this.gps.splice(this.gps.findIndex(s => s.id === gp.id),1);
+
+                        this.$oruga.notification.open({
+                            message: `Se ha eliminado correctamente el gran premio ${gp.name} #${gp.season.name}`,
+                            variant: "danger",
+                        });
+                    }).catch((error) => {
+                        this.$oruga.notification.open({
+                            message: error.message,
+                            variant: "danger",
+                        });
+                    });*/
         }
+    },
+    computed: {
+        filteredGps(): Array<GrandPrix> {
+            if (!this.filtroGrandprix.trim()) {
+                return this.gps;
+            }
 
-        const filtroLowerCase: string = this.filtroGrandprix.toLowerCase().trim();
+            const filtroLowerCase: string = this.filtroGrandprix.toLowerCase().trim();
 
-        return this.gps.filter((gp) => {
-            return (
-                gp.id
-                    .toString()
-                    .includes(filtroLowerCase) ||
-                gp.name
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                gp.code
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                gp.circuit.name
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                gp.circuit.locality
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                gp.circuit.country
-                    .toLowerCase()
-                    .includes(filtroLowerCase)
-            );
-        });
-    }
-
-    private confirmDeleteGrandPrix(gp: GrandPrix) {
-        this.$oruga.dialog.confirm({
-            title: 'Eliminar gran premio',
-            message: `¿Estás seguro de que quieres <b>eliminar</b> el Gran Premio ${gp.name} #${gp.season.name}? <br/>Esta acción se puede deshacer.`,
-            confirmText: 'Eliminar gran premio',
-            type: 'is-danger',
-            hasIcon: true,
-            onConfirm: () => this.deleteCompetition(gp),
-        })
-    }
-
-    private getSlug(gp: GrandPrix): string {
-        return `${gp.competition.code}/${gp.season.name}/${gp.id}`;
-    }
-
-    private deleteCompetition(gp: GrandPrix) {
-/*
-        grandPrixService.deleteGranPrix(gp).then((ok) => {
-
-            // Elimino de la lista y por lo tanto de la tabla
-            this.gps.splice(this.gps.findIndex(s => s.id === gp.id),1);
-
-            this.$oruga.notification.open({
-                message: `Se ha eliminado correctamente el gran premio ${gp.name} #${gp.season.name}`,
-                variant: "danger",
+            return this.gps.filter((gp) => {
+                return (
+                    gp.id
+                        .toString()
+                        .includes(filtroLowerCase) ||
+                    gp.name
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    gp.code
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    gp.circuit.name
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    gp.circuit.locality
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    gp.circuit.country
+                        .toLowerCase()
+                        .includes(filtroLowerCase)
+                );
             });
-        }).catch((error) => {
-            this.$oruga.notification.open({
-                message: error.message,
-                variant: "danger",
-            });
-        });*/
+        }
     }
-}
-
+});
 </script>

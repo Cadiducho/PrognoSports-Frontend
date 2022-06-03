@@ -23,13 +23,21 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
-import {UserPoints} from "@/types/UserPoints";
+import {defineComponent} from "vue";
 
-@Component
-export default class PointsTooltipComponent extends Vue {
-    @Prop({required: true}) gpName!: string;
-    @Prop({required: true}) displayPoints!: number;
-    @Prop({required: true}) userPoints!: UserPoints;
-}
+export default defineComponent({
+    name: "PointsTooltipComponent",
+    props: {
+        gpName: {
+            type: String
+        },
+        displayPoints: {
+            type: Number
+        },
+        userPoints: {
+            type: Object
+        }
+
+    }
+});
 </script>

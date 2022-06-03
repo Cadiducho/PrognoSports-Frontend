@@ -8,7 +8,7 @@
                     PrognoSports
                 </router-link>
 
-                <a role="button" class="navbar-burger" :class="{ 'is-active': isActive }" @click="isActive = !isActive"
+                <a role="button" class="navbar-burger" :class="{ 'is-active': isOpen }" @click="isOpen = !isOpen"
                    aria-label="menu" aria-expanded="false" data-target="prognoNavbar">
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
@@ -16,7 +16,7 @@
                 </a>
             </div>
 
-            <div id="prognoNavbar" class="navbar-menu" :class="{ 'is-active': isActive }">
+            <div id="prognoNavbar" class="navbar-menu" :class="{ 'is-active': isOpen }">
                 <div class="navbar-start">
                     <router-link class="navbar-item" to="/gps">
                         Grandes Premios
@@ -44,28 +44,29 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
     import AvatarComponent from "@/components/navbar/AvatarComponent.vue";
     import NotificationsDropdown from "@/components/navbar/NotificationsDropdown.vue";
     import CommunitiesDropdown from "@/components/navbar/CommunitiesDropdown.vue";
     import AddElementsDropdown from "@/components/navbar/AddElementsDropdown.vue";
-    import {Community} from "@/types/Community";
-    import {User} from "@/types/User";
-    import {namespace} from 'vuex-class'
-    const Auth = namespace("Auth");
+    import {defineComponent} from "vue";
+    import {useAuthStore} from "@/pinia/authStore";
+    import {useCommunityStore} from "@/pinia/communityStore";
 
-    @Component({
-        components: {
-            CommunitiesDropdown,
-            NotificationsDropdown,
-            AvatarComponent,
-            AddElementsDropdown
+    export default defineComponent({
+        name: "Navbar",
+        components: {CommunitiesDropdown, NotificationsDropdown, AvatarComponent, AddElementsDropdown},
+        setup() {
+            const authStore = useAuthStore();
+            const communityStore = useCommunityStore();
+
+            const currentUser = authStore.user;
+            const currentCommunity = communityStore.community;
+            return {currentUser, currentCommunity};
+        },
+        data() {
+            return {
+                isOpen: false,
+            }
         }
-    })
-    export default class Navbar extends Vue {
-        @Auth.State("user") private currentUser!: User;
-        @Auth.State("community") private currentCommunity!: Community;
-
-        isActive: boolean = false;
-    }
+    });
 </script>

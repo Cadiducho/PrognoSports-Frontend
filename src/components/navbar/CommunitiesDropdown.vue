@@ -25,7 +25,7 @@
     import {communityService} from "@/_services";
     import EventBus from "@/plugins/eventbus";
     import {isValidCommunity} from "@/utils";
-    import {defineComponent} from "@vue/composition-api";
+    import {defineComponent} from "vue";
     import {useAuthStore} from "@/pinia/authStore";
     import {useCommunityStore} from "@/pinia/communityStore";
 
