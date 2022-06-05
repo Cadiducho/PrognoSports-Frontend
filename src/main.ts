@@ -23,7 +23,6 @@ loadFilters(Vue);
 loadLeaflet();
 
 import router from '@/_router'
-//import store from '@/_store';
 import App from '@/App.vue'
 
 Vue.use(Oruga, {
