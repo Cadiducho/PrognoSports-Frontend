@@ -115,26 +115,32 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
-import {namespace} from "vuex-class";
 import {Competition} from "@/types/Competition";
 import {marked} from 'marked';
-import {Community} from "@/types/Community";
-import {User} from "@/types/User";
 import {competitionService} from "@/_services";
 import {RuleSet} from "@/types/RuleSet";
 import {isValidCommunity} from "@/utils";
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/pinia/authStore";
+import {useCommunityStore} from "@/pinia/communityStore";
 
-const Auth = namespace("Auth");
+export default defineComponent({
+    name: "RulesComponent",
+    setup() {
+        const authStore = useAuthStore();
+        const communityStore = useCommunityStore();
 
-@Component
-export default class RulesComponent extends Vue {
+        const currentUser = authStore.user;
+        const currentCommunity = communityStore.community;
 
-    @Auth.State("user") private currentUser!: User;
-    @Auth.State("community") private currentCommunity!: Community;
-    private competition: Competition = {id: 0} as Competition;
-    private compiledRules: string = "";
-
+        return { currentUser, currentCommunity };
+    },
+    data() {
+        return {
+            competition: {id: 0} as Competition,
+            compiledRules: ""
+        }
+    },
     mounted() {
         if (isValidCommunity(this.currentCommunity)) {
             competitionService.getCompetition(this.currentCommunity.competition.code)
@@ -143,35 +149,31 @@ export default class RulesComponent extends Vue {
                     this.compiledRules = marked(c.rules ?? "");
                 });
         }
-    }
-
-    get ruleSet(): RuleSet {
-        return this.currentCommunity.defaultRuleSet;
-    }
-
-    get maxPosInRuleSet(): number {
-        let max = 0;
-        this.competition.availableSessions.forEach(session => {
-            let map = this.ruleSet.data.pointsByEqualsPosition[session.name];
-            if (map !== undefined) {
-                for (let kPos of Object.keys(map)) {
-                    const pos = Number.parseInt(kPos);
-                    if (pos > max) max = pos;
+    },
+    computed: {
+        ruleSet(): RuleSet {
+            return this.currentCommunity.defaultRuleSet;
+        },
+        maxPosInRuleSet(): number {
+            let max = 0;
+            this.competition.availableSessions.forEach(session => {
+                let map = this.ruleSet.data.pointsByEqualsPosition[session.name];
+                if (map !== undefined) {
+                    for (let kPos of Object.keys(map)) {
+                        const pos = Number.parseInt(kPos);
+                        if (pos > max) max = pos;
+                    }
                 }
+            });
+            return max;
+        },
+        positionsInRuleSet() {
+            let postions = [];
+            for (let i = 1; i <= this.maxPosInRuleSet; ++i) {
+                postions.push(i);
             }
-        });
-        return max;
-    }
-
-    get positionsInRuleSet() {
-        let postions = [];
-        for (let i = 1; i <= this.maxPosInRuleSet; ++i) {
-            postions.push(i);
+            return postions;
         }
-        return postions;
     }
-}
+});
 </script>
-<style scoped>
-</style>
-

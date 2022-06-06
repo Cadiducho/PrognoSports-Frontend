@@ -29,37 +29,42 @@
 
 <script lang="ts">
 
-import {Component, Vue, Watch} from "vue-property-decorator";
     import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
     import NextGrandPrix from "@/components/gps/NextGrandPrix.vue";
     import GrandPrixesList from "@/components/gps/GrandPrixesList.vue";
     import {Competition} from "@/types/Competition";
     import {Season} from "@/types/Season";
     import {seasonService} from "@/_services";
-    import {Community} from "@/types/Community";
-    import {namespace} from "vuex-class";
-    const Auth = namespace('Auth')
 
-    @Component<ViewGrandPrixList>({
+    import {defineComponent} from "vue";
+    import {useCommunityStore} from "@/pinia/communityStore";
+
+    export default defineComponent({
+        name: "ViewGrandPrixList",
         components: {
             GrandPrixesList,
             NextGrandPrix,
             PrognoPageTitle
-        }
-    })
-    export default class ViewGrandPrixList extends Vue {
+        },
+        setup() {
+            const communityStore = useCommunityStore();
 
-        private competition!: Competition;
-        private season!: Season;
-        @Auth.State("community") private currentCommunity!: Community;
+            const currentCommunity = communityStore.community;
+            return { currentCommunity };
+        },
+        data() {
+            return {
+                competition: {} as Competition,
+                season: {} as Season,
 
-        private shouldSearchDefaultCompetition: boolean = false;
-        private shouldSearchDefaultSeason: boolean = false;
-        private activeTab: number = 0;
+                shouldSearchDefaultCompetition: false,
+                shouldSearchDefaultSeason: false,
+                activeTab: 0,
 
-        private competitionReady: boolean = false;
-        private seasonReady: boolean = false;
-
+                competitionReady: false,
+                seasonReady: false
+            }
+        },
         created() {
             this.competition = { code: this.$route.params.competition } as Competition;
             this.season = { name: this.$route.params.season } as Season;
@@ -78,35 +83,34 @@ import {Component, Vue, Watch} from "vue-property-decorator";
 
             this.searchDefaultCompetition();
             this.searchDefaultSeason();
-        }
-
-        @Watch('currentCommunity')
-        onCurrentCommunityChange(community: Community) {
-            this.searchDefaultCompetition();
-            this.searchDefaultSeason();
-        }
-
-        /**
-         * Buscar la competición si no se ha especificado en la url. Esta saldrá de la comunidad actual
-         */
-        public searchDefaultCompetition(): void {
-            if (this.shouldSearchDefaultCompetition) {
-                this.competition = this.currentCommunity.competition;
-                this.competitionReady = true;
+        },
+        methods: {
+            /**
+             * Buscar la competición si no se ha especificado en la url. Esta saldrá de la comunidad actual
+             */
+            searchDefaultCompetition(): void {
+                if (this.shouldSearchDefaultCompetition) {
+                    this.competition = this.currentCommunity.competition;
+                    this.competitionReady = true;
+                }
+            },
+            /**
+             * Buscar la temporada actual de la competición buscada si esta no se ha especificado en la url
+             */
+            searchDefaultSeason(): void {
+                if (this.shouldSearchDefaultSeason) {
+                    seasonService.getCurrentSeason(this.currentCommunity.competition).then((season) => {
+                        this.season = season;
+                        this.seasonReady = true;
+                    });
+                }
             }
-        }
-
-        /**
-         * Buscar la temporada actual de la competición buscada si esta no se ha especificado en la url
-         */
-        public searchDefaultSeason(): void {
-            if (this.shouldSearchDefaultSeason) {
-                seasonService.getCurrentSeason(this.currentCommunity.competition).then((season) => {
-                    this.season = season;
-                    this.seasonReady = true;
-                });
+        },
+        watch: {
+            currentCommunity(newCommunity, oldCommunity) {
+                this.searchDefaultCompetition();
+                this.searchDefaultSeason();
             }
-        }
-
-    }
+        },
+    });
 </script>

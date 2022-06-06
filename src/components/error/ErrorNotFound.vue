@@ -15,12 +15,14 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
+import {defineComponent} from "vue";
 
-    @Component
-    export default class ErrorNotFound extends Vue {
+export default defineComponent({
+    name: "ErrorNotFound",
+    methods: {
         back() {
             this.$router.go(-1);
         }
     }
+});
 </script>

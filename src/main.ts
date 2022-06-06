@@ -1,7 +1,10 @@
 import Vue from 'vue'
-import App from '@/App.vue'
-import router from "@/_router";
-import store from '@/_store';
+import { createPinia, PiniaVuePlugin } from 'pinia'
+Vue.use(PiniaVuePlugin);
+const pinia = createPinia();
+
+// @ts-ignore
+pinia.install(PiniaVuePlugin); // Hack para crear instancia de pinia en vue2 y que el router en beforeEach lo pueda usar
 
 // @ts-ignore
 import VueHeadful from 'vue-headful';
@@ -18,6 +21,9 @@ import { bulmaConfig } from '@oruga-ui/theme-bulma'
 
 loadFilters(Vue);
 loadLeaflet();
+
+import router from '@/_router'
+import App from '@/App.vue'
 
 Vue.use(Oruga, {
     customIconPacks: {
@@ -40,7 +46,7 @@ Vue.component("Loading", Loading);
 Vue.mixin(mixin);
 
 new Vue({
-  router,
-  store,
-  render: h => h(App)
+    pinia,
+    router,
+    render: h => h(App)
 }).$mount('#app');

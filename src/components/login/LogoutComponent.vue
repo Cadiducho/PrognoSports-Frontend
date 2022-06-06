@@ -3,13 +3,18 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
-import {namespace} from "vuex-class";
-const Auth = namespace("Auth");
-@Component
-export default class LogoutComponent extends Vue {
 
-    @Auth.Action private signOut!: () => Promise<void>;
+import {useAuthStore} from "@/pinia/authStore";
+import {defineComponent} from "vue";
+
+export default defineComponent({
+    name: "LogoutComponent",
+    setup() {
+        const authStore = useAuthStore();
+
+        const signOut = authStore.signOut;
+        return { signOut };
+    },
     created() {
         this.signOut().then(() => {
             this.$router.push({name: 'login'});
@@ -19,5 +24,5 @@ export default class LogoutComponent extends Vue {
             });
         });
     }
-};
+});
 </script>

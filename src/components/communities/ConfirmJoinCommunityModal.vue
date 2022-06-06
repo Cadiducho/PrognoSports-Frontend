@@ -21,41 +21,48 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
 import {Community} from "@/types/Community";
 import {communityService} from "@/_services";
-import {namespace} from "vuex-class";
 import EventBus from "@/plugins/eventbus";
-const Auth = namespace("Auth");
 
-@Component
-export default class ConfirmJoinCommunityModal extends Vue {
-    @Prop() community!: Community;
-    @Auth.Action setCommunity!: (community: Community) => void;
+import {defineComponent, PropType} from "vue";
+import {useCommunityStore} from "@/pinia/communityStore";
 
-    public joinCommunity() {
-        communityService.joinCommunity(this.community).then(communityRes => {
-            this.$oruga.notification.open({
-                message: "¡Te has unido correctamente a " + communityRes.name + "!",
-                variant: "success",
+export default defineComponent({
+    name: "ConfirmJoinCommunityModal",
+    props: {
+        community: {
+            type: Object as PropType<Community>,
+            required: true
+        }
+    },
+    setup() {
+        const communityStore = useCommunityStore();
+
+        const setCommunity = communityStore.setCommunity;
+        return { setCommunity };
+    },
+    methods: {
+        joinCommunity() {
+            communityService.joinCommunity(this.community).then(communityRes => {
+                this.$oruga.notification.open({
+                    message: "¡Te has unido correctamente a " + communityRes.name + "!",
+                    variant: "success",
+                });
+
+                this.setCommunity(communityRes);
+                this.$router.push(`/communities/${communityRes.name}`);
+            }).catch((error) => {
+                this.$oruga.notification.open({
+                    message: "Ha ocurrido un error: " + error.message,
+                    variant: "warning",
+                });
+            }).finally(() => {
+                EventBus.$emit('reloadCommunitiesList');
+                EventBus.$emit('reloadCommunitiesDropdown');
+                this.$emit('close');
             });
-
-            this.setCommunity(communityRes);
-            this.$router.push(`/communities/${communityRes.name}`);
-        }).catch((error) => {
-            this.$oruga.notification.open({
-                message: "Ha ocurrido un error: " + error.message,
-                variant: "warning",
-            });
-        }).finally(() => {
-            EventBus.$emit('reloadCommunitiesList');
-            EventBus.$emit('reloadCommunitiesDropdown');
-            this.$emit('close');
-        });
+        }
     }
-}
+});
 </script>
-
-<style scoped>
-
-</style>

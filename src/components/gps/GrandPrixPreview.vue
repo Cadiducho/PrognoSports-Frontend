@@ -29,28 +29,45 @@
 </template>
 
 <script lang="ts">
-
-    import {Component, Prop, Vue} from "vue-property-decorator";
     import {GrandPrix} from "@/types/GrandPrix";
     import {Circuit} from "@/types/Circuit";
 
-    @Component
-    export default class GrandPrixPreview extends Vue {
-        @Prop({required: true}) gp!: GrandPrix;
+    import {defineComponent, PropType} from "vue";
+    import {useAuthStore} from "@/pinia/authStore";
+    import {useCommunityStore} from "@/pinia/communityStore";
 
-        get gpLink(): Object {
-            return {
-                name: "gpdetails",
-                params: {
-                    competition: this.gp.competition.code,
-                    season: this.gp.season.name,
-                    id: this.gp.id,
-                }
-            };
-        }
+    export default defineComponent({
+        name: "GrandPrixPreview",
+        props: {
+            gp: {
+                type: Object as PropType<GrandPrix>,
+                required: true,
+            }
+        },
+        setup() {
+            const authStore = useAuthStore();
+            const communityStore = useCommunityStore();
 
-        public circuitLogoImage(circuit: Circuit) {
-            return circuit?.logo_url ?? import('@/assets/default_profile_image.jpg');
+            const currentUser = authStore.user;
+            const currentCommunity = communityStore.community;
+            return { currentUser, currentCommunity };
+        },
+        methods: {
+            circuitLogoImage(circuit: Circuit) {
+                return circuit?.logo_url ?? import('@/assets/default_profile_image.jpg');
+            }
+        },
+        computed: {
+            gpLink(): Object {
+                return {
+                    name: "gpdetails",
+                    params: {
+                        competition: this.gp.competition.code,
+                        season: this.gp.season.name,
+                        id: this.gp.id,
+                    }
+                };
+            }
         }
-    }
+    });
 </script>

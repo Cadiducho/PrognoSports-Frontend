@@ -97,31 +97,37 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
 import {User, UserResume} from "@/types/User";
-import {namespace} from "vuex-class";
 import EventBus from "@/plugins/eventbus";
 import {userService} from "@/_services";
 import {Season} from "@/types/Season";
-import {Community} from "@/types/Community";
 import UserLevelResume from "@/components/user/UserLevelResume.vue";
 
-const Auth = namespace('Auth')
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/pinia/authStore";
+import {useCommunityStore} from "@/pinia/communityStore";
 
-@Component({
+export default defineComponent({
+    name: "UserProfile",
     components: {
         UserLevelResume
-    }
-})
-export default class UserProfile extends Vue {
-    @Auth.State("user") private currentUser!: User;
-    @Auth.State("community") private currentCommunity!: Community;
+    },
+    setup() {
+        const authStore = useAuthStore();
+        const communityStore = useCommunityStore();
 
-    private thereIsUserParam = false;
-    private isLoading = true;
-    private profile: User | null = null;
-    private userResume: UserResume | null = null;
-
+        const currentUser = authStore.user;
+        const currentCommunity = communityStore.community;
+        return {currentUser, currentCommunity};
+    },
+    data() {
+        return {
+            thereIsUserParam: false,
+            isLoading: true,
+            profile: {} as User | null,
+            userResume: null as UserResume | null,
+        }
+    },
     mounted() {
         const findProfile = new Promise<User | null>((resolve, reject) => {
             // Si se ha buscado un user en la URL, se procesa
@@ -129,7 +135,8 @@ export default class UserProfile extends Vue {
                 this.thereIsUserParam = true;
                 userService.getUser(this.$route.params.user).then((user) => {
                     this.profile = user;
-                }).catch(()=>{}).finally(() => {
+                }).catch(() => {
+                }).finally(() => {
                     this.isLoading = false;
 
                     resolve(this.profile);
@@ -152,14 +159,13 @@ export default class UserProfile extends Vue {
                 this.userResume = resume;
             });
         });
+    },
+    methods: {
+        changeBreadcrumb(name: string) {
+            EventBus.$emit('breadcrumbLastname', name);
+        }
     }
-
-
-    changeBreadcrumb(name: string) {
-        EventBus.$emit('breadcrumbLastname', name);
-    }
-
-}
+});
 </script>
 
 <style lang="css">

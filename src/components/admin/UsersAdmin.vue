@@ -78,56 +78,61 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import {User} from "@/types/User";
-import {namespace} from "vuex-class";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {userService} from "@/_services";
-const Auth = namespace('Auth')
 
-@Component({
-        components: {
-            AlertNoPermission,
-            PrognoPageTitle,
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/pinia/authStore";
+
+export default defineComponent({
+    name: "DriversAdmin",
+    components: {
+        AlertNoPermission,
+        PrognoPageTitle,
+    },
+    setup() {
+        const authStore = useAuthStore();
+
+        const currentUser = authStore.user;
+        return { currentUser };
+    },
+    data() {
+        return {
+            isPaginated: true,
+            filtroUsuario: '',
+            users: new Array<User>(),
         }
-    }
-)
-export default class DriversAdmin extends Vue {
-    @Auth.State("user") private currentUser!: User;
-
-    private isPaginated: boolean = true;
-    private filtroUsuario: String = '';
-
-    private users: Array<User> = [];
-
+    },
     mounted() {
         userService.getAllUsers().then((users) => {
             this.users = [];
             this.users.push(...users);
         })
-    }
+    },
+    computed: {
+        filteredUsers(): Array<User> {
+            if (!this.filtroUsuario.trim()) {
+                return this.users;
+            }
 
-    get filteredUsers(): Array<User> {
-        if (!this.filtroUsuario.trim()) {
-            return this.users;
+            const filtroLowerCase: string = this.filtroUsuario.toLowerCase().trim();
+
+            return this.users.filter((user) => {
+                return (
+                    user.username
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    user.email
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    user.rank.name
+                        .toLowerCase()
+                        .includes(filtroLowerCase)
+                );
+            });
         }
-
-        const filtroLowerCase: string = this.filtroUsuario.toLowerCase().trim();
-
-        return this.users.filter((user) => {
-            return (
-                user.username
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                user.email
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                user.rank.name
-                    .toLowerCase()
-                    .includes(filtroLowerCase)
-            );
-        });
     }
-}
+});
 </script>

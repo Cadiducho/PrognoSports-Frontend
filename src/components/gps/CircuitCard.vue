@@ -32,22 +32,42 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
-    import {Circuit} from "../../types/Circuit";
+    import {Circuit} from "@/types/Circuit";
     import {hasVariant} from "@/utils";
 
-    @Component
-    export default class CircuitCard extends Vue {
-        @Prop({required: true}) private circuit!: Circuit;
-        @Prop() private laps!: number;
+    import {defineComponent, PropType} from "vue";
+    import {useAuthStore} from "@/pinia/authStore";
+    import {useCommunityStore} from "@/pinia/communityStore";
 
-        public hasLaps(): boolean {
-            return this.laps != undefined || this.laps != 0;
-        }
+    export default defineComponent({
+        name: "CircuitCard",
+        props: {
+            circuit: {
+                type: Object as PropType<Circuit>,
+                required: true
+            },
+            laps: {
+                type: Number
+            }
+        },
+        setup() {
+            const authStore = useAuthStore();
+            const communityStore = useCommunityStore();
 
-        get circuitUrl(): string {
-            let variant = hasVariant(this.circuit) ? ('/ '+ this.circuit!.variant) : "";
-            return '/circuits/' + this.circuit!.id + variant;
+            const currentUser = authStore.user;
+            const currentCommunity = communityStore.community;
+            return { currentUser, currentCommunity };
+        },
+        methods: {
+            hasLaps(): boolean {
+                return this.laps != undefined || this.laps != 0;
+            }
+        },
+        computed: {
+            circuitUrl(): string {
+                let variant = hasVariant(this.circuit) ? ('/ '+ this.circuit!.variant) : "";
+                return '/circuits/' + this.circuit!.id + variant;
+            }
         }
-    }
+    });
 </script>

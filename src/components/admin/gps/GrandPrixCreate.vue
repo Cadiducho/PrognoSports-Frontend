@@ -104,49 +104,51 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {User} from "@/types/User";
-import {namespace} from "vuex-class";
-import {circuitService, competitionService, grandPrixService, seasonService} from "@/_services";
+import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue"
+import {circuitService, grandPrixService, seasonService} from "@/_services";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-import {Competition} from "@/types/Competition";
-import {marked} from "marked";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Season} from "@/types/Season";
 import {Circuit} from "@/types/Circuit";
-const Auth = namespace('Auth')
 
-@Component({
-        components: {
-            AlertNoPermission,
-            AlertInvalidData,
-            PrognoPageTitle,
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/pinia/authStore";
+
+export default defineComponent({
+    name: "SeasonCreate",
+    components: {
+        AlertNoPermission,
+        AlertInvalidData,
+        PrognoPageTitle,
+    },
+    setup() {
+        const authStore = useAuthStore();
+
+        const currentUser = authStore.user;
+        return { currentUser };
+    },
+    data() {
+        return {
+            activeStep: 0,
+            circuits: new Array<Circuit>(),
+            seasons: new  Array<Season>(),
+
+            createdGrandPrix: {
+                id: undefined!,
+                code: undefined!,
+                name: undefined!,
+                circuit: undefined!,
+                competition: undefined!,
+                laps: undefined!,
+                promo_image_url: undefined!,
+                round: undefined!,
+                season: undefined!,
+                suspended: false,
+                sessions: [],
+            } as GrandPrix
         }
-    }
-)
-export default class SeasonCreate extends Vue {
-    @Auth.State("user") private currentUser!: User;
-
-    private activeStep = 0;
-    private circuits: Array<Circuit> = [];
-    private seasons: Array<Season> = [];
-
-    private createdGrandPrix: GrandPrix = {
-        id: undefined!,
-        code: undefined!,
-        name: undefined!,
-        circuit: undefined!,
-        competition: undefined!,
-        laps: undefined!,
-        promo_image_url: undefined!,
-        round: undefined!,
-        season: undefined!,
-        suspended: false,
-        sessions: [],
-    }
-
+    },
     mounted() {
         circuitService.getCircuitList().then((list) => {
             this.circuits = [];
@@ -156,49 +158,49 @@ export default class SeasonCreate extends Vue {
             this.seasons = [];
             this.seasons.push(...list);
         });
-    }
+    },
+    methods: {
+        isDataOk(): boolean {
+            return !(this.createdGrandPrix.id == undefined
+                && this.createdGrandPrix.code == undefined
+                && this.createdGrandPrix.name == undefined
+                && this.createdGrandPrix.circuit == undefined
+                && this.createdGrandPrix.laps == undefined
+                && this.createdGrandPrix.promo_image_url == undefined
+                && this.createdGrandPrix.round == undefined
+                && this.createdGrandPrix.season == undefined
+            )
+        },
+        registerGrandPrix(): void {
+            let data = {
+                id: this.createdGrandPrix.id,
+                season: this.createdGrandPrix.season.id,
+                competition: this.createdGrandPrix.season.competition.id,
+                round: this.createdGrandPrix.round,
+                name: this.createdGrandPrix.name,
+                code: this.createdGrandPrix.code,
+                circuit: this.createdGrandPrix.circuit.id,
+                variant: this.createdGrandPrix.circuit.variant.name,
+                promo_image_url: this.createdGrandPrix.promo_image_url,
+                laps: this.createdGrandPrix.laps
+            }
 
-    private isDataOk(): boolean {
-        return !(this.createdGrandPrix.id == undefined
-            && this.createdGrandPrix.code == undefined
-            && this.createdGrandPrix.name == undefined
-            && this.createdGrandPrix.circuit == undefined
-            && this.createdGrandPrix.laps == undefined
-            && this.createdGrandPrix.promo_image_url == undefined
-            && this.createdGrandPrix.round == undefined
-            && this.createdGrandPrix.season == undefined
-        )
-    }
+            grandPrixService.createGrandPrix(data).then((result) => {
+                this.$oruga.notification.open({
+                    message: "Se ha registrado correctamente el Gran Premio `" + result.id + "`",
+                    variant: "success",
+                });
 
-    private registerGrandPrix(): void {
-        let data = {
-            id: this.createdGrandPrix.id,
-            season: this.createdGrandPrix.season.id,
-            competition: this.createdGrandPrix.season.competition.id,
-            round: this.createdGrandPrix.round,
-            name: this.createdGrandPrix.name,
-            code: this.createdGrandPrix.code,
-            circuit: this.createdGrandPrix.circuit.id,
-            variant: this.createdGrandPrix.circuit.variant.name,
-            promo_image_url: this.createdGrandPrix.promo_image_url,
-            laps: this.createdGrandPrix.laps
+                this.$router.push({
+                    name: 'adminGps'
+                })
+            }).catch((error) => {
+                this.$oruga.notification.open({
+                    message: error.message,
+                    variant: "danger",
+                });
+            });
         }
-
-        grandPrixService.createGrandPrix(data).then((result) => {
-            this.$oruga.notification.open({
-                message: "Se ha registrado correctamente el Gran Premio `" + result.id + "`",
-                variant: "success",
-            });
-
-            this.$router.push({
-                name: 'adminGps'
-            })
-        }).catch((error) => {
-            this.$oruga.notification.open({
-                message: error.message,
-                variant: "danger",
-            });
-        });
     }
-}
+});
 </script>

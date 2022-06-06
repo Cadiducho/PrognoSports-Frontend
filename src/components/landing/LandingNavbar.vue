@@ -43,24 +43,28 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
-    import {namespace} from "vuex-class";
     import AvatarComponent from "@/components/navbar/AvatarComponent.vue";
-    import {Community} from "@/types/Community";
     import CommunitiesDropdown from "@/components/navbar/CommunitiesDropdown.vue";
 
-    const Auth = namespace("Auth");
+    import {defineComponent} from "vue";
+    import {useAuthStore} from "@/pinia/authStore";
+    import {useCommunityStore} from "@/pinia/communityStore";
 
-    @Component({
-        components: {
-            AvatarComponent,
-            CommunitiesDropdown
+    export default defineComponent({
+        name: "LandingNavbar",
+        components: {AvatarComponent, CommunitiesDropdown},
+        setup() {
+            const authStore = useAuthStore();
+            const communityStore = useCommunityStore();
+
+            const isLoggedIn = authStore.isLoggedIn;
+            const currentCommunity = communityStore.community;
+            return {isLoggedIn, currentCommunity};
+        },
+        data() {
+            return {
+                isActive: false,
+            }
         }
-    })
-    export default class LandingNavbar extends Vue {
-        @Auth.Getter private isLoggedIn!: boolean;
-        @Auth.State("community") private currentCommunity!: Community;
-
-        isActive: boolean = false;
-    }
+    });
 </script>

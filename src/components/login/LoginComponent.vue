@@ -59,64 +59,70 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
-import {namespace} from "vuex-class";
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/pinia/authStore";
 
-const Auth = namespace("Auth");
+export default defineComponent({
+    name: "RulesComponent",
+    setup() {
+        const authStore = useAuthStore();
 
-@Component
-export default class LoginComponent extends Vue {
-    private username: string = "";
-    private password: string = "";
-    private submitted: boolean = false;
-    private redirectTo = this.$route.query.redirect;
-
-    @Auth.Action private login!: (payload: { username: string, password: string }) => Promise<string>;
-    @Auth.State("mail") private registeredMail!: string;
-
+        const login = authStore.login;
+        const registeredMail = authStore.mail;
+        return { login, registeredMail }
+    },
+    data() {
+        return {
+            username: "",
+            password: "",
+            submitted: false,
+            redirectTo: this.$route.query.redirect
+        }
+    },
     created() {
         if (!!this.registeredMail) {
             this.username = this.registeredMail;
         }
-    }
+    },
+    methods: {
+        handleSubmit() {
+            this.submitted = true;
+            if (this.username && this.password) {
+                this.login({
+                    username: this.username,
+                    password: this.password,
+                }).then(
+                    () => {
+                        this.$oruga.notification.open({
+                            message: "¡Has iniciado sesión correctamente!",
+                            variant: "success",
+                        });
 
-    public handleSubmit() {
-        this.submitted = true;
-        if (this.username && this.password) {
-            this.login({
-                username: this.username,
-                password: this.password,
-            }).then(
-                () => {
-                    this.$oruga.notification.open({
-                        message: "¡Has iniciado sesión correctamente!",
-                        variant: "success",
-                    });
+                        if (this.redirectTo !== undefined) {
+                            // Enviar a la redirección
+                            this.$router.push(this.redirectTo as string);
+                        } else {
+                            // Redirigir al home en caso normal
+                            this.$router.push({name: "home"});
+                        }
+                    },
+                    (error: any) => {
+                        let message: string;
+                        if (error.code === 600) {
+                            message = "Fallo al iniciar sesión: Credenciales inválidas";
+                        } else {
+                            message = "Fallo al iniciar sesión: " + error.message;
+                        }
 
-                    if (this.redirectTo !== undefined) {
-                        // Enviar a la redirección
-                        this.$router.push(this.redirectTo as string);
-                    } else {
-                        // Redirigir al home en caso normal
-                        this.$router.push({ name: "home" });
+                        this.$oruga.notification.open({
+                            duration: 5000,
+                            message: message,
+                            variant: "danger",
+                        });
                     }
-                },
-                (error: any) => {
-                    let message: string;
-                    if (error.code === 600) {
-                        message = "Fallo al iniciar sesión: Credenciales inválidas";
-                    } else {
-                        message = "Fallo al iniciar sesión: " + error.message;
-                    }
-
-                    this.$oruga.notification.open({
-                        duration: 5000,
-                        message: message,
-                        variant: "danger",
-                    });
-                }
-            );
+                );
+            }
         }
     }
-}
+});
 </script>

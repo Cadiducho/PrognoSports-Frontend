@@ -14,26 +14,32 @@
 
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import {communityService} from "@/_services";
 
 import {Community} from "@/types/Community";
-import {namespace} from "vuex-class";
-const Auth = namespace('Auth')
 
-@Component<ViewOneCommunity>({
+import {defineComponent} from "vue";
+import {useCommunityStore} from "@/pinia/communityStore";
+
+export default defineComponent({
+    name: "ViewOneCommunity",
     components: {
         PrognoPageTitle
     },
-})
-export default class ViewOneCommunity extends Vue {
-    @Auth.Action setCommunity!: (community: Community) => void;
+    setup() {
+        const communityStore = useCommunityStore();
 
-    private community!: Community;
-    private isLoading: boolean = true;
-    private thereIsCommunity: boolean = false;
-
+        const setCommunity = communityStore.setCommunity;
+        return { setCommunity };
+    },
+    data() {
+        return {
+            community: {} as Community,
+            isLoading: true,
+            thereIsCommunity: false,
+        }
+    },
     created() {
         let communityId = this.$route.params.community;
         let code = this.$route.params.code;
@@ -72,17 +78,15 @@ export default class ViewOneCommunity extends Vue {
         }).finally(() => {
             this.isLoading = false;
         })
-    }
-
-    get communityName() {
-        if (this.thereIsCommunity) {
-            return this.community.name;
-        } else {
-            return "Comunidad no encontrada";
+    },
+    computed: {
+        communityName() {
+            if (this.thereIsCommunity) {
+                return this.community.name;
+            } else {
+                return "Comunidad no encontrada";
+            }
         }
     }
-}
+});
 </script>
-
-<style scoped>
-</style>

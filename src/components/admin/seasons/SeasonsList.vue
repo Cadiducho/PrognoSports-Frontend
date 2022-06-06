@@ -60,89 +60,94 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {User} from "@/types/User";
-import {namespace} from "vuex-class";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {seasonService} from "@/_services";
 import {Season} from "@/types/Season";
-const Auth = namespace('Auth')
 
-@Component({
-        components: {
-            AlertNoPermission,
-            PrognoPageTitle,
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/pinia/authStore";
+
+export default defineComponent({
+    name: "SeasonsList",
+    components: {
+        AlertNoPermission,
+        PrognoPageTitle,
+    },
+    setup() {
+        const authStore = useAuthStore();
+
+        const currentUser = authStore.user;
+        return { currentUser };
+    },
+    data() {
+        return {
+            isPaginated: true,
+            filtroSeason: '',
+
+            seasons: new Array<Season>()
         }
-    }
-)
-export default class SeasonsList extends Vue {
-    @Auth.State("user") private currentUser!: User;
-
-    private isPaginated: boolean = true;
-    private filtroSeason: String = '';
-
-    private seasons: Array<Season> = [];
-
+    },
     mounted() {
         seasonService.getSeasonList().then((seasons) => {
             this.seasons = [];
             this.seasons.push(...seasons);
         })
-    }
+    },
+    computed: {
+        filteredSeasons(): Array<Season> {
+            if (!this.filtroSeason.trim()) {
+                return this.seasons;
+            }
 
-    get filteredSeasons(): Array<Season> {
-        if (!this.filtroSeason.trim()) {
-            return this.seasons;
+            const filtroLowerCase: string = this.filtroSeason.toLowerCase().trim();
+
+            return this.seasons.filter((season) => {
+                return (
+                    season.id
+                        .toString()
+                        .includes(filtroLowerCase) ||
+                    season.name
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    season.competition.name
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    season.competition.code
+                        .toLowerCase()
+                        .includes(filtroLowerCase)
+                );
+            });
         }
+    },
+    methods: {
+        confirmDeleteSeason(season: Season) {
+            this.$oruga.dialog.confirm({
+                title: 'Eliminar temporada',
+                message: `¿Estás seguro de que quieres <b>eliminar</b> la temporada ${season.name} (#${season.id})? <br/>Esta acción se puede deshacer.`,
+                confirmText: 'Eliminar temporada',
+                type: 'is-danger',
+                hasIcon: true,
+                onConfirm: () => this.deleteSeason(season),
+            })
+        },
+        deleteSeason(season: Season) {
+            seasonService.deleteSeason(season).then((ok) => {
 
-        const filtroLowerCase: string = this.filtroSeason.toLowerCase().trim();
+                // Elimino de la lista y por lo tanto de la tabla
+                this.seasons.splice(this.seasons.findIndex(s => s.id === season.id),1);
 
-        return this.seasons.filter((season) => {
-            return (
-                season.id
-                    .toString()
-                    .includes(filtroLowerCase) ||
-                season.name
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                season.competition.name
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                season.competition.code
-                    .toLowerCase()
-                    .includes(filtroLowerCase)
-            );
-        });
-    }
-
-    private confirmDeleteSeason(season: Season) {
-        this.$oruga.dialog.confirm({
-            title: 'Eliminar temporada',
-            message: `¿Estás seguro de que quieres <b>eliminar</b> la temporada ${season.name} (#${season.id})? <br/>Esta acción se puede deshacer.`,
-            confirmText: 'Eliminar temporada',
-            type: 'is-danger',
-            hasIcon: true,
-            onConfirm: () => this.deleteSeason(season),
-        })
-    }
-
-    private deleteSeason(season: Season) {
-        seasonService.deleteSeason(season).then((ok) => {
-
-            // Elimino de la lista y por lo tanto de la tabla
-            this.seasons.splice(this.seasons.findIndex(s => s.id === season.id),1);
-
-            this.$oruga.notification.open({
-                message: `Se ha eliminado correctamente la temporada ${season.name} (#${season.id})`,
-                variant: "danger",
+                this.$oruga.notification.open({
+                    message: `Se ha eliminado correctamente la temporada ${season.name} (#${season.id})`,
+                    variant: "danger",
+                });
+            }).catch((error) => {
+                this.$oruga.notification.open({
+                    message: error.message,
+                    variant: "danger",
+                });
             });
-        }).catch((error) => {
-            this.$oruga.notification.open({
-                message: error.message,
-                variant: "danger",
-            });
-        });
-    }
-}
+        }
+    },
+});
 </script>

@@ -77,75 +77,80 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {User} from "@/types/User";
-import {namespace} from "vuex-class";
 import {driversService} from "@/_services";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {Driver} from "@/types/Driver";
-const Auth = namespace('Auth')
 
-@Component({
-        components: {
-            AlertNoPermission,
-            AlertInvalidData,
-            PrognoPageTitle,
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/pinia/authStore";
+import {useCommunityStore} from "@/pinia/communityStore";
+
+export default defineComponent({
+    name: "CreateDriver",
+    components: {
+        AlertNoPermission,
+        AlertInvalidData,
+        PrognoPageTitle,
+    },
+    setup() {
+        const authStore = useAuthStore();
+
+        const currentUser = authStore.user;
+        return { currentUser };
+    },
+    data() {
+        return {
+            activeStep: 0,
+            createdDriver: {
+                id: undefined!,
+                firstname: undefined!,
+                lastname: undefined!,
+                code: undefined!,
+                nationality: undefined!,
+                birth: undefined!,
+
+                color: "",
+                number: 0,
+                team: undefined!
+            } as Driver
         }
-    }
-)
-export default class createDriver extends Vue {
-    @Auth.State("user") private currentUser!: User;
-
-    private activeStep = 0;
-
-    private createdDriver: Driver = {
-        id: undefined!,
-        firstname: undefined!,
-        lastname: undefined!,
-        code: undefined!,
-        nationality: undefined!,
-        birth: undefined!,
-
-        color: "",
-        number: 0,
-        team: undefined!
-    }
-
-    private isDataOk(): boolean {
-        return !(this.createdDriver.id == undefined && this.createdDriver.firstname == undefined && this.createdDriver.lastname == undefined
+    },
+    methods: {
+        isDataOk(): boolean {
+            return !(this.createdDriver.id == undefined && this.createdDriver.firstname == undefined && this.createdDriver.lastname == undefined
                 && this.createdDriver.code == undefined && this.createdDriver.nationality == undefined && this.createdDriver.birth == undefined)
-    }
+        },
+        registerDriver(): void {
+            let rawDriver = {
+                id: this.createdDriver.id,
+                firstname: this.createdDriver.firstname,
+                lastname: this.createdDriver.lastname,
+                code: this.createdDriver.code,
+                nationality: this.createdDriver.nationality,
+                birth: this.createdDriver.birth,
+            }
 
-    private registerDriver(): void {
-        let rawDriver = {
-            id: this.createdDriver.id,
-            firstname: this.createdDriver.firstname,
-            lastname: this.createdDriver.lastname,
-            code: this.createdDriver.code,
-            nationality: this.createdDriver.nationality,
-            birth: this.createdDriver.birth,
+            driversService.createDriver(rawDriver).then((result) => {
+                this.$oruga.notification.open({
+                    message: "Se ha registrado correctamente el piloto `" + result.firstname + " " + result.lastname + "`",
+                    variant: "success",
+                });
+
+                this.$router.push({
+                    name: 'viewDriver',
+                    params: {
+                        id: result.id
+                    }
+                })
+            }).catch((error) => {
+                this.$oruga.notification.open({
+                    message: error.message,
+                    variant: "danger",
+                });
+            });
         }
-
-        driversService.createDriver(rawDriver).then((result) => {
-            this.$oruga.notification.open({
-                message: "Se ha registrado correctamente el piloto `" + result.firstname + " " + result.lastname + "`",
-                variant: "success",
-            });
-
-            this.$router.push({
-                name: 'viewDriver',
-                params: {
-                    id: result.id
-                }
-            })
-        }).catch((error) => {
-            this.$oruga.notification.open({
-                message: error.message,
-                variant: "danger",
-            });
-        });
     }
-}
+});
 </script>

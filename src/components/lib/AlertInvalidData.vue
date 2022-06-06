@@ -5,13 +5,19 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import {Prop} from "vue-property-decorator";
+import {defineComponent} from "vue";
 
-@Component
-export default class AlertInvalidData extends Vue {
-    @Prop({required: false}) object!: any | undefined;
-    @Prop({required: true}) message!: string;
-}
+export default defineComponent({
+    name: "LandingNavbar",
+    props: {
+        object: {
+            type: Object,
+            required: false,
+        },
+        message: {
+            type: String,
+            required: true
+        }
+    }
+});
 </script>

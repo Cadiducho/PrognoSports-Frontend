@@ -7,7 +7,7 @@
                 </template>
 
                 <p class="heading">Puesto</p>
-                <p class="title">{{ userResume.standing }}º</p>
+                <p class="title">{{ userResume.standing || '?'}}º</p>
             </o-tooltip>
         </div>
         <div class="level-item has-text-centered">
@@ -26,7 +26,7 @@
 
                     <p class="heading">Puntos</p>
                     <p class="title">
-                        {{ userResume.points }}
+                        {{ userResume.points || '?' }}
                     </p>
                 </o-tooltip>
             </div>
@@ -56,18 +56,17 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
 import {UserResume} from "@/types/User";
-import {namespace} from "vuex-class";
 
-const Auth = namespace('Auth')
+import {defineComponent, PropType} from "vue";
 
-@Component
-export default class UserLevelResume extends Vue {
-    @Prop() private userResume!: UserResume;
-}
+export default defineComponent({
+    name: "UserLevelResume",
+    props: {
+        userResume: {
+            type: Object as PropType<UserResume>
+        }
+    }
+
+});
 </script>
-
-<style scoped>
-
-</style>

@@ -51,60 +51,37 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {User} from "@/types/User";
-import {namespace} from "vuex-class";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {competitionService, seasonService} from "@/_services";
 import {Season} from "@/types/Season";
 import {Competition} from "@/types/Competition";
-const Auth = namespace('Auth')
 
-@Component({
-        components: {
-            AlertNoPermission,
-            PrognoPageTitle,
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/pinia/authStore";
+
+export default defineComponent({
+    name: "SeasonEdit",
+    components: {
+        AlertNoPermission,
+        PrognoPageTitle,
+    },
+    setup() {
+        const authStore = useAuthStore();
+
+        const currentUser = authStore.user;
+        return { currentUser };
+    },
+    data() {
+        return {
+            isLoading: true,
+            thereIsSeason: false,
+            season: {} as Season,
+            seasonId: this.$route.params.season,
+
+            competitions: new Array<Competition>()
         }
-    }
-)
-export default class SeasonEdit extends Vue {
-    @Auth.State("user") private currentUser!: User;
-
-    private isLoading = true;
-    private thereIsSeason = false;
-    private season?: Season;
-    private seasonId = this.$route.params.season;
-
-    private competitions: Array<Competition> = [];
-
-    private isDataOk(): boolean {
-        return (this.season !== undefined) && !(this.season.id == undefined && this.season.name == undefined && this.season.competition!.id == undefined)
-    }
-
-    private editSeason(): void {
-        let data = {
-            competition: this.season!.competition.id,
-            name: this.season!.name,
-            totalEvents: this.season!.totalEvents
-        }
-        seasonService.editSeason(this.season!, data).then((result) => {
-            this.$oruga.notification.open({
-                message: "Se ha editado correctamente la temporada `" + result.name + "`",
-                variant: "success",
-            });
-
-            this.$router.push({
-                name: 'adminSeasons'
-            })
-        }).catch((error) => {
-            this.$oruga.notification.open({
-                message: error.message,
-                variant: "danger",
-            });
-        });
-    }
-
+    },
     mounted() {
         seasonService.getSeason(this.seasonId).then((season) => {
             this.season = season;
@@ -117,7 +94,33 @@ export default class SeasonEdit extends Vue {
             this.competitions = [];
             this.competitions.push(...list);
         })
-    }
+    },
+    methods: {
+        isDataOk(): boolean {
+            return (this.season !== undefined) && !(this.season.id == undefined && this.season.name == undefined && this.season.competition!.id == undefined)
+        },
+        editSeason(): void {
+            let data = {
+                competition: this.season!.competition.id,
+                name: this.season!.name,
+                totalEvents: this.season!.totalEvents
+            }
+            seasonService.editSeason(this.season!, data).then((result) => {
+                this.$oruga.notification.open({
+                    message: "Se ha editado correctamente la temporada `" + result.name + "`",
+                    variant: "success",
+                });
 
-}
+                this.$router.push({
+                    name: 'adminSeasons'
+                })
+            }).catch((error) => {
+                this.$oruga.notification.open({
+                    message: error.message,
+                    variant: "danger",
+                });
+            });
+        }
+    }
+});
 </script>

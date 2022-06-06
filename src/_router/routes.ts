@@ -1,4 +1,4 @@
-import LandingView from "@/views/landing/LandingView.vue";
+import LandingView from "@/views/LandingView.vue";
 import PrognoView from "@/views/PrognoView.vue";
 import EmptyRoutedView from "@/views/EmptyRoutedView.vue";
 

@@ -21,47 +21,53 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
 import {Community} from "@/types/Community";
 import {communityService} from "@/_services";
 import EventBus from "@/plugins/eventbus";
-import {namespace} from "vuex-class";
-const Auth = namespace("Auth");
+import {defineComponent, PropType} from "vue";
+import {useCommunityStore} from "@/pinia/communityStore";
 
-@Component
-export default class ConfirmLeaveCommunityModal extends Vue {
-    @Prop() community!: Community;
-    @Auth.State("community") private currentCommunity!: Community;
-    @Auth.Action removeCommunity!: () => void;
+export default defineComponent({
+    name: "ConfirmLeaveCommunityModal",
+    props: {
+        community: {
+            type: Object as PropType<Community>,
+            required: true
+        }
+    },
+    setup() {
+        const communityStore = useCommunityStore();
 
-    public leaveCommunity() {
-        if (this.community.id == this.currentCommunity.id) {
-            this.$oruga.notification.open({
-                message: "No puedes dejar la comunidad en la que estás en este momento",
-                variant: "warning",
-            });
-            this.$emit('close');
-        } else {
-            communityService.quitCommunity(this.community).then(() => {
+        const currentCommunity = communityStore.community;
+        const removeCommunity = communityStore.removeCommunity;
+        return { removeCommunity, currentCommunity };
+    },
+    methods: {
+        leaveCommunity() {
+            if (this.community.id == this.currentCommunity.id) {
                 this.$oruga.notification.open({
-                    message: "¡Has dejado la comunidad " + this.community.name + "!",
-                    variant: "success",
-                });
-            }).catch((error) => {
-                this.$oruga.notification.open({
-                    message: "Ha ocurrido un error: " + error.message,
+                    message: "No puedes dejar la comunidad en la que estás en este momento",
                     variant: "warning",
                 });
-            }).finally(() => {
-                EventBus.$emit('reloadCommunitiesList');
-                EventBus.$emit('reloadCommunitiesDropdown');
                 this.$emit('close');
-            });
+            } else {
+                communityService.quitCommunity(this.community).then(() => {
+                    this.$oruga.notification.open({
+                        message: "¡Has dejado la comunidad " + this.community.name + "!",
+                        variant: "success",
+                    });
+                }).catch((error) => {
+                    this.$oruga.notification.open({
+                        message: "Ha ocurrido un error: " + error.message,
+                        variant: "warning",
+                    });
+                }).finally(() => {
+                    EventBus.$emit('reloadCommunitiesList');
+                    EventBus.$emit('reloadCommunitiesDropdown');
+                    this.$emit('close');
+                });
+            }
         }
     }
-}
+});
 </script>
-
-<style scoped>
-
-</style>

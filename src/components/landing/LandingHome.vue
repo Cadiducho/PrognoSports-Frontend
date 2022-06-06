@@ -119,6 +119,10 @@
     </div>
 </template>
 
+<style lang="scss" scoped>
+@import "@/scss/landing.scss";
+</style>
+
 <script lang="ts">
 import {defineComponent} from "vue";
 
@@ -126,6 +130,7 @@ export default defineComponent({
     name: "LandingHome",
     methods: {
         sendToRegister() {
+            window.scrollTo({ top: 0, left: 0, behavior: "smooth"});
             this.$router.push({path: '/register'});
         }
     }

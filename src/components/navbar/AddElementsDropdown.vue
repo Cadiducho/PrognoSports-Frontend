@@ -30,14 +30,16 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
-import {namespace} from "vuex-class";
-import {User} from "@/types/User";
-const Auth = namespace('Auth')
+import {useAuthStore} from "@/pinia/authStore";
+import {defineComponent} from "vue";
 
-@Component
-export default class AddElementsDropdown extends Vue {
-    @Auth.State("user") private currentUser!: User;
+export default defineComponent({
+    name: "AddElementsDropdown",
+    setup() {
+        const authStore = useAuthStore();
 
-}
+        const currentUser = authStore.user;
+        return {currentUser};
+    },
+});
 </script>
