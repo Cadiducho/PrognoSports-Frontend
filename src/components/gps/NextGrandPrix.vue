@@ -20,13 +20,13 @@
                 </p>
                 <p class="content block">
                     <span v-for="session in nextGp.sessions">
-                        <b>{{ session.humanName() }}:</b> {{ session.date | humanDate }} ({{ session.date | dateDiff }}) <br />
+                        <b>{{ session.humanName() }}:</b> {{ humanDate(session.date) }} ({{ dateDiff(session.date) }}) <br />
                     </span>
                 </p>
                 <footer class="card-footer">
                     <o-button tag="router-link"
                               :to="gpLink"
-                              variant="info is-light" expanded>
+                              variant="info light" expanded>
                         Pronosticar
                     </o-button>
                 </footer>
@@ -45,17 +45,21 @@
     import {GrandPrix} from "@/types/GrandPrix";
 
     import {defineComponent} from "vue";
-    import {useCommunityStore} from "@/pinia/communityStore";
+    import {useCommunityStore} from "@/store/communityStore";
     import {isValidCommunity} from "@/utils";
     import {grandPrixService} from "@/_services";
+    import {useDayjs} from "@/composables/useDayjs";
 
     export default defineComponent({
         name: "NextGrandPrix",
         setup() {
+            const dayjs = useDayjs();
             const communityStore = useCommunityStore();
 
+            const humanDate = dayjs.humanDate;
+            const dateDiff = dayjs.dateDiff;
             const currentCommunity = communityStore.community;
-            return { currentCommunity };
+            return { currentCommunity, humanDate, dateDiff };
         },
         data() {
             return {

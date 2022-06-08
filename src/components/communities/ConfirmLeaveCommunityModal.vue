@@ -23,9 +23,9 @@
 <script lang="ts">
 import {Community} from "@/types/Community";
 import {communityService} from "@/_services";
-import EventBus from "@/plugins/eventbus";
 import {defineComponent, PropType} from "vue";
-import {useCommunityStore} from "@/pinia/communityStore";
+import {useCommunityStore} from "@/store/communityStore";
+import useEmitter from "@/composables/useEmitter";
 
 export default defineComponent({
     name: "ConfirmLeaveCommunityModal",
@@ -36,11 +36,12 @@ export default defineComponent({
         }
     },
     setup() {
+        const emitter = useEmitter();
         const communityStore = useCommunityStore();
 
         const currentCommunity = communityStore.community;
         const removeCommunity = communityStore.removeCommunity;
-        return { removeCommunity, currentCommunity };
+        return { removeCommunity, currentCommunity, emitter };
     },
     methods: {
         leaveCommunity() {
@@ -62,8 +63,8 @@ export default defineComponent({
                         variant: "warning",
                     });
                 }).finally(() => {
-                    EventBus.$emit('reloadCommunitiesList');
-                    EventBus.$emit('reloadCommunitiesDropdown');
+                    this.emitter.emit('reloadCommunitiesList');
+                    this.emitter.emit('reloadCommunitiesDropdown');
                     this.$emit('close');
                 });
             }

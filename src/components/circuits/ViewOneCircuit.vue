@@ -104,13 +104,14 @@
                                         </p>
                                         <p class="subtitle">
                                             <span v-for="session in gp.sessions">
-                                                {{ session.humanName() }}: {{ session.date | humanDate }} ({{ session.date | dateDiff }}) <br />
+                                                {{ session.humanName() }}: {{ humanDate(session.date) }} ({{ dateDiff(session.date) }}) <br />
                                             </span>
                                         </p>
                                     </div>
 
-                                    <o-button tag="router-link"
-                                              :to="{
+                                    <router-link
+                                        class="button is-info is-light is-expanded"
+                                        :to="{
                                             name: 'gpdetails',
                                             params: {
                                                 competition: gp.competition.code,
@@ -118,9 +119,9 @@
                                                 id: gp.id,
                                             }
                                           }"
-                                              variant="info is-light" expanded>
+                                    >
                                         Detalles
-                                    </o-button>
+                                    </router-link>
                                 </div>
                             </div>
                         </article>
@@ -141,11 +142,12 @@ import {circuitService, grandPrixService} from "@/_services";
 import CircuitCard from "@/components/gps/CircuitCard.vue";
 
 import { LatLng, latLng} from "leaflet";
-import {LMap, LTileLayer, LMarker, LPopup, LTooltip} from "vue2-leaflet";
+import {LMap, LTileLayer, LMarker, LPopup, LTooltip} from "@vue-leaflet/vue-leaflet";
 import {GrandPrix} from "@/types/GrandPrix";
 import {hasVariant} from "@/utils";
-import EventBus from "@/plugins/eventbus";
 import {defineComponent} from "vue";
+import useEmitter from "@/composables/useEmitter";
+import {useDayjs} from "@/composables/useDayjs";
 
 export default defineComponent({
     name: "ViewOneCircuit",
@@ -157,6 +159,14 @@ export default defineComponent({
         LMarker,
         LPopup,
         LTooltip
+    },
+    setup() {
+        const emitter = useEmitter();
+        const dayjs = useDayjs();
+
+        const humanDate = dayjs.humanDate;
+        const dateDiff = dayjs.dateDiff;
+        return { emitter, humanDate, dateDiff }
     },
     data() {
         return {
@@ -200,7 +210,7 @@ export default defineComponent({
             this.thereIsCircuit = false;
         }).finally(() => {
             this.isLoading = false;
-            EventBus.$emit('breadcrumbLastname', this.circuitName);
+            this.emitter.emit('breadcrumbLastname', this.circuitName);
         })
     },
     methods: {

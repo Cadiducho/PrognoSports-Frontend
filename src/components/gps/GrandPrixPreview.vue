@@ -14,7 +14,7 @@
             </div>
             <p class="content block">
                 <span v-for="session in gp.sessions">
-                    {{ session.humanName() }}: {{ session.date | humanDate }} ({{ session.date | dateDiff }}) <br />
+                    {{ session.humanName() }}: {{ humanDate(session.date) }} ({{ dateDiff(session.date) }}) <br />
                 </span>
             </p>
             <footer class="card-footer">
@@ -33,8 +33,9 @@
     import {Circuit} from "@/types/Circuit";
 
     import {defineComponent, PropType} from "vue";
-    import {useAuthStore} from "@/pinia/authStore";
-    import {useCommunityStore} from "@/pinia/communityStore";
+    import {useAuthStore} from "@/store/authStore";
+    import {useCommunityStore} from "@/store/communityStore";
+    import {useDayjs} from "@/composables/useDayjs";
 
     export default defineComponent({
         name: "GrandPrixPreview",
@@ -45,12 +46,15 @@
             }
         },
         setup() {
+            const dayjs = useDayjs();
             const authStore = useAuthStore();
             const communityStore = useCommunityStore();
 
+            const dateDiff = dayjs.dateDiff;
+            const humanDate = dayjs.humanDate;
             const currentUser = authStore.user;
             const currentCommunity = communityStore.community;
-            return { currentUser, currentCommunity };
+            return { currentUser, currentCommunity, dateDiff, humanDate };
         },
         methods: {
             circuitLogoImage(circuit: Circuit) {

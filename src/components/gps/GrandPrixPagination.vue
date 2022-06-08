@@ -18,8 +18,8 @@
     import {RawLocation} from "vue-router";
 
     import {defineComponent, PropType} from "vue";
-    import {useAuthStore} from "@/pinia/authStore";
-    import {useCommunityStore} from "@/pinia/communityStore";
+    import {useAuthStore} from "@/store/authStore";
+    import {useCommunityStore} from "@/store/communityStore";
 
     export default defineComponent({
         name: "GrandPrixPagination",

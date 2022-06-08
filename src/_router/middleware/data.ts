@@ -1,13 +1,13 @@
-import {NavigationGuardNext, Route} from "vue-router";
-import {useAuthStore} from "@/pinia/authStore";
-import {useCommunityStore} from "@/pinia/communityStore";
+import {NavigationGuardNext, RouteLocationNormalized} from "vue-router";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
 
-export default function fetchDataFromClient(to: Route, from: Route, next: NavigationGuardNext) {
+export default function fetchDataFromClient(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
     const authStore = useAuthStore();
     const communityStore = useCommunityStore();
     authStore.userRequest().finally(() => {
         const loggedIn = authStore.isLoggedIn;
-        console.log("[🍍] Logged in? " + loggedIn)
+        //console.log("[🍍] Logged in? " + loggedIn)
         if (loggedIn) {
             // Si existe usuario iniciado sesión, pido su comunidad
             const hasCommunity = communityStore.thereIsCurrentCommunity;

@@ -22,7 +22,7 @@
                             </div>
 
                             <div class="content">
-                                <p class="card-text"><b>Fecha de creación: </b>{{community.created | humanDateTime}}</p>
+                                <p class="card-text"><b>Fecha de creación: </b>{{ humanDateTime(community.created) }}</p>
                                 <p class="card-text">
                                     <b>Creador: </b>
                                     <router-link :to="{name: 'user', params: { user: community.owner.username}}">
@@ -115,7 +115,7 @@
                                                                 </span>
                                                                 <span>
                                                                     <o-tooltip label="Última conexión">
-                                                                        {{ cu.user.last_activity | dateDiff }}
+                                                                        {{ dateDiff(cu.user.last_activity) }}
                                                                     </o-tooltip>
                                                                 </span>
                                                             </span>
@@ -128,7 +128,7 @@
                                                             <span class="icon">
                                                                 <i class="fas fa-calendar"></i>
                                                             </span>
-                                                            <span>Se unió el {{ cu.user.created | humanDateTime }}</span>
+                                                            <span>Se unió el {{ humanDateTime(cu.user.created) }}</span>
                                                         </span>
                                                     </p>
                                                 </div>
@@ -184,8 +184,9 @@ import {CommunityUser} from "@/types/CommunityUser";
 import dayjs from "dayjs";
 
 import {defineComponent} from "vue";
-import {useAuthStore} from "@/pinia/authStore";
-import {useCommunityStore} from "@/pinia/communityStore";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
+import {useDayjs} from "@/composables/useDayjs";
 
 export default defineComponent({
     name: "ViewOneCommunity",
@@ -193,12 +194,15 @@ export default defineComponent({
         PrognoPageTitle
     },
     setup() {
+        const dayjs = useDayjs();
         const authStore = useAuthStore();
         const communityStore = useCommunityStore();
 
+        const dateDiff = dayjs.dateDiff;
+        const humanDateTime = dayjs.humanDateTime;
         const currentUser = authStore.user;
         const currentCommunity = communityStore.community;
-        return { currentUser, currentCommunity };
+        return { currentUser, currentCommunity, dateDiff, humanDateTime };
     },
     data() {
         return {

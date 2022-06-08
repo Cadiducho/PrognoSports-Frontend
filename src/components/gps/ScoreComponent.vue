@@ -11,7 +11,7 @@
             </p>
 
             <o-notification v-if="currentUser.preferences['hide-tipps-until-start'] === true" variant="info is-light" aria-close-label="Close notification">
-                Tus pronósticos están ocultos al resto de usuarios hasta {{ session.date | humanDateTimeMinusFiveMinutes}}
+                Tus pronósticos están ocultos al resto de usuarios hasta {{ humanDateTimeMinusFiveMinutes(session.date)}}
             </o-notification>
             <o-notification v-if="!thereAreFinishResults" variant="primary is-light" aria-close-label="Close notification">
                 Aún no hay resultados confirmados para esta sesión
@@ -175,9 +175,10 @@ interface TableType {
 }
 
 import {defineComponent, PropType} from "vue";
-import {useAuthStore} from "@/pinia/authStore";
-import {useCommunityStore} from "@/pinia/communityStore";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
 import {StartGridPosition} from "@/types/StartGridPosition";
+import {useDayjs} from "@/composables/useDayjs";
 
 export default defineComponent({
     name: "LandingNavbar",
@@ -205,12 +206,14 @@ export default defineComponent({
         },
     },
     setup() {
+        const dayjs = useDayjs();
         const authStore = useAuthStore();
         const communityStore = useCommunityStore();
 
+        const humanDateTimeMinusFiveMinutes = dayjs.humanDateTimeMinusFiveMinutes;
         const currentUser = authStore.user;
         const currentCommunity = communityStore.community;
-        return { currentUser, currentCommunity };
+        return { currentUser, currentCommunity, humanDateTimeMinusFiveMinutes };
     },
     data() {
         return {

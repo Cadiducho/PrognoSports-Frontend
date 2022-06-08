@@ -3,3 +3,11 @@
         No tienes permiso para visualizar esta página
     </o-notification>
 </template>
+
+<script>
+import {defineComponent} from "vue";
+
+export default defineComponent({
+    name: "AlertNoPermission"
+});
+</script>

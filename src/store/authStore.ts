@@ -3,7 +3,7 @@ import {User} from "@/types/User";
 import {Community} from "@/types/Community";
 import {isValidUser} from "@/utils";
 import {authService, userService} from "@/_services";
-import {useCommunityStore} from "@/pinia/communityStore";
+import {useCommunityStore} from "@/store/communityStore";
 
 export const useAuthStore = defineStore('auth', {
 
@@ -85,12 +85,12 @@ export const useAuthStore = defineStore('auth', {
         userRequest(): Promise<User> {
             return userService.getMe().then(
                 user => {
-                    console.log("[🍍] user success: " + user.username);
+                    //console.log("[🍍] user success: " + user.username);
                     this.userRequestSuccess(user);
                     return Promise.resolve(user);
                 },
                 error => {
-                    console.log("[🍍] user error. Sign out");
+                    //console.log("[🍍] user error. Sign out");
                     this.signOut();
                     return Promise.reject(error);
                 }

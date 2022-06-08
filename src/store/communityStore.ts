@@ -2,7 +2,7 @@ import {defineStore} from "pinia";
 import {User} from "@/types/User";
 import {Community, ICommunity} from "@/types/Community";
 import {isValidCommunity} from "@/utils";
-import {useAuthStore} from "@/pinia/authStore";
+import {useAuthStore} from "@/store/authStore";
 import {communityService} from "@/_services";
 
 export const useCommunityStore = defineStore('community', {

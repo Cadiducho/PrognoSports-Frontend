@@ -23,15 +23,17 @@
 <script lang="ts">
     import {Community} from "@/types/Community";
     import {communityService} from "@/_services";
-    import EventBus from "@/plugins/eventbus";
     import {isValidCommunity} from "@/utils";
     import {defineComponent} from "vue";
-    import {useAuthStore} from "@/pinia/authStore";
-    import {useCommunityStore} from "@/pinia/communityStore";
+    import {useAuthStore} from "@/store/authStore";
+    import {useCommunityStore} from "@/store/communityStore";
+    import useEmitter from "@/composables/useEmitter";
 
     export default defineComponent({
         name: "CommunitiesDropdown",
         setup() {
+            const emitter = useEmitter();
+
             const authStore = useAuthStore();
             const communityStore = useCommunityStore();
 
@@ -39,7 +41,7 @@
             const currentCommunity = communityStore.community;
             const setCommunity = communityStore.setCommunity;
 
-            return { currentUser, currentCommunity, setCommunity };
+            return { currentUser, currentCommunity, setCommunity, emitter };
         },
         data() {
             return {
@@ -52,7 +54,7 @@
             }
         },
         mounted() {
-            EventBus.$on('reloadCommunitiesDropdown', () => {
+            this.emitter.on('reloadCommunitiesDropdown', () => {
                 this.getCommunityList();
             });
 
@@ -86,7 +88,7 @@
                             "Has cambiado a la comunidad " + targetCommunity.name,
                         variant: "info",
                     });
-                    EventBus.$emit('reloadCommunitiesDropdown'); // Recargar la lista, que previsiblemente quitará la target y añadirá la que estaba originalmente
+                    this.emitter.emit('reloadCommunitiesDropdown'); // Recargar la lista, que previsiblemente quitará la target y añadirá la que estaba originalmente
                 })
             }
         }

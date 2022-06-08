@@ -349,11 +349,11 @@
 <script lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import {communityService, rulesetService} from "@/_services";
-import EventBus from "@/plugins/eventbus";
 
 import {defineComponent} from "vue";
-import {useAuthStore} from "@/pinia/authStore";
-import {useCommunityStore} from "@/pinia/communityStore";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
+import useEmitter from "@/composables/useEmitter";
 
 export default defineComponent({
     name: "ViewCommunitiesList",
@@ -361,12 +361,13 @@ export default defineComponent({
         PrognoPageTitle
     },
     setup() {
+        const emitter = useEmitter();
         const authStore = useAuthStore();
         const communityStore = useCommunityStore();
 
         const currentUser = authStore.user;
         const setCommunity = communityStore.setCommunity;
-        return { currentUser, setCommunity };
+        return { currentUser, setCommunity, emitter };
     },
     data() {
         return {
@@ -472,7 +473,7 @@ export default defineComponent({
                     })
 
                     this.setCommunity(community); // Establecer en Pinia la comunidad actual
-                    EventBus.$emit('reloadCommunitiesDropdown'); // Recargar dropdown del navbar
+                    this.emitter.emit('reloadCommunitiesDropdown'); // Recargar dropdown del navbar
                 }).catch((error) => {
                     this.$oruga.notification.open({
                         message: error.message,

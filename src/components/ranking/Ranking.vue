@@ -236,8 +236,8 @@
 
 <script lang="ts">
     import {defineComponent} from "vue";
-    import {useAuthStore} from "@/pinia/authStore";
-    import {useCommunityStore} from "@/pinia/communityStore";
+    import {useAuthStore} from "@/store/authStore";
+    import {useCommunityStore} from "@/store/communityStore";
     import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
     import {communityService, grandPrixService, scoreService, seasonService} from "@/_services";
     import {GrandPrix} from "@/types/GrandPrix";
@@ -245,10 +245,9 @@
     import {Season} from "@/types/Season";
     import UserMiniCard from "@/components/user/UserMiniCard.vue";
     import {User} from "@/types/User";
-    import {Community} from "@/types/Community";
-    import VueApexCharts from "vue-apexcharts";
     import {UserPoints} from "@/types/UserPoints";
     import PointsTooltipComponent from "@/components/ranking/PointsTooltipComponent.vue";
+    import VueApexCharts from "vue3-apexcharts";
 
     interface TableEntry {
         'user': User;
@@ -260,7 +259,7 @@
     export default defineComponent({
         name: "LandingNavbar",
         components: {
-            PrognoPageTitle, UserMiniCard, VueApexCharts, PointsTooltipComponent
+            PrognoPageTitle, UserMiniCard, PointsTooltipComponent, VueApexCharts
         },
         setup() {
             const authStore = useAuthStore();

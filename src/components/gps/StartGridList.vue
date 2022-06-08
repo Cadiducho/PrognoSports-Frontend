@@ -38,12 +38,12 @@
 import {StartGridPosition} from "@/types/StartGridPosition";
 import StartGridCard from "@/components/gps/StartGridCard.vue";
 import {RaceSession} from "@/types/RaceSession";
-import EventBus from "@/plugins/eventbus";
 import dayjs from "@/plugins/dayjs";
 
 import {defineComponent, PropType} from "vue";
-import {useAuthStore} from "@/pinia/authStore";
-import {useCommunityStore} from "@/pinia/communityStore";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
+import useEmitter from "@/composables/useEmitter";
 
 export default defineComponent({
     name: "StartGridList",
@@ -55,12 +55,13 @@ export default defineComponent({
         }
     },
     setup() {
+        const emitter = useEmitter();
         const authStore = useAuthStore();
         const communityStore = useCommunityStore();
 
         const currentUser = authStore.user;
         const currentCommunity = communityStore.community;
-        return { currentUser, currentCommunity };
+        return { currentUser, currentCommunity, emitter };
     },
     data() {
         return {
@@ -80,7 +81,7 @@ export default defineComponent({
     },
     methods: {
         changeGridSession() {
-            EventBus.$emit('changeGridSession', this.chosenSession);
+            this.emitter.emit('changeGridSession', this.chosenSession);
         },
     },
     computed: {

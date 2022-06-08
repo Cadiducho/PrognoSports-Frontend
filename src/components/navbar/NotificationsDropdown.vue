@@ -28,8 +28,8 @@
                             </section>
                             <footer class="modal-card-foot">
                                 <span class="has-text-info is-italic has-text-right">Recibida el
-                                    <o-tooltip :label="noti.createdAt | dateDiff" position="right">
-                                        {{ noti.createdAt | humanDateTime }}
+                                    <o-tooltip :label="dateDiff(noti.createdAt)" position="right">
+                                        {{ humanDateTime(noti.createdAt) }}
                                     </o-tooltip>
                                 </span>
                             </footer>
@@ -44,19 +44,23 @@
     import {notificationService} from "@/_services";
     import { Notification } from "@/types/Notification";
 
-    import {useAuthStore} from "@/pinia/authStore";
-    import {useCommunityStore} from "@/pinia/communityStore";
+    import {useAuthStore} from "@/store/authStore";
+    import {useCommunityStore} from "@/store/communityStore";
     import {defineComponent} from "vue";
+    import {useDayjs} from "@/composables/useDayjs";
 
     export default defineComponent({
         name: "NotificationsDropdown",
         setup() {
+            const dayjs = useDayjs();
             const authStore = useAuthStore();
             const communityStore = useCommunityStore();
 
+            const dateDiff = dayjs.dateDiff;
+            const humanDateTime = dayjs.humanDateTime;
             const currentUser = authStore.user;
             const currentCommunity = communityStore.community;
-            return { currentUser, currentCommunity };
+            return { currentUser, currentCommunity, dateDiff, humanDateTime };
         },
         data() {
             return {

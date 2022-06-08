@@ -23,10 +23,11 @@
 <script lang="ts">
 import {Community} from "@/types/Community";
 import {communityService} from "@/_services";
-import EventBus from "@/plugins/eventbus";
 
-import {defineComponent, PropType} from "vue";
-import {useCommunityStore} from "@/pinia/communityStore";
+import {defineComponent, inject, PropType} from "vue";
+import {useCommunityStore} from "@/store/communityStore";
+import { Emitter } from "mitt";
+import useEmitter from "@/composables/useEmitter";
 
 export default defineComponent({
     name: "ConfirmJoinCommunityModal",
@@ -37,10 +38,12 @@ export default defineComponent({
         }
     },
     setup() {
-        const communityStore = useCommunityStore();
+        const emitter = useEmitter();
 
+        const communityStore = useCommunityStore();
         const setCommunity = communityStore.setCommunity;
-        return { setCommunity };
+
+        return { setCommunity, emitter };
     },
     methods: {
         joinCommunity() {
@@ -58,8 +61,8 @@ export default defineComponent({
                     variant: "warning",
                 });
             }).finally(() => {
-                EventBus.$emit('reloadCommunitiesList');
-                EventBus.$emit('reloadCommunitiesDropdown');
+                this.emitter.emit('reloadCommunitiesList');
+                this.emitter.emit('reloadCommunitiesDropdown');
                 this.$emit('close');
             });
         }

@@ -58,7 +58,7 @@ import {Season} from "@/types/Season";
 import {Competition} from "@/types/Competition";
 
 import {defineComponent} from "vue";
-import {useAuthStore} from "@/pinia/authStore";
+import {useAuthStore} from "@/store/authStore";
 
 export default defineComponent({
     name: "SeasonEdit",

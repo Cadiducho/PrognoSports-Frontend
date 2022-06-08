@@ -106,7 +106,7 @@ import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 
 import {defineComponent} from "vue";
-import {useAuthStore} from "@/pinia/authStore";
+import {useAuthStore} from "@/store/authStore";
 
 export default defineComponent({
     name: "CreateCircuit",

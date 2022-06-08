@@ -66,7 +66,7 @@ import {seasonService} from "@/_services";
 import {Season} from "@/types/Season";
 
 import {defineComponent} from "vue";
-import {useAuthStore} from "@/pinia/authStore";
+import {useAuthStore} from "@/store/authStore";
 
 export default defineComponent({
     name: "SeasonsList",
