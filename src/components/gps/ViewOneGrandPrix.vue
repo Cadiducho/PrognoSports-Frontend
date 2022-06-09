@@ -102,7 +102,7 @@ export default defineComponent({
 
         const humanDateTimeMinusFiveMinutes = dayjs.humanDateTimeMinusFiveMinutes;
         const currentCommunity = communityStore.community;
-        return {currentCommunity, emitter};
+        return {currentCommunity, emitter, humanDateTimeMinusFiveMinutes};
     },
     data() {
         return {

@@ -35,13 +35,12 @@ export default defineComponent({
         const router = useRouter();
         const route = useRoute();
 
-        let crumbs = ref([] as Array<Crumb>);
+        const crumbs = ref([] as Array<Crumb>);
 
         /**
          * Calcular a partir de la ruta actual del componente su Breadcrumb
          */
         const calculateCrumbs = () => {
-            console.log("crumbs")
             let list: Crumb[] = [];
 
             const myRoute = router.getRoutes().find(r => r.name == route.name) as BreadcrumbRoute;

@@ -51,7 +51,7 @@
                                         <span class="icon mr-2">
                                             <i class="fas fa-clock"></i>
                                         </span>
-                                        Última conexión: {{ dateDiff(profile.last_activity }}
+                                        Última conexión: {{ dateDiff(profile.last_activity) }}
                                     </span>
                                 </div>
                                 <div class="block mb-1">

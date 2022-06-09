@@ -24,8 +24,7 @@
                 </div>
             </div>
             <div class="column is-6">
-                <div class="block"></div>
-                <div v-for="pos in parrillaDerecha">
+                <div v-for="pos in parrillaDerecha" class="parrillaDerecha">
                     <StartGridCard :gridPos="pos"/>
                     <div class="block"></div>
                 </div>
@@ -38,12 +37,12 @@
 import {StartGridPosition} from "@/types/StartGridPosition";
 import StartGridCard from "@/components/gps/StartGridCard.vue";
 import {RaceSession} from "@/types/RaceSession";
-import dayjs from "@/plugins/dayjs";
 
 import {defineComponent, PropType} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import useEmitter from "@/composables/useEmitter";
+import dayjs from "dayjs";
 
 export default defineComponent({
     name: "StartGridList",
@@ -98,3 +97,9 @@ export default defineComponent({
     }
 });
 </script>
+
+<style scoped>
+.parrillaDerecha {
+    margin-top: 1.5rem;
+}
+</style>

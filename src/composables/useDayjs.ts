@@ -4,14 +4,16 @@ import timezone from "dayjs/plugin/timezone";
 import relativeTime from "dayjs/plugin/relativeTime";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import isToday from "dayjs/plugin/isToday";
+import 'dayjs/locale/es';
 
 export function useDayjs() {
 
-        dayjs.extend(utc);
-        dayjs.extend(timezone);
-        dayjs.extend(relativeTime);
-        dayjs.extend(customParseFormat);
-        dayjs.extend(isToday);
+    dayjs.locale('es');
+    dayjs.extend(utc);
+    dayjs.extend(timezone);
+    dayjs.extend(relativeTime);
+    dayjs.extend(customParseFormat);
+    dayjs.extend(isToday);
 
     const dateDiff = (date: Date): string => {
         return dayjs(date).fromNow();
