@@ -9,7 +9,6 @@
   "dependencies": {
     "@oruga-ui/oruga-next": "^0.5.5",
     "@oruga-ui/theme-bulma": "^0.2.5",
-    "@soerenmartius/vue3-clipboard": "^0.1.2",
     "@vitejs/plugin-vue": "^2.3.3",
     "@vue-leaflet/vue-leaflet": "^0.6.1",
     "apexcharts": "^3.35.3",

@@ -4,7 +4,6 @@ import Oruga from '@oruga-ui/oruga-next';
 import { bulmaConfig } from '@oruga-ui/theme-bulma'
 
 import './scss/app.scss';
-import {VueClipboard} from "@soerenmartius/vue3-clipboard";
 import VueApexCharts from "vue3-apexcharts";
 import mixin from "@/plugins/mixin";
 import App from "@/App.vue";
@@ -29,7 +28,6 @@ const app = createApp(App)
         ...bulmaConfig}
     )
     .use(VueApexCharts)
-    .use(VueClipboard)
     .component("Loading", Loading)
     .mixin(mixin);
 
