@@ -20,8 +20,13 @@
                                     :label="session.humanName()"
                                     :key="session.name"
                                     :value="index">
-                            <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
-                                es {{ humanDateTimeMinusFiveMinutes(session.date) }}</h6>
+                            <h6 class="font-weight-light">
+                                La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
+                                es {{ humanDateTimeMinusFiveMinutes(session.date) }}
+                            </h6>
+                            <h6 class="font-weight-light">
+                                Para esta sesión se ha de pronosticar {{ cantidadPilotosPronosticados(ruleSet, session) }} pilotos
+                            </h6>
                             <SelectTipps :session="session"
                                          :grand-prix="grandPrix"
                                          :rule-set="ruleSet"

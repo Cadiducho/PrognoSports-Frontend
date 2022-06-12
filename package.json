@@ -19,11 +19,10 @@
     "marked": "^4.0.12",
     "mitt": "^3.0.0",
     "pinia": "^2.0.14",
-    "sortablejs": "^1.15.0",
     "vue": "3.2.37",
     "vue-router": "4",
-    "vue3-apexcharts": "^1.4.1",
-    "vuedraggable": "^2.24.3"
+    "vue-slicksort": "^2.0.0-alpha.5",
+    "vue3-apexcharts": "^1.4.1"
   },
   "resolutions": {
     "vue-demi": "0.13.1"

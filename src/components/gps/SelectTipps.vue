@@ -34,74 +34,68 @@
                     </o-field>
                 </div>
 
-                <draggable class="block-list has-radius is-highlighted is-info no-select"
-                           :list="pilotosDisponiblesFiltrados" :group="session.name">
-                    <transition-group type="transition" :name="!drag ? 'flip-list' : null">
-                        <li
-                            class="is-highlighted has-text-weight-semibold is-flex is-justify-content-space-between"
-                            :style="styleDriverCard(element)"
-                            v-for="(element, index) in pilotosDisponiblesFiltrados"
-                            :key="element.number">
+                <SlickList v-model:list="pilotosDisponibles" :group="session.name" :accept="[session.name]" tag="ul" :distance="5"
+                           class="block-list has-radius no-select">
 
-                            <span>
-                                {{ element.firstname }} {{ element.lastname }}
-                                <span class="tag is-rounded" v-bind:style="styleDorsal(element)">#{{ element.number }}</span>
-                                <o-tooltip class="ml-1" :label="element.team.longname">
-                                    {{ element.team.name }}
-                                </o-tooltip>
-                                ({{element.team.carname}})
-                            </span>
+                    <SlickItem v-for="(item, index) in pilotosDisponiblesFiltrados" :key="item.id" :index="index" tag="li"
+                               class="is-highlighted has-text-weight-semibold is-flex is-justify-content-space-between"
+                               :style="styleDriverCard(item)">
+                        <span>
+                            {{ item.firstname }} {{ item.lastname }}
+                            <span class="tag is-rounded" v-bind:style="styleDorsal(item)">#{{ item.number }}</span>
+                            <o-tooltip class="ml-1" :label="item.team.longname">
+                                {{ item.team.name }}
+                            </o-tooltip>
+                            ({{item.team.carname}})
+                        </span>
 
-                            <a @click="moveToTippList(element, index)" class="pl-3 pr-3">
-                                <i class="mr-0 fas fa-angle-right has-text-primary"></i>
-                                <i class="ml-0 fas fa-angle-right has-text-primary"></i>
-                            </a>
-                        </li>
-                    </transition-group>
-                </draggable>
+                        <a @click="moveToTippList(item, index)" class="pl-3 pr-3">
+                            <i class="mr-0 fas fa-angle-right has-text-primary"></i>
+                            <i class="ml-0 fas fa-angle-right has-text-primary"></i>
+                        </a>
+                    </SlickItem>
+                </SlickList>
+
             </div>
+
             <div class="column is-6">
-                <h3>Pilotos pronosticados ({{ cantidadPilotosPronosticados(ruleSet, session) }})</h3>
-                <draggable class="block-list has-radius is-highlighted is-primary no-select"
-                           :list="pilotosPronosticados" :group="session.name"
-                           :emptyInsertThreshold="1000">
-                    <transition-group type="transition" tag="div" :name="!drag ? 'flip-list' : null">
-                        <li
-                            class="is-highlighted has-text-weight-semibold is-flex is-justify-content-left"
-                            v-bind:style="styleDriverCard(element)"
-                            v-for="(element, index)  in pilotosPronosticados"
-                            :key="element.number">
+                <h3>Pilotos pronosticados</h3>
+                <SlickList v-model:list="pilotosPronosticados" :group="session.name" :accept="[session.name]" tag="ul" :distance="5"
+                           class="block-list no-select">
 
-                            <a @click="moveToAvailableList(element, index)" class="mr-3 pl-3">
-                                <i class="mr-0 fas fa-angle-left has-text-primary"></i>
-                                <i class="ml-0 fas fa-angle-left has-text-primary"></i>
-                            </a>
+                    <SlickItem v-for="(item, index) in pilotosPronosticados" :key="item.id" :index="index" tag="li"
+                               class="is-highlighted has-text-weight-semibold has-radius is-flex is-justify-content-left"
+                               :style="styleDriverCard(item)">
+                        <a @click="moveToAvailableList(item, index)" class="mr-3 pl-3">
+                            <i class="mr-0 fas fa-angle-left has-text-primary"></i>
+                            <i class="ml-0 fas fa-angle-left has-text-primary"></i>
+                        </a>
 
-                            <span>
-                                <b>{{ index + 1 }}º.</b> {{ element.firstname }} {{ element.lastname }}
-                                <span class="tag is-rounded" v-bind:style="styleDorsal(element)">#{{ element.number }}</span>
-                                <o-tooltip class="ml-1" :label="element.team.longname">
-                                    {{ element.team.name }}
-                                </o-tooltip>
-                                ({{element.team.carname}})
-                            </span>
-                        </li>
-                    </transition-group>
-                </draggable>
+                        <span>
+                            <b>{{ index + 1 }}º.</b> {{ item.firstname }} {{ item.lastname }}
+                            <span class="tag is-rounded" v-bind:style="styleDorsal(item)">#{{ item.number }}</span>
+                            <o-tooltip class="ml-1" :label="item.team.longname">
+                                {{ item.team.name }}
+                            </o-tooltip>
+                            ({{item.team.carname}})
+                        </span>
+                    </SlickItem>
+                </SlickList>
+
                 <template v-if="isBeforeEndDate(this.session)">
                     <o-button v-if="pilotosPronosticados.length === cantidadPilotosPronosticados(ruleSet, session)"
                               variant="success is-fullwidth"
                               @click="enviarPronostico">Enviar pronóstico
                     </o-button>
+
+                    <div v-else class="notification is-warning is-light">
+                        El pronóstico debe tener {{ cantidadPilotosPronosticados(ruleSet, session) }} pilotos escogidos y ordenados.
+                    </div>
                 </template>
+
                 <o-button v-else disabled variant="success is-fullwidth">
                     Ya no se puede pronosticar
                 </o-button>
-
-
-                <div v-else class="notification is-warning is-light">
-                    El pronóstico debe tener {{ cantidadPilotosPronosticados(ruleSet, session) }} pilotos escogidos y ordenados.
-                </div>
 
                 <hr v-if="(pilotosPronosticados.length > 0) && isBeforeEndDate(this.session)"/>
                 <o-button v-if="(pilotosPronosticados.length > 0) && isBeforeEndDate(this.session)" variant="danger is-light is-fullwidth" @click="reiniciarPronostico">Limpiar pronóstico</o-button>
@@ -113,7 +107,7 @@
 
 <script lang="ts">
 import {RaceSession} from "@/types/RaceSession";
-import draggable from "vuedraggable";
+import { SlickList, SlickItem } from 'vue-slicksort';
 import {grandPrixService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Driver} from "@/types/Driver";
@@ -128,7 +122,8 @@ import {useCommunityStore} from "@/store/communityStore";
 export default defineComponent({
     name: "SelectTipps",
     components: {
-        draggable
+        SlickList,
+        SlickItem,
     },
     props: {
         session: {
