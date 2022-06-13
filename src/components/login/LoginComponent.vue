@@ -94,6 +94,7 @@ export default defineComponent({
                 }).then(
                     () => {
                         this.$oruga.notification.open({
+                            position: 'top',
                             message: "¡Has iniciado sesión correctamente!",
                             variant: "success",
                         });
@@ -115,6 +116,7 @@ export default defineComponent({
                         }
 
                         this.$oruga.notification.open({
+                            position: 'top',
                             duration: 5000,
                             message: message,
                             variant: "danger",

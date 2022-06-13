@@ -117,6 +117,7 @@ export default defineComponent({
 
             seasonService.createSeason(rawSeason).then((result) => {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: "Se ha registrado correctamente la temporada `" + result.name + "`",
                     variant: "success",
                 });
@@ -126,6 +127,7 @@ export default defineComponent({
                 })
             }).catch((error) => {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: error.message,
                     variant: "danger",
                 });

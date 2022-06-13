@@ -460,6 +460,7 @@ export default defineComponent({
 
                 communityService.createCommunity(communityData).then((community) => {
                     this.$oruga.notification.open({
+                        position: 'top',
                         message: "Se ha registrado correctamente la comunidad `" + community.name + "`",
                         variant: "success",
                     });
@@ -475,6 +476,7 @@ export default defineComponent({
                     EventBus.$emit('reloadCommunitiesDropdown'); // Recargar dropdown del navbar
                 }).catch((error) => {
                     this.$oruga.notification.open({
+                        position: 'top',
                         message: error.message,
                         variant: "danger",
                     });
@@ -486,6 +488,7 @@ export default defineComponent({
                 })
             }).catch((error) => {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: error.message,
                     variant: "danger",
                 });

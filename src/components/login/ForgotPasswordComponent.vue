@@ -149,6 +149,7 @@ export default defineComponent({
                 ).then(
                     () => {
                         this.$oruga.notification.open({
+                            position: 'top',
                             message: "Tu contraseña ha sido restablecida",
                             variant: "success",
                         });
@@ -160,30 +161,35 @@ export default defineComponent({
                     (error) => {
                         if (error === "User email cannot be null") {
                             this.$oruga.notification.open({
+                                position: 'top',
                                 duration: 5000,
                                 message: "Debes introducir tu dirección de email",
                                 variant: "danger",
                             });
                         } else if (error === "User not found") {
                             this.$oruga.notification.open({
+                                position: 'top',
                                 duration: 5000,
                                 message: "Usuario no encontrado",
                                 variant: "danger",
                             });
                         } else if (error === "You must send the security token") {
                             this.$oruga.notification.open({
+                                position: 'top',
                                 duration: 5000,
                                 message: "Debes escribir el código de seguridad recibido",
                                 variant: "danger",
                             });
                         } else if (error === "You must send new the password") {
                             this.$oruga.notification.open({
+                                position: 'top',
                                 duration: 5000,
                                 message: "Debes escribir tu nueva contraseña",
                                 variant: "danger",
                             });
                         } else if (error === "Token rejected") {
                             this.$oruga.notification.open({
+                                position: 'top',
                                 duration: 5000,
                                 message: "Token rechazado. Compruebalo bien o vuelve a intentarlo en 15 minutos",
                                 variant: "danger",
@@ -191,6 +197,7 @@ export default defineComponent({
                         } else {
                             console.log(error)
                             this.$oruga.notification.open({
+                                position: 'top',
                                 duration: 5000,
                                 message: "Ha ocurrido desconocido cambiando la contraseña",
                                 variant: "danger",
@@ -205,6 +212,7 @@ export default defineComponent({
                 userService.sendForgotPassword(this.email).then(
                     () => {
                         this.$oruga.notification.open({
+                            position: 'top',
                             message: "Tu código de verificación ha sido enviado",
                             variant: "success",
                         });
@@ -213,18 +221,21 @@ export default defineComponent({
                     (error) => {
                         if (error === "User email cannot be null") {
                             this.$oruga.notification.open({
+                                position: 'top',
                                 duration: 5000,
                                 message: "Debes introducir tu dirección de email",
                                 variant: "danger",
                             });
                         } else if (error === "User not found") {
                             this.$oruga.notification.open({
+                                position: 'top',
                                 duration: 5000,
                                 message: "Usuario no encontrado",
                                 variant: "danger",
                             });
                         } else {
                             this.$oruga.notification.open({
+                                position: 'top',
                                 duration: 5000,
                                 message: "Ha ocurrido un error solicitando el código",
                                 variant: "danger",

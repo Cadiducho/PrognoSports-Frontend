@@ -109,6 +109,7 @@ export default defineComponent({
                             query: {redirect: this.$route.query.redirect}
                         });
                         this.$oruga.notification.open({
+                            position: 'top',
                             message: "Te has registrado con éxito",
                             variant: "success",
                         });
@@ -117,36 +118,42 @@ export default defineComponent({
                         //ToDo: usar los códigos de error, no comparar mensajes
                         if (error === "Email cannot be null") {
                             this.$oruga.notification.open({
+                                position: 'top',
                                 duration: 5000,
                                 message: "Debes introducir una dirección de email",
                                 variant: "danger",
                             });
                         } else if (error === "Username cannot be null") {
                             this.$oruga.notification.open({
+                                position: 'top',
                                 duration: 5000,
                                 message: "Debes introducir un nombre de usuario",
                                 variant: "danger",
                             });
                         } else if (error === "Password cannot be null") {
                             this.$oruga.notification.open({
+                                position: 'top',
                                 duration: 5000,
                                 message: "Debes introducir una contraseña",
                                 variant: "danger",
                             });
                         } else if (error === "Email in use") {
                             this.$oruga.notification.open({
+                                position: 'top',
                                 duration: 5000,
                                 message: "Ya existe un usuario con ese email",
                                 variant: "danger",
                             });
                         } else if (error === "Username in use") {
                             this.$oruga.notification.open({
+                                position: 'top',
                                 duration: 5000,
                                 message: "Ya existe un usuario con ese nombre",
                                 variant: "danger",
                             });
                         } else if (error === "database error") {
                             this.$oruga.notification.open({
+                                position: 'top',
                                 duration: 5000,
                                 message: "Error inesperado registrando tus datos",
                                 variant: "danger",

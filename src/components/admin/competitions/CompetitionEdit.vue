@@ -136,6 +136,7 @@ export default defineComponent({
             }
             competitionService.editCompetition(this.competition!, data).then((result) => {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: "Se ha editado correctamente la competición `" + result.name + "`",
                     variant: "success",
                 });
@@ -145,6 +146,7 @@ export default defineComponent({
                 })
             }).catch((error) => {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: error.message,
                     variant: "danger",
                 });

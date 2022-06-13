@@ -134,7 +134,7 @@ export default defineComponent({
                 title: 'Eliminar competición',
                 message: `¿Estás seguro de que quieres <b>eliminar</b> la competición ${competition.name} (#${competition.id})? <br/>Esta acción se puede deshacer.`,
                 confirmText: 'Eliminar competición',
-                type: 'is-danger',
+                type: 'danger',
                 hasIcon: true,
                 onConfirm: () => this.deleteCompetition(competition),
             })
@@ -146,11 +146,13 @@ export default defineComponent({
                 this.competitions.splice(this.competitions.findIndex(s => s.id === competition.id),1);
 
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: `Se ha eliminado correctamente la competition ${competition.name} (#${competition.id})`,
                     variant: "danger",
                 });
             }).catch((error) => {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: error.message,
                     variant: "danger",
                 });

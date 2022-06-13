@@ -19,8 +19,9 @@ export default defineComponent({
         this.signOut().then(() => {
             this.$router.push({name: 'login'});
             this.$oruga.notification.open({
+                position: 'top',
                 message: 'Has cerrado sesión correctamente',
-                type: 'is-info'
+                type: 'info'
             });
         });
     }

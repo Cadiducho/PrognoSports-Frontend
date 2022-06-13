@@ -46,6 +46,7 @@ export default defineComponent({
         leaveCommunity() {
             if (this.community.id == this.currentCommunity.id) {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: "No puedes dejar la comunidad en la que estás en este momento",
                     variant: "warning",
                 });
@@ -53,11 +54,13 @@ export default defineComponent({
             } else {
                 communityService.quitCommunity(this.community).then(() => {
                     this.$oruga.notification.open({
+                        position: 'top',
                         message: "¡Has dejado la comunidad " + this.community.name + "!",
                         variant: "success",
                     });
                 }).catch((error) => {
                     this.$oruga.notification.open({
+                        position: 'top',
                         message: "Ha ocurrido un error: " + error.message,
                         variant: "warning",
                     });

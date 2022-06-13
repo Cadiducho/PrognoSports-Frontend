@@ -126,7 +126,7 @@ export default defineComponent({
                 title: 'Eliminar temporada',
                 message: `¿Estás seguro de que quieres <b>eliminar</b> la temporada ${season.name} (#${season.id})? <br/>Esta acción se puede deshacer.`,
                 confirmText: 'Eliminar temporada',
-                type: 'is-danger',
+                type: 'danger',
                 hasIcon: true,
                 onConfirm: () => this.deleteSeason(season),
             })
@@ -138,11 +138,13 @@ export default defineComponent({
                 this.seasons.splice(this.seasons.findIndex(s => s.id === season.id),1);
 
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: `Se ha eliminado correctamente la temporada ${season.name} (#${season.id})`,
                     variant: "danger",
                 });
             }).catch((error) => {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: error.message,
                     variant: "danger",
                 });

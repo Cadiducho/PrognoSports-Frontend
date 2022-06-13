@@ -166,6 +166,7 @@ export default defineComponent({
             // Se envia el circuito, con los datos por defecto para una variante GP que la API también creará
             circuitService.createCircuit(rawCircuit).then((result) => {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: "Se ha registrado correctamente el circuito `" + result.name + "`",
                     variant: "success",
                 });
@@ -180,11 +181,13 @@ export default defineComponent({
             }).catch((error) => {
                 if (error.code === 705) {
                     this.$oruga.notification.open({
+                        position: 'top',
                         message: "Invalid data for this new circuit",
                         variant: "danger",
                     });
                 } else {
                     this.$oruga.notification.open({
+                        position: 'top',
                         message: error.message,
                         variant: "danger",
                     });

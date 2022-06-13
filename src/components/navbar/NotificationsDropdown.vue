@@ -71,6 +71,7 @@
         methods: {
             clearNotification() {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: "Has limpiado tus notificaciones",
                     variant: "success",
                 });

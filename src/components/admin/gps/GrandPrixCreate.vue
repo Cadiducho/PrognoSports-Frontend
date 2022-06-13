@@ -187,6 +187,7 @@ export default defineComponent({
 
             grandPrixService.createGrandPrix(data).then((result) => {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: "Se ha registrado correctamente el Gran Premio `" + result.id + "`",
                     variant: "success",
                 });
@@ -196,6 +197,7 @@ export default defineComponent({
                 })
             }).catch((error) => {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: error.message,
                     variant: "danger",
                 });

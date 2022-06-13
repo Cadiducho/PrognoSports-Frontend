@@ -140,7 +140,7 @@ export default defineComponent({
                 title: 'Eliminar gran premio',
                 message: `¿Estás seguro de que quieres <b>eliminar</b> el Gran Premio ${gp.name} #${gp.season.name}? <br/>Esta acción se puede deshacer.`,
                 confirmText: 'Eliminar gran premio',
-                type: 'is-danger',
+                type: 'danger',
                 hasIcon: true,
                 onConfirm: () => this.deleteCompetition(gp),
             })
@@ -156,11 +156,13 @@ export default defineComponent({
                         this.gps.splice(this.gps.findIndex(s => s.id === gp.id),1);
 
                         this.$oruga.notification.open({
+                            position: 'top',
                             message: `Se ha eliminado correctamente el gran premio ${gp.name} #${gp.season.name}`,
                             variant: "danger",
                         });
                     }).catch((error) => {
                         this.$oruga.notification.open({
+                            position: 'top',
                             message: error.message,
                             variant: "danger",
                         });

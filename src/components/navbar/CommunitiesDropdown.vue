@@ -82,6 +82,7 @@
                     }
                 }).then(() => {
                     this.$oruga.notification.open({
+                        position: 'top',
                         message:
                             "Has cambiado a la comunidad " + targetCommunity.name,
                         variant: "info",

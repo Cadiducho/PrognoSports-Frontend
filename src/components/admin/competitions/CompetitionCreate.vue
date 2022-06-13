@@ -120,6 +120,7 @@ export default defineComponent({
 
             competitionService.createCompetition(data).then((result) => {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: "Se ha registrado correctamente la competición `" + result.name + "`",
                     variant: "success",
                 });
@@ -129,6 +130,7 @@ export default defineComponent({
                 })
             }).catch((error) => {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: error.message,
                     variant: "danger",
                 });

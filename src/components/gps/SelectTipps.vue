@@ -243,6 +243,7 @@ export default defineComponent({
             grandPrixService.postUserTipps(this.grandPrix, this.session, this.currentCommunity, tipps).then(
                 () => {
                     this.$oruga.notification.open({
+                        position: 'top',
                         message: "¡Has guardado tus pronósticos!",
                         variant: "success",
                     });
@@ -251,6 +252,7 @@ export default defineComponent({
                     let message = "Error guardando tus pronósticos: " + error.message;
 
                     this.$oruga.notification.open({
+                        position: 'top',
                         duration: 5000,
                         message: message,
                         variant: "danger",

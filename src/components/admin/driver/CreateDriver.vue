@@ -134,6 +134,7 @@ export default defineComponent({
 
             driversService.createDriver(rawDriver).then((result) => {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: "Se ha registrado correctamente el piloto `" + result.firstname + " " + result.lastname + "`",
                     variant: "success",
                 });
@@ -146,6 +147,7 @@ export default defineComponent({
                 })
             }).catch((error) => {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: error.message,
                     variant: "danger",
                 });

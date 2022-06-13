@@ -46,6 +46,7 @@ export default defineComponent({
         joinCommunity() {
             communityService.joinCommunity(this.community).then(communityRes => {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: "¡Te has unido correctamente a " + communityRes.name + "!",
                     variant: "success",
                 });
@@ -54,6 +55,7 @@ export default defineComponent({
                 this.$router.push(`/communities/${communityRes.name}`);
             }).catch((error) => {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: "Ha ocurrido un error: " + error.message,
                     variant: "warning",
                 });

@@ -235,6 +235,7 @@ export default defineComponent({
             let invitation = "https://prognosports.com/invitation/" + this.community.name + "/" + this.community.invitation;
             this.$copyText(invitation).then(() => {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: "Se te ha copiado la invitación al portapapeles",
                     variant: "success",
                 })}
