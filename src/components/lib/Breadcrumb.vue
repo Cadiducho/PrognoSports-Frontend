@@ -6,7 +6,7 @@
             </li>
 
             <li v-for="(crumb, index) in crumbs" :class="{ 'is-active': crumb.isLast}">
-                <router-link :to="{path: crumb.target, params: crumb.params}">{{ crumb.title }}</router-link>
+                <router-link :to="{name: crumb.target, params: crumb.params}">{{ crumb.title }}</router-link>
             </li>
         </ul>
     </nav>
@@ -61,13 +61,14 @@ export default defineComponent({
 
                 let crumb: Crumb = {
                     isLast: (parents.length == 0),
-                    target: route.path,
+                    target: route.name!,
                     title: route.meta!.title,
                     params: route.params
                 }
                 parents.push(crumb);
             }
 
+            // FixMe: No funciona en Vue 3. No existe el parámetro parents
             if (route.parent != undefined) {
                 findParents(route.parent as BreadcrumbRoute, parents);
             }

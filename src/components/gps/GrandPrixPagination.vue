@@ -15,7 +15,7 @@
 <script lang="ts">
     import {GrandPrix} from "@/types/GrandPrix";
     import {Competition} from "@/types/Competition";
-    import {RawLocation} from "vue-router";
+    import {RouteLocationRaw} from "vue-router";
 
     import {defineComponent, PropType} from "vue";
     import {useAuthStore} from "@/store/authStore";
@@ -49,9 +49,11 @@
                 return (grandPrix.round + 1) <= grandPrix.season.totalEvents;
             },
             push(next: boolean): void {
-                let params: RawLocation = {
+                let params: RouteLocationRaw = {
                     name: 'gpdetails',
                     params: {
+                        competition: this.grandPrix.competition.code,
+                        season: this.grandPrix.season.name,
                         id: ((this.grandPrix.round + (next ? 1 : -1)).toString())
                     }
                 };
