@@ -34,7 +34,7 @@
                     </o-field>
                 </div>
 
-                <SlickList v-model:list="pilotosDisponibles" :group="session.name" :accept="[session.name]" tag="ul" :distance="5"
+                <SlickList v-model:list="pilotosDisponibles" :group="session.name" :accept="[session.name]" tag="ul" :distance="1"
                            class="block-list has-radius no-select">
 
                     <SlickItem v-for="(item, index) in pilotosDisponiblesFiltrados" :key="item.id" :index="index" tag="li"
@@ -60,7 +60,7 @@
 
             <div class="column is-6">
                 <h3>Pilotos pronosticados</h3>
-                <SlickList v-model:list="pilotosPronosticados" :group="session.name" :accept="[session.name]" tag="ul" :distance="5"
+                <SlickList v-model:list="pilotosPronosticados" :group="session.name" :accept="[session.name]" tag="ul" :distance="1"
                            class="block-list no-select">
 
                     <SlickItem v-for="(item, index) in pilotosPronosticados" :key="item.id" :index="index" tag="li"
