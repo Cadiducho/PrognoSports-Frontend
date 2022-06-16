@@ -49,9 +49,11 @@
                             ({{item.team.carname}})
                         </span>
 
-                        <a @click="moveToTippList(item, index)" class="pl-3 pr-3">
-                            <i class="mr-0 fas fa-angle-right has-text-primary"></i>
-                            <i class="ml-0 fas fa-angle-right has-text-primary"></i>
+                        <a @click="moveToTippList(item, index)" class="pl-3 pr-3 arrow-col has-text-primary">
+                            <i class="is-hidden-touch mr-0 fas fa-angle-right"></i>
+                            <i class="is-hidden-touch ml-0 fas fa-angle-right"></i>
+                            <i class="is-hidden-desktop mt-0 fas fa-angle-up"></i>
+                            <i class="is-hidden-desktop mb-0 fas fa-angle-up"></i>
                         </a>
                     </SlickItem>
                 </SlickList>
@@ -66,9 +68,12 @@
                     <SlickItem v-for="(item, index) in pilotosPronosticados" :key="item.id" :index="index" tag="li"
                                class="is-highlighted has-text-weight-semibold has-radius is-flex is-justify-content-left"
                                :style="styleDriverCard(item)">
-                        <a @click="moveToAvailableList(item, index)" class="mr-3 pl-3">
-                            <i class="mr-0 fas fa-angle-left has-text-primary"></i>
-                            <i class="ml-0 fas fa-angle-left has-text-primary"></i>
+
+                        <a @click="moveToAvailableList(item, index)" class="mr-3 pl-3 arrow-col has-text-primary">
+                            <i class="is-hidden-touch mr-0 fas fa-angle-left"></i>
+                            <i class="is-hidden-touch ml-0 fas fa-angle-left"></i>
+                            <i class="is-hidden-desktop mt-0 fas fa-angle-down"></i>
+                            <i class="is-hidden-desktop mb-0 fas fa-angle-down"></i>
                         </a>
 
                         <span>
@@ -315,6 +320,12 @@ export default defineComponent({
     .listas {
         display: flex;
         flex-direction: column-reverse;
+    }
+}
+@media screen and (max-width: 1023px) {
+    .arrow-col {
+        display: flex;
+        flex-direction: column;
     }
 }
 </style>
