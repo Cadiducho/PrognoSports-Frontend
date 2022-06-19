@@ -15,7 +15,7 @@
                 </o-select>
             </o-field>
         </nav>
-        <div class="columns">
+        <div class="columns is-mobile">
             <div class="column is-6">
                 <StartGridCard v-for="pos in parrillaDerecha" v-bind:key="pos.position"/>
                 <div v-for="pos in parrillaIzquierda">
