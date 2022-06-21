@@ -6,73 +6,89 @@
             </li>
 
             <li v-for="(crumb, index) in crumbs" :class="{ 'is-active': crumb.isLast}">
-                <router-link :to="{path: crumb.target, params: crumb.params}">{{ crumb.title }}</router-link>
+                <router-link :to="{name: crumb.target, params: crumb.params}">{{ crumb.title }}</router-link>
             </li>
         </ul>
     </nav>
 </template>
 
 <script lang="ts">
-import {RouteRecordPublic} from "vue-router";
-import {defineComponent} from "vue";
+import {RouteParams, RouteRecord, useRoute, useRouter} from "vue-router";
+import {defineComponent, onMounted, ref} from "vue";
+import useEmitter from "@/composables/useEmitter";
 
-type Dictionary<T> = { [key: string]: T }
-interface BreadcrumbRoute extends RouteRecordPublic {
-    parent: RouteRecordPublic | undefined;
-    params: Dictionary<string>;
+interface BreadcrumbRoute extends RouteRecord {
+    parent: RouteRecord | undefined;
+    params: RouteParams;
 }
 
 interface Crumb {
     title: string;
     isLast: boolean;
     target: string;
-    params: Dictionary<string>;
+    params: RouteParams;
 }
 
 export default defineComponent({
-    data() {
-        return {
-            crumbs: [] as Array<Crumb>
-        }
-    },
-    methods: {
+    setup() {
+        const emitter = useEmitter();
+        const router = useRouter();
+        const route = useRoute();
+
+        const crumbs = ref([] as Array<Crumb>);
+
         /**
          * Calcular a partir de la ruta actual del componente su Breadcrumb
          */
-        calculateCrumbs(): Array<Crumb> {
+        const calculateCrumbs = () => {
             let list: Crumb[] = [];
 
-            const myRoute = this.$router.getRoutes().find(r => r.name == this.$route.name) as BreadcrumbRoute;
-            myRoute.params = this.$route.params;
+            const myRoute = router.getRoutes().find(r => r.name == route.name) as BreadcrumbRoute;
+            myRoute.params = route.params;
 
-            list.push(...this.findParents(myRoute).reverse());
+            list.push(...findParents(myRoute).reverse());
 
             return list;
-        },
+        }
 
         /**
          * Buscar recursivamente a los padres de la ruta y añadir aquellos que tengan un titulo a la lista de breadcrumb
          * @param route La ruta sobre la que buscar sus ancestros
          * @param parents Rutas ya agregadas, si existen
          */
-        findParents(route: BreadcrumbRoute, parents: Crumb[] = []): Array<Crumb> {
+        const findParents = (route: BreadcrumbRoute, parents: Crumb[] = []) => {
             if (route.meta!.title) {
 
                 let crumb: Crumb = {
                     isLast: (parents.length == 0),
-                    target: route.path,
+                    target: route.name!,
                     title: route.meta!.title,
                     params: route.params
                 }
                 parents.push(crumb);
             }
 
+            // FixMe: No funciona en Vue 3. No existe el parámetro parents
             if (route.parent != undefined) {
-                this.findParents(route.parent as BreadcrumbRoute, parents);
+                findParents(route.parent as BreadcrumbRoute, parents);
             }
 
             return parents;
         }
-    }
+
+        onMounted(() => {
+            crumbs.value = calculateCrumbs();
+            // Recibir eventos de otros componentes para sobreescribir el nombre del crumb actual
+            // Por ejemplo, "Detalles del Circuito" puede ser sustitido por "Autodromo Nazionale di Monza"
+            emitter.on('breadcrumbLastname', (name: string) => {
+                crumbs.value.forEach(crumb => {
+                    if (crumb.isLast) {
+                        crumb.title = name;
+                    }
+                })
+            });
+        });
+        return {emitter, crumbs}
+    },
 });
 </script>

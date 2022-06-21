@@ -91,11 +91,11 @@ import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import {Community} from "@/types/Community";
 import {communityService} from "@/_services";
 import CommunityListItem from "@/components/communities/CommunityListItem.vue";
-import EventBus from "@/plugins/eventbus";
 
 import {defineComponent} from "vue";
-import {useAuthStore} from "@/pinia/authStore";
-import {useCommunityStore} from "@/pinia/communityStore";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
+import useEmitter from "@/composables/useEmitter";
 
 export default defineComponent({
     name: "ViewCommunitiesList",
@@ -104,12 +104,13 @@ export default defineComponent({
         PrognoPageTitle,
     },
     setup() {
+        const emitter = useEmitter();
         const authStore = useAuthStore();
         const communityStore = useCommunityStore();
 
         const currentUser = authStore.user;
         const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
-        return { currentUser, thereIsCurrentCommunity };
+        return { currentUser, thereIsCurrentCommunity, emitter };
     },
     data() {
         return {
@@ -123,7 +124,7 @@ export default defineComponent({
     mounted() {
         this.loadCommunities();
 
-        EventBus.$on('reloadCommunitiesList', () => {
+        this.emitter.on('reloadCommunitiesList', () => {
             this.isLoading = true;
             this.loadCommunities();
         });

@@ -29,11 +29,11 @@
 import {StartGridPosition} from "@/types/StartGridPosition";
 import StartGridCard from "@/components/gps/StartGridCard.vue";
 import {RaceSession} from "@/types/RaceSession";
-import EventBus from "@/plugins/eventbus";
 
 import {defineComponent, PropType} from "vue";
-import {useAuthStore} from "@/pinia/authStore";
-import {useCommunityStore} from "@/pinia/communityStore";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
+import useEmitter from "@/composables/useEmitter";
 
 export default defineComponent({
     name: "PitLaneStartGrid",
@@ -45,12 +45,13 @@ export default defineComponent({
         }
     },
     setup() {
+        const emitter = useEmitter();
         const authStore = useAuthStore();
         const communityStore = useCommunityStore();
 
         const currentUser = authStore.user;
         const currentCommunity = communityStore.community;
-        return { currentUser, currentCommunity };
+        return { currentUser, currentCommunity, emitter };
     },
     data() {
         return {
@@ -60,7 +61,7 @@ export default defineComponent({
     mounted() {
         this.chosenSession = this.grid.keys().next().value;
 
-        EventBus.$on('changeGridSession', (session: RaceSession) => {
+        this.emitter.on('changeGridSession', (session: RaceSession) => {
             this.chosenSession = session;
         });
     },

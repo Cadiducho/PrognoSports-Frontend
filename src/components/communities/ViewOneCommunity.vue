@@ -22,7 +22,7 @@
                             </div>
 
                             <div class="content">
-                                <p class="card-text"><b>Fecha de creación: </b>{{community.created | humanDateTime}}</p>
+                                <p class="card-text"><b>Fecha de creación: </b>{{ humanDateTime(community.created) }}</p>
                                 <p class="card-text">
                                     <b>Creador: </b>
                                     <router-link :to="{name: 'user', params: { user: community.owner.username}}">
@@ -31,18 +31,18 @@
                                 </p>
                                 <p v-if="community.open" class="card-text has-text-success">Comunidad abierta/pública</p>
                                 <p v-else class="card-text has-text-danger">Comunidad cerrada/privada</p>
-                                        <o-field
-                                            v-if="!community.open && isUserInCommunity"
-                                            grouped
-                                            label="URL de Invitación:"
-                                            variant="rounded is-info">
-                                            <o-input placeholder="URL"
-                                                     :value="community.name + '/' + community.invitation ">
-                                            </o-input>
-                                            <p class="control">
-                                                <o-button class="button is-info" @click="clickInvitation">Copiar</o-button>
-                                            </p>
-                                        </o-field>
+
+                                    <o-field
+                                        v-if="!community.open && isUserInCommunity"
+                                        grouped
+                                        label="URL de Invitación:"
+                                        variant="rounded is-info">
+
+                                        <input class="input is-rounded is-small" type="text" :value="community.invitation">
+                                        <p class="control">
+                                            <o-button class="button is-primary is-small is-rounded" @click="clickInvitation">Copiar</o-button>
+                                        </p>
+                                    </o-field>
 
                                 <p class="card-text"><b>Usuarios apuntados: </b> {{ community.members_amount }}</p>
                             </div>
@@ -115,7 +115,7 @@
                                                                 </span>
                                                                 <span>
                                                                     <o-tooltip label="Última conexión">
-                                                                        {{ cu.user.last_activity | dateDiff }}
+                                                                        {{ dateDiff(cu.user.last_activity) }}
                                                                     </o-tooltip>
                                                                 </span>
                                                             </span>
@@ -128,7 +128,7 @@
                                                             <span class="icon">
                                                                 <i class="fas fa-calendar"></i>
                                                             </span>
-                                                            <span>Se unió el {{ cu.user.created | humanDateTime }}</span>
+                                                            <span>Se unió el {{ humanDateTime(cu.user.created) }}</span>
                                                         </span>
                                                     </p>
                                                 </div>
@@ -184,8 +184,10 @@ import {CommunityUser} from "@/types/CommunityUser";
 import dayjs from "dayjs";
 
 import {defineComponent} from "vue";
-import {useAuthStore} from "@/pinia/authStore";
-import {useCommunityStore} from "@/pinia/communityStore";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
+import {useDayjs} from "@/composables/useDayjs";
+import {useClipboard} from "@/composables/clipboard";
 
 export default defineComponent({
     name: "ViewOneCommunity",
@@ -193,12 +195,16 @@ export default defineComponent({
         PrognoPageTitle
     },
     setup() {
+        const dayjs = useDayjs();
         const authStore = useAuthStore();
         const communityStore = useCommunityStore();
+        const clipboard = useClipboard();
 
+        const dateDiff = dayjs.dateDiff;
+        const humanDateTime = dayjs.humanDateTime;
         const currentUser = authStore.user;
         const currentCommunity = communityStore.community;
-        return { currentUser, currentCommunity };
+        return { currentUser, currentCommunity, dateDiff, humanDateTime, clipboard };
     },
     data() {
         return {
@@ -233,7 +239,7 @@ export default defineComponent({
     methods: {
         clickInvitation() {
             let invitation = "https://prognosports.com/invitation/" + this.community.name + "/" + this.community.invitation;
-            this.$copyText(invitation).then(() => {
+            this.clipboard.writeText(invitation).then(() => {
                 this.$oruga.notification.open({
                     position: 'top',
                     message: "Se te ha copiado la invitación al portapapeles",

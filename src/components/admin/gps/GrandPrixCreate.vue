@@ -113,7 +113,7 @@ import {Season} from "@/types/Season";
 import {Circuit} from "@/types/Circuit";
 
 import {defineComponent} from "vue";
-import {useAuthStore} from "@/pinia/authStore";
+import {useAuthStore} from "@/store/authStore";
 
 export default defineComponent({
     name: "SeasonCreate",

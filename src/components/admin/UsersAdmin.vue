@@ -44,7 +44,7 @@
 
                 <o-table-column field="created" label="Creado" centered sortable v-slot="props">
                     <span class="tag is-success" v-if="props.row.created">
-                        {{ props.row.created | humanDateTime }}
+                        {{ humanDateTime(props.row.created) }}
                     </span>
                     <span class="tag is-warning" v-else>
                         Sin fecha
@@ -53,7 +53,7 @@
 
                 <o-table-column field="last_activity" label="Última actividad" centered sortable v-slot="props">
                     <span class="tag is-success" v-if="props.row.last_activity">
-                        {{ props.row.last_activity | humanDateTime }}
+                        {{ humanDateTime(props.row.last_activity) }}
                     </span>
                     <span class="tag is-warning" v-else>
                         Sin fecha
@@ -84,7 +84,8 @@ import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {userService} from "@/_services";
 
 import {defineComponent} from "vue";
-import {useAuthStore} from "@/pinia/authStore";
+import {useAuthStore} from "@/store/authStore";
+import {useDayjs} from "@/composables/useDayjs";
 
 export default defineComponent({
     name: "DriversAdmin",
@@ -93,10 +94,12 @@ export default defineComponent({
         PrognoPageTitle,
     },
     setup() {
+        const dayjs = useDayjs();
         const authStore = useAuthStore();
 
+        const humanDateTime = dayjs.humanDateTime;
         const currentUser = authStore.user;
-        return { currentUser };
+        return { currentUser, humanDateTime };
     },
     data() {
         return {

@@ -1,7 +1,7 @@
-import {NavigationGuardNext, Route} from "vue-router";
-import {useAuthStore} from "@/pinia/authStore";
+import {NavigationGuardNext, RouteLocationNormalized} from "vue-router";
+import {useAuthStore} from "@/store/authStore";
 
-export default function sendToHome(to: Route, from: Route, next: NavigationGuardNext) {
+export default function sendToHome(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
     const authStore = useAuthStore();
 
     // Si está iniciado sesión y entra a /, redirigir a /home

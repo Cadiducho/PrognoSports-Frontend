@@ -30,7 +30,7 @@
 
 <script lang="ts">
     import {defineComponent} from "vue";
-    import {useAuthStore} from "@/pinia/authStore";
+    import {useAuthStore} from "@/store/authStore";
 
     export default defineComponent({
         name: "AvatarComponent",

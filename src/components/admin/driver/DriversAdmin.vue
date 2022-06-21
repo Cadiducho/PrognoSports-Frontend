@@ -51,7 +51,7 @@
 
                 <o-table-column field="birth" label="Birth" centered sortable v-slot="props">
                     <span class="tag is-success" v-if="props.row.birth">
-                        {{ props.row.birth | humanDate }}
+                        {{ humanDate(props.row.birth) }}
                     </span>
                     <span class="tag is-warning" v-else>
                         Sin fecha
@@ -82,7 +82,8 @@ import {Driver} from "@/types/Driver";
 import {driversService} from "@/_services";
 
 import {defineComponent} from "vue";
-import {useAuthStore} from "@/pinia/authStore";
+import {useAuthStore} from "@/store/authStore";
+import {useDayjs} from "@/composables/useDayjs";
 
 export default defineComponent({
     name: "DriversAdmin",
@@ -91,10 +92,12 @@ export default defineComponent({
         PrognoPageTitle,
     },
     setup() {
+        const dayjs = useDayjs();
         const authStore = useAuthStore();
 
+        const humanDate = dayjs.humanDate;
         const currentUser = authStore.user;
-        return { currentUser };
+        return { currentUser, humanDate };
     },
     data() {
         return {

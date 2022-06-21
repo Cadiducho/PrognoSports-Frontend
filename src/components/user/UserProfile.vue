@@ -51,7 +51,7 @@
                                         <span class="icon mr-2">
                                             <i class="fas fa-clock"></i>
                                         </span>
-                                        Última conexión: {{ profile.last_activity | dateDiff }}
+                                        Última conexión: {{ dateDiff(profile.last_activity) }}
                                     </span>
                                 </div>
                                 <div class="block mb-1">
@@ -59,7 +59,7 @@
                                         <span class="icon mr-2">
                                             <i class="fas fa-calendar"></i>
                                         </span>
-                                        Registrado el {{ profile.created | humanDateTime }}
+                                        Registrado el {{ humanDateTime(profile.created) }}
                                     </span>
                                 </div>
                                 <div v-if="profile.location" class="block mb-1">
@@ -75,7 +75,7 @@
                                         <span class="icon mr-2">
                                             <i class="fas fa-birthday-cake"></i>
                                         </span>
-                                        {{ profile.birthdate | humanDate }}
+                                        {{ humanDate(profile.birthdate) }}
                                     </span>
                                 </div>
                             </div>
@@ -98,14 +98,15 @@
 
 <script lang="ts">
 import {User, UserResume} from "@/types/User";
-import EventBus from "@/plugins/eventbus";
 import {userService} from "@/_services";
 import {Season} from "@/types/Season";
 import UserLevelResume from "@/components/user/UserLevelResume.vue";
 
 import {defineComponent} from "vue";
-import {useAuthStore} from "@/pinia/authStore";
-import {useCommunityStore} from "@/pinia/communityStore";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
+import useEmitter from "@/composables/useEmitter";
+import {useDayjs} from "@/composables/useDayjs";
 
 export default defineComponent({
     name: "UserProfile",
@@ -113,12 +114,17 @@ export default defineComponent({
         UserLevelResume
     },
     setup() {
+        const dayjs = useDayjs();
+        const emitter = useEmitter();
         const authStore = useAuthStore();
         const communityStore = useCommunityStore();
 
+        const dateDiff = dayjs.dateDiff;
+        const humanDateTime = dayjs.humanDateTime;
+        const humanDate = dayjs.humanDate;
         const currentUser = authStore.user;
         const currentCommunity = communityStore.community;
-        return {currentUser, currentCommunity};
+        return {currentUser, currentCommunity, emitter, dateDiff, humanDateTime, humanDate};
     },
     data() {
         return {
@@ -162,7 +168,7 @@ export default defineComponent({
     },
     methods: {
         changeBreadcrumb(name: string) {
-            EventBus.$emit('breadcrumbLastname', name);
+            this.emitter.emit('breadcrumbLastname', name);
         }
     }
 });

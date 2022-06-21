@@ -18,7 +18,7 @@ export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
         return new GrandPrix(data);
     }
 
-    public async getNextGrandPrix(competition: Competition) : Promise<GrandPrix> {
+    public async getNextGrandPrix(competition: Competition): Promise<GrandPrix> {
         return this.getObjectFromAPI(`/gps/${competition.code}/next`);
     }
 

@@ -90,8 +90,8 @@ import {GrandPrix} from "@/types/GrandPrix";
 import {Season} from "@/types/Season";
 
 import {defineComponent} from "vue";
-import {useAuthStore} from "@/pinia/authStore";
-import {useCommunityStore} from "@/pinia/communityStore";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
 
 export default defineComponent({
     name: "GrandPrixList",

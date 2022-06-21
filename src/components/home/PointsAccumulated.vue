@@ -25,14 +25,16 @@ interface IChartType {
     options: {position: string, floating: boolean}
 }
 
-import {useAuthStore} from "@/pinia/authStore";
-import {useCommunityStore} from "@/pinia/communityStore";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
 import {defineComponent, PropType} from "vue";
-import VueApexCharts from "vue-apexcharts";
+import VueApexCharts from "vue3-apexcharts";
 
 export default defineComponent({
     name: "PointsAccumulated",
-    components: { VueApexCharts },
+    components: {
+        VueApexCharts,
+    },
     props: {
         user: {
             type: Object as PropType<User>,

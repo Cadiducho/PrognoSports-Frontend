@@ -47,4 +47,23 @@ export class GrandPrix implements IGrandPrix {
             this.sessions.push(new RaceSession(session));
         })
     }
+
+    firstDate(): Date {
+        return new Date(Math.min(...this.sessions.map(ses => ses.date.getTime())));
+    }
+
+    lastDate(): Date {
+        return new Date(Math.max(...this.sessions.map(ses => ses.date.getTime())));
+    }
+
+    gpLink(): Object {
+        return {
+            name: "gpdetails",
+            params: {
+                competition: this.competition.code,
+                season: this.season.name,
+                id: this.id,
+            }
+        };
+    }
 }

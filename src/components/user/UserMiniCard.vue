@@ -33,7 +33,7 @@
                     <span class="icon is-small">
                         <i class="fas fa-clock fa-sm mr-2"></i>
                     </span>
-                    <span class="multiline-text">Visto por última vez {{ user.last_activity | dateDiff }}</span>
+                    <span class="multiline-text">Visto por última vez {{ dateDiff(user.last_activity) }}</span>
                 </p>
             </div>
         </div>
@@ -43,6 +43,7 @@
 <script lang="ts">
 import { User } from "@/types/User";
 import {defineComponent, PropType} from "vue";
+import {useDayjs} from "@/composables/useDayjs";
 
 export default defineComponent({
     name: "ScoreComponents",
@@ -51,6 +52,11 @@ export default defineComponent({
             type: Object as PropType<User>,
             required: true,
         }
+    },
+    setup() {
+        const dayjs = useDayjs();
+        const dateDiff = dayjs.dateDiff;
+        return { dateDiff };
     }
 });
 </script>

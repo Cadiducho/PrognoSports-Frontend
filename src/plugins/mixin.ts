@@ -9,7 +9,6 @@ import {
 } from "@/utils";
 import {RaceSession} from "@/types/RaceSession";
 import {Community} from "@/types/Community";
-import {GrandPrix} from "@/types/GrandPrix";
 import {User} from "@/types/User";
 import {UserRank} from "@/types/UserRank";
 import {RuleSet} from "@/types/RuleSet";

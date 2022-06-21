@@ -4,7 +4,7 @@
 
 <script lang="ts">
 
-import {useAuthStore} from "@/pinia/authStore";
+import {useAuthStore} from "@/store/authStore";
 import {defineComponent} from "vue";
 
 export default defineComponent({

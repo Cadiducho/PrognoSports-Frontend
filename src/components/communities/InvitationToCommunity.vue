@@ -20,7 +20,7 @@ import {communityService} from "@/_services";
 import {Community} from "@/types/Community";
 
 import {defineComponent} from "vue";
-import {useCommunityStore} from "@/pinia/communityStore";
+import {useCommunityStore} from "@/store/communityStore";
 
 export default defineComponent({
     name: "ViewOneCommunity",

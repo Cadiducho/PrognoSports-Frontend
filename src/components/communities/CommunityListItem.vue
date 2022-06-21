@@ -23,7 +23,7 @@
                     Comunidad {{ community.open ? "abierta" : "cerrada" }} con {{ community.members_amount }} participantes
                 </span><br />
                 <br>
-                <i>Comunidad creada el <time :datetime="community.created">{{ community.created | humanDateTime }}</time></i>
+                <i>Comunidad creada el <time :datetime="community.created">{{ humanDateTime(community.created) }}</time></i>
                 <br />
                 <div class="buttons mt-2">
                     <o-button v-if="community.open && !isUserInCommunity" variant="success" @click="tryJoinCommunity">Unirse</o-button>
@@ -54,6 +54,7 @@ import ConfirmLeaveCommunityModal from "@/components/communities/ConfirmLeaveCom
 import ConfirmJoinCommunityModal from "@/components/communities/ConfirmJoinCommunityModal.vue";
 
 import {defineComponent, PropType} from "vue";
+import {useDayjs} from "@/composables/useDayjs";
 
 export default defineComponent({
     name: "CommunityListItem",
@@ -67,6 +68,11 @@ export default defineComponent({
             type: Boolean,
             required: true,
         }
+    },
+    setup() {
+        const dayjs = useDayjs();
+        const humanDateTime = dayjs.humanDateTime;
+        return { humanDateTime }
     },
     data() {
         return {

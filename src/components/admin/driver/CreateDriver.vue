@@ -58,7 +58,7 @@
                         <p class="card-text"><b>Nombre del piloto: </b>{{ createdDriver.firstname }} {{ createdDriver.lastname }}</p>
                         <p class="card-text"><b>Código del piloto: </b>{{ createdDriver.code }}</p>
                         <p class="card-text"><b>Nacionalidad del piloto: </b>{{ createdDriver.nationality }}</p>
-                        <p class="card-text"><b>Fecha de nacimiento: </b>{{ createdDriver.birth | humanDate }}</p>
+                        <p class="card-text"><b>Fecha de nacimiento: </b>{{ humanDate(createdDriver.birth) }}</p>
                     </div>
 
                     <hr/>
@@ -84,8 +84,9 @@ import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {Driver} from "@/types/Driver";
 
 import {defineComponent} from "vue";
-import {useAuthStore} from "@/pinia/authStore";
-import {useCommunityStore} from "@/pinia/communityStore";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
+import {useDayjs} from "@/composables/useDayjs";
 
 export default defineComponent({
     name: "CreateDriver",
@@ -95,10 +96,12 @@ export default defineComponent({
         PrognoPageTitle,
     },
     setup() {
+        const dayjs = useDayjs();
         const authStore = useAuthStore();
 
+        const humanDate = dayjs.humanDate;
         const currentUser = authStore.user;
-        return { currentUser };
+        return { currentUser, humanDate };
     },
     data() {
         return {

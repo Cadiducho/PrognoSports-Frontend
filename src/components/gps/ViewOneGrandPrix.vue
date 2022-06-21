@@ -20,8 +20,13 @@
                                     :label="session.humanName()"
                                     :key="session.name"
                                     :value="index">
-                            <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
-                                es {{session.date | humanDateTimeMinusFiveMinutes}}</h6>
+                            <h6 class="font-weight-light">
+                                La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
+                                es {{ humanDateTimeMinusFiveMinutes(session.date) }}
+                            </h6>
+                            <h6 class="font-weight-light">
+                                Para esta sesión se ha de pronosticar {{ cantidadPilotosPronosticados(ruleSet, session) }} pilotos
+                            </h6>
                             <SelectTipps :session="session"
                                          :grand-prix="grandPrix"
                                          :rule-set="ruleSet"
@@ -46,7 +51,7 @@
                             :key="session.name"
                             :value="index">
                     <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
-                        es {{session.date | humanDateTimeMinusFiveMinutes}}</h6>
+                        es {{ humanDateTimeMinusFiveMinutes(session.date) }}</h6>
                     <ScoreComponents :gp="grandPrix"
                                      :rule-set="ruleSet"
                                      :session="session"
@@ -73,7 +78,6 @@ import PitLaneStartGrid from "@/components/gps/PitLaneStartGrid.vue";
 import ScoreComponents from "@/components/gps/ScoreComponent.vue";
 import {UserPoints} from "@/types/UserPoints";
 import {Dictionary} from "@/types/Dictionary";
-import EventBus from "@/plugins/eventbus";
 import dayjs from "dayjs";
 import {RaceSession} from "@/types/RaceSession";
 import {RuleSet} from "@/types/RuleSet";
@@ -81,7 +85,9 @@ import {Driver} from "@/types/Driver";
 import {CommunityUser} from "@/types/CommunityUser";
 
 import {defineComponent} from "vue";
-import {useCommunityStore} from "@/pinia/communityStore";
+import {useCommunityStore} from "@/store/communityStore";
+import useEmitter from "@/composables/useEmitter";
+import {useDayjs} from "@/composables/useDayjs";
 
 export default defineComponent({
     name: "ViewOneGrandPrix",
@@ -95,10 +101,13 @@ export default defineComponent({
         StartGrid
     },
     setup() {
+        const dayjs = useDayjs();
+        const emitter = useEmitter();
         const communityStore = useCommunityStore();
 
+        const humanDateTimeMinusFiveMinutes = dayjs.humanDateTimeMinusFiveMinutes;
         const currentCommunity = communityStore.community;
-        return {currentCommunity};
+        return {currentCommunity, emitter, humanDateTimeMinusFiveMinutes};
     },
     data() {
         return {
@@ -122,7 +131,7 @@ export default defineComponent({
             this.grandPrix = gp;
 
             if (this.grandPrix) {
-                EventBus.$emit('breadcrumbLastname', this.grandPrix.name + ' de ' + this.grandPrix.season.name);
+                this.emitter.emit('breadcrumbLastname', this.grandPrix.name + ' de ' + this.grandPrix.season.name);
 
                 Promise.all([
                     driversService.getDriversInGrandPrix(this.grandPrix!),
