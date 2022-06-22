@@ -64,6 +64,14 @@
                     </span>
                 </o-table-column>
 
+                <o-table-column field="sessions" label="Sessions" v-slot="props">
+                    <div class="tags are-small">
+                        <span class="tag is-success" v-for="ses in props.row.sessions">
+                            {{ ses.name }}
+                        </span>
+                    </div>
+                </o-table-column>
+
                 <o-table-column label="Actions" v-slot="props">
                     <span class="tags">
                         <router-link class="tag is-info" :to="`/gps/${getSlug(props.row)}`">Ver</router-link>

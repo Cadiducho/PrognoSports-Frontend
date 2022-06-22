@@ -189,6 +189,12 @@ export const routes = [
                     },
                 ],
             },
+            {
+                path: 'sessions',
+                name: 'adminSessions',
+                component: () => import('@/components/admin/sessions/SessionList.vue'),
+                meta: { title: "Sesiones" },
+            },
         ]
     },
 

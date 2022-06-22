@@ -11,6 +11,7 @@ import {ScoreService} from "@/_services/score.service";
 import {CompetitionService} from "@/_services/competition.service";
 import {ConstructorService} from "@/_services/constructor.service";
 import {RuleSetService} from "@/_services/ruleset.service";
+import {SessionService} from "@/_services/session.service";
 
 function authHeader() {
     let token = localStorage.getItem('token');
@@ -62,4 +63,5 @@ export const notificationService = new NotificationService();
 export const grandPrixService = new GrandprixService();
 export const driversService = new DriversService();
 export const seasonService = new SeasonService();
+export const sessionService = new SessionService();
 export const scoreService = new ScoreService();

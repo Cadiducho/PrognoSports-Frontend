@@ -22,12 +22,11 @@ export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
         return this.getObjectFromAPI(`/gps/${competition.code}/next`);
     }
 
-    public async getGrandPrixesList(competition: Competition, season: Season, searchType: string = 'all'): Promise<Array<GrandPrix>> {
+    public async getGrandPrixesList(competition: Competition, season: Season): Promise<Array<GrandPrix>> {
         let comp = competition.id ?? competition.code;
         let seas = season.id ?? season.name;
-        let searchParameter = (searchType === "all" ? "" : `/${searchType}` );
 
-        return this.getObjectListFromAPI(`/gps/${comp}/${seas}${searchParameter}`);
+        return this.getObjectListFromAPI(`/gps/${comp}/${seas}`);
     }
 
     public async getGPThatUsesCircuit(circuit: Circuit, variant: CircuitVariant): Promise<Array<GrandPrix>> {
