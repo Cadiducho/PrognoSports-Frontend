@@ -1,46 +1,36 @@
-import Vue from 'vue'
-import App from '@/App.vue'
-import router from '@/_router'
-import store from '@/_store';
-
-// @ts-ignore
-import VueHeadful from 'vue-headful';
-import VueClipboard from 'vue-clipboard2'
-import Loading from '@/components/lib/Loading.vue'
-
-import './scss/app.scss';
-import { loadFilters } from "@/plugins/dayjs";
-import { loadLeaflet } from "@/plugins/leaflet";
-import mixin from "@/plugins/mixin";
-
-import Oruga from '@oruga-ui/oruga'
+import {createApp} from 'vue'
+import { createPinia } from 'pinia'
+import Oruga from '@oruga-ui/oruga-next';
 import { bulmaConfig } from '@oruga-ui/theme-bulma'
 
-loadFilters(Vue);
-loadLeaflet();
+import './scss/app.scss';
+import VueApexCharts from "vue3-apexcharts";
+import { plugin as Slicksort } from 'vue-slicksort';
+import mixin from "@/plugins/mixin";
+import App from "@/App.vue";
+import Loading from '@/components/lib/Loading.vue'
+import router from "@/_router";
 
-Vue.use(Oruga, {
-    customIconPacks: {
-        fas: {
-            sizes: {
-                default: '',
-                small: 'fa-sm',
-                medium: 'fa-lg',
-                large: 'fa-2x'
+const app = createApp(App)
+    .use(createPinia())
+    .use(router)
+    .use(Oruga, {
+        customIconPacks: {
+            fas: {
+                sizes: {
+                    default: '',
+                    small: 'fa-sm',
+                    medium: 'fa-lg',
+                    large: 'fa-2x'
+                }
             }
-        }
-    },
-    iconPack: 'fas',
-    ...bulmaConfig
-})
-Vue.use(VueClipboard);
-Vue.config.productionTip = false;
+        },
+        iconPack: 'fas',
+        ...bulmaConfig}
+    )
+    .use(VueApexCharts)
+    .use(Slicksort)
+    .component("Loading", Loading)
+    .mixin(mixin);
 
-Vue.component("Loading", Loading);
-Vue.mixin(mixin);
-
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app');
+app.mount('#app');

@@ -22,7 +22,7 @@
                             </div>
 
                             <div class="content">
-                                <p class="card-text"><b>Fecha de creación: </b>{{community.created | humanDateTime}}</p>
+                                <p class="card-text"><b>Fecha de creación: </b>{{ humanDateTime(community.created) }}</p>
                                 <p class="card-text">
                                     <b>Creador: </b>
                                     <router-link :to="{name: 'user', params: { user: community.owner.username}}">
@@ -31,18 +31,18 @@
                                 </p>
                                 <p v-if="community.open" class="card-text has-text-success">Comunidad abierta/pública</p>
                                 <p v-else class="card-text has-text-danger">Comunidad cerrada/privada</p>
-                                        <o-field
-                                            v-if="!community.open && isUserInCommunity"
-                                            grouped
-                                            label="URL de Invitación:"
-                                            variant="rounded is-info">
-                                            <o-input placeholder="URL"
-                                                     :value="community.name + '/' + community.invitation ">
-                                            </o-input>
-                                            <p class="control">
-                                                <o-button class="button is-info" @click="clickInvitation">Copiar</o-button>
-                                            </p>
-                                        </o-field>
+
+                                    <o-field
+                                        v-if="!community.open && isUserInCommunity"
+                                        grouped
+                                        label="URL de Invitación:"
+                                        variant="rounded is-info">
+
+                                        <input class="input is-rounded is-small" type="text" :value="community.invitation">
+                                        <p class="control">
+                                            <o-button class="button is-primary is-small is-rounded" @click="clickInvitation">Copiar</o-button>
+                                        </p>
+                                    </o-field>
 
                                 <p class="card-text"><b>Usuarios apuntados: </b> {{ community.members_amount }}</p>
                             </div>
@@ -115,7 +115,7 @@
                                                                 </span>
                                                                 <span>
                                                                     <o-tooltip label="Última conexión">
-                                                                        {{ cu.user.last_activity | dateDiff }}
+                                                                        {{ dateDiff(cu.user.last_activity) }}
                                                                     </o-tooltip>
                                                                 </span>
                                                             </span>
@@ -128,7 +128,7 @@
                                                             <span class="icon">
                                                                 <i class="fas fa-calendar"></i>
                                                             </span>
-                                                            <span>Se unió el {{ cu.user.created | humanDateTime }}</span>
+                                                            <span>Se unió el {{ humanDateTime(cu.user.created) }}</span>
                                                         </span>
                                                     </p>
                                                 </div>
@@ -176,7 +176,6 @@
 
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import {communityService} from "@/_services";
 
@@ -184,22 +183,42 @@ import {Community} from "@/types/Community";
 import {CommunityUser} from "@/types/CommunityUser";
 import dayjs from "dayjs";
 
-@Component<ViewOneCommunity>({
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
+import {useDayjs} from "@/composables/useDayjs";
+import {useClipboard} from "@/composables/clipboard";
+
+export default defineComponent({
+    name: "ViewOneCommunity",
     components: {
         PrognoPageTitle
     },
-})
-export default class ViewOneCommunity extends Vue {
-    private community!: Community;
-    private isLoading: boolean = true;
-    private thereIsCommunity: boolean = false;
-    private members: Array<CommunityUser> = [];
-    private isUserInCommunity: boolean = false;
+    setup() {
+        const dayjs = useDayjs();
+        const authStore = useAuthStore();
+        const communityStore = useCommunityStore();
+        const clipboard = useClipboard();
 
-    private searchInput: String = '';
-    private orderType: number = 2;
-    private orderAscendent: boolean = false;
+        const dateDiff = dayjs.dateDiff;
+        const humanDateTime = dayjs.humanDateTime;
+        const currentUser = authStore.user;
+        const currentCommunity = communityStore.community;
+        return { currentUser, currentCommunity, dateDiff, humanDateTime, clipboard };
+    },
+    data() {
+        return {
+            community: {} as Community,
+            isLoading: true,
+            thereIsCommunity: false,
+            members: new Array<CommunityUser>(),
+            isUserInCommunity: false,
 
+            searchInput: '',
+            orderType: 2,
+            orderAscendent: false,
+        }
+    },
     created() {
         let communityId = this.$route.params.community;
 
@@ -216,71 +235,73 @@ export default class ViewOneCommunity extends Vue {
         }).finally(() => {
             this.isLoading = false;
         })
-    }
-
-    get communityName() {
-        if (this.thereIsCommunity) {
-            return this.community.name;
-        } else {
-            return "Comunidad no encontrada";
-        }
-    }
-
-    clickInvitation() {
-        let invitation = "https://prognosports.com/invitation/" + this.community.name + "/" + this.community.invitation;
-        this.$copyText(invitation).then(() => {
-            this.$oruga.notification.open({
-                message: "Se te ha copiado la invitación al portapapeles",
-                variant: "success",
-            })}
-        );
-    }
-
-    get filteredMembers(): Array<CommunityUser> {
-        const sortUsername = (m1: CommunityUser, m2: CommunityUser) => (m1.user.username < m2.user.username ? -1 : 1);
-        const sortRank = (m1: CommunityUser, m2: CommunityUser) => (m1.user.rank.name < m2.user.rank.name ? -1 : 1);
-        const sortRegisterDate = (m1: CommunityUser, m2: CommunityUser) => (dayjs(m1.user.created).isBefore(m2.user.created) ? -1 : 1);
-
-        const sortLastConnect = (m1: CommunityUser, m2: CommunityUser) => {
-            if (m1.user.last_activity === undefined) return 1;
-            if (m2.user.last_activity === undefined) return -1;
-            const d1 = new Date(m1.user.last_activity);
-            const d2 = new Date(m2.user.last_activity);
-            return (d1 < d2 ? 10 : -10);
-        }
-
-        let pickedSort: (m1: CommunityUser, m2: CommunityUser) => (number);
-        switch (this.orderType) {
-            case 1: pickedSort = sortRank; break;
-            case 2: pickedSort = sortLastConnect; break;
-            case 3: pickedSort = sortRegisterDate; break;
-            default: pickedSort = sortUsername;
-        }
-        let listaOrdenada = this.members.sort(pickedSort);
-
-        if (this.orderAscendent) {
-            listaOrdenada = listaOrdenada.reverse();
-        }
-
-        if (!this.searchInput.trim()) {
-            return listaOrdenada;
-        }
-
-        const filtroLowerCase: string = this.searchInput.toLowerCase().trim();
-
-        return listaOrdenada.filter((member) => {
-            return (
-                member.user.username
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                (member.user.bio ?? "")
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                member.user.rank.name
-                    .toLowerCase()
-                    .includes(filtroLowerCase)
+    },
+    methods: {
+        clickInvitation() {
+            let invitation = "https://prognosports.com/invitation/" + this.community.name + "/" + this.community.invitation;
+            this.clipboard.writeText(invitation).then(() => {
+                this.$oruga.notification.open({
+                    position: 'top',
+                    message: "Se te ha copiado la invitación al portapapeles",
+                    variant: "success",
+                })}
             );
-        });
+        },
+    },
+    computed: {
+        communityName() {
+            if (this.thereIsCommunity) {
+                return this.community.name;
+            } else {
+                return "Comunidad no encontrada";
+            }
+        },
+        filteredMembers(): Array<CommunityUser> {
+            const sortUsername = (m1: CommunityUser, m2: CommunityUser) => (m1.user.username < m2.user.username ? -1 : 1);
+            const sortRank = (m1: CommunityUser, m2: CommunityUser) => (m1.user.rank.name < m2.user.rank.name ? -1 : 1);
+            const sortRegisterDate = (m1: CommunityUser, m2: CommunityUser) => (dayjs(m1.user.created).isBefore(m2.user.created) ? -1 : 1);
+
+            const sortLastConnect = (m1: CommunityUser, m2: CommunityUser) => {
+                if (m1.user.last_activity === undefined) return 1;
+                if (m2.user.last_activity === undefined) return -1;
+                const d1 = new Date(m1.user.last_activity);
+                const d2 = new Date(m2.user.last_activity);
+                return (d1 < d2 ? 10 : -10);
+            }
+
+            let pickedSort: (m1: CommunityUser, m2: CommunityUser) => (number);
+            switch (this.orderType) {
+                case 1: pickedSort = sortRank; break;
+                case 2: pickedSort = sortLastConnect; break;
+                case 3: pickedSort = sortRegisterDate; break;
+                default: pickedSort = sortUsername;
+            }
+            let listaOrdenada = this.members.sort(pickedSort);
+
+            if (this.orderAscendent) {
+                listaOrdenada = listaOrdenada.reverse();
+            }
+
+            if (!this.searchInput.trim()) {
+                return listaOrdenada;
+            }
+
+            const filtroLowerCase: string = this.searchInput.toLowerCase().trim();
+
+            return listaOrdenada.filter((member) => {
+                return (
+                    member.user.username
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    (member.user.bio ?? "")
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    member.user.rank.name
+                        .toLowerCase()
+                        .includes(filtroLowerCase)
+                );
+            });
+        }
     }
-}
+});
 </script>

@@ -347,154 +347,164 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue, Watch} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {User} from "@/types/User";
-import {namespace} from "vuex-class";
 import {communityService, rulesetService} from "@/_services";
-import {Community} from "@/types/Community";
-import EventBus from "@/plugins/eventbus";
-const Auth = namespace('Auth')
 
-@Component({
-        components: {
-            PrognoPageTitle
-        }
-    }
-)
-export default class ViewCommunitiesList extends Vue {
-    @Auth.State("user") private currentUser!: User;
-    @Auth.Action setCommunity!: (community: Community) => void;
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
+import useEmitter from "@/composables/useEmitter";
 
-    private activeStep: number = 0;
+export default defineComponent({
+    name: "ViewCommunitiesList",
+    components: {
+        PrognoPageTitle
+    },
+    setup() {
+        const emitter = useEmitter();
+        const authStore = useAuthStore();
+        const communityStore = useCommunityStore();
 
-    private name: string = "";
-    private description: string = "";
-    private imageUrl: string = "";
-    private privacy: boolean = false;
+        const currentUser = authStore.user;
+        const setCommunity = communityStore.setCommunity;
+        return { currentUser, setCommunity, emitter };
+    },
+    data() {
+        return {
+            activeStep: 0,
+            name: "",
+            description: "",
+            imageUrl: "",
+            privacy: false,
 
-    private numberQualify: number = 4;
-    private numberRace: number = 10;
+            numberQualify: 4,
+            numberRace: 10,
 
-    private rulesetName: string = "";
-    private rulesetDescription: string = "";
-    private rulesetPrivacy: boolean = true;
+            rulesetName: "",
+            rulesetDescription: "",
+            rulesetPrivacy: "",
 
-    private pointsByEqualsPosition = {
-        QUALIFY: {
-            1: 20,
-            2: 16,
-            3: 12,
-            4: 10
-        },
-        RACE: {
-            1: 25,
-            2: 20,
-            3: 18,
-            4: 16,
-            5: 14,
-            6: 12,
-            7: 10,
-            8: 8,
-            9: 4,
-            10: 2
-        }
-    }
-    private pointsByNextPosition = {
-        QUALIFY: 2,
-        RACE: 2,
-    };
-    private pointsByNextOfFollowingPosition = {
-        QUALIFY: 1,
-        RACE: 1,
-    };
-    private pointsByPreviousPosition = {
-        QUALIFY: 2,
-        RACE: 2,
-    };
-    private pointsByPreviousOfPreviousPosition = {
-        QUALIFY: 1,
-        RACE: 1,
-    };
-    private pointsIfIsNotInPodium = {
-        QUALIFY: 0,
-        RACE: 0,
-    };
-    private pointsIfIsNotInResults = {
-        QUALIFY: 0,
-        RACE: 0,
-    };
-
-    private registerCommunity() {
-        let rulesetData = {
-            isPublic: this.rulesetPrivacy,
-            displayname: this.rulesetName,
-            description: this.rulesetDescription,
-            data: {
-                pointsByEqualsPosition: this.pointsByEqualsPosition,
-                pointsByNextPosition: this.pointsByNextPosition,
-                pointsByNextOfFollowingPosition: this.pointsByNextOfFollowingPosition,
-                pointsByPreviousPosition: this.pointsByPreviousPosition,
-                pointsByPreviousOfPreviousPosition: this.pointsByPreviousOfPreviousPosition,
-                pointsIfIsNotInPodium: this.pointsIfIsNotInPodium,
-                pointsIfIsNotInResults: this.pointsIfIsNotInResults
+            pointsByEqualsPosition: {
+                QUALIFY: {
+                    1: 20,
+                    2: 16,
+                    3: 12,
+                    4: 10
+                },
+                RACE: {
+                    1: 25,
+                    2: 20,
+                    3: 18,
+                    4: 16,
+                    5: 14,
+                    6: 12,
+                    7: 10,
+                    8: 8,
+                    9: 4,
+                    10: 2
+                }
+            },
+            pointsByNextPosition: {
+                QUALIFY: 2,
+                RACE: 2,
+            },
+            pointsByNextOfFollowingPosition: {
+                QUALIFY: 1,
+                RACE: 1,
+            },
+            pointsByPreviousPosition: {
+                QUALIFY: 2,
+                RACE: 2,
+            },
+            pointsByPreviousOfPreviousPosition: {
+                QUALIFY: 1,
+                RACE: 1,
+            },
+            pointsIfIsNotInPodium: {
+                QUALIFY: 0,
+                RACE: 0,
+            },
+            pointsIfIsNotInResults: {
+                QUALIFY: 0,
+                RACE: 0,
             }
         }
-        let communityData = {
-            name: this.name,
-            description: this.description,
-            image_url: this.imageUrl,
-            owner: this.currentUser.id,
-            open: !this.privacy,
-            default_rule_set: 1, //FixMe: Creador de rulesets
-        };
+    },
+    methods: {
+        registerCommunity() {
+            let rulesetData = {
+                isPublic: this.rulesetPrivacy,
+                displayname: this.rulesetName,
+                description: this.rulesetDescription,
+                data: {
+                    pointsByEqualsPosition: this.pointsByEqualsPosition,
+                    pointsByNextPosition: this.pointsByNextPosition,
+                    pointsByNextOfFollowingPosition: this.pointsByNextOfFollowingPosition,
+                    pointsByPreviousPosition: this.pointsByPreviousPosition,
+                    pointsByPreviousOfPreviousPosition: this.pointsByPreviousOfPreviousPosition,
+                    pointsIfIsNotInPodium: this.pointsIfIsNotInPodium,
+                    pointsIfIsNotInResults: this.pointsIfIsNotInResults
+                }
+            }
+            let communityData = {
+                name: this.name,
+                description: this.description,
+                image_url: this.imageUrl,
+                owner: this.currentUser.id,
+                open: !this.privacy,
+                default_rule_set: 1, //FixMe: Creador de rulesets
+            };
 
-        // Primero se crea el RuleSet
-        rulesetService.createRuleSet(rulesetData).then((ruleset) => {
-            communityData.default_rule_set = ruleset.id; // y se asigna este rule set por defecto a la nueva comunidad
+            // Primero se crea el RuleSet
+            rulesetService.createRuleSet(rulesetData).then((ruleset) => {
+                communityData.default_rule_set = ruleset.id; // y se asigna este rule set por defecto a la nueva comunidad
 
-            communityService.createCommunity(communityData).then((community) => {
-                this.$oruga.notification.open({
-                    message: "Se ha registrado correctamente la comunidad `" + community.name + "`",
-                    variant: "success",
-                });
+                communityService.createCommunity(communityData).then((community) => {
+                    this.$oruga.notification.open({
+                        position: 'top',
+                        message: "Se ha registrado correctamente la comunidad `" + community.name + "`",
+                        variant: "success",
+                    });
 
-                this.$router.push({
-                    name: 'communitiesDetails',
-                    params:  {
-                        community: community.name,
-                    }
+                    this.$router.push({
+                        name: 'communitiesDetails',
+                        params:  {
+                            community: community.name,
+                        }
+                    })
+
+                    this.setCommunity(community); // Establecer en Pinia la comunidad actual
+                    this.emitter.emit('reloadCommunitiesDropdown'); // Recargar dropdown del navbar
+                }).catch((error) => {
+                    this.$oruga.notification.open({
+                        position: 'top',
+                        message: error.message,
+                        variant: "danger",
+                    });
+                    rulesetService.removeRuleSet(ruleset).then(e => {
+                        console.log(e);
+                    }).catch(e => {
+                        console.log(e);
+                    });
                 })
-
-                this.setCommunity(community); // Establecer en Vuex la comunidad actual
-                EventBus.$emit('reloadCommunitiesDropdown'); // Recargar dropdown del navbar
             }).catch((error) => {
                 this.$oruga.notification.open({
+                    position: 'top',
                     message: error.message,
                     variant: "danger",
                 });
-                rulesetService.removeRuleSet(ruleset).then(e => {
-                    console.log(e);
-                }).catch(e => {
-                    console.log(e);
-                });
             })
-        }).catch((error) => {
-            this.$oruga.notification.open({
-                message: error.message,
-                variant: "danger",
-            });
-        })
-    }
-
-    @Watch('name')
-    onCommunityNameChange(name: string) {
-        if (!this.rulesetName) {
-            this.rulesetName = "Reglas por defecto de " + name;
         }
-        if (!this.rulesetDescription) {
-            this.rulesetDescription = "Reglas por defecto de " + name;
+    },
+    watch: {
+        name(newName, oldName) {
+            if (!this.rulesetName) {
+                this.rulesetName = "Reglas por defecto de " + name;
+            }
+            if (!this.rulesetDescription) {
+                this.rulesetDescription = "Reglas por defecto de " + name;
+            }
         }
-    }
-}
+    },
+});
 </script>

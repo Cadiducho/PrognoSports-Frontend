@@ -51,7 +51,7 @@
 
                 <o-table-column field="birth" label="Birth" centered sortable v-slot="props">
                     <span class="tag is-success" v-if="props.row.birth">
-                        {{ props.row.birth | humanDate }}
+                        {{ humanDate(props.row.birth) }}
                     </span>
                     <span class="tag is-warning" v-else>
                         Sin fecha
@@ -76,63 +76,70 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {User} from "@/types/User";
-import {namespace} from "vuex-class";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {Driver} from "@/types/Driver";
 import {driversService} from "@/_services";
-const Auth = namespace('Auth')
 
-@Component({
-        components: {
-            AlertNoPermission,
-            PrognoPageTitle,
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/store/authStore";
+import {useDayjs} from "@/composables/useDayjs";
+
+export default defineComponent({
+    name: "DriversAdmin",
+    components: {
+        AlertNoPermission,
+        PrognoPageTitle,
+    },
+    setup() {
+        const dayjs = useDayjs();
+        const authStore = useAuthStore();
+
+        const humanDate = dayjs.humanDate;
+        const currentUser = authStore.user;
+        return { currentUser, humanDate };
+    },
+    data() {
+        return {
+            isPaginated: true,
+            filtroPiloto: '',
+            drivers: new Array<Driver>(),
         }
-    }
-)
-export default class DriversAdmin extends Vue {
-    @Auth.State("user") private currentUser!: User;
-
-    private isPaginated: boolean = true;
-    private filtroPiloto: String = '';
-
-    private drivers: Array<Driver> = [];
-
+    },
     mounted() {
         driversService.getAllDrivers().then((drivers) => {
             this.drivers = [];
             this.drivers.push(...drivers);
         })
-    }
+    },
+    computed: {
+        filteredDrivers(): Array<Driver> {
+            if (!this.filtroPiloto.trim()) {
+                return this.drivers;
+            }
 
-    get filteredDrivers(): Array<Driver> {
-        if (!this.filtroPiloto.trim()) {
-            return this.drivers;
+            const filtroLowerCase: string = this.filtroPiloto.toLowerCase().trim();
+
+            return this.drivers.filter((driver) => {
+                return (
+                    driver.id
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    driver.lastname
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    driver.firstname
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    driver.code
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    driver.nationality
+                        .toLowerCase()
+                        .includes(filtroLowerCase)
+                );
+            });
         }
-
-        const filtroLowerCase: string = this.filtroPiloto.toLowerCase().trim();
-
-        return this.drivers.filter((driver) => {
-            return (
-                driver.id
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                driver.lastname
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                driver.firstname
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                driver.code
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                driver.nationality
-                    .toLowerCase()
-                    .includes(filtroLowerCase)
-            );
-        });
     }
-}
+});
 </script>

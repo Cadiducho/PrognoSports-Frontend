@@ -63,71 +63,76 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {User} from "@/types/User";
-import {namespace} from "vuex-class";
 import {competitionService, seasonService} from "@/_services";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {Season} from "@/types/Season";
 import {Competition} from "@/types/Competition";
-const Auth = namespace('Auth')
 
-@Component({
-        components: {
-            AlertNoPermission,
-            AlertInvalidData,
-            PrognoPageTitle,
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/store/authStore";
+
+export default defineComponent({
+    name: "SeasonCreate",
+    components: {
+        AlertNoPermission,
+        AlertInvalidData,
+        PrognoPageTitle,
+    },
+    setup() {
+        const authStore = useAuthStore();
+
+        const currentUser = authStore.user;
+        return { currentUser };
+    },
+    data() {
+        return {
+            activeStep: 0,
+            competitions: new Array<Competition>(),
+            createdSeason: {
+                id: undefined!,
+                competition: undefined!,
+                name: undefined!,
+                totalEvents: undefined!
+            } as Season
         }
-    }
-)
-export default class SeasonCreate extends Vue {
-    @Auth.State("user") private currentUser!: User;
-
-    private activeStep = 0;
-    private competitions: Array<Competition> = [];
-
-    private createdSeason: Season = {
-        id: undefined!,
-        competition: undefined!,
-        name: undefined!,
-        totalEvents: undefined!
-    }
-
+    },
     mounted() {
         competitionService.getCompetitionList().then((list) => {
             this.competitions = [];
             this.competitions.push(...list);
         })
-    }
+    },
+    methods: {
+        isDataOk(): boolean {
+            return !(this.createdSeason.id == undefined && this.createdSeason.name == undefined && this.createdSeason.competition == undefined)
+        },
+        registerSeason(): void {
+            let rawSeason = {
+                name: this.createdSeason.name,
+                totalEvents: this.createdSeason.totalEvents,
+                competition: this.createdSeason.competition.name,
+            }
 
-    private isDataOk(): boolean {
-        return !(this.createdSeason.id == undefined && this.createdSeason.name == undefined && this.createdSeason.competition == undefined)
-    }
+            seasonService.createSeason(rawSeason).then((result) => {
+                this.$oruga.notification.open({
+                    position: 'top',
+                    message: "Se ha registrado correctamente la temporada `" + result.name + "`",
+                    variant: "success",
+                });
 
-    private registerSeason(): void {
-        let rawSeason = {
-            name: this.createdSeason.name,
-            totalEvents: this.createdSeason.totalEvents,
-            competition: this.createdSeason.competition.name,
+                this.$router.push({
+                    name: 'adminSeasons'
+                })
+            }).catch((error) => {
+                this.$oruga.notification.open({
+                    position: 'top',
+                    message: error.message,
+                    variant: "danger",
+                });
+            });
         }
-
-        seasonService.createSeason(rawSeason).then((result) => {
-            this.$oruga.notification.open({
-                message: "Se ha registrado correctamente la temporada `" + result.name + "`",
-                variant: "success",
-            });
-
-            this.$router.push({
-                name: 'adminSeasons'
-            })
-        }).catch((error) => {
-            this.$oruga.notification.open({
-                message: error.message,
-                variant: "danger",
-            });
-        });
-    }
-}
+    },
+});
 </script>

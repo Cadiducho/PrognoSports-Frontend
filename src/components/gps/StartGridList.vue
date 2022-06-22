@@ -15,7 +15,7 @@
                 </o-select>
             </o-field>
         </nav>
-        <div class="columns">
+        <div class="columns is-mobile">
             <div class="column is-6">
                 <StartGridCard v-for="pos in parrillaDerecha" v-bind:key="pos.position"/>
                 <div v-for="pos in parrillaIzquierda">
@@ -24,8 +24,7 @@
                 </div>
             </div>
             <div class="column is-6">
-                <div class="block"></div>
-                <div v-for="pos in parrillaDerecha">
+                <div v-for="pos in parrillaDerecha" class="parrillaDerecha">
                     <StartGridCard :gridPos="pos"/>
                     <div class="block"></div>
                 </div>
@@ -35,21 +34,40 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import StartGridCard from "@/components/gps/StartGridCard.vue";
 import {RaceSession} from "@/types/RaceSession";
-import EventBus from "@/plugins/eventbus";
-import dayjs from "@/plugins/dayjs";
-@Component({
-    components: {StartGridCard}
-})
-export default class StartGridList extends Vue {
-    @Prop({required: true}) grid!: Map<RaceSession, Array<StartGridPosition>>;
 
-    private chosenSession: RaceSession = {} as RaceSession;
-    private availableSessions: Array<RaceSession> = [];
+import {defineComponent, PropType} from "vue";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
+import useEmitter from "@/composables/useEmitter";
+import dayjs from "dayjs";
 
+export default defineComponent({
+    name: "StartGridList",
+    components: {StartGridCard},
+    props: {
+        grid: {
+            type: Map as PropType<Map<RaceSession, Array<StartGridPosition>>>,
+            required: true,
+        }
+    },
+    setup() {
+        const emitter = useEmitter();
+        const authStore = useAuthStore();
+        const communityStore = useCommunityStore();
+
+        const currentUser = authStore.user;
+        const currentCommunity = communityStore.community;
+        return { currentUser, currentCommunity, emitter };
+    },
+    data() {
+        return {
+            chosenSession: {} as RaceSession,
+            availableSessions: new Array<RaceSession>(),
+        }
+    },
     mounted() {
         this.chosenSession = this.grid.keys().next().value
 
@@ -59,22 +77,29 @@ export default class StartGridList extends Vue {
                 this.chosenSession = ses;
             }
         }
+    },
+    methods: {
+        changeGridSession() {
+            this.emitter.emit('changeGridSession', this.chosenSession);
+        },
+    },
+    computed: {
+        parrillaIzquierda(): StartGridPosition[] | undefined {
+            return this.grid.get(this.chosenSession)?.filter((gridPos: StartGridPosition) => {
+                return gridPos.position % 2 !== 0 && !gridPos.isFromPit;
+            })
+        },
+        parrillaDerecha(): StartGridPosition[] | undefined  {
+            return this.grid.get(this.chosenSession)?.filter((gridPos: StartGridPosition) => {
+                return gridPos.position % 2 === 0  && !gridPos.isFromPit;
+            })
+        }
     }
-
-    changeGridSession() {
-        EventBus.$emit('changeGridSession', this.chosenSession);
-    }
-
-    get parrillaIzquierda() {
-        return this.grid.get(this.chosenSession)?.filter(function (gridPos) {
-            return gridPos.position % 2 !== 0 && !gridPos.isFromPit;
-        })
-    }
-
-    get parrillaDerecha() {
-        return this.grid.get(this.chosenSession)?.filter(function (gridPos) {
-            return gridPos.position % 2 === 0  && !gridPos.isFromPit;
-        })
-    }
-}
+});
 </script>
+
+<style scoped>
+.parrillaDerecha {
+    margin-top: 1.5rem;
+}
+</style>

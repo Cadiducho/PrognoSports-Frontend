@@ -20,8 +20,13 @@
                                     :label="session.humanName()"
                                     :key="session.name"
                                     :value="index">
-                            <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
-                                es {{session.date | humanDateTimeMinusFiveMinutes}}</h6>
+                            <h6 class="font-weight-light">
+                                La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
+                                es {{ humanDateTimeMinusFiveMinutes(session.date) }}
+                            </h6>
+                            <h6 class="font-weight-light">
+                                Para esta sesión se ha de pronosticar {{ cantidadPilotosPronosticados(ruleSet, session) }} pilotos
+                            </h6>
                             <SelectTipps :session="session"
                                          :grand-prix="grandPrix"
                                          :rule-set="ruleSet"
@@ -46,7 +51,7 @@
                             :key="session.name"
                             :value="index">
                     <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
-                        es {{session.date | humanDateTimeMinusFiveMinutes}}</h6>
+                        es {{ humanDateTimeMinusFiveMinutes(session.date) }}</h6>
                     <ScoreComponents :gp="grandPrix"
                                      :rule-set="ruleSet"
                                      :session="session"
@@ -63,7 +68,6 @@ import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
 import CircuitCard from "@/components/gps/CircuitCard.vue";
 import StartGrid from "@/components/gps/StartGridList.vue";
-import {Component, Vue} from "vue-property-decorator";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
 import {GrandPrix} from "@/types/GrandPrix";
@@ -72,104 +76,113 @@ import {StartGridPosition} from "@/types/StartGridPosition";
 import SelectTipps from "@/components/gps/SelectTipps.vue";
 import PitLaneStartGrid from "@/components/gps/PitLaneStartGrid.vue";
 import ScoreComponents from "@/components/gps/ScoreComponent.vue";
-import {Community} from "@/types/Community";
-import {namespace} from "vuex-class";
 import {UserPoints} from "@/types/UserPoints";
 import {Dictionary} from "@/types/Dictionary";
-import EventBus from "@/plugins/eventbus";
 import dayjs from "dayjs";
 import {RaceSession} from "@/types/RaceSession";
 import {RuleSet} from "@/types/RuleSet";
 import {Driver} from "@/types/Driver";
 import {CommunityUser} from "@/types/CommunityUser";
 
-const Auth = namespace('Auth')
+import {defineComponent} from "vue";
+import {useCommunityStore} from "@/store/communityStore";
+import useEmitter from "@/composables/useEmitter";
+import {useDayjs} from "@/composables/useDayjs";
 
-    @Component({
-        components: {
-            ScoreComponents,
-            PitLaneStartGrid,
-            SelectTipps,
-            CircuitCard,
-            PrognoPageTitle,
-            GrandPrixPagination,
-            StartGrid
+export default defineComponent({
+    name: "ViewOneGrandPrix",
+    components: {
+        ScoreComponents,
+        PitLaneStartGrid,
+        SelectTipps,
+        CircuitCard,
+        PrognoPageTitle,
+        GrandPrixPagination,
+        StartGrid
+    },
+    setup() {
+        const dayjs = useDayjs();
+        const emitter = useEmitter();
+        const communityStore = useCommunityStore();
+
+        const humanDateTimeMinusFiveMinutes = dayjs.humanDateTimeMinusFiveMinutes;
+        const currentCommunity = communityStore.community;
+        return {currentCommunity, emitter, humanDateTimeMinusFiveMinutes};
+    },
+    data() {
+        return {
+            competition: {code: this.$route.params.competition} as Competition,
+            season: {name: this.$route.params.season} as Season,
+            id: this.$route.params.id as string,
+
+            grandPrix: {} as GrandPrix,
+            ruleSet: {} as RuleSet,
+            drivers: new Array<Driver>(),
+            communityMembers: new Array<CommunityUser>(),
+
+            isLoadingGrandPrix: true,
+            startGrid: new Map<RaceSession, Array<StartGridPosition>>(),
+            userPoints: {} as Dictionary<number, UserPoints>,
+            activeTab: 0
         }
-    })
-    export default class ViewOneGrandPrix extends Vue {
-        @Auth.State("community") private currentCommunity!: Community;
+    },
+    mounted() {
+        grandPrixService.getGrandPrix(this.competition, this.season, this.id).then(gp => {
+            this.grandPrix = gp;
 
-        private competition: Competition = { code: this.$route.params.competition } as Competition;
-        private season: Season = {name: this.$route.params.season } as Season;
-        private id: string = this.$route.params.id;
+            if (this.grandPrix) {
+                this.emitter.emit('breadcrumbLastname', this.grandPrix.name + ' de ' + this.grandPrix.season.name);
 
-        private grandPrix?: GrandPrix;
-        private ruleSet?: RuleSet;
-        private drivers?: Array<Driver> = [];
-        private communityMembers?: Array<CommunityUser> = [];
+                Promise.all([
+                    driversService.getDriversInGrandPrix(this.grandPrix!),
+                    rulesetService.getRuleSetInGrandPrix(this.currentCommunity, this.grandPrix),
+                    scoreService.getPointsInGrandPrix(this.currentCommunity, this.grandPrix!),
+                    communityService.getMembers(this.currentCommunity),
+                    this.getStartGrids(this.grandPrix)
+                ]).then(result => {
+                    this.drivers = result[0];
+                    this.ruleSet = result[1];
+                    const points = result[2];
+                    this.communityMembers = result[3];
+                    const rawStartGrids = result[4];
 
-        private isLoadingGrandPrix: boolean = true;
-        private startGrid: Map<RaceSession, Array<StartGridPosition>> = new Map();
-        private userPoints: Dictionary<number, UserPoints> = {};
+                    points.forEach((points) => {
+                        this.userPoints[points.user.id] = points;
+                    });
 
-        private activeTab: number = 0;
+                    rawStartGrids.forEach((grid, index) => {
+                        const session = this.grandPrix!.sessions[index];
+                        if (grid.length > 0) {
+                            this.startGrid.set(session, grid);
+                        }
+                    });
 
-        mounted() {
-            grandPrixService.getGrandPrix(this.competition, this.season, this.id)
-                .then(gp => {
-                    this.grandPrix = gp;
-
-                    if (this.grandPrix) {
-                        EventBus.$emit('breadcrumbLastname', this.grandPrix.name + ' de ' + this.grandPrix.season.name);
-
-                        Promise.all([
-                            driversService.getDriversInGrandPrix(this.grandPrix!),
-                            rulesetService.getRuleSetInGrandPrix(this.currentCommunity, this.grandPrix),
-                            scoreService.getPointsInGrandPrix(this.currentCommunity, this.grandPrix!),
-                            communityService.getMembers(this.currentCommunity),
-                            this.getStartGrids(this.grandPrix)
-                        ]).then(result => {
-                            this.drivers = result[0];
-                            this.ruleSet = result[1];
-                            const points = result[2];
-                            this.communityMembers = result[3];
-                            const rawStartGrids = result[4];
-
-                            points.forEach((points) => {
-                                this.userPoints[points.user.id] = points;
-                            });
-
-                            rawStartGrids.forEach((grid, index) => {
-                                const session = this.grandPrix!.sessions[index];
-                                if (grid.length > 0) {
-                                    this.startGrid.set(session, grid);
-                                }
-                            });
-
-                            this.isLoadingGrandPrix = false;
-                        });
-
-                        // Colocar la tab correcta según si es día de clasificación o carrera
-                        this.grandPrix.sessions.forEach((ses, index) => {
-                            if (dayjs(ses.date).isToday()) {
-                                this.activeTab = index;
-                                return;
-                            }
-                        })
-                    }
+                    this.isLoadingGrandPrix = false;
                 });
-        }
 
-        async getStartGrids(grandPrix: GrandPrix) {
+                // Colocar la tab correcta según si es día de clasificación o carrera
+                this.grandPrix.sessions.forEach((ses, index) => {
+                    if (dayjs(ses.date).isToday()) {
+                        this.activeTab = index;
+                        return;
+                    }
+                })
+            }
+        });
+    },
+    methods: {
+        async getStartGrids(grandPrix: GrandPrix): Promise<StartGridPosition[][]> {
             const request = [];
             for await (const session of grandPrix.sessions) {
                 request.push(grandPrixService.getGrandPrixGrid(this.grandPrix!, session));
             }
             return Promise.all(request);
         }
-
-        get thereIsGrid() {
+    },
+    computed: {
+        thereIsGrid(): boolean {
             return this.startGrid.size !== 0
         }
     }
+});
 </script>

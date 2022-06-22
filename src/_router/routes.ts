@@ -1,4 +1,4 @@
-import LandingView from "@/views/landing/LandingView.vue";
+import LandingView from "@/views/LandingView.vue";
 import PrognoView from "@/views/PrognoView.vue";
 import EmptyRoutedView from "@/views/EmptyRoutedView.vue";
 
@@ -137,12 +137,12 @@ export const routes = [
             },
             {
                 path: 'competitions',
+                name: 'adminCompetitions',
                 component: EmptyRoutedView,
                 meta: { title: "Competiciones" },
                 children: [
                     {
                         path: '',
-                        name: 'adminCompetitions',
                         component: () => import('@/components/admin/competitions/CompetitionsList.vue'),
                     },
                     {
@@ -304,20 +304,28 @@ export const routes = [
     // Grandes Premios
     {
         path: '/gps',
+        name: 'gplist',
         meta: { requiresAuth: true, title: "Grandes Premios" },
         component: PrognoView,
         children: [
             {
                 path: ':competition?/:season?',
                 alias: ['', ':competition?'],
-                name: 'gplist',
-                component: () => import('@/components/gps/ViewGrandPrixList.vue'),
-            },
-            {
-                path: ':competition/:season/:id',
-                name: 'gpdetails',
-                component: () => import('@/components/gps/ViewOneGrandPrix.vue'),
-                meta: { title: "Gran Premio"}
+                component: EmptyRoutedView,
+                meta: {title: "Lista de Grandes Premios"},
+                children: [
+                    {
+                        path: '',
+                        component: () => import('@/components/gps/list/ViewGrandPrixList.vue'),
+                        meta: {title: "Temporada"}
+                    },
+                    {
+                        path: ':id',
+                        name: 'gpdetails',
+                        component: () => import('@/components/gps/ViewOneGrandPrix.vue'),
+                        meta: {title: "Gran Premio"}
+                    }
+                ]
             }
         ]
     },
@@ -333,7 +341,7 @@ export const routes = [
         }]
     },
     {
-        path: '*',
+        path: '/:pathMatch(.*)',
         redirect: { path: "/404" }
     }
 ];

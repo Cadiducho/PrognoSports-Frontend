@@ -6,30 +6,17 @@
 
       <router-view :key="$route.fullPath"/>
 
+      <ToTop :scroll-y="200"/>
   </div>
 </template>
 
-<style>
-
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-@import url('https://use.fontawesome.com/releases/v5.8.1/css/all.css');
-
-</style>
-
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
-    import navbar from "@/components/navbar/Navbar.vue";
-    import {namespace} from "vuex-class";
-    import {User} from "@/types/User";
-    import {Community} from "@/types/Community";
-    const Auth = namespace("Auth");
+import {defineComponent} from "vue";
+import ToTop from "@/components/lib/ToTop.vue";
 
-    @Component({
-        components: {
-            navbar,
-        }
-    })
-    export default class App extends Vue {
-
+export default defineComponent({
+    components: {
+        ToTop,
     }
+});
 </script>

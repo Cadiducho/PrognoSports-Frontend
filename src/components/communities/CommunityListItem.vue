@@ -23,7 +23,7 @@
                     Comunidad {{ community.open ? "abierta" : "cerrada" }} con {{ community.members_amount }} participantes
                 </span><br />
                 <br>
-                <i>Comunidad creada el <time :datetime="community.created">{{ community.created | humanDateTime }}</time></i>
+                <i>Comunidad creada el <time :datetime="community.created">{{ humanDateTime(community.created) }}</time></i>
                 <br />
                 <div class="buttons mt-2">
                     <o-button v-if="community.open && !isUserInCommunity" variant="success" @click="tryJoinCommunity">Unirse</o-button>
@@ -49,36 +49,54 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
 import {Community} from "@/types/Community";
 import ConfirmLeaveCommunityModal from "@/components/communities/ConfirmLeaveCommunityModal.vue";
 import ConfirmJoinCommunityModal from "@/components/communities/ConfirmJoinCommunityModal.vue";
 
-@Component<CommunityListItem>({
+import {defineComponent, PropType} from "vue";
+import {useDayjs} from "@/composables/useDayjs";
+
+export default defineComponent({
+    name: "CommunityListItem",
     components: {ConfirmJoinCommunityModal, ConfirmLeaveCommunityModal},
-})
-export default class CommunityListItem extends Vue {
-    @Prop() community!: Community;
-    @Prop() isUserInCommunity!: boolean;
-    private isJoinModalActive: boolean = false;
-    private isLeaveModalActive: boolean = false;
-
-    private tryJoinCommunity() {
-        this.$oruga.modal.open({
-            parent: this,
-            component: ConfirmJoinCommunityModal,
-            trapFocus: false,
-            props: {community: this.community}
-        });
+    props: {
+        community: {
+            type: Object as PropType<Community>,
+            required: true,
+        },
+        isUserInCommunity: {
+            type: Boolean,
+            required: true,
+        }
+    },
+    setup() {
+        const dayjs = useDayjs();
+        const humanDateTime = dayjs.humanDateTime;
+        return { humanDateTime }
+    },
+    data() {
+        return {
+            isJoinModalActive: false,
+            isLeaveModalActive: false,
+        }
+    },
+    methods: {
+        tryJoinCommunity() {
+            this.$oruga.modal.open({
+                parent: this,
+                component: ConfirmJoinCommunityModal,
+                trapFocus: false,
+                props: {community: this.community}
+            });
+        },
+        tryLeaveCommunity() {
+            this.$oruga.modal.open({
+                parent: this,
+                component: ConfirmLeaveCommunityModal,
+                trapFocus: false,
+                props: {community: this.community}
+            });
+        }
     }
-
-    private tryLeaveCommunity() {
-        this.$oruga.modal.open({
-            parent: this,
-            component: ConfirmLeaveCommunityModal,
-            trapFocus: false,
-            props: {community: this.community}
-        });
-    }
-}
+});
 </script>

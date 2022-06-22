@@ -1,7 +1,7 @@
 <template>
     <div class="block" v-if="gridPos !== undefined">
         <div class="card has-text-centered" v-bind:style="gridCardStyle(gridPos.driver)">
-            <header class="card-header f1-card-header" v-bind:style="gridCardBackgroundStyle(gridPos.driver)" >
+            <header class="card-header" v-bind:style="gridCardBackgroundStyle(gridPos.driver)" >
                 <div class="tags">
                     <span class="tag is-dark">{{ gridPos.position }}º</span>
                     <span class="tag is-success">#{{ gridPos.driver.number }}</span>
@@ -10,7 +10,7 @@
             </header>
             <div class="f1-card-main">
                 <div class="f1-card-main-description">
-                    <o-tooltip :label="fullname(gridPos.driver)" variant="info" class=f1-card-driver>
+                    <o-tooltip :label="fullname(gridPos.driver)" variant="primary" class="f1-card-driver">
                         {{ gridPos.driver.code }}
                     </o-tooltip>
                 </div>
@@ -21,37 +21,48 @@
 
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import {Driver} from "@/types/Driver";
 
-@Component
-export default class StartGridCard extends Vue {
-    @Prop() gridPos!: StartGridPosition;
+import {defineComponent, PropType} from "vue";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
 
-    public fullname(driver: Driver) {
-        return driver.firstname + " " + driver.lastname;
-    }
-
-    public gridCardStyle(driver: Driver) {
-        return {
-            'border': '1px solid #'+ driver.team.teamcolor,
+export default defineComponent({
+    name: "StartGridCard",
+    props: {
+        gridPos: {
+            type: Object as PropType<StartGridPosition>,
+            required: true,
         }
-    }
+    },
+    setup() {
+        const authStore = useAuthStore();
+        const communityStore = useCommunityStore();
 
-    public gridCardBackgroundStyle(driver: Driver) {
-        return {
-            'background-color': '#'+ driver.team.teamcolor,
-        }
+        const currentUser = authStore.user;
+        const currentCommunity = communityStore.community;
+        return { currentUser, currentCommunity };
+    },
+    methods: {
+        fullname(driver: Driver) {
+            return driver.firstname + " " + driver.lastname;
+        },
+        gridCardStyle(driver: Driver) {
+            return {
+                'border': '1px solid #' + driver.team.teamcolor,
+            }
+        },
+        gridCardBackgroundStyle(driver: Driver) {
+            return {
+                'background-color': '#'+ driver.team.teamcolor,
+            }
+        },
     }
-}
+});
 </script>
 
-<style scoped>
-
-.f1-card-header {
-    padding: 5px 0;
-}
+<style scoped lang="scss">
 
 .f1-card-main {
     display: flex;
@@ -69,5 +80,38 @@ export default class StartGridCard extends Vue {
 .f1-card-main-description {
     font-size: 12px;
     text-align: center;
+}
+
+.card.is-wide {
+    width: 550px;
+}
+
+.card.has-text-centered {
+    .card-header,
+    .card-content,
+    .card-footer {
+        justify-content: center;
+        align-items: center;
+    }
+
+    h1 {
+        font-size: 1.75rem;
+        font-weight: bold;
+    }
+}
+
+.card-header {
+    padding: 5px 0;
+}
+
+.card-content {
+    padding: 3.5rem 0;
+}
+
+.card-footer {
+    padding: 1rem 0;
+    border: none;
+    font-size: .9rem;
+    color: lighten(black, 50%);
 }
 </style>

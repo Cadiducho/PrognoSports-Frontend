@@ -69,89 +69,95 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {User} from "@/types/User";
-import {namespace} from "vuex-class";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {competitionService} from "@/_services";
 import {Competition} from "@/types/Competition";
-const Auth = namespace('Auth')
 
-@Component({
-        components: {
-            AlertNoPermission,
-            PrognoPageTitle,
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/store/authStore";
+
+export default defineComponent({
+    name: "CompetitionsList",
+    components: {
+        AlertNoPermission,
+        PrognoPageTitle,
+    },
+    setup() {
+        const authStore = useAuthStore();
+
+        const currentUser = authStore.user;
+        return { currentUser };
+    },
+    data() {
+        return {
+            isPaginated: true,
+            filtroCompetition: '',
+            competitions: new Array<Competition>(),
         }
-    }
-)
-export default class CompetitionsList extends Vue {
-    @Auth.State("user") private currentUser!: User;
-
-    private isPaginated: boolean = true;
-    private filtroCompetition: String = '';
-
-    private competitions: Array<Competition> = [];
-
+    },
     mounted() {
         competitionService.getCompetitionList().then((competitions) => {
             this.competitions = [];
             this.competitions.push(...competitions);
         })
-    }
+    },
+    computed: {
+        filteredCompetitions(): Array<Competition> {
+            if (!this.filtroCompetition.trim()) {
+                return this.competitions;
+            }
 
-    get filteredCompetitions(): Array<Competition> {
-        if (!this.filtroCompetition.trim()) {
-            return this.competitions;
+            const filtroLowerCase: string = this.filtroCompetition.toLowerCase().trim();
+
+            return this.competitions.filter((competition) => {
+                return (
+                    competition.id
+                        .toString()
+                        .includes(filtroLowerCase) ||
+                    competition.name
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    competition.code
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    competition.fullname
+                        .toLowerCase()
+                        .includes(filtroLowerCase)
+                );
+            });
         }
+    },
+    methods: {
+        confirmDeleteSeason(competition: Competition) {
+            this.$oruga.dialog.confirm({
+                title: 'Eliminar competición',
+                message: `¿Estás seguro de que quieres <b>eliminar</b> la competición ${competition.name} (#${competition.id})? <br/>Esta acción se puede deshacer.`,
+                confirmText: 'Eliminar competición',
+                type: 'danger',
+                hasIcon: true,
+                onConfirm: () => this.deleteCompetition(competition),
+            })
+        },
+        deleteCompetition(competition: Competition) {
+            competitionService.deleteCompetition(competition).then((ok) => {
 
-        const filtroLowerCase: string = this.filtroCompetition.toLowerCase().trim();
+                // Elimino de la lista y por lo tanto de la tabla
+                this.competitions.splice(this.competitions.findIndex(s => s.id === competition.id),1);
 
-        return this.competitions.filter((competition) => {
-            return (
-                competition.id
-                    .toString()
-                    .includes(filtroLowerCase) ||
-                competition.name
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                competition.code
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                competition.fullname
-                    .toLowerCase()
-                    .includes(filtroLowerCase)
-            );
-        });
-    }
-
-    private confirmDeleteSeason(competition: Competition) {
-        this.$oruga.dialog.confirm({
-            title: 'Eliminar competición',
-            message: `¿Estás seguro de que quieres <b>eliminar</b> la competición ${competition.name} (#${competition.id})? <br/>Esta acción se puede deshacer.`,
-            confirmText: 'Eliminar competición',
-            type: 'is-danger',
-            hasIcon: true,
-            onConfirm: () => this.deleteCompetition(competition),
-        })
-    }
-
-    private deleteCompetition(competition: Competition) {
-        competitionService.deleteCompetition(competition).then((ok) => {
-
-            // Elimino de la lista y por lo tanto de la tabla
-            this.competitions.splice(this.competitions.findIndex(s => s.id === competition.id),1);
-
-            this.$oruga.notification.open({
-                message: `Se ha eliminado correctamente la competition ${competition.name} (#${competition.id})`,
-                variant: "danger",
+                this.$oruga.notification.open({
+                    position: 'top',
+                    message: `Se ha eliminado correctamente la competition ${competition.name} (#${competition.id})`,
+                    variant: "danger",
+                });
+            }).catch((error) => {
+                this.$oruga.notification.open({
+                    position: 'top',
+                    message: error.message,
+                    variant: "danger",
+                });
             });
-        }).catch((error) => {
-            this.$oruga.notification.open({
-                message: error.message,
-                variant: "danger",
-            });
-        });
-    }
-}
+        }
+    },
+});
 </script>

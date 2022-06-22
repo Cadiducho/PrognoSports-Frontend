@@ -98,96 +98,102 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {User} from "@/types/User";
-import {namespace} from "vuex-class";
 import {circuitService} from "@/_services";
 import ViewCircuitItem from "@/components/circuits/ViewCircuitItem.vue";
 import {ICircuit} from "@/types/Circuit";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-const Auth = namespace('Auth')
 
-@Component({
-        components: {
-            AlertNoPermission,
-            AlertInvalidData,
-            ViewCircuitItem,
-            PrognoPageTitle,
-        }
-    }
-)
-export default class CreateCircuit extends Vue {
-    @Auth.State("user") private currentUser!: User;
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/store/authStore";
 
-    private activeStep = 0;
+export default defineComponent({
+    name: "CreateCircuit",
+    components: {
+        AlertNoPermission,
+        AlertInvalidData,
+        ViewCircuitItem,
+        PrognoPageTitle,
+    },
+    setup() {
+        const authStore = useAuthStore();
 
-    private createdCircuit: ICircuit = {
-        country: undefined!,
-        id: undefined!,
-        latitude: undefined!,
-        locality: undefined!,
-        logo_url: undefined!,
-        longitude: undefined!,
-        name: undefined!,
-        variant: {
-            name: "grandprix",
-            distance: undefined!,
-            turns: undefined!,
-            layout_image: undefined!,
-        }
-    }
-
-    private isDataOk(): boolean {
-        return !(this.createdCircuit.id == undefined && this.createdCircuit.name == undefined && this.createdCircuit.country == undefined && this.createdCircuit.locality == undefined
-            && this.createdCircuit.latitude == undefined && this.createdCircuit.longitude == undefined
-            && this.createdCircuit.variant.layout_image == undefined
-            && this.createdCircuit.variant.distance == undefined && this.createdCircuit.variant.turns == undefined)
-    }
-
-    private registerCircuit(): void {
-        let rawCircuit = {
-            id: this.createdCircuit.id,
-            name: this.createdCircuit.name,
-            country: this.createdCircuit.country,
-            locality: this.createdCircuit.locality,
-            latitude: this.createdCircuit.latitude,
-            longitude: this.createdCircuit.longitude,
-            logo_url: this.createdCircuit.logo_url,
-            layout_image: this.createdCircuit.variant.layout_image,
-            distance: this.createdCircuit.variant.distance,
-            turns: this.createdCircuit.variant.turns,
-        }
-
-        // Se envia el circuito, con los datos por defecto para una variante GP que la API también creará
-        circuitService.createCircuit(rawCircuit).then((result) => {
-            this.$oruga.notification.open({
-                message: "Se ha registrado correctamente el circuito `" + result.name + "`",
-                variant: "success",
-            });
-
-            this.$router.push({
-                name: 'circuitDetails',
-                params: {
-                    circuit: result.id,
-                    variant: result.variant.name
+        const currentUser = authStore.user;
+        return { currentUser };
+    },
+    data() {
+        return {
+            activeStep: 0,
+            createdCircuit: {
+                country: undefined!,
+                id: undefined!,
+                latitude: undefined!,
+                locality: undefined!,
+                logo_url: undefined!,
+                longitude: undefined!,
+                name: undefined!,
+                variant: {
+                    name: "grandprix",
+                    distance: undefined!,
+                    turns: undefined!,
+                    layout_image: undefined!,
                 }
-            })
-        }).catch((error) => {
-            if (error.code === 705)  {
-                this.$oruga.notification.open({
-                    message: "Invalid data for this new circuit",
-                    variant: "danger",
-                });
-            } else {
-                this.$oruga.notification.open({
-                    message: error.message,
-                    variant: "danger",
-                });
+            } as ICircuit,
+        }
+    },
+    method: {
+        isDataOk(): boolean {
+            return !(this.createdCircuit.id == undefined && this.createdCircuit.name == undefined && this.createdCircuit.country == undefined && this.createdCircuit.locality == undefined
+                && this.createdCircuit.latitude == undefined && this.createdCircuit.longitude == undefined
+                && this.createdCircuit.variant.layout_image == undefined
+                && this.createdCircuit.variant.distance == undefined && this.createdCircuit.variant.turns == undefined)
+        },
+        registerCircuit(): void {
+            let rawCircuit = {
+                id: this.createdCircuit.id,
+                name: this.createdCircuit.name,
+                country: this.createdCircuit.country,
+                locality: this.createdCircuit.locality,
+                latitude: this.createdCircuit.latitude,
+                longitude: this.createdCircuit.longitude,
+                logo_url: this.createdCircuit.logo_url,
+                layout_image: this.createdCircuit.variant.layout_image,
+                distance: this.createdCircuit.variant.distance,
+                turns: this.createdCircuit.variant.turns,
             }
-        });
 
+            // Se envia el circuito, con los datos por defecto para una variante GP que la API también creará
+            circuitService.createCircuit(rawCircuit).then((result) => {
+                this.$oruga.notification.open({
+                    position: 'top',
+                    message: "Se ha registrado correctamente el circuito `" + result.name + "`",
+                    variant: "success",
+                });
+
+                this.$router.push({
+                    name: 'circuitDetails',
+                    params: {
+                        circuit: result.id,
+                        variant: result.variant.name
+                    }
+                })
+            }).catch((error) => {
+                if (error.code === 705) {
+                    this.$oruga.notification.open({
+                        position: 'top',
+                        message: "Invalid data for this new circuit",
+                        variant: "danger",
+                    });
+                } else {
+                    this.$oruga.notification.open({
+                        position: 'top',
+                        message: error.message,
+                        variant: "danger",
+                    });
+                }
+            });
+        }
     }
-}
+});
 </script>

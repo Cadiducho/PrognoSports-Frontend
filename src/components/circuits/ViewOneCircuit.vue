@@ -104,13 +104,14 @@
                                         </p>
                                         <p class="subtitle">
                                             <span v-for="session in gp.sessions">
-                                                {{ session.humanName() }}: {{ session.date | humanDate }} ({{ session.date | dateDiff }}) <br />
+                                                {{ session.humanName() }}: {{ humanDate(session.date) }} ({{ dateDiff(session.date) }}) <br />
                                             </span>
                                         </p>
                                     </div>
 
-                                    <o-button tag="router-link"
-                                              :to="{
+                                    <router-link
+                                        class="button is-info is-light is-expanded"
+                                        :to="{
                                             name: 'gpdetails',
                                             params: {
                                                 competition: gp.competition.code,
@@ -118,9 +119,9 @@
                                                 id: gp.id,
                                             }
                                           }"
-                                              variant="info is-light" expanded>
+                                    >
                                         Detalles
-                                    </o-button>
+                                    </router-link>
                                 </div>
                             </div>
                         </article>
@@ -134,7 +135,6 @@
 
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import { Circuit } from "@/types/Circuit";
 import { CircuitVariant } from "@/types/CircuitVariant";
@@ -142,12 +142,15 @@ import {circuitService, grandPrixService} from "@/_services";
 import CircuitCard from "@/components/gps/CircuitCard.vue";
 
 import { LatLng, latLng} from "leaflet";
-import {LMap, LTileLayer, LMarker, LPopup, LTooltip} from "vue2-leaflet";
+import {LMap, LTileLayer, LMarker, LPopup, LTooltip} from "@vue-leaflet/vue-leaflet";
 import {GrandPrix} from "@/types/GrandPrix";
 import {hasVariant} from "@/utils";
-import EventBus from "@/plugins/eventbus";
+import {defineComponent} from "vue";
+import useEmitter from "@/composables/useEmitter";
+import {useDayjs} from "@/composables/useDayjs";
 
-@Component<ViewOneCircuit>({
+export default defineComponent({
+    name: "ViewOneCircuit",
     components: {
         CircuitCard,
         PrognoPageTitle,
@@ -157,24 +160,32 @@ import EventBus from "@/plugins/eventbus";
         LPopup,
         LTooltip
     },
-})
-export default class ViewOneCircuit extends Vue {
-    private circuit!: Circuit;
-    private variant!: CircuitVariant;
-    private isLoading: boolean = true;
-    private thereIsCircuit: boolean = false;
+    setup() {
+        const emitter = useEmitter();
+        const dayjs = useDayjs();
 
-    zoom = 14;
-    private center!: LatLng;
-    url= 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-    attribution= '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors';
-    mapOptions= {
-        zoomSnap: 0.5
-    };
+        const humanDate = dayjs.humanDate;
+        const dateDiff = dayjs.dateDiff;
+        return { emitter, humanDate, dateDiff }
+    },
+    data() {
+        return {
+            circuit: {} as Circuit,
+            variant: {} as CircuitVariant,
+            isLoading: true,
+            thereIsCircuit: false,
+            grandPrixesUsingCircuit: new Array<GrandPrix>(),
+            circuitVariants: new Array<CircuitVariant>(),
 
-    private grandPrixesUsingCircuit: Array<GrandPrix> = [];
-    private circuitVariants: Array<CircuitVariant> = [];
-
+            zoom: 14,
+            center: {} as LatLng,
+            url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+            mapOptions: {
+                zoomSnap: 0.5
+            },
+        }
+    },
     created() {
         let circuitId = this.$route.params.circuit;
         let variantId = this.$route.params.variant;
@@ -199,52 +210,52 @@ export default class ViewOneCircuit extends Vue {
             this.thereIsCircuit = false;
         }).finally(() => {
             this.isLoading = false;
-            EventBus.$emit('breadcrumbLastname', this.circuitName);
+            this.emitter.emit('breadcrumbLastname', this.circuitName);
         })
-    }
-
-    /**
-     * Comprobar si un texto que debería ser una Variante de Circuito es válida o no
-     * @param variantId la supuesta variante
-     * @return True si el parámetro es undefined o es igual a "grandprix"
-     */
-    private thereIsVariant(variantId: string): boolean {
-        return !(variantId === undefined || variantId === "grandprix");
-    }
-
-    /**
-     * Devuelve el nombre del circuito y, si es necesario, especificando su nombre de variante
-     */
-    get circuitName(): string {
-        if (this.thereIsCircuit) {
-            if (hasVariant(this.circuit)) {
-                return this.circuit.name + " (" + this.variant.name + ")";
+    },
+    methods: {
+        /**
+         * Comprobar si un texto que debería ser una Variante de Circuito es válida o no
+         * @param variantId la supuesta variante
+         * @return True si el parámetro es undefined o es igual a "grandprix"
+         */
+        thereIsVariant(variantId: string): boolean {
+            return !(variantId === undefined || variantId === "grandprix");
+        }
+    },
+    computed: {
+        /**
+         * Devuelve el nombre del circuito y, si es necesario, especificando su nombre de variante
+         */
+        circuitName(): string {
+            if (this.thereIsCircuit) {
+                if (hasVariant(this.circuit)) {
+                    return this.circuit.name + " (" + this.variant.name + ")";
+                }
+                return this.circuit.name;
+            } else {
+                return "Circuito no encontrado";
             }
-            return this.circuit.name;
-        } else {
-            return "Circuito no encontrado";
+        },
+        getRawCircuitName() {
+            let variant = this.thereIsVariant(this.$route.params.variant) ? ' y la variante ' + this.$route.params.variant : "";
+            return this.$route.params.circuit + variant;
+        },
+        variantTabs() {
+            let tabs: { id: string; label: string; }[] = [];
+            if (this.circuitVariants.length > 1) {
+                this.circuitVariants.forEach((value: CircuitVariant) => {
+                    let label = value.name === "grandprix" ? "GrandPrix" : value.name;
+                    tabs.push({
+                        id: value.name.toLowerCase(),
+                        label: label,
+                    });
+                })
+            }
+            return tabs;
         }
     }
-
-    get getRawCircuitName() {
-        let variant = this.thereIsVariant(this.$route.params.variant) ? ' y la variante ' + this.$route.params.variant : "";
-        return this.$route.params.circuit + variant;
-    }
-
-    get variantTabs() {
-        let tabs: { id: string; label: string; }[] = [];
-        if (this.circuitVariants.length > 1) {
-            this.circuitVariants.forEach((value: CircuitVariant) => {
-                let label = value.name === "grandprix" ? "GrandPrix" : value.name;
-                tabs.push({
-                    id: value.name.toLowerCase(),
-                    label: label,
-                });
-            })
-        }
-        return tabs;
-    }
-}
+});
 </script>
 
 <style scoped>

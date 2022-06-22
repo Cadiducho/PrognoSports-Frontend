@@ -74,79 +74,95 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import {namespace} from "vuex-class";
-const Auth = namespace("Auth");
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/store/authStore";
 
-@Component
-export default class RegisterComponent extends Vue {
-    private email: string = "";
-    private username: string = "";
-    private password: string = "";
-    private tos: boolean = false;
-    private submitted: boolean = false;
-    @Auth.Action private register!: (payload: {username: string, email: string, password: string}) => Promise<any>;
+export default defineComponent({
+    name: "RegisterComponent",
+    setup() {
+        const authStore = useAuthStore();
 
-    public handleSubmit() {
-        this.submitted = true;
-        if (this.email && this.username && this.password) {
-            this.register({
-                email: this.email,
-                username: this.username,
-                password: this.password,
-            }).then(
-                () => {
-                    this.$router.push({
-                        path: '/login',
-                        query: { redirect: this.$route.query.redirect }
-                    });
-                    this.$oruga.notification.open({
-                        message: "Te has registrado con éxito",
-                        variant: "success",
-                    });
-                },
-                (error) => {
-                    //ToDo: usar los códigos de error, no comparar mensajes
-                    if (error === "Email cannot be null") {
-                        this.$oruga.notification.open({
-                            duration: 5000,
-                            message: "Debes introducir una dirección de email",
-                            variant: "danger",
+        const register = authStore.register;
+        return { register };
+    },
+    data() {
+        return {
+            email: "",
+            username: "",
+            password: "",
+            tos: false,
+            submitted: false,
+        }
+    },
+    methods: {
+        handleSubmit() {
+            this.submitted = true;
+            if (this.email && this.username && this.password) {
+                this.register({
+                    email: this.email,
+                    username: this.username,
+                    password: this.password,
+                }).then(
+                    () => {
+                        this.$router.push({
+                            path: '/login',
+                            query: {redirect: this.$route.query.redirect}
                         });
-                    } else if (error === "Username cannot be null") {
                         this.$oruga.notification.open({
-                            duration: 5000,
-                            message: "Debes introducir un nombre de usuario",
-                            variant: "danger",
+                            position: 'top',
+                            message: "Te has registrado con éxito",
+                            variant: "success",
                         });
-                    } else if (error === "Password cannot be null") {
-                        this.$oruga.notification.open({
-                            duration: 5000,
-                            message: "Debes introducir una contraseña",
-                            variant: "danger",
-                        });
-                    } else if (error === "Email in use") {
-                        this.$oruga.notification.open({
-                            duration: 5000,
-                            message: "Ya existe un usuario con ese email",
-                            variant: "danger",
-                        });
-                    } else if (error === "Username in use") {
-                        this.$oruga.notification.open({
-                            duration: 5000,
-                            message: "Ya existe un usuario con ese nombre",
-                            variant: "danger",
-                        });
-                    } else if (error === "database error") {
-                        this.$oruga.notification.open({
-                            duration: 5000,
-                            message: "Error inesperado registrando tus datos",
-                            variant: "danger",
-                        });
+                    },
+                    (error) => {
+                        //ToDo: usar los códigos de error, no comparar mensajes
+                        if (error === "Email cannot be null") {
+                            this.$oruga.notification.open({
+                                position: 'top',
+                                duration: 5000,
+                                message: "Debes introducir una dirección de email",
+                                variant: "danger",
+                            });
+                        } else if (error === "Username cannot be null") {
+                            this.$oruga.notification.open({
+                                position: 'top',
+                                duration: 5000,
+                                message: "Debes introducir un nombre de usuario",
+                                variant: "danger",
+                            });
+                        } else if (error === "Password cannot be null") {
+                            this.$oruga.notification.open({
+                                position: 'top',
+                                duration: 5000,
+                                message: "Debes introducir una contraseña",
+                                variant: "danger",
+                            });
+                        } else if (error === "Email in use") {
+                            this.$oruga.notification.open({
+                                position: 'top',
+                                duration: 5000,
+                                message: "Ya existe un usuario con ese email",
+                                variant: "danger",
+                            });
+                        } else if (error === "Username in use") {
+                            this.$oruga.notification.open({
+                                position: 'top',
+                                duration: 5000,
+                                message: "Ya existe un usuario con ese nombre",
+                                variant: "danger",
+                            });
+                        } else if (error === "database error") {
+                            this.$oruga.notification.open({
+                                position: 'top',
+                                duration: 5000,
+                                message: "Error inesperado registrando tus datos",
+                                variant: "danger",
+                            });
+                        }
                     }
-                }
-            );
+                );
+            }
         }
     }
-}
+});
 </script>

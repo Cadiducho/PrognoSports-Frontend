@@ -5,7 +5,7 @@
         </a>
 
         <div class="navbar-dropdown">
-            <router-link class="navbar-item is-active":to="{name: 'communitiesDetails', params: { community: currentCommunity.name}}">
+            <router-link class="navbar-item is-active" :to="{name: 'communitiesDetails', params: { community: currentCommunity.name}}">
                 {{ currentCommunity.name }}
             </router-link>
             <hr class="navbar-divider" v-if="communitiesList.length > 0">
@@ -21,65 +21,77 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue, Watch} from "vue-property-decorator";
     import {Community} from "@/types/Community";
     import {communityService} from "@/_services";
-    import {namespace} from "vuex-class";
-    import {User} from "@/types/User";
-    import EventBus from "@/plugins/eventbus";
     import {isValidCommunity} from "@/utils";
-    const Auth = namespace('Auth')
+    import {defineComponent} from "vue";
+    import {useAuthStore} from "@/store/authStore";
+    import {useCommunityStore} from "@/store/communityStore";
+    import useEmitter from "@/composables/useEmitter";
 
-    @Component
-    export default class CommunitiesDropdown extends Vue {
-        @Auth.State("user") private currentUser!: User;
-        @Auth.State("community") private currentCommunity!: Community;
-        @Auth.Action setCommunity!: (community: Community) => void;
-        private communitiesList: Array<Community> = [];
+    export default defineComponent({
+        name: "CommunitiesDropdown",
+        setup() {
+            const emitter = useEmitter();
 
+            const authStore = useAuthStore();
+            const communityStore = useCommunityStore();
+
+            const currentUser = authStore.user;
+            const currentCommunity = communityStore.community;
+            const setCommunity = communityStore.setCommunity;
+
+            return { currentUser, currentCommunity, setCommunity, emitter };
+        },
+        data() {
+            return {
+                communitiesList: [] as Array<Community>
+            }
+        },
+        watch: {
+            currentCommunity(newCommunity, oldcommunity) {
+                this.getCommunityList();
+            }
+        },
         mounted() {
-            EventBus.$on('reloadCommunitiesDropdown', () => {
+            this.emitter.on('reloadCommunitiesDropdown', () => {
                 this.getCommunityList();
             });
 
             if (isValidCommunity(this.currentCommunity)) {
                 this.getCommunityList();
             }
-        }
-
-        @Watch('currentCommunity')
-        onCurrentCommunityChange(community: Community) {
-            this.getCommunityList();
-        }
-
-        getCommunityList(): void {
-            communityService.getUserCommunities(this.currentUser).then(list => {
-                this.communitiesList = [];
-                list.forEach(comm => {
-                    // Agregar todas menos la activa, que ya saldrá en la primera
-                    if (comm.name !== this.currentCommunity.name) {
-                        this.communitiesList.push(comm);
-                    }
-                })
-            });
-        }
-
-        private switchToCommunity(targetCommunity: Community) {
-            this.setCommunity(targetCommunity);
-
-            this.$router.push({
-                name: 'communitiesDetails',
-                params:  {
-                    community: targetCommunity.name,
-                }
-            }).then(() => {
-                this.$oruga.notification.open({
-                    message:
-                        "Has cambiado a la comunidad " + targetCommunity.name,
-                    variant: "info",
+        },
+        methods: {
+            getCommunityList(): void {
+                communityService.getUserCommunities(this.currentUser).then(list => {
+                    this.communitiesList = [];
+                    list.forEach(comm => {
+                        // Agregar todas menos la activa, que ya saldrá en la primera
+                        if (comm.name !== this.currentCommunity.name) {
+                            this.communitiesList.push(comm);
+                        }
+                    })
                 });
-                EventBus.$emit('reloadCommunitiesDropdown'); // Recargar la lista, que previsiblemente quitará la target y añadirá la que estaba originalmente
-            })
+            },
+            switchToCommunity(targetCommunity: Community) {
+                this.setCommunity(targetCommunity);
+
+                this.$router.push({
+                    name: 'communitiesDetails',
+                    params:  {
+                        community: targetCommunity.name,
+                    }
+                }).then(() => {
+                    this.$oruga.notification.open({
+                        position: 'top',
+                        message:
+                            "Has cambiado a la comunidad " + targetCommunity.name,
+                        variant: "info",
+                    });
+                    this.emitter.emit('reloadCommunitiesDropdown'); // Recargar la lista, que previsiblemente quitará la target y añadirá la que estaba originalmente
+                })
+            }
         }
-    }
+    });
 </script>

@@ -11,7 +11,7 @@
             </p>
 
             <o-notification v-if="currentUser.preferences['hide-tipps-until-start'] === true" variant="info is-light" aria-close-label="Close notification">
-                Tus pronósticos están ocultos al resto de usuarios hasta {{ session.date | humanDateTimeMinusFiveMinutes}}
+                Tus pronósticos están ocultos al resto de usuarios hasta {{ humanDateTimeMinusFiveMinutes(session.date)}}
             </o-notification>
             <o-notification v-if="!thereAreFinishResults" variant="primary is-light" aria-close-label="Close notification">
                 Aún no hay resultados confirmados para esta sesión
@@ -68,7 +68,7 @@
                 <o-table-column field="user.username" label="Nombre" sortable>
                     <template v-slot="props">
                         <o-tooltip
-                            position="is-right"
+                            position="right"
                             variant="light"
                             append-to-body>
                             <template v-slot:content>
@@ -148,24 +148,19 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
 import {User} from "@/types/User";
-import {namespace} from "vuex-class";
 import {RaceSession} from "@/types/RaceSession";
 import {grandPrixService, scoreService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
 import {RaceResult} from "@/types/RaceResult";
-import {Community} from "@/types/Community";
 import {Driver} from "@/types/Driver";
 import {CommunityUser} from "@/types/CommunityUser";
 import UserMiniCard from "@/components/user/UserMiniCard.vue";
 import {cantidadPilotosPronosticados, isBeforeEndDate} from "@/utils";
 import {UserPoints} from "@/types/UserPoints";
 import {Dictionary} from "@/types/Dictionary";
-import EventBus from "@/plugins/eventbus";
 import {RuleSet} from "@/types/RuleSet";
 
-const Auth = namespace('Auth')
 
 interface TableType {
     user: User;
@@ -179,27 +174,59 @@ interface TableType {
     }
 }
 
-@Component({
-    components: {UserMiniCard}
-})
-export default class ScoreComponents extends Vue {
-    @Prop({required: true}) gp!: GrandPrix;
-    @Prop({required: true}) ruleSet!: RuleSet;
-    @Prop({required: true}) session!: RaceSession;
-    @Prop({required: true}) communityMembers!: Array<CommunityUser>;
-    @Prop({required: true}) userPoints!: Dictionary<number, UserPoints>;
-    @Auth.State("user") private currentUser!: User;
-    @Auth.State("community") private currentCommunity!: Community;
+import {defineComponent, PropType} from "vue";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
+import {StartGridPosition} from "@/types/StartGridPosition";
+import {useDayjs} from "@/composables/useDayjs";
 
-    private loaded = false;
-    private thereAreFinishResults = false;
-    private sessionResults: Array<RaceResult> = [];
-    private pointsByPosition: Dictionary<number, Dictionary<number, number>> = {};
-    private tableData: TableType[] = [];
+export default defineComponent({
+    name: "LandingNavbar",
+    components: {UserMiniCard},
+    props: {
+        gp: {
+            type: Object as PropType<GrandPrix>,
+            required: true,
+        },
+        ruleSet: {
+            type: Object as PropType<RuleSet>,
+            required: true,
+        },
+        session: {
+            type: Object as PropType<RaceSession>,
+            required: true,
+        },
+        communityMembers: {
+            type: Array as PropType<Array<CommunityUser>>,
+            required: true,
+        },
+        userPoints: {
+            type: Object as PropType<Dictionary<number, UserPoints>>,
+            required: true,
+        },
+    },
+    setup() {
+        const dayjs = useDayjs();
+        const authStore = useAuthStore();
+        const communityStore = useCommunityStore();
 
-    private winnersBySession: Map<RaceSession, Array<string>> = new Map();
-    private winnersOfGrandPrix: Array<string> = [];
+        const humanDateTimeMinusFiveMinutes = dayjs.humanDateTimeMinusFiveMinutes;
+        const currentUser = authStore.user;
+        const currentCommunity = communityStore.community;
+        return { currentUser, currentCommunity, humanDateTimeMinusFiveMinutes };
+    },
+    data() {
+        return {
+            loaded: false,
+            thereAreFinishResults: false,
+            sessionResults: new Array<RaceResult>(),
+            pointsByPosition: {} as Dictionary<number, Dictionary<number, number>>,
+            tableData: new Array<TableType>(),
 
+            winnersBySession: new Map<RaceSession, Array<string>>(),
+            winnersOfGrandPrix: new Array<string>(),
+        }
+    },
     mounted() {
         grandPrixService.getResults(this.gp, this.session).then((results) => {
 
@@ -221,7 +248,6 @@ export default class ScoreComponents extends Vue {
 
                 this.sessionResults.push({position: (position + 1), driver: driver, raceSession: session});
             }
-
         }).then(() => {
             grandPrixService.getAllTipps(this.gp, this.session, this.currentCommunity).then((tipps) => {
 
@@ -275,62 +301,60 @@ export default class ScoreComponents extends Vue {
                 this.loaded = true;
             });
         })
-    }
+    },
+    methods: {
+        /**
+         * Buscar el nombre del usuario con más puntos en la sesión
+         */
+        findWinnerUserOfSession(session?: RaceSession, minumum = -Infinity): Array<string> {
+            let maxSum = minumum;
 
-    /**
-     * Buscar el nombre del usuario con más puntos en la sesión
-     */
-    private findWinnerUserOfSession(session?: RaceSession, minumum = -Infinity): Array<string> {
-        let maxSum = minumum;
+            let winners = [];
+            for (let key in this.userPoints) {
+                let value = this.userPoints[key]!;
+                let pointsOfUser = 0;
 
-        let winners = [];
-        for (let key in this.userPoints) {
-            let value = this.userPoints[key]!;
-            let pointsOfUser = 0;
+                if (session === undefined) {
+                    pointsOfUser = value.pointsInGP;
+                } else {
+                    pointsOfUser = value.pointsBySession[session.name] ?? 0;
+                }
 
-            if (session === undefined) {
-                pointsOfUser = value.pointsInGP;
-            } else {
-                pointsOfUser = value.pointsBySession[session.name] ?? 0;
+                if (pointsOfUser > maxSum) {
+                    maxSum = pointsOfUser;
+                    return this.findWinnerUserOfSession(session, maxSum);
+                } else if (pointsOfUser == maxSum && pointsOfUser != 0) {
+                    winners.push(value.user.username);
+                }
             }
-
-            if (pointsOfUser > maxSum) {
-                maxSum = pointsOfUser;
-                return this.findWinnerUserOfSession(session, maxSum);
-            } else if (pointsOfUser == maxSum && pointsOfUser != 0) {
-                winners.push(value.user.username);
+            return winners;
+        },
+        checkRowClass(row: any) {
+            if (this.winnersOfGrandPrix.includes(row.user.username)) return 'is-winner';
+            if (row.user.username === this.currentUser.username) return 'is-user';
+            return '';
+        },
+        /**
+         * Retorna un icono de trofeo si eres el ganador de esas puntuaciones
+         * @param username Nombre del usuario
+         * @param session Sesión en la que consultar
+         */
+        checkAndInsertTrophy(username: string, session?: RaceSession) {
+            if (session == undefined) {
+                return (this.winnersOfGrandPrix.includes(username))
             }
+            return this.winnersBySession.get(session)?.includes(username) || false;
+        },
+        driverTooltip(driver: Driver) {
+            if (driver.code === "???") return "Pronóstico Oculto"; // Si hay pronóstico, pero este esta oculto, informar de eso
+            return driver.firstname + ' ' + driver.lastname + ' (' + driver.team.name + ')';
         }
-        return winners;
     }
-
-    private checkRowClass(row: any) {
-        if (this.winnersOfGrandPrix.includes(row.user.username)) return 'is-winner';
-        if (row.user.username === this.currentUser.username) return 'is-user';
-        return '';
-    }
-
-    /**
-     * Retorna un icono de trofeo si eres el ganador de esas puntuaciones
-     * @param username Nombre del usuario
-     * @param session Sesión en la que consultar
-     */
-    private checkAndInsertTrophy(username: string, session?: RaceSession) {
-        if (session == undefined) {
-            return (this.winnersOfGrandPrix.includes(username))
-        }
-        return this.winnersBySession.get(session)?.includes(username) || false;
-    }
-
-    private driverTooltip(driver: Driver) {
-        if (driver.code === "???") return "Pronóstico Oculto"; // Si hay pronóstico, pero este esta oculto, informar de eso
-        return driver.firstname + ' ' + driver.lastname + ' (' + driver.team.name + ')';
-    }
-}
+});
 </script>
 
 <style lang="scss">
-@import "~bulma/sass/utilities/_all";
+@import "bulma/sass/utilities/_all.sass";
 
 tr.is-user {
     background: $primary;

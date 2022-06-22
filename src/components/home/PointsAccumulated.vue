@@ -14,190 +14,180 @@
 </template>
 
 <script lang="ts">
-
-import {Component, Prop, Vue, Watch} from "vue-property-decorator";
-import VueApexCharts from "vue-apexcharts";
 import {User} from "@/types/User";
 import {grandPrixService, seasonService, userService} from "@/_services";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
-import {Community} from "@/types/Community";
-import {namespace} from "vuex-class";
 import {isValidCommunity} from "@/utils";
-const Auth = namespace('Auth')
 
 interface IChartType {
     name: string,
     options: {position: string, floating: boolean}
 }
 
-@Component<PointsAccumulated>({
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
+import {defineComponent, PropType} from "vue";
+import VueApexCharts from "vue3-apexcharts";
+
+export default defineComponent({
+    name: "PointsAccumulated",
     components: {
-        VueApexCharts
-    }
-})
-export default class PointsAccumulated extends Vue {
-    private grandPrixes = new Map<string, string>();
-    private loading: boolean = false;
-    private chartTypeIndex: number = 0;
-    @Auth.State("community") private currentCommunity!: Community;
-    @Prop() private user!: User;
+        VueApexCharts,
+    },
+    props: {
+        user: {
+            type: Object as PropType<User>,
+            required: true
+        }
+    },
+    setup() {
+        const authStore = useAuthStore();
+        const communityStore = useCommunityStore();
+
+        const currentUser = authStore.user;
+        const currentCommunity = communityStore.community;
 
 
-    private chartTypes = new Map<number, IChartType>([
-        [0, {
-            name: "area",
-            options: {
-                position: 'top',
-                floating: true,
+        return {currentUser, currentCommunity};
+    },
+    data() {
+        return {
+            loading: false,
+            grandPrixes: new Map<string, string>(),
+            chartTypeIndex: 0,
+            chartTypes: new Map<number, IChartType>([
+                [0, {
+                    name: "area",
+                    options: {
+                        position: 'top',
+                        floating: true,
+                    }
+                }],
+                [1, {
+                    name: "radar",
+                    options: {
+                        position: 'left',
+                        floating: true,
+                    }
+                }]
+                //ToDo: Más charts? tipo Bar?
+            ]),
+            chartSeries: [] as any[],
+            chartOptions: {
+                chart: {
+                    shadow: {
+                        enabled: true,
+                        color: '#000',
+                        top: 18,
+                        left: 7,
+                        blur: 10,
+                        opacity: 1
+                    },
+                    zoom: {
+                        enabled: false
+                    }
+                },
+                dataLabels: {
+                    enabled: true,
+                },
+                stroke: {
+                    curve: 'smooth',
+                    width: 3
+                },
+                markers: {
+                    size: 5
+                },
+                xaxis: {
+                    title: {
+                        text: 'Grandes Premios'
+                    }
+                },
+                yaxis: {
+                    title: {
+                        text: 'Puntos'
+                    }
+                },
+                legend: {
+                    position: 'top',
+                    floating: true,
+                },
+                tooltip: {
+                    x: {
+                        // @ts-ignore
+                        formatter: (codePos: number) => { return [...this.grandPrixes.values()][codePos - 1] },
+                    }
+                },
             }
-        }],
-        [1, {
-            name: "radar",
-            options: {
-                position: 'left',
-                floating: true,
-            }
-        }]
-        //ToDo: Más charts? tipo Bar?
-    ]);
-
+        }
+    },
     mounted() {
         this.loading = true;
         if (isValidCommunity(this.currentCommunity)) {
             this.fetchData();
         }
-    }
-
-    private changeGraphType() {
-        this.chartTypeIndex = (this.chartTypeIndex + 1) % this.chartTypes.size;//% 3;
-    }
-
-    private getChartType(): string {
-        let chartType = this.chartTypes.get(this.chartTypeIndex);
-        if (chartType === undefined) {
-            return "area";
-        }
-
-        this.chartOptions.legend = chartType.options;
-        return chartType.name;
-        /*
-        switch (this.chartType) {
-            case 1: {
-                this.chartOptions.legend = {
-                    position: 'left',
-                    floating: true,
-                };
-                return "radar";
+    },
+    methods: {
+        changeGraphType() {
+            this.chartTypeIndex = (this.chartTypeIndex + 1) % this.chartTypes.size;//% 3;
+        },
+        getChartType(): string {
+            let chartType = this.chartTypes.get(this.chartTypeIndex);
+            if (chartType === undefined) {
+                return "area";
             }
-           /* case 2: {
-                this.chartOptions.legend = {
-                    position: 'top',
-                    floating: true,
-                };
-                return "bar";
-            }*
-        }
-        this.chartOptions.legend = {
-            position: 'top',
-            floating: true,
-        };
-        return "area";*/
-    }
 
-    @Watch('currentCommunity')
-    onCurrentCommunityChange(community: Community) {
-        this.fetchData();
-    }
+            this.chartOptions.legend = chartType.options;
+            return chartType.name;
+        },
+        fetchData(): void {
+            let season: Season;
+            let competition: Competition = this.currentCommunity.competition;
 
-    public fetchData(): void {
-        let season: Season;
-        let competition: Competition = this.currentCommunity.competition;
+            seasonService.getCurrentSeason(competition).then((seasonFetched) => {
+                season = seasonFetched;
 
-        seasonService.getCurrentSeason(competition).then((seasonFetched) => {
-            season = seasonFetched;
-
-        }).then(() => {
-            grandPrixService.getGrandPrixesList(competition, season, 'all').then(gplist => {
-                gplist.forEach(gp => this.grandPrixes.set(gp.code, gp.name));
-
-                // Actualizar leyenda con los codigos de los gps
-                this.chartOptions = {
-                    ...this.chartOptions,
-                    xaxis: {
-                        categories: [...this.grandPrixes.keys()],
-                    }
-                }
             }).then(() => {
+                grandPrixService.getGrandPrixesList(competition, season, 'all').then(gplist => {
+                    gplist.forEach(gp => this.grandPrixes.set(gp.code, gp.name));
 
-                userService.getCumulatedPointsInCommunity(this.user, this.currentCommunity, competition, season).then(cumulatedPoints => {
-                    let dataAcumulada = [...Object.values(cumulatedPoints)];
-                    userService.getPointsInCommunity(this.user, this.currentCommunity, competition, season).then(points => {
-                        let dataPoints = [...Object.values(points)];
-                        this.chartSeries = [
-                            ...this.chartSeries,
-                            {
-                                name: 'Puntos acumulados',
-                                data: dataAcumulada
-                            },
-                            {
-                                name: 'Puntos por Gran Premio',
-                                data: dataPoints
-                            }
-                        ]
+                    // Actualizar leyenda con los codigos de los gps
+                    this.chartOptions = {
+                        ...this.chartOptions,
+                        xaxis: {
+                            // @ts-ignore
+                            categories: [...this.grandPrixes.keys()],
+                        }
+                    }
+                }).then(() => {
 
-                        this.loading = false;
+                    userService.getCumulatedPointsInCommunity(this.user, this.currentCommunity, competition, season).then(cumulatedPoints => {
+                        let dataAcumulada = [...Object.values(cumulatedPoints)];
+                        userService.getPointsInCommunity(this.user, this.currentCommunity, competition, season).then(points => {
+                            let dataPoints = [...Object.values(points)];
+                            this.chartSeries = [
+                                ...this.chartSeries,
+                                {
+                                    name: 'Puntos acumulados',
+                                    data: dataAcumulada
+                                },
+                                {
+                                    name: 'Puntos por Gran Premio',
+                                    data: dataPoints
+                                }
+                            ]
+
+                            this.loading = false;
+                        });
                     });
                 });
             });
-        });
-    }
-
-    private chartSeries: any = [];
-
-    private chartOptions: any = {
-        chart: {
-            shadow: {
-                enabled: true,
-                color: '#000',
-                top: 18,
-                left: 7,
-                blur: 10,
-                opacity: 1
-            },
-            zoom: {
-                enabled: false
-            }
-        },
-        dataLabels: {
-            enabled: true,
-        },
-        stroke: {
-            curve: 'smooth',
-            width: 3
-        },
-        markers: {
-            size: 5
-        },
-        xaxis: {
-            title: {
-                text: 'Grandes Premios'
-            }
-        },
-        yaxis: {
-            title: {
-                text: 'Puntos'
-            }
-        },
-        legend: {
-            position: 'top',
-            floating: true,
-        },
-        tooltip: {
-            x: {
-                formatter: (codePos: number) => { return [...this.grandPrixes.values()][codePos - 1] },
-            }
-        },
-    };
-}
+        }
+    },
+    watch: {
+        currentCommunity(newCommunity, oldcommunity) {
+            this.fetchData();
+        }
+    },
+});
 </script>

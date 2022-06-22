@@ -44,7 +44,7 @@
 
                 <o-table-column field="created" label="Creado" centered sortable v-slot="props">
                     <span class="tag is-success" v-if="props.row.created">
-                        {{ props.row.created | humanDateTime }}
+                        {{ humanDateTime(props.row.created) }}
                     </span>
                     <span class="tag is-warning" v-else>
                         Sin fecha
@@ -53,7 +53,7 @@
 
                 <o-table-column field="last_activity" label="Última actividad" centered sortable v-slot="props">
                     <span class="tag is-success" v-if="props.row.last_activity">
-                        {{ props.row.last_activity | humanDateTime }}
+                        {{ humanDateTime(props.row.last_activity) }}
                     </span>
                     <span class="tag is-warning" v-else>
                         Sin fecha
@@ -78,56 +78,64 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import {User} from "@/types/User";
-import {namespace} from "vuex-class";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {userService} from "@/_services";
-const Auth = namespace('Auth')
 
-@Component({
-        components: {
-            AlertNoPermission,
-            PrognoPageTitle,
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/store/authStore";
+import {useDayjs} from "@/composables/useDayjs";
+
+export default defineComponent({
+    name: "DriversAdmin",
+    components: {
+        AlertNoPermission,
+        PrognoPageTitle,
+    },
+    setup() {
+        const dayjs = useDayjs();
+        const authStore = useAuthStore();
+
+        const humanDateTime = dayjs.humanDateTime;
+        const currentUser = authStore.user;
+        return { currentUser, humanDateTime };
+    },
+    data() {
+        return {
+            isPaginated: true,
+            filtroUsuario: '',
+            users: new Array<User>(),
         }
-    }
-)
-export default class DriversAdmin extends Vue {
-    @Auth.State("user") private currentUser!: User;
-
-    private isPaginated: boolean = true;
-    private filtroUsuario: String = '';
-
-    private users: Array<User> = [];
-
+    },
     mounted() {
         userService.getAllUsers().then((users) => {
             this.users = [];
             this.users.push(...users);
         })
-    }
+    },
+    computed: {
+        filteredUsers(): Array<User> {
+            if (!this.filtroUsuario.trim()) {
+                return this.users;
+            }
 
-    get filteredUsers(): Array<User> {
-        if (!this.filtroUsuario.trim()) {
-            return this.users;
+            const filtroLowerCase: string = this.filtroUsuario.toLowerCase().trim();
+
+            return this.users.filter((user) => {
+                return (
+                    user.username
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    user.email
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    user.rank.name
+                        .toLowerCase()
+                        .includes(filtroLowerCase)
+                );
+            });
         }
-
-        const filtroLowerCase: string = this.filtroUsuario.toLowerCase().trim();
-
-        return this.users.filter((user) => {
-            return (
-                user.username
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                user.email
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                user.rank.name
-                    .toLowerCase()
-                    .includes(filtroLowerCase)
-            );
-        });
     }
-}
+});
 </script>

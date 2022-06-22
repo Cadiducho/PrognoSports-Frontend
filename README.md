@@ -9,14 +9,14 @@ Servidor de desarrollo
 ----------------
 
 ```
-$ npm run serve
+$ yarn run dev
 ```
 
 Compilación
 ----------------
 
 ```
-$ npm run build
+$ yarn run build
 ```
 
 

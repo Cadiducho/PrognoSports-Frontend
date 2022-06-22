@@ -10,7 +10,6 @@ import {Circuit} from "@/types/Circuit";
 import {Community} from "@/types/Community";
 import {RaceSession} from "@/types/RaceSession";
 import dayjs from "dayjs";
-import {GrandPrix} from "@/types/GrandPrix";
 import {User} from "@/types/User";
 import {RuleSet} from "@/types/RuleSet";
 
@@ -29,8 +28,9 @@ export function isAdmin(user: User): boolean {
 /**
  * Obtener imagen de perfil de un usuario, o la de por defecto
  */
-export function userProfileImage(user?: User) {
-    return user?.profileImageUrl ?? require('@/assets/default_profile_image.jpg');
+export function userProfileImage(user: User) {
+    // ToDo: coger la imagen por defecto de los assets
+    return user.profileImageUrl ?? 'https://github.com/Cadiducho/PrognoSports-Frontend/blob/develop/src/assets/default_profile_image.jpg?raw=true';
 }
 
 /**

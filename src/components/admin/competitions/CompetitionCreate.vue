@@ -64,75 +64,83 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {User} from "@/types/User";
-import {namespace} from "vuex-class";
 import {competitionService} from "@/_services";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-import {Competition} from "@/types/Competition";
+import {ICompetition} from "@/types/Competition";
 import {marked} from "marked";
-const Auth = namespace('Auth')
 
-@Component({
-        components: {
-            AlertNoPermission,
-            AlertInvalidData,
-            PrognoPageTitle,
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/store/authStore";
+
+export default defineComponent({
+    name: "SeasonCreate",
+
+    components: {
+        AlertNoPermission,
+        AlertInvalidData,
+        PrognoPageTitle,
+    },
+    setup() {
+        const authStore = useAuthStore();
+
+        const currentUser = authStore.user;
+        return { currentUser };
+    },
+    data() {
+        return {
+            activeStep: 0,
+            createdCompetition: {
+                id: undefined!,
+                code: undefined!,
+                name: undefined!,
+                fullname: undefined!,
+                currentSeason: undefined!,
+                rules: undefined!,
+                availableSessions: []
+            } as ICompetition,
+        }
+    },
+    methods: {
+        isDataOk(): boolean {
+            return !(this.createdCompetition.id == undefined
+                && this.createdCompetition.code == undefined
+                && this.createdCompetition.name == undefined
+                && this.createdCompetition.fullname == undefined
+                && this.createdCompetition.rules == undefined)
+        },
+        registerCompetition(): void {
+            let data = {
+                code: this.createdCompetition!.code,
+                name: this.createdCompetition!.name,
+                fullname: this.createdCompetition!.fullname,
+                rules: this.createdCompetition!.rules,
+            }
+
+            competitionService.createCompetition(data).then((result) => {
+                this.$oruga.notification.open({
+                    position: 'top',
+                    message: "Se ha registrado correctamente la competición `" + result.name + "`",
+                    variant: "success",
+                });
+
+                this.$router.push({
+                    name: 'adminCompetitions'
+                })
+            }).catch((error) => {
+                this.$oruga.notification.open({
+                    position: 'top',
+                    message: error.message,
+                    variant: "danger",
+                });
+            });
+        }
+    },
+    computed: {
+        compiledRules() {
+            return marked(this.createdCompetition?.rules ?? "");
         }
     }
-)
-export default class SeasonCreate extends Vue {
-    @Auth.State("user") private currentUser!: User;
-
-    private activeStep = 0;
-
-    private createdCompetition: Competition = {
-        id: undefined!,
-        code: undefined!,
-        name: undefined!,
-        fullname: undefined!,
-        currentSeason: undefined!,
-        rules: undefined!,
-        availableSessions: []
-    }
-
-    get compiledRules() {
-        return marked(this.createdCompetition?.rules ?? "");
-    }
-
-    private isDataOk(): boolean {
-        return !(this.createdCompetition.id == undefined
-            && this.createdCompetition.code == undefined
-            && this.createdCompetition.name == undefined
-            && this.createdCompetition.fullname == undefined
-            && this.createdCompetition.rules == undefined)
-    }
-
-    private registerCompetition(): void {
-        let data = {
-            code: this.createdCompetition!.code,
-            name: this.createdCompetition!.name,
-            fullname: this.createdCompetition!.fullname,
-            rules: this.createdCompetition!.rules,
-        }
-
-        competitionService.createCompetition(data).then((result) => {
-            this.$oruga.notification.open({
-                message: "Se ha registrado correctamente la competición `" + result.name + "`",
-                variant: "success",
-            });
-
-            this.$router.push({
-                name: 'adminCompetitions'
-            })
-        }).catch((error) => {
-            this.$oruga.notification.open({
-                message: error.message,
-                variant: "danger",
-            });
-        });
-    }
-}
+});
 </script>

@@ -53,55 +53,59 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {User} from "@/types/User";
-import {namespace} from "vuex-class";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-import {Driver} from "@/types/Driver";
-import {constructorService, driversService} from "@/_services";
+import {constructorService} from "@/_services";
 import {Constructor} from "@/types/Constructor";
-const Auth = namespace('Auth')
 
-@Component({
-        components: {
-            AlertNoPermission,
-            PrognoPageTitle,
+import {defineComponent} from "vue";
+import {useAuthStore} from "@/store/authStore";
+
+export default defineComponent({
+    name: "LandingNavbar",
+    components: {
+        AlertNoPermission,
+        PrognoPageTitle,
+    },
+    setup() {
+        const authStore = useAuthStore();
+
+        const currentUser = authStore.user;
+        return { currentUser };
+    },
+    data() {
+        return {
+            isPaginated: true,
+            filtroTeam: '',
+
+            constructors: new Array<Constructor>(),
         }
-    }
-)
-export default class DriversAdmin extends Vue {
-    @Auth.State("user") private currentUser!: User;
-
-    private isPaginated: boolean = true;
-    private filtroTeam: String = '';
-
-    private constructors: Array<Constructor> = [];
-
+    },
     mounted() {
         constructorService.getAllConstructors().then((constructors) => {
             this.constructors = [];
             this.constructors.push(...constructors);
         })
-    }
+    },
+    computed: {
+        filteredDrivers(): Array<Constructor> {
+            if (!this.filtroTeam.trim()) {
+                return this.constructors;
+            }
 
-    get filteredDrivers(): Array<Constructor> {
-        if (!this.filtroTeam.trim()) {
-            return this.constructors;
+            const filtroLowerCase: string = this.filtroTeam.toLowerCase().trim();
+
+            return this.constructors.filter((driver) => {
+                return (
+                    driver.id
+                        .toLowerCase()
+                        .includes(filtroLowerCase) ||
+                    driver.name
+                        .toLowerCase()
+                        .includes(filtroLowerCase)
+                );
+            });
         }
-
-        const filtroLowerCase: string = this.filtroTeam.toLowerCase().trim();
-
-        return this.constructors.filter((driver) => {
-            return (
-                driver.id
-                    .toLowerCase()
-                    .includes(filtroLowerCase) ||
-                driver.name
-                    .toLowerCase()
-                    .includes(filtroLowerCase)
-            );
-        });
     }
-}
+});
 </script>

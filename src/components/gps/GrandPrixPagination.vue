@@ -13,32 +13,52 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
     import {GrandPrix} from "@/types/GrandPrix";
     import {Competition} from "@/types/Competition";
-    import {RawLocation} from "vue-router";
+    import {RouteLocationRaw} from "vue-router";
 
-    @Component
-    export default class GrandPrixPagination extends Vue {
-        @Prop({required: true}) private competition!: Competition;
-        @Prop({required: true}) private grandPrix!: GrandPrix;
+    import {defineComponent, PropType} from "vue";
+    import {useAuthStore} from "@/store/authStore";
+    import {useCommunityStore} from "@/store/communityStore";
 
-        private thereIsPrevious(grandPrix: GrandPrix): boolean {
-            return grandPrix.round > 1;
+    export default defineComponent({
+        name: "GrandPrixPagination",
+        props: {
+            competition: {
+                type: Object as PropType<Competition>,
+                required: true,
+            },
+            grandPrix: {
+                type: Object as PropType<GrandPrix>,
+                required: true,
+            }
+        },
+        setup() {
+            const authStore = useAuthStore();
+            const communityStore = useCommunityStore();
+
+            const currentUser = authStore.user;
+            const currentCommunity = communityStore.community;
+            return { currentUser, currentCommunity };
+        },
+        methods: {
+            thereIsPrevious(grandPrix: GrandPrix): boolean {
+                return grandPrix.round > 1;
+            },
+            thereIsNext(grandPrix: GrandPrix): boolean {
+                return (grandPrix.round + 1) <= grandPrix.season.totalEvents;
+            },
+            push(next: boolean): void {
+                let params: RouteLocationRaw = {
+                    name: 'gpdetails',
+                    params: {
+                        competition: this.grandPrix.competition.code,
+                        season: this.grandPrix.season.name,
+                        id: ((this.grandPrix.round + (next ? 1 : -1)).toString())
+                    }
+                };
+                this.$router.push(params);
+            }
         }
-
-        private thereIsNext(grandPrix: GrandPrix): boolean {
-            return (grandPrix.round + 1) <= grandPrix.season.totalEvents;
-        }
-
-        push(next: boolean): void {
-            let params: RawLocation = {
-                name: 'gpdetails',
-                params: {
-                    id: ((this.grandPrix.round + (next ? 1 : -1)).toString())
-                }
-            };
-            this.$router.push(params);
-        }
-    }
+    });
 </script>

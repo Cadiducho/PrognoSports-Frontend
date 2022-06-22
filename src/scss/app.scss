@@ -1,16 +1,18 @@
 // Import Bulma's core
-@import "~bulma/sass/utilities/_all";
+@import "bulma/bulma";
+@import '@oruga-ui/theme-bulma/dist/scss/bulma';
 
 @import "ui/prognosection";
 @import "ui/prognocontainer";
-@import "ui/centered-card";
 @import "ui/navbar";
+@import "ui/block-list";
+@import "ui/timeline";
 
-@import "~bulma";
-@import '~@oruga-ui/theme-bulma/dist/scss/bulma';
-@import "~bulma-block-list/src/block-list";
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import url('https://use.fontawesome.com/releases/v5.8.1/css/all.css');
 
-@import '~leaflet/dist/leaflet.css';
+@import 'leaflet/dist/leaflet.css';
+
 .leaflet-pane {
   z-index: 10;
 }
