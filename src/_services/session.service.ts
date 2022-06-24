@@ -1,6 +1,7 @@
 import {PrognoService} from "@/_services/progno.service";
 import {IRaceSession, RaceSession} from "@/types/RaceSession";
 import axios from "axios";
+import {GrandPrix} from "@/types/GrandPrix";
 
 export class SessionService extends PrognoService<IRaceSession, RaceSession> {
 
@@ -45,5 +46,25 @@ export class SessionService extends PrognoService<IRaceSession, RaceSession> {
      */
     public async deleteSession(session: RaceSession): Promise<boolean> {
         return await axios.delete(`/sessions/${session.name}`)
+    }
+
+    public async listSessionsInGrandPrix(gp: GrandPrix): Promise<Array<RaceSession>> {
+        return this.getObjectListFromAPI(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions`);
+    }
+
+    public async getOneSessionInGrandPrix(gp: GrandPrix, session: RaceSession): Promise<RaceSession> {
+        return this.getObjectFromAPI(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.name}`);
+    }
+
+    public async addSessionInGrandPrix(gp: GrandPrix, session: RaceSession): Promise<RaceSession> {
+        return await axios.post(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions`, session);
+    }
+
+    public async updateSessionInGrandPrix(gp: GrandPrix, session: RaceSession): Promise<Array<RaceSession>> {
+        return await axios.put(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.name}`, session);
+    }
+
+    public async removeSessionFromGrandPrix(gp: GrandPrix, session: RaceSession): Promise<Array<RaceSession>> {
+        return await axios.delete(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.name}`);
     }
 }

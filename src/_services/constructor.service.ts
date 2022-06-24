@@ -1,14 +1,35 @@
 import axios from "axios";
-import {Constructor} from "@/types/Constructor";
+import {Constructor, IConstructor} from "@/types/Constructor";
+import {PrognoService} from "@/_services/progno.service";
+import {Season} from "@/types/Season";
 
-export class ConstructorService {
+export class ConstructorService extends PrognoService<IConstructor, Constructor> {
 
-    public async getAllConstructors(): Promise<Array<Constructor>> {
-        return await axios.get(`/constructors`);
+    factory(data: IConstructor): Constructor {
+        return new Constructor(data);
     }
 
-    public async getConstructor(constructor: string): Promise<Array<Constructor>> {
-        return await axios.get(`/constructors/${constructor}`);
+    /**
+     * Devuelve un constructor
+     * @param sessionName el nombre del constructor
+     */
+    public async getConstructor(constructorName: string): Promise<Constructor> {
+        return this.getObjectFromAPI(`/constructors/${constructorName}`)
+    }
+
+    /**
+     * Devuelve la lista total de constructores
+     */
+    public async getAllConstructors(): Promise<Array<Constructor>> {
+        return this.getObjectListFromAPI(`/constructors`)
+    }
+
+    /**
+     * Obtener la lista de constructores que participan en una temporada
+     * @param season la temporada
+     */
+    public async getConstructorsInSeason(season: Season): Promise<Array<Constructor>> {
+        return this.getObjectListFromAPI(`/seasons/${season.id}/constructors`);
     }
 
     public async createConstructor(data: any): Promise<Constructor> {
