@@ -66,6 +66,9 @@
 
                 <o-table-column field="sessions" label="Sessions" v-slot="props">
                     <div class="tags are-small">
+                        <span class="tag is-danger" v-if="!props.row.sessions.length">
+                            No hay sesiones
+                        </span>
                         <span class="tag is-success" v-for="ses in props.row.sessions">
                             {{ ses.name }}
                         </span>

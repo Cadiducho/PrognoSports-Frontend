@@ -165,9 +165,16 @@ export const routes = [
                     },
                     {
                         path: ':competition/:season/:id',
-                        name: 'adminGpEdit',
-                        component: () => import('@/components/admin/gps/GrandPrixEdit.vue'),
-                        meta: { title: "Editar Gran Premio" }
+                        component: EmptyRoutedView,
+                        meta: { title: "Gran Premio" },
+                        children: [
+                            {
+                                path: '',
+                                name: 'adminGpEdit',
+                                meta: { title: "Editar Gran Premio" },
+                                component: () => import('@/components/admin/gps/edit/GrandPrixEditPage.vue'),
+                            },
+                        ]
                     },
                 ],
             },
