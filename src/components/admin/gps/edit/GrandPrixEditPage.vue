@@ -83,6 +83,8 @@
 
                     <hr />
 
+                    <DriversInGrandPrix v-if="thereIsGrandPrix" :grand-prix="grandPrix" />
+
                 </template>
             </template>
 

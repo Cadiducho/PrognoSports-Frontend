@@ -1,0 +1,164 @@
+<template>
+    <h2 class="title">Pilotos y equipos del Gran Premio</h2>
+
+    <o-field label="Clonar del Gran Premio...">
+        <o-select v-model="clonedGrandPrix" placeholder="Seleciona un Gran Premio" @change="cloneDriversFromGrandPrix()">
+            <option v-for="gp in otherGPList" :value="gp" :key="gp.id">{{ gp.name }}</option>
+        </o-select>
+    </o-field>
+
+    <div class="columns">
+
+        <div class="column is-one-fifth">
+            <label class="label">Pilotos de {{ grandPrix.season.name }}</label>
+
+            <SlickList v-model:list="driversInSeason" group="allDrivers" :accept="true" tag="div">
+                <SlickItem v-for="(driver, index) in driversInSeason" :key="driver.id" :index="index" tag="li"
+                           class="list-item">
+                    {{driver.firstname}} {{ driver.lastname}}
+                </SlickItem>
+            </SlickList>
+        </div>
+        <div class="column">
+
+            <label class="label">Pilotos en el Gran Premio</label>
+            <div class="columns is-multiline">
+                <div class="column is-2" v-for="constructor in constructorList">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title" :style="teamCarColor(constructor)">
+                                {{ constructor.name }}
+                            </p>
+                        </header>
+
+                        <div class="card-content">
+                            <SlickList v-model:list="driversByConstructor[constructor.id]" :group="constructor.id" :accept="true" tag="div">
+                                <SlickItem v-for="(driver, index) in driversByConstructor[constructor.id]"
+                                           :key="driver.id" :index="index" tag="li"
+                                           class="list-item">
+                                    {{driver.firstname}} {{ driver.lastname}}
+                                </SlickItem>
+                            </SlickList>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="button is-primary" @click="saveDrivers()">Guardar pilotos</button>
+        </div>
+    </div>
+</template>
+
+<script lang="ts">
+import {defineComponent, PropType} from "vue";
+import {GrandPrix} from "@/types/GrandPrix";
+import {useDayjs} from "@/composables/useDayjs";
+import {Dictionary} from "@/types/Dictionary";
+import {Driver} from "@/types/Driver";
+import {Constructor} from "@/types/Constructor";
+import {constructorService, driversService, grandPrixService} from "@/_services";
+import {SlickItem, SlickList} from "vue-slicksort";
+import {useColorUtils} from "@/composables/useColorUtils";
+
+export default defineComponent({
+    name: "DriversInGrandPrix",
+    components: {
+        SlickList,
+        SlickItem,
+    },
+    props: {
+        grandPrix: {
+            type: Object as PropType<GrandPrix>,
+            required: true,
+        },
+    },
+    setup() {
+        const dayjs = useDayjs();
+        const colorUtils = useColorUtils();
+
+        const humanDateTime = dayjs.humanDateTime;
+        const invertColor = colorUtils.invertColor;
+        return { humanDateTime, invertColor };
+    },
+    data() {
+        return {
+            driversInSeason: new Array<Driver>(),
+            driversInGrandPrix: new Array<Driver>(),
+
+            constructorList: new Array<Constructor>(),
+            driversByConstructor: {} as Dictionary<string, Array<Driver>>,
+
+            otherGPList: new Array<GrandPrix>(),
+            clonedGrandPrix: {} as GrandPrix,
+        }
+    },
+    mounted() {
+        driversService.getDriversInSeason(this.grandPrix.season).then((listDrivers) => {
+
+            this.driversInSeason = [];
+            this.driversInSeason.push(...listDrivers);
+            this.driversInSeason.sort((a, b) => a.lastname.localeCompare(b.lastname))
+
+            this.loadDriversInGrandPrix(this.grandPrix);
+        });
+
+        grandPrixService.getGrandPrixesList(this.grandPrix.competition, this.grandPrix.season).then((list) => {
+            this.otherGPList = [];
+            this.otherGPList.push(...list);
+        });
+    },
+    methods: {
+        cloneDriversFromGrandPrix() {
+            console.log("Clonando de " + JSON.stringify(this.clonedGrandPrix));
+            this.clonedGrandPrix.competition = this.grandPrix.competition;
+            this.clonedGrandPrix.season = this.grandPrix.season;
+            this.loadDriversInGrandPrix(this.clonedGrandPrix);
+        },
+        loadDriversInGrandPrix(gp: GrandPrix) {
+            driversService.getDriversInGrandPrix(gp).then((listGP) => {
+                this.driversInGrandPrix = [];
+                this.driversInGrandPrix.push(...listGP);
+
+                constructorService.getConstructorsInSeason(gp.season).then((listC) => {
+                    this.constructorList = [];
+                    this.constructorList.push(...listC);
+
+                    this.constructorList.forEach((c) => {
+                        this.driversByConstructor[c.id] = [];
+                    })
+
+                    this.driversInGrandPrix.forEach((d) => {
+                        this.driversByConstructor[d.team.id] = [...this.driversByConstructor[d.team.id]??[], d];
+                    });
+                })
+            });
+        },
+        saveDrivers() {
+            if (this.driversByConstructor) {
+                driversService.setDriversInGrandPrix(this.grandPrix, this.driversByConstructor).then(() => {
+                    this.$oruga.notification.open({
+                        position: 'top',
+                        message: "Lista de pilotos guardada correctamente.",
+                        variant: "success",
+                    });
+                }).catch((error) => {
+                    this.$oruga.notification.open({
+                        position: 'top',
+                        message: "Ha ocurrido un error.",
+                        variant: "danger",
+                    });
+                });
+            }
+        },
+        teamCarColor(constructor: Constructor) {
+            return {
+                color: this.invertColor(constructor.teamcolor),
+                backgroundColor: '#' + constructor.teamcolor,
+            }
+        },
+    }
+});
+</script>
+
+<style scoped>
+
+</style>
