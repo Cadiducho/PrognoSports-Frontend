@@ -123,6 +123,7 @@ import {RuleSet} from "@/types/RuleSet";
 import {defineComponent, PropType} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
+import {useColorUtils} from "@/composables/useColorUtils";
 
 export default defineComponent({
     name: "SelectTipps",
@@ -155,10 +156,12 @@ export default defineComponent({
     setup() {
         const authStore = useAuthStore();
         const communityStore = useCommunityStore();
+        const colorUtils = useColorUtils();
 
         const currentUser = authStore.user;
         const currentCommunity = communityStore.community;
-        return { currentUser, currentCommunity };
+        const invertColor = colorUtils.invertColor;
+        return { currentUser, currentCommunity, invertColor };
     },
     data() {
         return {
@@ -224,8 +227,8 @@ export default defineComponent({
         },
         styleDorsal(driver: Driver) {
             return {
-                color: 'white',
-                textShadow: '0 0 2px #000',
+                color: this.invertColor(driver.team.teamcolor),
+                fontWeight: 'bold',
                 backgroundColor: '#' + driver.team.teamcolor,
             }
         },
