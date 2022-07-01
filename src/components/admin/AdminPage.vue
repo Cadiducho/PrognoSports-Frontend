@@ -35,6 +35,11 @@
                         Administración de Grandes Premios
                     </router-link>
                 </div>
+                <div class="column">
+                    <router-link class="box notification is-link has-text-centered has-text-weight-bold" to="/admin/sessions">
+                        Administración de Sesiones
+                    </router-link>
+                </div>
             </div>
 
             <div class="columns">

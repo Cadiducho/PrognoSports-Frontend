@@ -7,6 +7,7 @@ export interface IRaceSession {
     competition: Competition;
     grandPrix: GrandPrix;
     date: Date | string;
+    uses: number;
 }
 
 export class RaceSession implements IRaceSession {
@@ -15,6 +16,7 @@ export class RaceSession implements IRaceSession {
     grandPrix: GrandPrix;
     name: string;
     code: string;
+    uses: number;
 
     constructor(data: IRaceSession) {
         this.competition = data.competition;
@@ -22,6 +24,7 @@ export class RaceSession implements IRaceSession {
         this.grandPrix = data.grandPrix;
         this.name = data.name;
         this.code = data.code;
+        this.uses = data.uses;
     }
 
     // ToDo: i18n
