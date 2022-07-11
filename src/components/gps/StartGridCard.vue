@@ -5,7 +5,10 @@
                 <div class="tags">
                     <span class="tag is-dark">{{ gridPos.position }}º</span>
                     <span class="tag is-success">#{{ gridPos.driver.number }}</span>
-                    <span v-if="gridPos.note !== undefined" class="tag is-warning">!</span>
+                    <o-tooltip v-if="gridPos.note !== undefined"
+                               :label="gridPos.note" position="bottom">
+                        <span class="tag is-warning">!</span>
+                    </o-tooltip>
                 </div>
             </header>
             <div class="f1-card-main">
