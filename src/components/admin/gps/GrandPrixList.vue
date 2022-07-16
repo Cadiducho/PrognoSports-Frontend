@@ -8,7 +8,7 @@
                 <p class="control">
                     <o-button variant="link" to="/new/grandprix" tag="router-link">Nuevo Gran Premio</o-button>
                 </p>
-                <o-select v-if="seasonList" v-model="chosenSeason" placeholder="Selecciona la temporada"  @input="changeSeason()" >
+                <o-select v-if="seasonList" v-model="chosenSeason" placeholder="Selecciona la temporada"  @change="changeSeason()" >
                     <option
                         v-for="season in seasonList"
                         :value="season"
@@ -133,6 +133,7 @@ export default defineComponent({
         seasonService.getSeasonList().then((seasons) => {
             this.seasonList = [];
             this.seasonList.push(...seasons);
+            this.chosenSeason = this.seasonList[this.seasonList.length - 1];
         });
     },
     methods: {
