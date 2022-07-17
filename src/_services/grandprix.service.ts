@@ -34,7 +34,10 @@ export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
     }
 
     public async getGrandPrix(competition: Competition, season: Season, id: string): Promise<GrandPrix> {
-        return this.getObjectFromAPI(`/gps/${competition.code}/${season.name}/${id}`);
+        let comp = competition.id ?? competition.code;
+        let seas = season.id ?? season.name;
+
+        return this.getObjectFromAPI(`/gps/${comp}/${seas}/${id}`);
     }
 
     public async createGrandPrix(data: { code: string; circuit: string; round: number; promo_image_url: string; name: string; variant: string; season: number; competition: number; laps: number; id: string }): Promise<GrandPrix> {

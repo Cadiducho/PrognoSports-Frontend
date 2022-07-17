@@ -7,9 +7,26 @@
                 <o-step-item step="1" label="Datos del gran premio">
                     <h2 class="title">Datos del gran premio</h2>
 
-                    <o-field label="ID del Gran Premio">
-                        <o-input v-model="createdGrandPrix.id" name="id" expanded lazy></o-input>
-                    </o-field>
+                    <div class="columns">
+                        <div class="column">
+                            <o-field label="ID del Gran Premio">
+                                <o-input v-model="createdGrandPrix.id" name="id" expanded lazy></o-input>
+                            </o-field>
+                        </div>
+                        <div class="column">
+                            <div class="field">
+                                <label class="label">Clonar datos de un GP anterior con misma ID</label>
+                                <o-select v-model="cloneFromSeason" expanded placeholder="De la temporada..." @change="cloneData()" >
+                                    <option
+                                        v-for="season in seasons"
+                                        :value="season"
+                                        :key="season.id">
+                                        {{ season.name }} (#{{ season.id }}) - {{ season.competition.name }}
+                                    </option>
+                                </o-select>
+                            </div>
+                        </div>
+                    </div>
 
                     <o-field label="Nombre del Gran Premio">
                         <o-input v-model="createdGrandPrix.name" name="name" expanded lazy></o-input>
@@ -20,7 +37,7 @@
                     </o-field>
 
                     <o-field label="Circuito del Gran Premio">
-                        <o-select v-model:class="createdGrandPrix.circuit" placeholder="Selecciona un circuito" expanded>
+                        <o-select v-model="createdGrandPrix.circuit" placeholder="Selecciona un circuito" expanded>
                             <option
                                 v-for="circuit in circuits"
                                 :value="circuit"
@@ -48,12 +65,12 @@
                     </o-field>
 
                     <o-field label="Temporada del Gran Premio">
-                        <o-select v-model:class="createdGrandPrix.season" placeholder="Selecciona una temporada" expanded>
+                        <o-select v-model="createdGrandPrix.season" placeholder="Selecciona una temporada" expanded >
                             <option
-                                v-for="ses in seasons"
-                                :value="ses"
-                                :key="ses.id">
-                                {{ ses.name }} (#{{ ses.id }}) - {{ ses.competition.name }}
+                                v-for="season in seasons"
+                                :value="season"
+                                :key="season.id">
+                                {{ season.name }} (#{{ season.id }}) - {{ season.competition.name }}
                             </option>
                         </o-select>
                     </o-field>
@@ -81,11 +98,11 @@
                         <p class="card-text"><b>ID del Gran Premio: </b>{{ createdGrandPrix.id }}</p>
                         <p class="card-text"><b>Nombre del Gran Premio: </b>{{ createdGrandPrix.name }}</p>
                         <p class="card-text"><b>Código del Gran Premio: </b>{{ createdGrandPrix.code }}</p>
-                        <p class="card-text"><b>Circuito del Gran Premio: </b>{{ createdGrandPrix.circuit }}</p>
+                        <p class="card-text"><b>Circuito del Gran Premio: </b>{{ createdGrandPrix.circuit?.name }} - {{ createdGrandPrix.circuit?.variant.name }}</p>
                         <p class="card-text"><b>Ronda del Gran Premio: </b>{{ createdGrandPrix.round }}</p>
                         <p class="card-text"><b>Vueltas al Gran Premio: </b>{{ createdGrandPrix.laps }}</p>
                         <p class="card-text"><b>Imagen del Gran Premio: </b>{{ createdGrandPrix.code }}</p>
-                        <p class="card-text"><b>Temporada del Gran Premio: </b>{{ createdGrandPrix.season }}</p>
+                        <p class="card-text"><b>Temporada del Gran Premio: </b>{{ createdGrandPrix.season?.name }} de {{ createdGrandPrix.season?.competition.name }}</p>
                     </div>
 
                     <hr/>
@@ -132,7 +149,8 @@ export default defineComponent({
         return {
             activeStep: 0,
             circuits: new Array<Circuit>(),
-            seasons: new  Array<Season>(),
+            seasons: new Array<Season>(),
+            cloneFromSeason: {} as Season,
 
             createdGrandPrix: {
                 id: undefined!,
@@ -157,6 +175,8 @@ export default defineComponent({
         seasonService.getSeasonList().then((list) => {
             this.seasons = [];
             this.seasons.push(...list);
+
+            this.createdGrandPrix.season = this.seasons[this.seasons.length - 1]; // Por defecto pongo la ultima temporada
         });
     },
     methods: {
@@ -170,6 +190,25 @@ export default defineComponent({
                 && this.createdGrandPrix.round == undefined
                 && this.createdGrandPrix.season == undefined
             )
+        },
+        cloneData(): void {
+            if (this.createdGrandPrix.id && this.cloneFromSeason?.id) {
+                console.log("clonando de " + this.createdGrandPrix.id + " y " + this.cloneFromSeason.name);
+                grandPrixService.getGrandPrix(this.cloneFromSeason.competition, this.cloneFromSeason, this.createdGrandPrix.id).then((oldGp) => {
+                    console.log(oldGp);
+                    this.createdGrandPrix.name = oldGp.name;
+                    this.createdGrandPrix.code = oldGp.code;
+                    this.createdGrandPrix.circuit = oldGp.circuit;
+                    this.createdGrandPrix.laps = oldGp.laps;
+                    this.createdGrandPrix.promo_image_url = oldGp.promo_image_url;
+                }).catch((error) => {
+                    this.$oruga.notification.open({
+                        position: 'top',
+                        message: "No existe GP con esos datos",
+                        variant: "danger",
+                    });
+                });
+            }
         },
         registerGrandPrix(): void {
             let data = {
