@@ -131,3 +131,14 @@ $block-list-highlight-width: 5px !default;
     }
   }
 }
+
+
+.block-list:empty,
+.block-list > div:empty {
+  padding:1rem;
+  border: 1px solid #dbdbdb;
+  border-radius: 4px;
+}
+.block-list li {
+  padding: 0.75rem;
+}

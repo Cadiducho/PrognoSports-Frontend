@@ -57,7 +57,7 @@ import {Driver} from "@/types/Driver";
 import {Constructor} from "@/types/Constructor";
 import {constructorService, driversService, grandPrixService} from "@/_services";
 import {SlickItem, SlickList} from "vue-slicksort";
-import {useColorUtils} from "@/composables/useColorUtils";
+import {useStyles} from "@/composables/useStyles";
 
 export default defineComponent({
     name: "DriversInGrandPrix",
@@ -73,7 +73,7 @@ export default defineComponent({
     },
     setup() {
         const dayjs = useDayjs();
-        const colorUtils = useColorUtils();
+        const colorUtils = useStyles();
 
         const humanDateTime = dayjs.humanDateTime;
         const invertColor = colorUtils.invertColor;
