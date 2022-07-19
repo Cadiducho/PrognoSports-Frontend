@@ -174,6 +174,12 @@ export const routes = [
                                 meta: { title: "Editar Gran Premio" },
                                 component: () => import('@/components/admin/gps/edit/GrandPrixEditPage.vue'),
                             },
+                            {
+                                path: ':session',
+                                name: 'adminGpEditSession',
+                                meta: { title: "Editar Sesión del Gran Premio" },
+                                component: () => import('@/components/admin/gps/edit/SessionGrandPrixEditPage.vue'),
+                            },
                         ]
                     },
                 ],

@@ -52,8 +52,8 @@ export class SessionService extends PrognoService<IRaceSession, RaceSession> {
         return this.getObjectListFromAPI(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions`);
     }
 
-    public async getOneSessionInGrandPrix(gp: GrandPrix, session: RaceSession): Promise<RaceSession> {
-        return this.getObjectFromAPI(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.name}`);
+    public async getOneSessionInGrandPrix(gp: GrandPrix, sessionName: string): Promise<RaceSession> {
+        return this.getObjectFromAPI(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${sessionName}`);
     }
 
     public async addSessionInGrandPrix(gp: GrandPrix, data: { session: string, date: Date }): Promise<RaceSession> {
