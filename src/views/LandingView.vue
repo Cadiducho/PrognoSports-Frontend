@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LandingNavbar />
+        <Navbar />
 
         <router-view/>
 
@@ -9,12 +9,12 @@
 </template>
 
 <script lang="ts">
-import LandingNavbar from "@/components/landing/LandingNavbar.vue";
+import Navbar from "@/components/navbar/Navbar.vue";
 import LandingFooter from "@/components/landing/LandingFooter.vue";
 import {defineComponent} from "vue";
 
 export default defineComponent({
     name: "LandingView",
-    components: {LandingFooter, LandingNavbar}
+    components: {LandingFooter, Navbar}
 });
 </script>

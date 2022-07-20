@@ -17,7 +17,7 @@
             </div>
 
             <div id="prognoNavbar" class="navbar-menu" :class="{ 'is-active': isOpen }">
-                <div class="navbar-start">
+                <div v-if="isLoggedIn" class="navbar-start">
                     <router-link class="navbar-item" to="/gps">
                         Grandes Premios
                     </router-link>
@@ -32,7 +32,20 @@
                     </router-link>
                 </div>
 
-                <div class="navbar-end" v-if="isValidUser(currentUser)">
+                <div v-if="!isLoggedIn" class="navbar-end">
+                    <div class="navbar-item">
+                        <div class="buttons">
+                            <router-link class="button is-primary" to="/register">
+                                <strong>Registrarse</strong>
+                            </router-link>
+                            <router-link class="button is-primary is-outlined" to="/login">
+                                Iniciar sesión
+                            </router-link>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="isValidUser(currentUser)" class="navbar-end" >
                     <CommunitiesDropdown v-if="isValidCommunity(currentCommunity)"/>
                     <NotificationsDropdown />
                     <AddElementsDropdown />
@@ -59,9 +72,10 @@
             const authStore = useAuthStore();
             const communityStore = useCommunityStore();
 
+            const isLoggedIn = authStore.isLoggedIn;
             const currentUser = authStore.user;
             const currentCommunity = communityStore.community;
-            return {currentUser, currentCommunity};
+            return {isLoggedIn, currentUser, currentCommunity};
         },
         data() {
             return {
