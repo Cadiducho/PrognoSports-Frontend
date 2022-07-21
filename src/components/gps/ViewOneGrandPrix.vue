@@ -1,8 +1,7 @@
 <template>
     <div id="grandprix">
-        <div v-if="isLoadingGrandPrix || grandPrix === undefined">
-            <loading />
-        </div>
+        <loading v-if="isLoadingGrandPrix || grandPrix === undefined" />
+
         <div v-else>
             <div class="columns is-variable is-5">
                 <div class="column">
@@ -13,7 +12,13 @@
                 </div>
             </div>
 
+
+            <article v-if="!grandPrix.sessions || !grandPrix.sessions.length" class="notification is-warning">
+                No hay sesiones configuradas en este Gran Premio
+            </article>
+
             <div class="columns">
+
                 <div v-bind:class="thereIsGrid ? 'column is-6' : 'column is-9'">
                     <o-tabs v-model="activeTab">
                         <o-tab-item v-for="(session, index) in grandPrix.sessions"
@@ -88,10 +93,12 @@ import {defineComponent} from "vue";
 import {useCommunityStore} from "@/store/communityStore";
 import useEmitter from "@/composables/useEmitter";
 import {useDayjs} from "@/composables/useDayjs";
+import Loading from "@/components/lib/Loading.vue";
 
 export default defineComponent({
     name: "ViewOneGrandPrix",
     components: {
+        Loading,
         ScoreComponents,
         PitLaneStartGrid,
         SelectTipps,

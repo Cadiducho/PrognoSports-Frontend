@@ -380,7 +380,7 @@
                 this.chartSeriesAcumuladas = [];
                 this.chartStandings = [];
 
-                grandPrixService.getGrandPrixesList(competition, season, 'all').then(gps => {
+                grandPrixService.getGrandPrixesList(competition, season).then(gps => {
                     this.gps = gps;
                     this.checkRankingLoaded();
                 });
