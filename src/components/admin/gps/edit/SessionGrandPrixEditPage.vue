@@ -24,8 +24,7 @@
                             <h2 class="title">Datos del {{ grandPrix.name }} en {{ session.humanName()}} </h2>
 
                             <o-field label="Fecha de la sesión">
-                                <o-datetimepicker v-model="session.date" icon="calendar" locale="es-ES">
-                                </o-datetimepicker>
+                                <bulma_calendar :value="session.date" :options="calendarOptions" v-on:input="session.date = $event;" />
                             </o-field>
 
                             <button class="button is-primary mt-0" @click="changeSessionData()">Editar datos de la sesión</button>
@@ -92,6 +91,7 @@
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import { SlickList, SlickItem } from 'vue-slicksort';
+import bulma_calendar from "bulma-calendar/dist/components/vue/bulma_calendar.vue";
 import {
     driversService,
     grandPrixService,
@@ -119,6 +119,7 @@ export default defineComponent({
         SessionsInGrandPrix,
         SlickList,
         SlickItem,
+        bulma_calendar
     },
     setup() {
         const authStore = useAuthStore();
@@ -145,11 +146,27 @@ export default defineComponent({
             grandPrix: {} as GrandPrix,
             dataLoaded: false,
             isLoadingData: true,
+
+            calendarOptions: {
+                dateFormat: 'dd/MM/yyyy',
+                lang: 'es',
+                showTodayButton: false,
+                showClearButton: false,
+                weekStart: 1,
+                validateLabel: 'Confirmar',
+                minuteSteps: 1,
+            }
         }
     },
     methods: {
         changeSessionData() {
-            sessionService.updateSessionInGrandPrix(this.grandPrix, this.session);
+            sessionService.updateSessionInGrandPrix(this.grandPrix, this.session).then(() => {
+                this.$oruga.notification.open({
+                    position: 'top',
+                    message: "Datos de la sesión actualizados.",
+                    variant: "success",
+                });
+            });
         },
         saveResults() {
             // ToDo: Insertar resultados mediante API v2
