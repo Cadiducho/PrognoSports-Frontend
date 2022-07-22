@@ -25,7 +25,7 @@
                     </p>
                     <o-table :data="tableData"
                              hoverable
-                             mobile-cards
+                             :mobile-cards="false"
                              default-sort="totalScore"
                              default-sort-direction="DESC"
                              :row-class="(row, index) => checkRowClass(row, index)"
@@ -58,12 +58,6 @@
                             </template>
                             <template v-slot="props">
 
-                                <o-tooltip v-if="checkAndInsertTrophy(gp.name, props.row.gps.get(gp.name).pointsInGP)"
-                                           :label="'Ganador de ' + gp.name"
-                                           variant="light">
-                                    <o-icon pack="fas" variant="info" icon="trophy"></o-icon>
-                                </o-tooltip>
-
                                 <PointsTooltipComponent
                                     v-if="props.row.gps.has(gp.name)"
                                     :gp-name="gp.name"
@@ -72,6 +66,13 @@
                                 <template v-else>
                                     0 :(
                                 </template>
+
+                                <o-tooltip v-if="checkAndInsertTrophy(gp.name, props.row.gps.get(gp.name).pointsInGP)"
+                                           :label="'Ganador de ' + gp.name"
+                                           variant="light">
+                                    <o-icon pack="fas" variant="info" icon="trophy"></o-icon>
+                                </o-tooltip>
+
                             </template>
                         </o-table-column>
 
@@ -95,7 +96,7 @@
                     </p>
                     <o-table :data="tableDataAcumulada"
                              hoverable
-                             mobile-cards
+                             :mobile-cards="false"
                              default-sort="totalScore"
                              default-sort-direction="DESC"
                              :row-class="(row, index) => checkRowClass(row, index)"
@@ -164,7 +165,7 @@
                     <h1 class="title is-4 mt-4">Clasificaciones</h1>
                     <o-table :data="tableDataAcumulada"
                              hoverable
-                             mobile-cards
+                             :mobile-cards="false"
                              default-sort="totalScore"
                              default-sort-direction="DESC"
                              :row-class="(row, index) => checkRowClass(row, index)"
