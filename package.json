@@ -14,6 +14,7 @@
     "apexcharts": "^3.35.3",
     "axios": "^0.26.1",
     "bulma-block-list": "^0.6.0",
+    "bulma-calendar": "^6.1.18",
     "dayjs": "^1.11.0",
     "leaflet": "^1.7.1",
     "marked": "^4.0.12",

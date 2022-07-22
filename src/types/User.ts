@@ -19,16 +19,13 @@ export interface User {
 }
 
 export interface UserResume {
-    points: number;
-    pointsInQualis: number;
-    pointsInRaces: number;
-    averageInRaces: number;
-    averageInQualis: number;
-    raceParticipations: number;
-    qualiParticipations: number;
-    standing: number;
-    //Fixme: wonSessions: Map<string, number>;
-    wonQualifySessions: number;
-    wonRaceSessions: number;
-    wonGrandPrixes: number;
+    totalPoints: number;
+    standings: number;
+    average: number;
+
+    totalPointsBySession: Map<string, number>;
+    averagePointsBySession: Map<string, number>;
+    participationsBySession: Map<string, number>;
+    wonSessions: Map<string, Array<string>>;
+    wonGrandPrixes: Array<string>;
 }

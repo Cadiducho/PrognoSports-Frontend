@@ -23,7 +23,6 @@
                 <loading v-else />
             </div>
             <div class="column is-4">
-                <!--<NextGrandPrix />-->
                 <div v-if="allGps && allGps.length" class="timeline">
                     <header class="timeline-header">
                         <span class="tag is-medium is-info">{{ firstEventYear }}</span>
@@ -39,14 +38,15 @@
                         <div v-if="isThisWeek(gp.lastDate())"  class="timeline-marker is-danger is-icon">
                             <i class="fa fa-flag"></i>
                         </div>
-                        <div v-else-if="isBefore(gp.lastDate())" class="timeline-marker is-warning"></div>
+                        <div v-else-if="isBefore(gp.lastDate()) || Number.isNaN(gp.lastDate().getTime())" class="timeline-marker is-warning"></div>
                         <div v-else class="timeline-marker is-primary"></div>
 
                         <router-link :to="gp.gpLink()" >
                             <div class="timeline-content">
-                                <p class="heading">
-                                    {{ gp.firstDate().getDate() }} - {{ humanDayMonth(gp.lastDate()) }}
-                                    <span v-if="isThisWeek(gp.lastDate())" class="tag is-light is-danger">
+                                <p>
+                                    <span v-if="Number.isNaN(gp.firstDate().getDate())">Sin fecha</span>
+                                    <span v-else>{{ gp.firstDate().getDate() }} - {{ humanDayMonth(gp.lastDate()) }}</span>
+                                    <span v-if="isThisWeek(gp.lastDate())" class="tag is-light is-danger heading ml-1">
                                         Próximo
                                     </span>
                                 </p>
@@ -164,12 +164,13 @@
             },
             seasonReady(seasonReady, oldSeasonReady) {
                 if (seasonReady) {
-                    grandPrixService.getGrandPrixesList(this.competition, this.season, 'all').then((list) => {
+                    grandPrixService.getGrandPrixesList(this.competition, this.season).then((list) => {
                         let activeGps = list.filter(gp => !gp.suspended);
+                        let gpsWithDates = activeGps.filter(gp => !Number.isNaN(gp.lastDate().getTime()))
                         this.allGps.push(...activeGps);
 
-                        const firstDate = activeGps.at(0)!.firstDate();
-                        const lastDate = activeGps.at(activeGps.length - 1)!.lastDate()
+                        const firstDate = gpsWithDates.at(0)!.firstDate();
+                        const lastDate = gpsWithDates.at(gpsWithDates.length - 1)!.lastDate()
 
                         this.firstEventYear = this.humanMonth(firstDate).toUpperCase() + " " + lastDate.getFullYear();
                         this.lastEventYear = this.humanMonth(lastDate).toUpperCase() + " " + lastDate.getFullYear();

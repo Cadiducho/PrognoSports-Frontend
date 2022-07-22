@@ -5,7 +5,7 @@
 
             <o-field v-if="Object.keys(chosenSession).length && availableSessions.length > 1"
                      label="Sesión" :label-position="'on-border'">
-                <o-select v-model="chosenSession" placeholder="Selecciona la sesión" @input="changeGridSession()">
+                <o-select v-model="chosenSession" placeholder="Selecciona la sesión" @change="changeGridSession()">
                     <option
                         v-for="session in availableSessions"
                         :value="session"
@@ -17,7 +17,6 @@
         </nav>
         <div class="columns is-mobile">
             <div class="column is-6">
-                <StartGridCard v-for="pos in parrillaDerecha" v-bind:key="pos.position"/>
                 <div v-for="pos in parrillaIzquierda">
                     <StartGridCard :gridPos="pos"/>
                     <div class="block"></div>

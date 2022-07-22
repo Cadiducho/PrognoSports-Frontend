@@ -123,7 +123,7 @@ import {RuleSet} from "@/types/RuleSet";
 import {defineComponent, PropType} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
-import {useColorUtils} from "@/composables/useColorUtils";
+import {useStyles} from "@/composables/useStyles";
 
 export default defineComponent({
     name: "SelectTipps",
@@ -156,12 +156,14 @@ export default defineComponent({
     setup() {
         const authStore = useAuthStore();
         const communityStore = useCommunityStore();
-        const colorUtils = useColorUtils();
+        const styles = useStyles();
 
         const currentUser = authStore.user;
         const currentCommunity = communityStore.community;
-        const invertColor = colorUtils.invertColor;
-        return { currentUser, currentCommunity, invertColor };
+        const styleDriverCard = styles.styleDriverCard;
+        const styleDorsal = styles.styleDorsal;
+
+        return { currentUser, currentCommunity, styleDriverCard, styleDorsal };
     },
     data() {
         return {
@@ -214,23 +216,6 @@ export default defineComponent({
             console.log("Moviendo a disponibles " + driver.code);
             this.pilotosPronosticados.splice(index, 1);
             this.pilotosDisponibles.push(driver);
-        },
-        styleDriverCard(driver: Driver) {
-            return {
-                color: 'black',
-                'border': '1px solid #'+ driver.team.teamcolor,
-                'border-left': '10px #'+ driver.team.teamcolor + ' solid',
-                // 'border-right': '30px #'+ driver.team.teamcolor + ' solid',
-                'border-right-image-source': 'linear-gradient(to left, #'+ driver.team.teamcolor + ', #ffffff)',
-                opacity: 0.9,
-            }
-        },
-        styleDorsal(driver: Driver) {
-            return {
-                color: this.invertColor(driver.team.teamcolor),
-                fontWeight: 'bold',
-                backgroundColor: '#' + driver.team.teamcolor,
-            }
         },
         reiniciarPronostico() {
             this.pilotosPronosticados = [];
@@ -302,16 +287,6 @@ export default defineComponent({
 
 <style scoped lang="scss">
 @import "bulma/sass/utilities/_all.sass";
-
-.block-list:empty,
-.block-list > div:empty {
-    padding:1rem;
-    border: 1px solid #dbdbdb;
-    border-radius: 4px;
-}
-.block-list li {
-    padding: 0.75rem;
-}
 
 .block-list:empty:before,
 .block-list > div:empty:before {

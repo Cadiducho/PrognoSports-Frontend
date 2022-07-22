@@ -148,7 +148,7 @@ export default defineComponent({
                 season = seasonFetched;
 
             }).then(() => {
-                grandPrixService.getGrandPrixesList(competition, season, 'all').then(gplist => {
+                grandPrixService.getGrandPrixesList(competition, season).then(gplist => {
                     gplist.forEach(gp => this.grandPrixes.set(gp.code, gp.name));
 
                     // Actualizar leyenda con los codigos de los gps

@@ -19,7 +19,7 @@
 
             <o-table :data="tableData"
                      hoverable
-                     mobile-cards
+                     :mobile-cards="false"
                      default-sort="score.accumulated"
                      default-sort-direction="DESC"
                      :row-class="(row, index) => checkRowClass(row)"
@@ -33,6 +33,9 @@
 
 
                             <template v-if="props.row.score.standings > 0">
+
+                                {{ props.row.score.standings }}º
+
                                 <!-- Solo puedo añadir flechas si existe un previous -->
                                 <template v-if="props.row.score.previousStandings > 0">
                                     <o-tooltip v-if="props.row.score.previousStandings > props.row.score.standings"
@@ -46,8 +49,6 @@
                                         <o-icon pack="fas" variant="danger" icon="arrow-down"></o-icon>
                                     </o-tooltip>
                                 </template>
-
-                                {{ props.row.score.standings }}º
 
                                 </template>
                                 <template v-else>
@@ -119,25 +120,26 @@
 
                 <o-table-column v-for="session in gp.sessions" :key="session.code"
                                 field="score.pointsBySession[session.name]" :label="session.code" sortable numeric v-slot="props">
+
+                    <span v-bind:class="{'has-text-danger': (props.row.score.bySession[session.name] || 0) < 0}">
+                        {{ props.row.score.bySession[session.name] || 0 }}
+                    </span>
+
                     <o-tooltip v-if="checkAndInsertTrophy(props.row.user.username, session)"
                                :label="'Ganador de la sesión de ' + session.humanName()"
                                variant="light">
                         <o-icon pack="fas" variant="info" icon="trophy"></o-icon>
                     </o-tooltip>
 
-                    <span v-bind:class="{'has-text-danger': (props.row.score.bySession[session.name] || 0) < 0}">
-                        {{ props.row.score.bySession[session.name] || 0 }}
-                    </span>
-
                 </o-table-column>
 
                 <o-table-column field="score.gp" label="GP" sortable numeric v-slot="props">
+                    {{ props.row.score.gp }}
                     <o-tooltip v-if="checkAndInsertTrophy(props.row.user.username, undefined)"
                                label="Ganador del Gran Premio"
                                variant="light">
                         <o-icon pack="fas" variant="purple" icon="trophy"></o-icon>
                     </o-tooltip>
-                    {{ props.row.score.gp }}
                 </o-table-column>
                 <o-table-column field="score.accumulated" label="TOT" sortable numeric v-slot="props">
                     <span class="has-text-weight-bold">{{ props.row.score.accumulated }}</span>

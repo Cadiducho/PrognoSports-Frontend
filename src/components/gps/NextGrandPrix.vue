@@ -17,13 +17,13 @@
                 </figure>
             </div>
             <div class="card-content">
-                <div class="media">
-                    <div class="media-content">
+                <div class="columns">
+                    <div class="column">
                         <p class="title is-4">{{ nextGp.circuit.name }}</p>
                         <p class="subtitle mb-0">{{ nextGp.circuit.locality }} ({{ nextGp.circuit.country }})</p>
                         <p class="subtitle mt-0">Ronda #{{ nextGp.round }}</p>
                     </div>
-                    <div class="media-right">
+                    <div class="column">
                         <p class="content block">
                             <span v-for="session in nextGp.sessions">
                                 <b>{{ session.humanName() }}:</b> {{ humanDate(session.date) }} ({{ dateDiff(session.date) }}) <br />

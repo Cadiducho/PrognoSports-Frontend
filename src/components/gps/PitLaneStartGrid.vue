@@ -17,8 +17,10 @@
             <hr class="hr">
             <h5>Notas sobre el cambio de la parrilla: </h5>
             <ul>
-                <li v-for="gridPosition in grid.get(chosenSession)" v-if="gridPosition.note !== undefined">
-                    <b>{{gridPosition.driver.lastname}} #{{gridPosition.driver.number}}</b>: {{gridPosition.note}}
+                <li v-for="gridPosition in parrillaNotas">
+                    <span >
+                        <b>{{gridPosition.driver.lastname}} #{{gridPosition.driver.number}}</b>: {{gridPosition.note}}
+                    </span>
                 </li>
             </ul>
         </div>
@@ -67,16 +69,24 @@ export default defineComponent({
     },
     methods: {
         thereIsPitLaneExits() {
-            return this.grid.get(this.chosenSession)?.some((gridPos => gridPos.isFromPit));
+            return this.parrillaSession?.some(gridPos => gridPos.isFromPit);
         },
         thereIsGridChanges() {
-            return this.grid.get(this.chosenSession)?.some((gridPos => gridPos.note !== undefined));
+            return this.parrillaSession?.some(gridPos => gridPos.note !== undefined);
         }
     },
     computed: {
+        parrillaSession(): StartGridPosition[] | undefined {
+            return this.grid.get(this.chosenSession);
+        },
         parrillaPitLane(): StartGridPosition[] | undefined {
-            return this.grid.get(this.chosenSession)?.filter((gridPos: StartGridPosition) => {
+            return this.parrillaSession?.filter((gridPos: StartGridPosition) => {
                 return gridPos.isFromPit;
+            });
+        },
+        parrillaNotas(): StartGridPosition[] | undefined {
+            return this.parrillaSession?.filter((gridPos: StartGridPosition) => {
+                return gridPos.note !== undefined;
             });
         }
     }
