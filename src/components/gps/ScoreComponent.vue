@@ -82,7 +82,9 @@
                     </template>
                 </o-table-column>
 
-                <o-table-column v-for="(position, index) in sessionResults" v-bind:key="position.position" :field="position.driver.code">
+                <o-table-column :visible="showResults"
+                                v-for="(position, index) in sessionResults"
+                                v-bind:key="position.position" :field="position.driver.code">
                     <template v-slot:header="{ column }">
                         <o-tooltip v-if="position.driver.code !== '---'"
                                    :label="driverTooltip(position.driver)"
@@ -141,10 +143,43 @@
                         <o-icon pack="fas" variant="purple" icon="trophy"></o-icon>
                     </o-tooltip>
                 </o-table-column>
+
+                <o-table-column :visible="showAdvancedStadistics"
+                    v-for="session in gp.sessions" :key="session.code"
+                                field="score.hitPercentageBySession[session.name]" :label="session.code + `%`" sortable numeric v-slot="props">
+                    <span v-if="props.row.score.hitPercentageBySession[session.name] >= 0">
+                        {{ Number((props.row.score.hitPercentageBySession[session.name] * 100).toFixed(2)) }}%
+                    </span>
+                    <span v-else>
+                        -
+                    </span>
+
+                </o-table-column>
+
+                <o-table-column :visible="showAdvancedStadistics"
+                    field="score.hitPercentageInGP" label="GP%" sortable numeric v-slot="props">
+                    <span v-if="props.row.score.hitPercentageInGP >= 0">
+                        {{ Number((props.row.score.hitPercentageInGP * 100).toFixed(2)) }}%
+                    </span>
+                    <span v-else>
+                        -
+                    </span>
+                </o-table-column>
+
+
                 <o-table-column field="score.accumulated" label="TOT" sortable numeric v-slot="props">
                     <span class="has-text-weight-bold">{{ props.row.score.accumulated }}</span>
                 </o-table-column>
             </o-table>
+
+            <hr />
+            <h6 class="subtitle">Opciones de la tabla</h6>
+            <section class="is-flex is-flex-direction-column" style="gap: 0.6rem">
+                <o-checkbox v-model="showAdvancedStadistics">Mostrar estadísticas avanzadas</o-checkbox>
+                <o-checkbox v-model="showResults">Mostrar resultados</o-checkbox>
+                <o-checkbox v-model="showColorUser">Mostrar color en tu usuario</o-checkbox>
+                <o-checkbox v-model="showColorWinner">Mostrar color en el ganador</o-checkbox>
+            </section>
         </template>
     </div>
 </template>
@@ -169,7 +204,9 @@ interface TableType {
     tipps: Array<RaceResult>;
     score: {
         bySession: Dictionary<string, number>;
+        hitPercentageBySession: Dictionary<string, number>;
         gp: number,
+        hitPercentageInGP: number;
         accumulated: number,
         standings: number,
         previousStandings: number
@@ -227,6 +264,11 @@ export default defineComponent({
 
             winnersBySession: new Map<RaceSession, Array<string>>(),
             winnersOfGrandPrix: new Array<string>(),
+
+            showAdvancedStadistics: false,
+            showResults: true,
+            showColorUser: true,
+            showColorWinner: true,
         }
     },
     mounted() {
@@ -266,7 +308,9 @@ export default defineComponent({
                         tipps: [],
                         score: {
                             bySession: {},
+                            hitPercentageBySession: {},
                             gp: 0,
+                            hitPercentageInGP: 0,
                             accumulated: 0,
                             standings: 0,
                             previousStandings: 0,
@@ -283,6 +327,12 @@ export default defineComponent({
                             rowData.score.bySession[session] = points;
                             // console.log("Poniendo " + comUser.user.id + " en sesion " + session + ": " + points);
                         }
+                        for (let session in this.userPoints[comUser.user.id]!.hitPercentageBySession) {
+                            let hits: number = this.userPoints[comUser.user.id]!.hitPercentageBySession[session]!;
+
+                            rowData.score.hitPercentageBySession[session] = hits;
+                        }
+                        rowData.score.hitPercentageInGP = this.userPoints[comUser.user.id]!.hitPercentageInGP || -1;
 
                         rowData.score.gp = this.userPoints[comUser.user.id]!.pointsInGP || 0;
                         rowData.score.accumulated = this.userPoints[comUser.user.id]!.accumulatedPoints || 0;
@@ -332,8 +382,8 @@ export default defineComponent({
             return winners;
         },
         checkRowClass(row: any) {
-            if (this.winnersOfGrandPrix.includes(row.user.username)) return 'is-winner';
-            if (row.user.username === this.currentUser.username) return 'is-user';
+            if (this.winnersOfGrandPrix.includes(row.user.username) && this.showColorWinner) return 'is-winner';
+            if (row.user.username === this.currentUser.username && this.showColorUser) return 'is-user';
             return '';
         },
         /**
