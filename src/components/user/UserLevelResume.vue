@@ -93,11 +93,6 @@ import {useCommunityStore} from "@/store/communityStore";
 
 export default defineComponent({
     name: "UserLevelResume",
-    props: {
-        userResume: {
-            type: Object as PropType<UserResume>
-        }
-    },
     setup() {
         const authStore = useAuthStore();
         const communityStore = useCommunityStore();

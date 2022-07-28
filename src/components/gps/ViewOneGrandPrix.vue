@@ -47,6 +47,14 @@
                 <div class="column is-3">
                     <CircuitCard :circuit="grandPrix.circuit" :laps="grandPrix.laps" />
                     <PitLaneStartGrid v-if="thereIsGrid" :grid="startGrid"/>
+
+                    <section v-if="isAdmin(this.currentUser)" class="mt-2">
+                        <hr/>
+                        <o-button variant="primary" expanded tag="router-link"
+                                  :to="{ name: 'adminGpEdit', params: {competition: competition.code, season: season.name, id: grandPrix.id} } ">
+                            Administración
+                        </o-button>
+                    </section>
                 </div>
             </div>
 
@@ -94,6 +102,7 @@ import {useCommunityStore} from "@/store/communityStore";
 import useEmitter from "@/composables/useEmitter";
 import {useDayjs} from "@/composables/useDayjs";
 import Loading from "@/components/lib/Loading.vue";
+import {useAuthStore} from "@/store/authStore";
 
 export default defineComponent({
     name: "ViewOneGrandPrix",
@@ -110,11 +119,13 @@ export default defineComponent({
     setup() {
         const dayjs = useDayjs();
         const emitter = useEmitter();
+        const authStore = useAuthStore();
         const communityStore = useCommunityStore();
 
         const humanDateTimeMinusFiveMinutes = dayjs.humanDateTimeMinusFiveMinutes;
         const currentCommunity = communityStore.community;
-        return {currentCommunity, emitter, humanDateTimeMinusFiveMinutes};
+        const currentUser = authStore.loggedUser;
+        return {currentUser, currentCommunity, emitter, humanDateTimeMinusFiveMinutes};
     },
     data() {
         return {
