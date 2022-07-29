@@ -85,7 +85,7 @@
 
                 <hr/>
 
-                <UserLevelResume v-if="userResume" :user-resume="userResume" />
+                <UserLevelResume />
 
             </article>
 
@@ -157,13 +157,6 @@ export default defineComponent({
 
         findProfile.then((profile) => {
             this.changeBreadcrumb(this.profile?.username || 'Perfil desconocido');
-
-            let competition = this.currentCommunity.competition;
-            let season: Season = competition.currentSeason;
-            userService.getUserResume(this.currentUser, this.currentCommunity, competition, season).then((resume) => {
-                console.log(resume);
-                this.userResume = resume;
-            });
         });
     },
     methods: {
