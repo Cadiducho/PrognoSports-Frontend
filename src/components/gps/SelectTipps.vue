@@ -43,8 +43,9 @@
                         <span>
                             {{ item.firstname }} {{ item.lastname }}
                             <span class="tag is-rounded" v-bind:style="styleDorsal(item)">#{{ item.number }}</span>
-                            <o-tooltip class="ml-1" :label="item.team.longname">
-                                {{ item.team.name }}
+                            <o-tooltip class="ml-1" :label="currentUser.preferences['use-long-team-names'] ? item.team.name : item.team.longname">
+                                <span v-if="currentUser.preferences['use-long-team-names']">{{ item.team.longname }}</span>
+                                <span v-else>{{ item.team.name }}</span>
                             </o-tooltip>
                             ({{item.team.carname}})
                         </span>
