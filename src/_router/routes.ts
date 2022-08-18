@@ -105,6 +105,17 @@ export const routes = [
             meta: { title: "Usuario" }
         }]
     },
+    {
+        path: '/settings',
+        meta: { requiresAuth: true, requiresCommunity: true, title: "Ajustes" },
+        component: PrognoView,
+        children: [{
+            path: '',
+            name: 'userSettings',
+            component: () => import('@/components/user/UserSettings.vue'),
+            meta: { title: "Ajustes" }
+        }]
+    },
 
     // Admin
     {

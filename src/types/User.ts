@@ -6,6 +6,7 @@ export interface User {
     username: string;
     email: string;
     bio?: string;
+    password?: string;
     rank: UserRank;
     profileImageUrl: string;
     created: Date,

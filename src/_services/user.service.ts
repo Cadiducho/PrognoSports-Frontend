@@ -41,4 +41,8 @@ export class UserService {
     public async getUserResume(user: User, community: Community, competition: Competition, season: Season): Promise<UserResume> {
         return await axios.get(`/user/${user.id}/communities/${community.id}/${competition.id}/${season.id}/resume`);
     }
+
+    public async updateUser(user: Partial<User>): Promise<string> {
+        return await axios.patch(`/user/${user.id}`, user);
+    }
 }
