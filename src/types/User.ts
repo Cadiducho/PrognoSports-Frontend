@@ -1,5 +1,6 @@
 import {UserRank} from "@/types/UserRank";
 import {Community} from "@/types/Community";
+import {Dictionary} from "@/types/Dictionary";
 
 export interface User {
     id: number;
@@ -16,7 +17,7 @@ export interface User {
     gender: string;
     location: string;
     currentCommunity: Community;
-    preferences: Map<string, any>;
+    preferences: Dictionary<string, any>;
 }
 
 export interface UserResume {

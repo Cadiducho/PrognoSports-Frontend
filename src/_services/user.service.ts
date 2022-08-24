@@ -45,4 +45,12 @@ export class UserService {
     public async updateUser(user: Partial<User>): Promise<string> {
         return await axios.patch(`/user/${user.id}`, user);
     }
+
+    public async linkTelegram(user: User, payload: {'telegram-id': number, 'telegram-firstname': string | null, 'telegram-username': string | null}) {
+        return await axios.post(`/user/${user.id}/settings/telegram`, payload);
+    }
+
+    public async unlinkTelegram(user: User) {
+        return await axios.delete(`/user/${user.id}/settings/telegram`);
+    }
 }

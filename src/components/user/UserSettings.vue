@@ -14,19 +14,19 @@
 
         <div class="buttons">
             <!-- ToDo: Modales con los ajustes de cuenta -->
-            <button class="button is-info">
+            <button class="button is-info" @click="showChangePassword()">
                 <span class="icon">
-                  <i class="fas fa-lock"></i>
+                    <i class="fas fa-lock"></i>
                 </span>
                 <span>Cambiar contraseña</span>
             </button>
-            <button class="button is-info">
+            <button class="button is-info" @click="showChangeMail()">
                 <span class="icon">
                   <i class="fas fa-envelope"></i>
                 </span>
                 <span>Cambiar email</span>
             </button>
-            <button class="button is-info">
+            <button class="button is-info" @click="showLinkTelegram()">
                 <span class="icon">
                   <i class="fab fa-telegram"></i>
                 </span>
@@ -114,12 +114,77 @@
         </form>
     </section>
 
-
     <div class="box">
         <!-- ToDo: Sistema de notificaciones. -->
         <h2 class="subtitle">Notificaciones</h2>
+
+        <table class="table is-fullwidth">
+            <thead>
+                <tr>
+                    <td></td>
+                    <th v-for="methodName in methods">
+                        {{ methodName }}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Notificaciones genéricas con información</td>
+                    <td>b</td>
+                    <td>c</td>
+                    <td>d</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
+    <PrognoModal v-show="changePasswordModal.show" @close="closeChangePassword()" @save="changePassword()">
+        <template v-slot:title>Cambiar contraseña</template>
+        <template v-slot:content>
+            <o-field label="Nueva contraseña">
+                <o-input v-model="changePasswordModal.newPassword" name="password" type="password" expanded lazy></o-input>
+            </o-field>
+            <o-field label="Confirmar contraseña" message="Debes introducir tu contraseña actual para confirmar cambios en tus ajustes">
+                <o-input v-model="changePasswordModal.confirmPassword" name="password" type="password" expanded lazy></o-input>
+            </o-field>
+        </template>
+    </PrognoModal>
+
+    <PrognoModal v-show="changeMailModal.show" @close="closeChangeMail()" @save="changeMail()">
+        <template v-slot:title>Cambiar email</template>
+        <template v-slot:content>
+            <o-field label="Nueva email">
+                <o-input v-model="changeMailModal.newMail" name="password" type="password" expanded lazy></o-input>
+            </o-field>
+            <o-field label="Confirmar contraseña" message="Debes introducir tu contraseña actual para confirmar cambios en tus ajustes">
+                <o-input v-model="changeMailModal.confirmPassword" name="password" type="password" expanded lazy></o-input>
+            </o-field>
+        </template>
+    </PrognoModal>
+
+    <PrognoModal v-show="linkTelegramModal.show" @close="closeLinkTelegram()">
+        <template v-slot:title>
+            <p v-if="currentUser.preferences['telegram-id']">
+                Tu cuenta está enlazada a Telegram
+            </p>
+            <p v-else>
+                Enlazar a Telegram
+            </p>
+        </template>
+        <template v-slot:content>
+            <p v-if="currentUser.preferences['telegram-id']">
+                Has iniciado sesión con tu cuenta #{{ currentUser.preferences["telegram-id"] }}
+                    ({{ currentUser.preferences["telegram-firstname"] ?? "" }}, @{{ currentUser.preferences["telegram-username"] ?? "" }})
+            </p>
+            <p v-else>
+                Enlazando tu cuenta a Telegram podrás recibir notificaciones o mejorar tu seguridad a través de una doble verificación.
+            </p>
+        </template>
+        <template v-slot:footer>
+            <button v-if="currentUser.preferences['telegram-id']" class="button is-danger" @click="unlinkTelegram()">Desvincular cuenta</button>
+            <div v-else ref="telegramLoginButton"></div>
+        </template>
+    </PrognoModal>
 </template>
 
 <script lang="ts">
@@ -135,7 +200,8 @@ import {useDayjs} from "@/composables/useDayjs";
 import axios from "axios";
 import {Dictionary} from "@/types/Dictionary";
 import {User} from "@/types/User";
-import {userService} from "@/_services";
+import {notificationService, userService} from "@/_services";
+import PrognoModal from "@/components/lib/PrognoModal.vue";
 
 interface Timezone {
     id: string,
@@ -145,6 +211,7 @@ interface Timezone {
 export default defineComponent({
     name: "UserProfile",
     components: {
+        PrognoModal,
         UserLevelResume,
         UserProfileCard,
         bulma_calendar
@@ -164,7 +231,9 @@ export default defineComponent({
         const editedUser = currentUser as Partial<User>;
         delete editedUser.currentCommunity;
 
-        return {currentUser, editedUser, currentCommunity, emitter, dateDiff, humanDateTime, humanDate};
+        const userRequest = authStore.userRequest;
+
+        return {currentUser, editedUser, userRequest, currentCommunity, emitter, dateDiff, humanDateTime, humanDate};
     },
     data() {
         return {
@@ -179,15 +248,39 @@ export default defineComponent({
                 type: 'date',
             },
             timeZones: new Array<Timezone>(),
+            methods: new Array<string>(),
             noPassword: false,
+
+            changePasswordModal: {
+                show: false,
+                newPassword: '',
+                confirmPassword: '',
+            },
+            changeMailModal: {
+                show: false,
+                newMail: '',
+                confirmPassword: '',
+            },
+            linkTelegramModal: {
+                show: false,
+            }
         }
     },
     mounted() {
         axios.get<Dictionary<string, string>>('/timezones').then((result) => {
+            this.timeZones = [];
             Object.entries(result).forEach(([id, offset]) => {
                 this.timeZones.push({id, offset});
             });
-        })
+        });
+        notificationService.getNotificationMethods().then((result) => {
+            this.methods = [];
+            this.methods.push(...result);
+        });
+
+        // Login Telegram
+        this.renderTelegramLoginAndScripts();
+
     },
     methods: {
         save() {
@@ -218,6 +311,76 @@ export default defineComponent({
                     });
                     this.noPassword = true;
                 }
+            });
+        },
+        showChangePassword() {
+            this.changePasswordModal.show = true;
+        },
+        closeChangePassword() {
+            this.changePasswordModal.show = false;
+        },
+        changePassword() {
+            console.log("Cambiando contraseña confirmada " + this.changePasswordModal.confirmPassword + " a la nueva " + this.changePasswordModal.newPassword);
+            this.closeChangePassword();
+        },
+
+        showChangeMail() {
+            this.changeMailModal.show = true;
+        },
+        closeChangeMail() {
+            this.changeMailModal.show = false;
+        },
+        changeMail() {
+            console.log("Cambiando email a " + this.changeMailModal.newMail);
+            this.closeChangeMail();
+        },
+        renderTelegramLoginAndScripts() {
+            if (!this.currentUser.preferences['telegram-id']) {
+                // Solo mostrar este botón si no está iniciado sesión
+                const script = document.createElement('script')
+                script.async = true
+                script.src = 'https://telegram.org/js/telegram-widget.js?19'
+                script.setAttribute('data-size', 'medium')
+                script.setAttribute('data-userpic', 'false')
+                script.setAttribute('data-telegram-login', 'PrognoSportsBot')
+                script.setAttribute('data-request-access', 'write')
+                // @ts-ignore
+                window.onTelegramAuth = this.onTelegramAuth
+                script.setAttribute('data-onauth', 'window.onTelegramAuth(user)')
+                // @ts-ignore
+                this.$refs.telegramLoginButton.appendChild(script);
+            }
+        },
+        showLinkTelegram() {
+            this.linkTelegramModal.show = true;
+        },
+        closeLinkTelegram() {
+            this.linkTelegramModal.show = false;
+        },
+        unlinkTelegram() {
+            userService.unlinkTelegram(this.currentUser).then(() => {
+                this.$oruga.notification.open({
+                    position: 'top',
+                    message: "Cuenta desvinculada de Telegram",
+                    variant: "warning",
+                });
+                this.userRequest().then(() => {
+                    this.closeLinkTelegram();
+                    this.renderTelegramLoginAndScripts();
+                });
+            });
+        },
+        onTelegramAuth(telegramPayload: {'telegram-id': number, 'telegram-firstname': string | null, 'telegram-username': string | null}) {
+            console.log(telegramPayload);
+            userService.linkTelegram(this.currentUser, telegramPayload).then(() => {
+                this.$oruga.notification.open({
+                    position: 'top',
+                    message: "Cuenta enlazada a Telegram",
+                    variant: "info",
+                });
+                this.userRequest().then(() => {
+                    this.closeLinkTelegram();
+                });
             });
         }
     }
