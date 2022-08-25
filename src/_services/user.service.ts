@@ -46,7 +46,15 @@ export class UserService {
         return await axios.patch(`/user/${user.id}`, user);
     }
 
-    public async linkTelegram(user: User, payload: {'telegram-id': number, 'telegram-firstname': string | null, 'telegram-username': string | null}) {
+    public async changePasswordInSettings(user: User, payload: { password: string; newPassword: string }) {
+        return await axios.patch(`/user/${user.id}/settings/password`, payload);
+    }
+
+    public async changeEmail(user: User, payload: { password: string; email: string }) {
+        return await axios.patch(`/user/${user.id}/settings/email`, payload);
+    }
+
+    public async linkTelegram(user: User, payload: { id: number; first_name: string | null; username: string | null }) {
         return await axios.post(`/user/${user.id}/settings/telegram`, payload);
     }
 

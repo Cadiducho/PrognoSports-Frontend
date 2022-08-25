@@ -138,26 +138,26 @@
         </table>
     </div>
 
-    <PrognoModal v-show="changePasswordModal.show" @close="closeChangePassword()" @save="changePassword()">
+    <PrognoModal v-show="changePasswordModal.show" @close="closeChangePassword()" @handle="changePassword()">
         <template v-slot:title>Cambiar contraseña</template>
         <template v-slot:content>
             <o-field label="Nueva contraseña">
-                <o-input v-model="changePasswordModal.newPassword" name="password" type="password" expanded lazy></o-input>
+                <o-input v-model="changePasswordModal.newPassword" name="newPassword" type="password" expanded lazy></o-input>
             </o-field>
-            <o-field label="Confirmar contraseña" message="Debes introducir tu contraseña actual para confirmar cambios en tus ajustes">
-                <o-input v-model="changePasswordModal.confirmPassword" name="password" type="password" expanded lazy></o-input>
+            <o-field label="Contraseña actual" message="Debes introducir tu contraseña actual para confirmar cambios en tus ajustes">
+                <o-input v-model="changePasswordModal.confirmPassword" name="confirmPassword" type="password" expanded lazy></o-input>
             </o-field>
         </template>
     </PrognoModal>
 
-    <PrognoModal v-show="changeMailModal.show" @close="closeChangeMail()" @save="changeMail()">
+    <PrognoModal v-show="changeMailModal.show" @close="closeChangeMail()" @handle="changeMail()">
         <template v-slot:title>Cambiar email</template>
         <template v-slot:content>
-            <o-field label="Nueva email">
-                <o-input v-model="changeMailModal.newMail" name="password" type="password" expanded lazy></o-input>
+            <o-field label="Nuevo email">
+                <o-input v-model="changeMailModal.newMail" name="mail" type="email" expanded lazy></o-input>
             </o-field>
             <o-field label="Confirmar contraseña" message="Debes introducir tu contraseña actual para confirmar cambios en tus ajustes">
-                <o-input v-model="changeMailModal.confirmPassword" name="password" type="password" expanded lazy></o-input>
+                <o-input v-model="changeMailModal.confirmPassword" name="confirmPassword" type="password" expanded lazy></o-input>
             </o-field>
         </template>
     </PrognoModal>
@@ -182,7 +182,7 @@
         </template>
         <template v-slot:footer>
             <button v-if="currentUser.preferences['telegram-id']" class="button is-danger" @click="unlinkTelegram()">Desvincular cuenta</button>
-            <div v-else ref="telegramLoginButton"></div>
+            <div ref="telegramLoginButton"></div>
         </template>
     </PrognoModal>
 </template>
@@ -231,9 +231,7 @@ export default defineComponent({
         const editedUser = currentUser as Partial<User>;
         delete editedUser.currentCommunity;
 
-        const userRequest = authStore.userRequest;
-
-        return {currentUser, editedUser, userRequest, currentCommunity, emitter, dateDiff, humanDateTime, humanDate};
+        return {currentUser, editedUser, currentCommunity, emitter, dateDiff, humanDateTime, humanDate};
     },
     data() {
         return {
@@ -295,7 +293,6 @@ export default defineComponent({
             }
 
             this.noPassword = false;
-            console.log("save" + JSON.stringify(this.editedUser));
             userService.updateUser(this.editedUser).then(() => {
                 this.$oruga.notification.open({
                     position: 'top',
@@ -320,33 +317,88 @@ export default defineComponent({
             this.changePasswordModal.show = false;
         },
         changePassword() {
-            console.log("Cambiando contraseña confirmada " + this.changePasswordModal.confirmPassword + " a la nueva " + this.changePasswordModal.newPassword);
-            this.closeChangePassword();
+            const payload = {
+                password: this.changePasswordModal.confirmPassword,
+                newPassword: this.changePasswordModal.newPassword,
+            };
+            userService.changePasswordInSettings(this.currentUser, payload).then(() => {
+                this.$oruga.notification.open({
+                    position: 'top',
+                    message: "Contraseña cambiada correctamente",
+                    variant: "info",
+                });
+
+                this.closeChangePassword();
+            }).catch((reason) => {
+                if (reason.code === 600) {
+                    this.$oruga.notification.open({
+                        position: 'top',
+                        message: "Contraseña incorrecta",
+                        variant: "danger",
+                    });
+                    this.noPassword = true;
+                }
+            });
         },
 
         showChangeMail() {
             this.changeMailModal.show = true;
         },
         closeChangeMail() {
+            console.log("close")
             this.changeMailModal.show = false;
         },
         changeMail() {
-            console.log("Cambiando email a " + this.changeMailModal.newMail);
-            this.closeChangeMail();
+            const payload = {
+                password: this.changeMailModal.confirmPassword,
+                email: this.changeMailModal.newMail,
+            };
+            userService.changeEmail(this.currentUser, payload).then(() => {
+                this.$oruga.notification.open({
+                    position: 'top',
+                    message: "Email cambiada correctamente",
+                    variant: "info",
+                });
+
+                this.closeChangeMail();
+            }).catch((reason) => {
+                if (reason.code === 600) {
+                    this.$oruga.notification.open({
+                        position: 'top',
+                        message: "Contraseña incorrecta",
+                        variant: "danger",
+                    });
+                    this.noPassword = true;
+                } else if (reason.code === 770) {
+                    this.$oruga.notification.open({
+                        position: 'top',
+                        message: "Email ya en uso por otro usuario",
+                        variant: "danger",
+                    });
+                    this.noPassword = true;
+                } else if (reason.code === 700) {
+                    this.$oruga.notification.open({
+                        position: 'top',
+                        message: "Email inválido",
+                        variant: "danger",
+                    });
+                    this.noPassword = true;
+                }
+            });
         },
         renderTelegramLoginAndScripts() {
             if (!this.currentUser.preferences['telegram-id']) {
                 // Solo mostrar este botón si no está iniciado sesión
-                const script = document.createElement('script')
-                script.async = true
-                script.src = 'https://telegram.org/js/telegram-widget.js?19'
-                script.setAttribute('data-size', 'medium')
-                script.setAttribute('data-userpic', 'false')
-                script.setAttribute('data-telegram-login', 'PrognoSportsBot')
-                script.setAttribute('data-request-access', 'write')
+                const script = document.createElement('script');
+                script.async = true;
+                script.src = 'https://telegram.org/js/telegram-widget.js?19';
+                script.setAttribute('data-size', 'medium');
+                script.setAttribute('data-userpic', 'false');
+                script.setAttribute('data-telegram-login', 'PrognoSportsBot');
+                script.setAttribute('data-request-access', 'write');
                 // @ts-ignore
-                window.onTelegramAuth = this.onTelegramAuth
-                script.setAttribute('data-onauth', 'window.onTelegramAuth(user)')
+                window.onTelegramAuth = this.onTelegramAuth;
+                script.setAttribute('data-onauth', 'window.onTelegramAuth(user)');
                 // @ts-ignore
                 this.$refs.telegramLoginButton.appendChild(script);
             }
@@ -364,23 +416,30 @@ export default defineComponent({
                     message: "Cuenta desvinculada de Telegram",
                     variant: "warning",
                 });
-                this.userRequest().then(() => {
-                    this.closeLinkTelegram();
-                    this.renderTelegramLoginAndScripts();
-                });
+
+                this.currentUser.preferences['telegram-id'] = '';
+                this.currentUser.preferences['telegram-firstname'] = '';
+                this.currentUser.preferences['telegram-username'] = '';
+
+                this.closeLinkTelegram();
+                this.renderTelegramLoginAndScripts();
             });
         },
-        onTelegramAuth(telegramPayload: {'telegram-id': number, 'telegram-firstname': string | null, 'telegram-username': string | null}) {
-            console.log(telegramPayload);
+        onTelegramAuth(telegramPayload: {'id': number, 'first_name': string | null, 'username': string | null}) {
             userService.linkTelegram(this.currentUser, telegramPayload).then(() => {
                 this.$oruga.notification.open({
                     position: 'top',
                     message: "Cuenta enlazada a Telegram",
                     variant: "info",
                 });
-                this.userRequest().then(() => {
-                    this.closeLinkTelegram();
-                });
+
+                this.currentUser.preferences['telegram-id'] = telegramPayload.id;
+                this.currentUser.preferences['telegram-firstname'] = telegramPayload.first_name;
+                this.currentUser.preferences['telegram-username'] = telegramPayload.username;
+                console.log(telegramPayload)
+                console.log(this.currentUser.preferences)
+
+                this.closeLinkTelegram();
             });
         }
     }
