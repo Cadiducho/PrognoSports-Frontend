@@ -140,30 +140,7 @@
                 </table>
             </div>
             <div class="column">
-                <!-- ToDo: Sistema de notificaciones. -->
-                <h2 class="subtitle">Tokens de inicio de sesión</h2>
-
-                <table class="table is-fullwidth">
-                    <thead>
-                    <tr>
-                        <th>Token</th>
-                        <th>Creado</th>
-                        <th>Último uso</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="token in authTokens" :class="token.current ? 'is-selected': ''">
-                        <td>
-                            {{token.token}}
-                            <span class="tag is-link ml-1" v-if="token.current">
-                                Actual
-                            </span>
-                        </td>
-                        <td>{{humanDateTime(token.createdAt)}}</td>
-                        <td>{{humanDateTime(token.lastActivityAt)}}</td>
-                    </tr>
-                    </tbody>
-                </table>
+                <AuthTokenList />
             </div>
         </div>
 
@@ -231,9 +208,9 @@ import {useDayjs} from "@/composables/useDayjs";
 import axios from "axios";
 import {Dictionary} from "@/types/Dictionary";
 import {User} from "@/types/User";
-import {authService, notificationService, userService} from "@/_services";
+import {notificationService, userService} from "@/_services";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
-import {AuthToken} from "@/types/AuthToken";
+import AuthTokenList from "@/components/user/settings/AuthTokenList.vue";
 
 interface Timezone {
     id: string,
@@ -243,6 +220,7 @@ interface Timezone {
 export default defineComponent({
     name: "UserProfile",
     components: {
+        AuthTokenList,
         PrognoModal,
         UserLevelResume,
         UserProfileCard,
@@ -279,7 +257,6 @@ export default defineComponent({
             },
             timeZones: new Array<Timezone>(),
             methods: new Array<string>(),
-            authTokens: new Array<AuthToken>(),
             noPassword: false,
 
             changePasswordModal: {
@@ -308,12 +285,6 @@ export default defineComponent({
             this.methods = [];
             this.methods.push(...result);
         });
-        authService.getAuthTokens().then((tokens) => {
-            this.authTokens = [];
-            this.authTokens.push(...tokens);
-
-            console.log(tokens);
-        })
 
         // Login Telegram
         this.renderTelegramLoginAndScripts();

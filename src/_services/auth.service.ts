@@ -29,4 +29,12 @@ export class AuthService {
             }));
         })
     }
+
+    public async deleteOneAuthToken(token: AuthToken): Promise<Array<AuthToken>> {
+        return axios.delete(`/auth/tokens/${token.token}`);
+    }
+
+    public async deleteAuthTokens(): Promise<Array<AuthToken>> {
+        return axios.delete('/auth/tokens');
+    }
 }

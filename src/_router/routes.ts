@@ -112,7 +112,7 @@ export const routes = [
         children: [{
             path: '',
             name: 'userSettings',
-            component: () => import('@/components/user/UserSettings.vue'),
+            component: () => import('@/components/user/settings/UserSettings.vue'),
             meta: { title: "Ajustes" }
         }]
     },
