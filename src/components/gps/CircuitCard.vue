@@ -21,10 +21,10 @@
             </div>
 
             <div class="content">
-                <p v-if="hasVariant(circuit)" class="card-text"><b>Variante: </b>{{circuit.variant.name}}</p>
-                <p class="card-text"><b>Distancia por vuelta: </b>{{circuit.variant.distance}} km</p>
-                <p v-if="hasLaps()" class="card-text"><b>Vueltas: </b>{{laps}}</p>
-                <p v-if="hasLaps()" class="card-text"><b>Distancia total: </b>{{laps * circuit.variant.distance}} km</p>
+                <p v-if="hasVariant(circuit)" class="card-text"><b>Variante: </b>{{ circuit.variant.name }}</p>
+                <p class="card-text"><b>Distancia por vuelta: </b>{{ circuit.variant.distance }}km</p>
+                <p v-if="hasLaps()" class="card-text"><b>Vueltas: </b>{{ laps }}</p>
+                <p v-if="hasLaps()" class="card-text"><b>Distancia total: </b>{{ (laps * circuit.variant.distance).toFixed(2) }}km</p>
             </div>
             <o-button variant="info is-light is-fullwidth" tag="router-link" :to="circuitUrl">Más datos del circuito</o-button>
         </div>
