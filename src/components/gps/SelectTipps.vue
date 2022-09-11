@@ -88,7 +88,7 @@
                     </SlickItem>
                 </SlickList>
 
-                <template v-if="isBeforeEndDate(this.session)">
+                <template v-if="this.session.isBeforeClosureDate()">
                     <o-button v-if="pilotosPronosticados.length === cantidadPilotosPronosticados(ruleSet, session)"
                               variant="success is-fullwidth"
                               @click="enviarPronostico">Enviar pronóstico
@@ -103,8 +103,8 @@
                     Ya no se puede pronosticar
                 </o-button>
 
-                <hr v-if="(pilotosPronosticados.length > 0) && isBeforeEndDate(this.session)"/>
-                <o-button v-if="(pilotosPronosticados.length > 0) && isBeforeEndDate(this.session)" variant="danger is-light is-fullwidth" @click="reiniciarPronostico">Limpiar pronóstico</o-button>
+                <hr v-if="(pilotosPronosticados.length > 0) && this.session.isBeforeClosureDate()"/>
+                <o-button v-if="(pilotosPronosticados.length > 0) && this.session.isBeforeClosureDate()" variant="danger is-light is-fullwidth" @click="reiniciarPronostico">Limpiar pronóstico</o-button>
 
             </div>
         </div>

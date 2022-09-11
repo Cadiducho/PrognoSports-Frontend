@@ -1,5 +1,6 @@
 import {Competition} from "@/types/Competition";
 import {GrandPrix} from "@/types/GrandPrix";
+import {useDayjs} from "@/composables/useDayjs";
 
 export interface IRaceSession {
     name: string;
@@ -36,5 +37,21 @@ export class RaceSession implements IRaceSession {
             case "SPRINT_RACE": return "Carrera Sprint";
             default: return this.name;
         }
+    }
+
+    /**
+     * Hora de cierre de un pronóstico. 5 minutos antes de la fecha de la sesión
+     */
+    public closureDate(): Date {
+        const dayjs = useDayjs();
+        return dayjs.minusFiveMinutes(this.date).toDate();
+    }
+
+    /**
+     * Verdadero si la fecha actual es anterior a la fecha de cierre del pronostico
+     */
+    public isBeforeClosureDate(): boolean {
+        const dayjs = useDayjs();
+        return dayjs.isBefore(this.closureDate());
     }
 }

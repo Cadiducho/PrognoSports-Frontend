@@ -3,7 +3,7 @@ import {
     cantidadPilotosPronosticados,
     hasVariant,
     isAdmin,
-    isBeforeEndDate, isValidCommunity,
+    isValidCommunity,
     isValidUser,
     userProfileImage
 } from "@/utils";
@@ -32,9 +32,6 @@ let mixin = {
         },
         cantidadPilotosPronosticados(ruleSet: RuleSet, session: RaceSession): number {
             return cantidadPilotosPronosticados(ruleSet, session);
-        },
-        isBeforeEndDate(session: RaceSession): boolean {
-            return isBeforeEndDate(session);
         },
         isValidCommunity(community: Community): boolean {
             return isValidCommunity(community);

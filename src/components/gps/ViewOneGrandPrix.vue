@@ -27,7 +27,7 @@
                                     :value="index">
                             <h6 class="font-weight-light">
                                 La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
-                                es {{ humanDateTimeMinusFiveMinutes(session.date) }}
+                                es {{ humanDateTime(session.closureDate()) }} (en {{ dateDiff(session.closureDate()) }})
                             </h6>
                             <h6 class="font-weight-light">
                                 Para esta sesión se ha de pronosticar {{ cantidadPilotosPronosticados(ruleSet, session) }} pilotos
@@ -63,8 +63,10 @@
                             :label="session.humanName()"
                             :key="session.name"
                             :value="index">
-                    <h6 class="font-weight-light">La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
-                        es {{ humanDateTimeMinusFiveMinutes(session.date) }}</h6>
+                    <h6 class="font-weight-light">
+                        La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
+                        es {{ humanDateTime(session.closureDate()) }} (en {{ dateDiff(session.closureDate()) }})
+                    </h6>
                     <ScoreComponents :gp="grandPrix"
                                      :rule-set="ruleSet"
                                      :session="session"
@@ -122,10 +124,11 @@ export default defineComponent({
         const authStore = useAuthStore();
         const communityStore = useCommunityStore();
 
-        const humanDateTimeMinusFiveMinutes = dayjs.humanDateTimeMinusFiveMinutes;
+        const dateDiff = dayjs.dateDiff;
+        const humanDateTime = dayjs.humanDateTime;
         const currentCommunity = communityStore.community;
         const currentUser = authStore.loggedUser;
-        return {currentUser, currentCommunity, emitter, humanDateTimeMinusFiveMinutes};
+        return {currentUser, currentCommunity, emitter, humanDateTime, dateDiff};
     },
     data() {
         return {
