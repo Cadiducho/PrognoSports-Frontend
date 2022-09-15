@@ -7,7 +7,7 @@
 
                 <Breadcrumb />
 
-                <o-notification v-if="!betaAceptada" closable variant="warning" aria-close-label="Close notification" @close="acceptBeta()">
+                <o-notification v-if="isBeta && !betaAceptada" closable variant="warning" aria-close-label="Close notification" @close="acceptBeta()">
                     Estás utilizando PrognoSports Beta, la experiencia puede verse afectada
                 </o-notification>
 
@@ -34,12 +34,13 @@ export default defineComponent({
         LandingFooter,
     },
     setup() {
+        const isBeta = import.meta.env.MODE == 'beta';
         const betaAceptada: boolean = localStorage.getItem("beta-accepted") === "true";
         const acceptBeta = () => {
             localStorage.setItem("beta-accepted", "true");
         };
 
-        return { betaAceptada, acceptBeta }
+        return { isBeta, betaAceptada, acceptBeta }
     }
 });
 </script>

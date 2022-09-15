@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import { fileURLToPath } from "url";
 import vue from '@vitejs/plugin-vue'
+import { createHtmlPlugin } from 'vite-plugin-html'
 import { execSync } from "child_process";
 
 export default defineConfig(({ command, mode }) => {
@@ -15,6 +16,14 @@ export default defineConfig(({ command, mode }) => {
     return {
         plugins: [
             vue(),
+            createHtmlPlugin({
+                minify: true,
+                inject: {
+                    data: {
+                        title: mode === "beta" ? 'PrognoSports (Beta)' : ' PrognoSports',
+                    }
+                }
+            }),
         ],
         resolve: {
             alias: {
