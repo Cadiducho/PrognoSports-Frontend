@@ -1,11 +1,19 @@
 <template>
     <div id="adminDrivers" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de Grandes Premios" />
 
         <section v-if="isAdmin(currentUser)">
 
             <loading v-if="isLoadingData" />
             <template v-else>
+
+                <div class="columns is-variable is-5">
+                    <div class="column">
+                        <PrognoPageTitle :name="'Administración de ' + grandPrix.name + ' de ' + grandPrix.season.name" />
+                    </div>
+                    <div class="column is-3">
+                        <GrandPrixPagination isAdmin :competition="competition" :grand-prix="grandPrix"/>
+                    </div>
+                </div>
 
                 <div class="block">
                     <o-button variant="link" :to="{ name: 'adminGpEdit' }" tag="router-link">
@@ -109,6 +117,7 @@ import {RaceSession} from "@/types/RaceSession";
 import {Driver} from "@/types/Driver";
 import {useStyles} from "@/composables/useStyles";
 import {StartGridPosition} from "@/types/StartGridPosition";
+import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
 
 // ToDo: Alterar grid si no contiene QUALIFY
 // ToDo: Vuelta rápida si es RACE
@@ -120,6 +129,7 @@ export default defineComponent({
         SessionsInGrandPrix,
         SlickList,
         SlickItem,
+        GrandPrixPagination,
         bulma_calendar
     },
     setup() {
