@@ -81,6 +81,12 @@
                                     passive-variant="primary">
                                     NO enviar notificación
                                 </o-checkbox>
+                                <o-checkbox
+                                    v-model="notOverrideGrid"
+                                    variant="danger"
+                                    passive-variant="primary">
+                                    NO sobreescribir parrilla
+                                </o-checkbox>
                             </section>
 
                             <button class="button is-primary" @click="saveResults()">Guardar resultados</button>
@@ -150,6 +156,7 @@ export default defineComponent({
             session: {name: this.$route.params.session} as RaceSession,
 
             notSendNotification: false,
+            notOverrideGrid: false,
             fastLap: {} as Driver,
             resultsInSession: new Array<Driver>(),
             startGrid: new Array<StartGridPosition>(),
@@ -180,11 +187,17 @@ export default defineComponent({
             });
         },
         saveResults() {
-            // ToDo: Insertar resultados mediante API v2
-            console.log("guardando resultados");
-            if (this.notSendNotification) {
-                console.log("sin notificacion")
-            }
+            const payload = {
+                results: new Map(this.resultsInSession.map((driver, index, array) => [index + 1, driver.id])),
+                notSendNotification: this.notSendNotification,
+            };
+            grandPrixService.saveResults(this.grandPrix, this.session, payload).then(() => {
+                this.$oruga.notification.open({
+                    position: 'top',
+                    message: "¡Has guardado los resultados!",
+                    variant: "success",
+                });
+            });
         }
     },
     mounted() {
