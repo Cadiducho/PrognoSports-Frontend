@@ -11,7 +11,7 @@
                         <PrognoPageTitle :name="'Administración de ' + grandPrix.name + ' de ' + grandPrix.season.name" />
                     </div>
                     <div class="column is-3">
-                        <GrandPrixPagination isAdmin :competition="competition" :grand-prix="grandPrix"/>
+                    <GrandPrixPagination isAdminPag :competition="competition" :grand-prix="grandPrix"/>
                     </div>
                 </div>
 

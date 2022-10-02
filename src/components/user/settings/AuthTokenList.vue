@@ -16,7 +16,7 @@
                 </span>
 
                 <span><b>Creado: </b>{{ humanDateTime(token.createdAt) }}</span>
-                <span><b>Última actividad: </b>{{ humanDateTime(token.lastActivityAt) }} ({{ dateDiff(token.lastActivityAt) }}</span>
+                <span><b>Última actividad: </b>{{ humanDateTime(token.lastActivityAt) }} ({{ dateDiff(token.lastActivityAt) }})</span>
             </section>
             <section class="is-flex is-flex-direction-column is-justify-content-space-around">
                 <button class="button is-danger" :disabled="token.current" @click="deleteOneAuthToken(token)">Cerrar sesión</button>
