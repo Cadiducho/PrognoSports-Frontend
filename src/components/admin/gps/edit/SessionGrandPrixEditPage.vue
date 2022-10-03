@@ -1,105 +1,68 @@
 <template>
-    <div id="adminDrivers" class="box">
 
-        <section v-if="isAdmin(currentUser)">
+    <section class="box" v-if="isAdmin(currentUser)">
 
-            <loading v-if="isLoadingData" />
+        <loading v-if="isLoadingData"/>
+        <template v-else>
+
+            <div class="columns is-variable is-5">
+                <div class="column">
+                    <PrognoPageTitle :name="'Administración de ' + grandPrix.name + ' de ' + grandPrix.season.name"/>
+                </div>
+                <div class="column is-3">
+                    <GrandPrixPagination isAdminPag :competition="competition" :grand-prix="grandPrix"/>
+                </div>
+            </div>
+
+            <div class="block">
+                <o-button variant="link" :to="{ name: 'adminGpEdit' }" tag="router-link">
+                    Volver al Gran Premio
+                </o-button>
+            </div>
+
+            <p v-if="!dataLoaded">El Gran Premio {{ id }} {{ session }} no ha sido encontrado</p>
             <template v-else>
 
-                <div class="columns is-variable is-5">
+                <div class="columns">
+                    <div class="column is-one-fifth">
+                        <SessionsInGrandPrix :grand-prix="grandPrix" :sessions="grandPrix.sessions"/>
+                    </div>
+
                     <div class="column">
-                        <PrognoPageTitle :name="'Administración de ' + grandPrix.name + ' de ' + grandPrix.season.name" />
-                    </div>
-                    <div class="column is-3">
-                    <GrandPrixPagination isAdminPag :competition="competition" :grand-prix="grandPrix"/>
+                        <h2 class="title">Datos del {{ grandPrix.name }} en {{ session.humanName() }}</h2>
+
+                        <o-field label="Fecha de la sesión">
+                            <bulma_calendar :value="session.date" :options="calendarOptions"
+                                            v-on:input="session.date = $event;"/>
+                        </o-field>
+
+                        <button class="button is-primary mt-0" @click="changeSessionData()">
+                            Editar datos de la sesión
+                        </button>
+
+                        <hr/>
+
+                        <!-- Si no es quali, hay resultados y grid-->
+                        <div v-if="session.name !== 'QUALIFY'" class="columns">
+                            <div class="column">
+                                <EditResults :grandPrix="grandPrix" :session="session" :resultsInSession="resultsInSession" />
+                            </div>
+                            <div class="column">
+                                <h3 class="subtitle">Parrilla de {{ session.humanName() }}</h3>
+                            </div>
+                        </div>
+                        <!-- En caso contrario mostrar solo selector de resultados -->
+                        <EditResults v-else :grandPrix="grandPrix" :session="session" :resultsInSession="resultsInSession" />
+
                     </div>
                 </div>
-
-                <div class="block">
-                    <o-button variant="link" :to="{ name: 'adminGpEdit' }" tag="router-link">
-                        Volver al Gran Premio
-                    </o-button>
-                </div>
-
-                <p v-if="!dataLoaded">El Gran Premio {{ id }} {{ session }} no ha sido encontrado</p>
-                <template v-else>
-
-                    <div class="columns">
-                        <div class="column is-one-fifth">
-                            <SessionsInGrandPrix :grand-prix="grandPrix" :sessions="grandPrix.sessions" />
-                        </div>
-                        <div class="column">
-                            <h2 class="title">Datos del {{ grandPrix.name }} en {{ session.humanName()}} </h2>
-
-                            <o-field label="Fecha de la sesión">
-                                <bulma_calendar :value="session.date" :options="calendarOptions" v-on:input="session.date = $event;" />
-                            </o-field>
-
-                            <button class="button is-primary mt-0" @click="changeSessionData()">Editar datos de la sesión</button>
-                            <hr/>
-
-                            <h3 class="subtitle">Resultados en {{ session.humanName()}} </h3>
-
-                            <section v-if="session.name === 'RACE'" class="mb-4">
-                                <o-field label="Vuelta rápida">
-                                    <o-select v-model="fastLap" placeholder="Selecciona un circuito" expanded>
-                                        <option
-                                            v-for="driver in resultsInSession"
-                                            :value="driver"
-                                            :key="driver.id">
-                                            {{ driver.lastname}}, {{driver.firstname}} - {{ driver.team.name }} ({{ driver.team.carname }})
-                                        </option>
-                                    </o-select>
-                                </o-field>
-                            </section>
-                            <hr/>
-
-                            <label class="label">Resultados</label>
-                            <SlickList v-if="resultsInSession" v-model:list="resultsInSession" tag="ul" :distance="1"
-                                       class="block-list no-select">
-
-                                <SlickItem v-for="(item, index) in resultsInSession" :key="item.id" :index="index" tag="li"
-                                           class="is-highlighted has-text-weight-semibold has-radius is-flex is-justify-content-left"
-                                           :style="styleDriverCard(item)">
-
-                                    <span>
-                                        <b>{{ index + 1 }}º.</b> {{ item.firstname }} {{ item.lastname }}
-                                        <span class="tag is-rounded" v-bind:style="styleDorsal(item)">#{{ item.number }}</span>
-                                        <o-tooltip class="ml-1" :label="currentUser.preferences['use-long-team-names'] ? item.team.name : item.team.longname">
-                                            <span v-if="currentUser.preferences['use-long-team-names']">{{ item.team.longname }}</span>
-                                            <span v-else>{{ item.team.name }}</span>
-                                        </o-tooltip>
-                                        ({{item.team.carname}})
-                                    </span>
-                                </SlickItem>
-                            </SlickList>
-
-                            <section class="block mt-4">
-                                <o-checkbox
-                                    v-model="notSendNotification"
-                                    variant="danger"
-                                    passive-variant="primary">
-                                    NO enviar notificación
-                                </o-checkbox>
-                                <o-checkbox
-                                    v-model="notOverrideGrid"
-                                    variant="danger"
-                                    passive-variant="primary">
-                                    NO sobreescribir parrilla
-                                </o-checkbox>
-                            </section>
-
-                            <button class="button is-primary" @click="saveResults()">Guardar resultados</button>
-                        </div>
-                    </div>
-                </template>
             </template>
+        </template>
 
-        </section>
-        <section v-else>
-            <AlertNoPermission />
-        </section>
-    </div>
+    </section>
+    <section class="box" v-else>
+        <AlertNoPermission/>
+    </section>
 </template>
 
 <script lang="ts">
@@ -124,12 +87,14 @@ import {Driver} from "@/types/Driver";
 import {useStyles} from "@/composables/useStyles";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
+import EditResults from "@/components/admin/gps/edit/EditResults.vue";
 
 // ToDo: Alterar grid si no contiene QUALIFY
 // ToDo: Vuelta rápida si es RACE
 export default defineComponent({
     name: "GrandPrixEditPage",
     components: {
+        EditResults,
         AlertNoPermission,
         PrognoPageTitle,
         SessionsInGrandPrix,

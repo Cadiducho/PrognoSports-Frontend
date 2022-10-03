@@ -32,7 +32,7 @@
                 type: Object as PropType<GrandPrix>,
                 required: true,
             },
-            isAdmin: {
+            isAdminPag: {
                 type: Boolean,
                 required: false,
             }
