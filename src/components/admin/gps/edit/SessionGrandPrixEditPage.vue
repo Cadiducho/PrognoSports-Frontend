@@ -43,7 +43,7 @@
                         <hr/>
 
                         <!-- Si no es quali, hay resultados y grid-->
-                        <div v-if="session.name !== 'QUALIFY'" class="columns">
+                        <div v-if="session.hasGrid" class="columns">
                             <div class="column">
                                 <EditResults :grandPrix="grandPrix" :session="session" :resultsInSession="resultsInSession" />
                             </div>

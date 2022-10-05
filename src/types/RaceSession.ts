@@ -5,6 +5,7 @@ import {useDayjs} from "@/composables/useDayjs";
 export interface IRaceSession {
     name: string;
     code: string;
+    hasGrid: boolean;
     competition: Competition;
     grandPrix: GrandPrix;
     date: Date | string;
@@ -14,6 +15,7 @@ export interface IRaceSession {
 export class RaceSession implements IRaceSession {
     competition: Competition;
     date: Date;
+    hasGrid: boolean;
     grandPrix: GrandPrix;
     name: string;
     code: string;
@@ -22,6 +24,7 @@ export class RaceSession implements IRaceSession {
     constructor(data: IRaceSession) {
         this.competition = data.competition;
         this.date = new Date(data.date);
+        this.hasGrid = data.hasGrid;
         this.grandPrix = data.grandPrix;
         this.name = data.name;
         this.code = data.code;
