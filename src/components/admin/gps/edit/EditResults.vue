@@ -5,7 +5,7 @@
         <o-field label="Vuelta rápida">
             <o-select v-model="fastLap" placeholder="Selecciona un circuito" expanded>
                 <option
-                    v-for="driver in resultsInSession"
+                    v-for="driver in sessionResults"
                     :value="driver"
                     :key="driver.id">
                     {{ driver.lastname}}, {{driver.firstname}} - {{ driver.team.name }} ({{ driver.team.carname }})
@@ -16,10 +16,10 @@
     <hr/>
 
     <label class="label">Resultados</label>
-    <SlickList v-if="resultsInSession" v-model:list="resultsInSession" tag="ul" :distance="1"
+    <SlickList v-model:list="sessionResults" tag="ul" :distance="1"
                class="block-list no-select">
 
-        <SlickItem v-for="(item, index) in resultsInSession" :key="item.id" :index="index" tag="li"
+        <SlickItem v-for="(item, index) in sessionResults" :key="item.id" :index="index" tag="li"
                    class="is-highlighted has-text-weight-semibold has-radius is-flex is-justify-content-left"
                    :style="styleDriverCard(item)">
 
@@ -59,7 +59,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, PropType} from "vue";
+import {defineComponent, onMounted, PropType} from "vue";
 import {SlickItem, SlickList} from "vue-slicksort";
 import {useAuthStore} from "@/store/authStore";
 import {useStyles} from "@/composables/useStyles";
@@ -105,12 +105,13 @@ export default defineComponent({
             notSendNotification: false,
             notOverrideGrid: false,
             fastLap: {} as Driver,
+            sessionResults: [...this.resultsInSession],
         }
     },
     methods: {
         saveResults() {
             const payload = {
-                results: new Map(this.resultsInSession.map((driver, index, array) => [index + 1, driver.id])),
+                results: new Map(this.sessionResults.map((driver, index, array) => [index + 1, driver.id])),
                 notSendNotification: this.notSendNotification,
             };
             grandPrixService.saveResults(this.grandPrix, this.session, payload).then(() => {
