@@ -117,4 +117,8 @@ export default defineComponent({
     font-size: .9rem;
     color: lighten(black, 50%);
 }
+
+.tag {
+    font-size: 0.60rem;
+}
 </style>

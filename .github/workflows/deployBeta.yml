@@ -1,8 +1,8 @@
-name: Deploy to Production
+name: Deploy to Beta
 
 on:
     push:
-        branches: [ master ]
+        branches: [ develop ]
         
 jobs:
     deploy:
@@ -16,7 +16,7 @@ jobs:
         - name: Install dependencies
           run: yarn install
         - name: Vue Build
-          run: yarn run build
+          run: yarn run buildBeta
         - name: Upload to server
           uses: appleboy/scp-action@v0.1.3
           with:
@@ -25,5 +25,5 @@ jobs:
             key: ${{ secrets.SECRET_FRONTEND_RSA }}
             port: ${{ secrets.SECRET_FRONTEND_PORT }}
             source: "dist/"
-            target: ${{ secrets.SECRET_FRONTEND_PATH }}
+            target: ${{ secrets.SECRET_FRONTEND_BETA_PATH }}
             strip_components: 1

@@ -51,15 +51,6 @@ export function cantidadPilotosPronosticados(ruleSet: RuleSet, session: RaceSess
     return ruleSet?.data?.predictedPositions[session.name] || 0;
 }
 
-/**
- * Comprobar si el momento actual es anterior a la fecha de cierre de un Gran Premio en una sesión concreta
- * @param session La sesión
- * @return True si es antes del cierre de la sesión
- */
-export function isBeforeEndDate(session: RaceSession): boolean {
-    return dayjs().isBefore(session.date);
-}
-
 export function isValidCommunity(community: Community): boolean {
     return community.id !== 0;
 }

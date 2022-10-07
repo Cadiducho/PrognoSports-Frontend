@@ -1,11 +1,19 @@
 <template>
     <div id="adminDrivers" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de Grandes Premios" />
 
         <section v-if="isAdmin(currentUser)">
 
             <loading v-if="isLoadingGrandPrix" />
             <template v-else>
+
+                <div class="columns is-variable is-5">
+                    <div class="column">
+                        <PrognoPageTitle :name="'Administración de ' + grandPrix.name + ' de ' + grandPrix.season.name" />
+                    </div>
+                    <div class="column is-3">
+                        <GrandPrixPagination isAdminPag :competition="competition" :grand-prix="grandPrix"/>
+                    </div>
+                </div>
 
                 <div class="block">
                     <o-button variant="link" to="/admin/gps" tag="router-link">Lista de grandes premios</o-button>
@@ -108,6 +116,7 @@ import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import SessionsInGrandPrix from "@/components/admin/gps/edit/SessionsInGrandPrix.vue";
 import DriversInGrandPrix from "@/components/admin/gps/edit/DriversInGrandPrix.vue";
+import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
 
 export default defineComponent({
     name: "GrandPrixEditPage",
@@ -116,6 +125,7 @@ export default defineComponent({
         AlertNoPermission,
         PrognoPageTitle,
         SessionsInGrandPrix,
+        GrandPrixPagination,
     },
     setup() {
         const authStore = useAuthStore();

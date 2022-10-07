@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs, {Dayjs} from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -29,14 +29,14 @@ export function useDayjs() {
     const isThisWeek = (date: Date): boolean => {
         return dayjs().week() == dayjs(date).week();
     }
+    const minusFiveMinutes = (date: Date, timezone: string = "Europe/Madrid"): Dayjs => {
+        return dayjs.tz(date, timezone).subtract(5, 'minute');
+    }
     const humanDate = (date: Date, timezone: string = "Europe/Madrid"): string => {
         return dayjs.tz(date, timezone).format('D/M/YYYY');
     }
     const humanDateTime = (date: Date, timezone: string = "Europe/Madrid"): string => {
         return dayjs.tz(date, timezone).format('D/M/YY [a las] H:mm');
-    }
-    const humanDateTimeMinusFiveMinutes = (date: Date, timezone: string = "Europe/Madrid"): string => {
-        return dayjs.tz(date, timezone).subtract(5, 'minute').format('D/M/YY [a las] H:mm');
     }
     const humanMonth = (date: Date, timezone: string = "Europe/Madrid"): string => {
         return dayjs.tz(date, timezone).format('MMMM');
@@ -45,5 +45,5 @@ export function useDayjs() {
         return dayjs.tz(date, timezone).format('D [de] MMMM');
     }
 
-    return { dateDiff, isBefore, isAfter, isThisWeek, humanDate, humanDateTime, humanDateTimeMinusFiveMinutes, humanMonth, humanDayMonth };
+    return { dateDiff, isBefore, isAfter, isThisWeek, minusFiveMinutes, humanDate, humanDateTime, humanMonth, humanDayMonth };
 }

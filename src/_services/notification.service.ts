@@ -15,4 +15,8 @@ export class NotificationService extends PrognoService<INotification, Notificati
     public async clearNotifications(): Promise<void> {
         return await axios.delete('/notifications');
     }
+
+    public async getNotificationMethods(): Promise<Array<string>> {
+        return await axios.get('/notifications/methods');
+    }
 }

@@ -87,9 +87,40 @@
                 </div>
             </div>
             <small class="footer-small">© {{ new Date().getFullYear() }} PrognoSports.com. Todos los derechos reservados</small>
+            <small class="footer-small">Versión <a :href="`https://github.com/Cadiducho/PrognoSports-Frontend/commit/${commitHash}`">{{ humanVersion }}</a> - Compilado el {{ humanDateTime(commitDate) }}</small>
         </footer>
     </div>
 </template>
+
+<script lang="ts">
+import {defineComponent} from "vue";
+import {useDayjs} from "@/composables/useDayjs";
+import {useAuthStore} from "@/store/authStore";
+
+export default defineComponent({
+    name: "PrognoView",
+    setup() {
+        const branchName = import.meta.env.VITE_GIT_BRANCH_NAME;
+        const commitHash = import.meta.env.VITE_GIT_COMMIT_HASH;
+        const commitDate = import.meta.env.VITE_GIT_COMMIT_DATE;
+
+        let humanVersion;
+        if (branchName === "master") {
+            humanVersion = "estable";
+        } else {
+            humanVersion = branchName
+        }
+        humanVersion += "/" + commitHash;
+
+
+        const dayjs = useDayjs();
+        const humanDateTime = dayjs.humanDateTime;
+
+        return {commitHash, humanVersion, commitDate, humanDateTime}
+    }
+});
+
+</script>
 
 <style lang="scss" scoped>
 * {

@@ -43,8 +43,9 @@
                         <span>
                             {{ item.firstname }} {{ item.lastname }}
                             <span class="tag is-rounded" v-bind:style="styleDorsal(item)">#{{ item.number }}</span>
-                            <o-tooltip class="ml-1" :label="item.team.longname">
-                                {{ item.team.name }}
+                            <o-tooltip class="ml-1" :label="currentUser.preferences['use-long-team-names'] ? item.team.name : item.team.longname">
+                                <span v-if="currentUser.preferences['use-long-team-names']">{{ item.team.longname }}</span>
+                                <span v-else>{{ item.team.name }}</span>
                             </o-tooltip>
                             ({{item.team.carname}})
                         </span>
@@ -87,7 +88,7 @@
                     </SlickItem>
                 </SlickList>
 
-                <template v-if="isBeforeEndDate(this.session)">
+                <template v-if="this.session.isBeforeClosureDate()">
                     <o-button v-if="pilotosPronosticados.length === cantidadPilotosPronosticados(ruleSet, session)"
                               variant="success is-fullwidth"
                               @click="enviarPronostico">Enviar pronóstico
@@ -102,8 +103,8 @@
                     Ya no se puede pronosticar
                 </o-button>
 
-                <hr v-if="(pilotosPronosticados.length > 0) && isBeforeEndDate(this.session)"/>
-                <o-button v-if="(pilotosPronosticados.length > 0) && isBeforeEndDate(this.session)" variant="danger is-light is-fullwidth" @click="reiniciarPronostico">Limpiar pronóstico</o-button>
+                <hr v-if="(pilotosPronosticados.length > 0) && this.session.isBeforeClosureDate()"/>
+                <o-button v-if="(pilotosPronosticados.length > 0) && this.session.isBeforeClosureDate()" variant="danger is-light is-fullwidth" @click="reiniciarPronostico">Limpiar pronóstico</o-button>
 
             </div>
         </div>

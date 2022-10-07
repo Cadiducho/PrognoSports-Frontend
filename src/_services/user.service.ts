@@ -41,4 +41,24 @@ export class UserService {
     public async getUserResume(user: User, community: Community, competition: Competition, season: Season): Promise<UserResume> {
         return await axios.get(`/user/${user.id}/communities/${community.id}/${competition.id}/${season.id}/resume`);
     }
+
+    public async updateUser(user: Partial<User>): Promise<string> {
+        return await axios.patch(`/user/${user.id}`, user);
+    }
+
+    public async changePasswordInSettings(user: User, payload: { password: string; newPassword: string }) {
+        return await axios.patch(`/user/${user.id}/settings/password`, payload);
+    }
+
+    public async changeEmail(user: User, payload: { password: string; email: string }) {
+        return await axios.patch(`/user/${user.id}/settings/email`, payload);
+    }
+
+    public async linkTelegram(user: User, payload: { id: number; first_name: string | null; username: string | null }) {
+        return await axios.post(`/user/${user.id}/settings/telegram`, payload);
+    }
+
+    public async unlinkTelegram(user: User) {
+        return await axios.delete(`/user/${user.id}/settings/telegram`);
+    }
 }

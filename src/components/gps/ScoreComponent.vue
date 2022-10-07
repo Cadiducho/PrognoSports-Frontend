@@ -11,7 +11,7 @@
             </p>
 
             <o-notification v-if="currentUser.preferences['hide-tipps-until-start'] === true" variant="info is-light" aria-close-label="Close notification">
-                Tus pronósticos están ocultos al resto de usuarios hasta {{ humanDateTimeMinusFiveMinutes(session.date)}}
+                Tus pronósticos están ocultos al resto de usuarios hasta {{ humanDateTime(session.closureDate()) }} (en {{ dateDiff(session.closureDate()) }})
             </o-notification>
             <o-notification v-if="!thereAreFinishResults" variant="primary is-light" aria-close-label="Close notification">
                 Aún no hay resultados confirmados para esta sesión
@@ -193,7 +193,7 @@ import {RaceResult} from "@/types/RaceResult";
 import {Driver} from "@/types/Driver";
 import {CommunityUser} from "@/types/CommunityUser";
 import UserMiniCard from "@/components/user/UserMiniCard.vue";
-import {cantidadPilotosPronosticados, isBeforeEndDate} from "@/utils";
+import {cantidadPilotosPronosticados} from "@/utils";
 import {UserPoints} from "@/types/UserPoints";
 import {Dictionary} from "@/types/Dictionary";
 import {RuleSet} from "@/types/RuleSet";
@@ -249,10 +249,11 @@ export default defineComponent({
         const authStore = useAuthStore();
         const communityStore = useCommunityStore();
 
-        const humanDateTimeMinusFiveMinutes = dayjs.humanDateTimeMinusFiveMinutes;
+        const humanDateTime = dayjs.humanDateTime;
+        const dateDiff = dayjs.dateDiff;
         const currentUser = authStore.user;
         const currentCommunity = communityStore.community;
-        return { currentUser, currentCommunity, humanDateTimeMinusFiveMinutes };
+        return { currentUser, currentCommunity, dateDiff, humanDateTime };
     },
     data() {
         return {
@@ -296,7 +297,7 @@ export default defineComponent({
             grandPrixService.getAllTipps(this.gp, this.session, this.currentCommunity).then((tipps) => {
 
                 // Si ya se ha cerrado el pronóstico para esta sesión, quizás hay puntos
-                if (!isBeforeEndDate(this.session)) {
+                if (!this.session.isBeforeClosureDate()) {
                     scoreService.getPointsByPositionInGrandPrix(this.currentCommunity, this.gp, this.session).then(points => {
                         this.pointsByPosition = points;
                     }).catch(() => {}); // Capturar el error de pronósticos antes de tiempo, ignorarlo

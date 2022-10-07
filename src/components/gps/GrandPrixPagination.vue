@@ -31,6 +31,10 @@
             grandPrix: {
                 type: Object as PropType<GrandPrix>,
                 required: true,
+            },
+            isAdminPag: {
+                type: Boolean,
+                required: false,
             }
         },
         setup() {
@@ -50,7 +54,7 @@
             },
             push(next: boolean): void {
                 let params: RouteLocationRaw = {
-                    name: 'gpdetails',
+                    name: this.isAdmin ? 'adminGpEdit' : 'gpdetails',
                     params: {
                         competition: this.grandPrix.competition.code,
                         season: this.grandPrix.season.name,

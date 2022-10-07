@@ -17,71 +17,8 @@
         </section>
         <div v-else>
             <article class="box">
-                <div class="section">
-                    <div class="container">
-                        <div class="columns is-mobile">
-                            <div class="column is-1"></div>
-                            <div class="column">
-                                <figure class="image is-1by1">
-                                    <img :src="userProfileImage(profile)" alt="Profile image"/>
-                                </figure>
-                            </div>
-                            <div class="column is-1"></div>
-                            <div class="column is-two-thirds content">
-                                <p class="is-flex is-mobile is-justify-content-space-between">
-                                    <span class="title is-bold">
-                                        {{ profile.username }}
 
-                                        <span class="tag" :style="styleRankTag(profile.rank)">{{ profile.rank.name }}</span>
-                                    </span>
-
-                                    <o-button v-if="profile.id === currentUser.id"
-                                        variant="primary" icon-left="cog" tag="router-link" to="/settings">
-                                        Ajustes
-                                    </o-button>
-                                </p>
-                                <p v-if="profile.bio">
-                                    <span class="subtitle">
-                                        <small>{{ profile.bio }}</small>
-                                    </span>
-                                </p>
-
-                                <div class="block mb-1">
-                                    <span class="icon-text">
-                                        <span class="icon mr-2">
-                                            <i class="fas fa-clock"></i>
-                                        </span>
-                                        Última conexión: {{ dateDiff(profile.last_activity) }}
-                                    </span>
-                                </div>
-                                <div class="block mb-1">
-                                    <span class="icon-text">
-                                        <span class="icon mr-2">
-                                            <i class="fas fa-calendar"></i>
-                                        </span>
-                                        Registrado el {{ humanDateTime(profile.created) }}
-                                    </span>
-                                </div>
-                                <div v-if="profile.location" class="block mb-1">
-                                    <span class="icon-text">
-                                        <span class="icon mr-2">
-                                            <i class="fas fa-map-marker-alt"></i>
-                                        </span>
-                                        {{ profile.location }}
-                                    </span>
-                                </div>
-                                <div v-if="profile.birthdate" class="block mb-1">
-                                    <span class="icon-text">
-                                        <span class="icon mr-2">
-                                            <i class="fas fa-birthday-cake"></i>
-                                        </span>
-                                        {{ humanDate(profile.birthdate) }}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <UserProfileCard :profile="profile" :showSettingsButton="true" />
 
                 <hr/>
 
@@ -99,7 +36,6 @@
 <script lang="ts">
 import {User, UserResume} from "@/types/User";
 import {userService} from "@/_services";
-import {Season} from "@/types/Season";
 import UserLevelResume from "@/components/user/UserLevelResume.vue";
 
 import {defineComponent} from "vue";
@@ -107,10 +43,12 @@ import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import useEmitter from "@/composables/useEmitter";
 import {useDayjs} from "@/composables/useDayjs";
+import UserProfileCard from "@/components/user/UserProfileCard.vue";
 
 export default defineComponent({
     name: "UserProfile",
     components: {
+        UserProfileCard,
         UserLevelResume
     },
     setup() {

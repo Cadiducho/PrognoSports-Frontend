@@ -11,6 +11,7 @@ import {Dictionary} from "@/types/Dictionary";
 import {PrognoService} from "@/_services/progno.service";
 import {Circuit} from "@/types/Circuit";
 import {CircuitVariant} from "@/types/CircuitVariant";
+import {Driver} from "@/types/Driver";
 
 export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
 
@@ -55,6 +56,14 @@ export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
 
     public async getResults(gp: GrandPrix, session: RaceSession): Promise<Array<RaceResult>> {
         return await axios.get(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.name}/results`);
+    }
+
+    public async saveResults(gp: GrandPrix, session: RaceSession, payload: {results: Map<number, string>, notSendNotification: boolean}): Promise<Array<RaceResult>> {
+        const realPayload = {
+            results: Object.fromEntries(payload.results!),
+            notSendNotification: payload.notSendNotification,
+        }
+        return await axios.post(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.name}/results`, realPayload);
     }
 
     public async getAllTipps(gp: GrandPrix, session: RaceSession, community: Community): Promise<Record<number, Array<RaceResult>>> {

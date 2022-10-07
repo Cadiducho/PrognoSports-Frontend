@@ -1,11 +1,13 @@
 import {UserRank} from "@/types/UserRank";
 import {Community} from "@/types/Community";
+import {Dictionary} from "@/types/Dictionary";
 
 export interface User {
     id: number;
     username: string;
     email: string;
     bio?: string;
+    password?: string;
     rank: UserRank;
     profileImageUrl: string;
     created: Date,
@@ -15,7 +17,7 @@ export interface User {
     gender: string;
     location: string;
     currentCommunity: Community;
-    preferences: Map<string, any>;
+    preferences: Dictionary<string, any>;
 }
 
 export interface UserResume {
