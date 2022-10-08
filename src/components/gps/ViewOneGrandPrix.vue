@@ -27,7 +27,7 @@
                                     :value="index">
                             <h6 class="font-weight-light">
                                 La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
-                                es {{ humanDateTime(session.closureDate()) }} (en {{ dateDiff(session.closureDate()) }})
+                                es {{ humanDateTime(session.closureDate()) }} ({{ dateDiff(session.closureDate()) }})
                             </h6>
                             <h6 class="font-weight-light">
                                 Para esta sesión se ha de pronosticar {{ cantidadPilotosPronosticados(ruleSet, session) }} pilotos
@@ -65,7 +65,7 @@
                             :value="index">
                     <h6 class="font-weight-light">
                         La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
-                        es {{ humanDateTime(session.closureDate()) }} (en {{ dateDiff(session.closureDate()) }})
+                        es {{ humanDateTime(session.closureDate()) }} ({{ dateDiff(session.closureDate()) }})
                     </h6>
                     <ScoreComponents :gp="grandPrix"
                                      :rule-set="ruleSet"
