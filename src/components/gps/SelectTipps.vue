@@ -5,34 +5,47 @@
                 <h3>Lista de pilotos</h3>
 
                 <div class="is-flex">
-                    <o-collapse :open="false" aria-id="opcionesOrdenado" class="mb-2">
-                        <template #trigger>
-                            <o-button label="Ordenar"
-                                      variant="primary"
-                                      aria-controls="opcionesOrdenado"/>
-                        </template>
+                    <o-button label="Ordenar" variant="primary" aria-controls="opcionesOrdenado" @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen"/>
 
-                        <div class="box mt-1">
-                            <o-field label="Orderar lista de pilotos">
-                                <o-radio v-model='orderType' :native-value='0'>Orden alfabético</o-radio>
-                                <o-radio v-model='orderType' :native-value='1'>Por equipos</o-radio>
-                                <o-radio v-model='orderType' :native-value='2'>Por dorsal</o-radio>
-                                <o-radio v-model='orderType' :native-value='3' v-if="this.indexedGrid.size > 0">Por
-                                    parrilla de salida
-                                </o-radio>
-                            </o-field>
-                            <o-field>
-                                <o-switch v-model="orderAscendent">
-                                    Orden {{ orderAscendent ? "ascendente" : "descendente" }}
-                                </o-switch>
-                            </o-field>
-                        </div>
-                    </o-collapse>
                     <o-field class="ml-1 is-fullwidth">
                         <o-input v-model="filtroPiloto" placeholder="Buscar piloto" type="search" icon-pack="fas"
                                  icon="search"></o-input>
                     </o-field>
                 </div>
+
+                <o-collapse :open="opcionesOrdenadoOpen" aria-id="opcionesOrdenado" class="mb-2">
+                    <template #trigger>
+                    </template>
+
+                    <div class="box mt-1">
+                        <label class="label">Orderar lista de pilotos</label>
+                        <div class="field mb-0">
+                            <o-radio v-model='orderType' :native-value='0'>
+                                Orden alfabético
+                            </o-radio>
+                        </div>
+                        <div class="field mb-0">
+                            <o-radio v-model='orderType' :native-value='1'>
+                                Por equipos
+                            </o-radio>
+                        </div>
+                        <div class="field mb-0">
+                            <o-radio v-model='orderType' :native-value='2'>
+                                Por dorsal
+                            </o-radio>
+                        </div>
+                        <div class="field mb-0">
+                            <o-radio v-model='orderType' :native-value='3' v-if="this.indexedGrid.size > 0">
+                                Por parrilla de salida
+                            </o-radio>
+                        </div>
+                        <div class="field">
+                            <o-switch v-model="orderAscendent">
+                                Orden {{ orderAscendent ? "ascendente" : "descendente" }}
+                            </o-switch>
+                        </div>
+                    </div>
+                </o-collapse>
 
                 <SlickList v-model:list="pilotosDisponibles" :group="session.name" :accept="[session.name]" tag="ul" :distance="1"
                            class="block-list has-radius no-select">
@@ -170,6 +183,7 @@ export default defineComponent({
         return {
             drag: false,
             filtroPiloto: '',
+            opcionesOrdenadoOpen: false,
             orderType: 1,
             orderAscendent: false,
 
