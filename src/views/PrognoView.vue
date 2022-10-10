@@ -2,8 +2,8 @@
     <div>
         <Navbar />
 
-        <section class="section is-tiny">
-            <div class="container prognocontainer">
+        <section class="section">
+            <section class="container prognocontainer">
 
                 <Breadcrumb />
 
@@ -12,7 +12,7 @@
                 </o-notification>
 
                 <router-view :key="$route.fullPath"/>
-            </div>
+            </section>
         </section>
 
         <LandingFooter/>
@@ -44,3 +44,20 @@ export default defineComponent({
     }
 });
 </script>
+
+<style scoped>
+.section {
+    padding: 1rem;
+}
+.container.prognocontainer {
+    max-width: none !important;
+    width: 100%;
+}
+
+@media screen and (min-width: 1024px) {
+    .container.prognocontainer {
+        padding-left: 32px;
+        padding-right: 32px;
+    }
+}
+</style>

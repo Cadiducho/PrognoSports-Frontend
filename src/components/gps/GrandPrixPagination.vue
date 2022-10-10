@@ -4,9 +4,7 @@
             <a v-if="thereIsPrevious(grandPrix)" class="pagination-previous" @click="push(false)">&laquo;</a>
             <a v-if="thereIsNext(grandPrix)" class="pagination-next" @click="push(true)">&raquo;</a>
             <ul class="pagination-list">
-                <li><span v-if="thereIsPrevious(grandPrix)" class="pagination-ellipsis">&hellip;</span></li>
                 <li><a class="pagination-link is-current">{{grandPrix.code}} ({{grandPrix.round}}º)</a></li>
-                <li><span v-if="thereIsNext(grandPrix)" class="pagination-ellipsis">&hellip;</span></li>
             </ul>
         </nav>
     </div>
@@ -54,7 +52,7 @@
             },
             push(next: boolean): void {
                 let params: RouteLocationRaw = {
-                    name: this.isAdmin ? 'adminGpEdit' : 'gpdetails',
+                    name: this.isAdminPag ? 'adminGpEdit' : 'gpdetails',
                     params: {
                         competition: this.grandPrix.competition.code,
                         season: this.grandPrix.season.name,
