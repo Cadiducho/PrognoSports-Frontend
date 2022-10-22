@@ -17,7 +17,7 @@ export const useAuthStore = defineStore('auth', {
             return isValidUser(this.user);
         },
         loggedUser(): User {
-            return this.user;
+            return new User(this.user);
         },
     },
     actions: {

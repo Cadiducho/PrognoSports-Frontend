@@ -2,7 +2,7 @@
   "name": "prognosports-frontend",
   "version": "2.0.0beta",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "buildBeta": "vite build --mode beta"
   },
@@ -21,6 +21,7 @@
     "mitt": "^3.0.0",
     "pinia": "^2.0.22",
     "vue": "3.2.40",
+    "vue-advanced-cropper": "^2.8.6",
     "vue-router": "4.1.5",
     "vue-slicksort": "^2.0.0-alpha.5",
     "vue3-apexcharts": "^1.4.1"

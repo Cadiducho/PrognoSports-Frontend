@@ -5,8 +5,13 @@
             <div class="columns is-mobile">
                 <div class="column is-1"></div>
                 <div class="column">
-                    <figure class="image is-1by1">
-                        <img :src="userProfileImage(profile)" alt="Profile image"/>
+                    <figure class="image">
+                        <img :class="{ photoOpacity : !showSettingsButton}" :src="profile.profileImage()" alt="Profile image"/>
+
+                        <label v-if="!showSettingsButton" class="icon edit-icon">
+                            <i class="fa fa-camera"></i>
+                            <input @change="onFileChange" accept="image/*" tabindex="-1" type="file" hidden>
+                        </label>
                     </figure>
                 </div>
                 <div class="column is-1"></div>
@@ -15,7 +20,7 @@
                         <span class="title is-bold">
                             {{ profile.username }}
 
-                            <span class="tag" :style="styleRankTag(profile.rank)">{{ profile.rank.name }}</span>
+                            <span class="tag" :style="profile.styleRankTag()">{{ profile.rank.name }}</span>
                         </span>
 
                         <o-button v-if="showSettingsButton && profile.id === currentUser.id"
@@ -66,6 +71,8 @@
         </div>
     </div>
 
+    <ChangeImageModal v-show="showEditImageModal" @close="showEditImageModal = false" :file="selectedFile" />
+
 </template>
 
 <script lang="ts">
@@ -74,9 +81,15 @@ import {useDayjs} from "@/composables/useDayjs";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {User} from "@/types/User";
+import PrognoModal from "@/components/lib/PrognoModal.vue";
+import ChangeImageModal from "@/components/user/settings/ChangeImageModal.vue";
 
 export default defineComponent({
     name: "UserProfileCard",
+    components: {
+        ChangeImageModal,
+        PrognoModal
+    },
     props: {
         profile: {
             type: Object as PropType<User>,
@@ -95,13 +108,63 @@ export default defineComponent({
         const dateDiff = dayjs.dateDiff;
         const humanDateTime = dayjs.humanDateTime;
         const humanDate = dayjs.humanDate;
-        const currentUser = authStore.user;
+        const currentUser = authStore.loggedUser;
+
         const currentCommunity = communityStore.community;
         return {currentUser, currentCommunity, dateDiff, humanDateTime, humanDate};
+    },
+    data() {
+        return {
+            showEditImageModal: false,
+            selectedFile: null,
+        }
+    },
+    methods: {
+        onFileChange(e: any) {
+            this.showEditImageModal = false;
+            this.selectedFile = null;
+
+            let file = e.target.files[0];
+            if (file) {
+                this.selectedFile = file;
+                this.showEditImageModal = true;
+            }
+        },
     }
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "bulma/sass/utilities/_all.sass";
 
+.photoOpacity {
+    opacity: 0.75;
+}
+
+.edit-icon {
+    font-size: 1.2rem;
+    opacity: 0.85;
+    position: absolute;
+    color: #fff;
+    bottom: 50%;
+    left: 50%;
+    i {
+        background: hsl(171, 100%, 41%);
+        padding: 1.5rem;
+        border-radius: 50%;
+    }
+    i:hover {
+        background: #00c4a7;
+    }
+}
+
+// Resolución móvil
+@media screen and (max-width: 768px) {
+    .image img {
+        max-width: 50%;
+    }
+    .edit-icon {
+        left: 25%;
+    }
+}
 </style>

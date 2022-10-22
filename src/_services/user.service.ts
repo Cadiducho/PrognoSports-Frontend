@@ -1,25 +1,30 @@
 import axios from 'axios';
-import {User, UserResume} from "@/types/User";
+import {IUser, IUserResume, User, UserResume} from "@/types/User";
 import {Community} from "@/types/Community";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
+import {PrognoService} from "@/_services/progno.service";
 
-export class UserService {
+export class UserService  extends PrognoService<IUser, User> {
+
+    factory(data: IUser): User {
+        return new User(data);
+    }
 
     public async getMe(): Promise<User> {
-        return await axios.get('/user/me');
+        return this.getObjectFromAPI('/user/me');
     }
 
     public async getUser(user: string): Promise<User> {
-        return await axios.get(`/user/${user}`);
+        return this.getObjectFromAPI(`/user/${user}`);
     }
 
     public async getUsersInCommunity(communityId: number): Promise<Array<User>> {
-        return await axios.get(`/communities/${communityId}/members`);
+        return this.getObjectListFromAPI(`/communities/${communityId}/members`);
     }
 
     public async getAllUsers(): Promise<Array<User>> {
-        return await axios.get(`/user`);
+        return this.getObjectListFromAPI(`/user`);
     }
 
     public async sendForgotPassword(email: string) {
@@ -39,7 +44,12 @@ export class UserService {
     }
 
     public async getUserResume(user: User, community: Community, competition: Competition, season: Season): Promise<UserResume> {
-        return await axios.get(`/user/${user.id}/communities/${community.id}/${competition.id}/${season.id}/resume`);
+        return new Promise((resolve, reject) => {
+            axios.get(`/user/${user.id}/communities/${community.id}/${competition.id}/${season.id}/resume`).then(data => {
+                const resumeData = data as unknown as IUserResume;
+                resolve(new UserResume(resumeData));
+            }).catch(e => reject(e))
+        });
     }
 
     public async updateUser(user: Partial<User>): Promise<string> {
@@ -60,5 +70,15 @@ export class UserService {
 
     public async unlinkTelegram(user: User) {
         return await axios.delete(`/user/${user.id}/settings/telegram`);
+    }
+
+    public async changeProfileImage(user: User, blob: Blob | string) {
+        const formData = new FormData();
+        formData.append('image', blob);
+        return await axios.post(`/user/${user.id}/image`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
     }
 }
