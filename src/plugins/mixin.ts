@@ -5,7 +5,6 @@ import {
     isAdmin,
     isValidCommunity,
     isValidUser,
-    userProfileImage
 } from "@/utils";
 import {RaceSession} from "@/types/RaceSession";
 import {Community} from "@/types/Community";
@@ -17,15 +16,6 @@ let mixin = {
     methods: {
         isAdmin(user: User): boolean {
             return isAdmin(user);
-        },
-        userProfileImage(user: User): string {
-            return userProfileImage(user);
-        },
-        styleRankTag(rank: UserRank) {
-            return {
-                backgroundColor: '#' + rank.color,
-                color: 'white',
-            }
         },
         hasVariant(circuit: Circuit): boolean {
             return hasVariant(circuit);

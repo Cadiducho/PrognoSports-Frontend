@@ -25,13 +25,6 @@ export function isAdmin(user: User): boolean {
     return false;
 }
 
-/**
- * Obtener imagen de perfil de un usuario, o la de por defecto
- */
-export function userProfileImage(user: User) {
-    // ToDo: coger la imagen por defecto de los assets
-    return user.profileImageUrl ?? 'https://github.com/Cadiducho/PrognoSports-Frontend/blob/develop/src/assets/default_profile_image.jpg?raw=true';
-}
 
 /**
  * Comprobar si un circuito tiene una variante válida y diferente a la por defecto, "grandprix"

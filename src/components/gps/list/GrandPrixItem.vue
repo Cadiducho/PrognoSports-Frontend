@@ -11,7 +11,7 @@
                         </div>
                         <div class="media-right">
                             <figure class="image is-128x128">
-                                <img :src="circuitLogoImage(gp.circuit)" alt="Circuit logo">
+                                <img :src="gp.circuit.logoImage()" alt="Circuit logo">
                             </figure>
                         </div>
                     </div>
@@ -50,18 +50,9 @@
 
             const dateDiff = dayjs.dateDiff;
             const humanDate = dayjs.humanDate;
-            const currentUser = authStore.user;
+            const currentUser = authStore.loggedUser;
             const currentCommunity = communityStore.community;
             return { currentUser, currentCommunity, dateDiff, humanDate };
-        },
-        methods: {
-            circuitLogoImage(circuit: Circuit) {
-                if (circuit?.logo_url.trim()) {
-                    return circuit.logo_url;
-                } else {
-                    return circuit.variant.layout_image;
-                }
-            }
         },
     });
 </script>

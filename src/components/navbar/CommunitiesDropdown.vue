@@ -37,7 +37,7 @@
             const authStore = useAuthStore();
             const communityStore = useCommunityStore();
 
-            const currentUser = authStore.user;
+            const currentUser = authStore.loggedUser;
             const currentCommunity = communityStore.community;
             const setCommunity = communityStore.setCommunity;
 

@@ -178,7 +178,7 @@ export default defineComponent({
         const communityStore = useCommunityStore();
         const styles = useStyles();
 
-        const currentUser = authStore.user;
+        const currentUser = authStore.loggedUser;
         const currentCommunity = communityStore.community;
         const styleDriverCard = styles.styleDriverCard;
         const styleDorsal = styles.styleDorsal;

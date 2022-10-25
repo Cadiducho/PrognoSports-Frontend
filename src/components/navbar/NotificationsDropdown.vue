@@ -58,7 +58,7 @@
 
             const dateDiff = dayjs.dateDiff;
             const humanDateTime = dayjs.humanDateTime;
-            const currentUser = authStore.user;
+            const currentUser = authStore.loggedUser;
             const currentCommunity = communityStore.community;
             return { currentUser, currentCommunity, dateDiff, humanDateTime };
         },

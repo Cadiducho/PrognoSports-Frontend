@@ -3,7 +3,7 @@
 
         <a class="navbar-link nav-tag">
             <figure class="image is-32x32 avatar-figure">
-                <img class="avatar" :src="userProfileImage(currentUser)" alt="Profile image">
+                <img class="avatar" :src="currentUser.profileImage()" alt="Profile image">
             </figure>
             {{ currentUser.username }}
         </a>
@@ -36,7 +36,7 @@
         name: "AvatarComponent",
         setup() {
             const authStore = useAuthStore();
-            const currentUser = authStore.user;
+            const currentUser = authStore.loggedUser;
             return { currentUser };
         },
         methods: {

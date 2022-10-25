@@ -47,7 +47,7 @@ export default defineComponent({
         const dateDiff = dayjs.dateDiff;
         const humanDateTime = dayjs.humanDateTime;
         const humanDate = dayjs.humanDate;
-        const currentUser = authStore.user;
+        const currentUser = authStore.loggedUser;
         const currentCommunity = communityStore.community;
 
 

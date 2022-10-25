@@ -94,7 +94,7 @@ export default defineComponent({
         const authStore = useAuthStore();
         const styles = useStyles();
 
-        const currentUser = authStore.user;
+        const currentUser = authStore.loggedUser;
         const styleDriverCard = styles.styleDriverCard;
         const styleDorsal = styles.styleDorsal;
 

@@ -98,7 +98,7 @@ export default defineComponent({
         const authStore = useAuthStore();
 
         const humanDateTime = dayjs.humanDateTime;
-        const currentUser = authStore.user;
+        const currentUser = authStore.loggedUser;
         return { currentUser, humanDateTime };
     },
     data() {

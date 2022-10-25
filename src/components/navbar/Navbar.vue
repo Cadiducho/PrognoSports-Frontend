@@ -73,7 +73,7 @@
             const communityStore = useCommunityStore();
 
             const isLoggedIn = authStore.isLoggedIn;
-            const currentUser = authStore.user;
+            const currentUser = authStore.loggedUser;
             const currentCommunity = communityStore.community;
             return {isLoggedIn, currentUser, currentCommunity};
         },

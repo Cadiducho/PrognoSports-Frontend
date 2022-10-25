@@ -46,10 +46,6 @@
                         <o-input v-model="editedUser.username" name="name" expanded lazy></o-input>
                     </o-field>
 
-                    <o-field label="Imagen de perfil">
-                        <o-input v-model="editedUser.profileImageUrl" name="profileImageUrl" expanded lazy></o-input>
-                    </o-field>
-
                     <o-field label="Biografía">
                         <o-input v-model="editedUser.bio" name="bio" expanded lazy></o-input>
                     </o-field>
@@ -235,7 +231,7 @@ export default defineComponent({
         const dateDiff = dayjs.dateDiff;
         const humanDateTime = dayjs.humanDateTime;
         const humanDate = dayjs.humanDate;
-        const currentUser = authStore.user;
+        const currentUser = authStore.loggedUser;
         const currentCommunity = communityStore.community;
 
         const editedUser = currentUser as Partial<User>;
