@@ -26,7 +26,7 @@
 import {computed, defineComponent, PropType, toRef} from "vue";
 import {CircleStencil, Coordinates, Cropper, CropperResult} from 'vue-advanced-cropper';
 import PrognoModal from "@/components/lib/PrognoModal.vue";
-import {userService} from "@/_services";
+import {notificationService, userService} from "@/_services";
 import {useAuthStore} from "@/store/authStore";
 import 'vue-advanced-cropper/dist/style.css';
 import 'vue-advanced-cropper/dist/theme.bubble.css';
@@ -73,27 +73,16 @@ export default defineComponent({
             this.selectedCanvas.toBlob((blob => {
                 if (blob) {
                     if (blob.size > 2_097_152) {
-                        this.$oruga.notification.open({
-                            position: 'top',
-                            message: "El archivo escogido es demasiado grande. El tamaño máximo es de 2Mb.",
-                            variant: "danger",
-                        });
+                        notificationService.showNotification("El archivo escogido es demasiado grande. El tamaño máximo es de 2Mb.", "danger");
                         return;
                     }
 
                     userService.changeProfileImage(this.currentUser, blob).then(() => {
-                        this.$oruga.notification.open({
-                            position: 'top',
-                            message: "¡Has cambiado tu imagen de perfil!",
-                            variant: "success",
-                        });
+                        notificationService.showNotification("¡Has cambiado tu imagen de perfil!");
+
                         this.$emit('close');
                     }).catch(() => {
-                        this.$oruga.notification.open({
-                            position: 'top',
-                            message: "Ha ocurrido un error cambiado tu imagen de perfil",
-                            variant: "danger",
-                        });
+                        notificationService.showNotification("Ha ocurrido un error cambiado tu imagen de perfil", "danger");
                     });
                 }
 

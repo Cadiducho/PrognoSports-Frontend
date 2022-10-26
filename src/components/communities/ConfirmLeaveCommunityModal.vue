@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import {Community} from "@/types/Community";
-import {communityService} from "@/_services";
+import {communityService, notificationService} from "@/_services";
 import {defineComponent, PropType} from "vue";
 import {useCommunityStore} from "@/store/communityStore";
 import useEmitter from "@/composables/useEmitter";
@@ -46,25 +46,13 @@ export default defineComponent({
     methods: {
         leaveCommunity() {
             if (this.community.id == this.currentCommunity.id) {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "No puedes dejar la comunidad en la que estás en este momento",
-                    variant: "warning",
-                });
+                notificationService.showNotification("No puedes dejar la comunidad en la que estás en este momento", "warning");
                 this.$emit('close');
             } else {
                 communityService.quitCommunity(this.community).then(() => {
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message: "¡Has dejado la comunidad " + this.community.name + "!",
-                        variant: "success",
-                    });
+                    notificationService.showNotification("¡Has dejado la comunidad " + this.community.name + "!");
                 }).catch((error) => {
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message: "Ha ocurrido un error: " + error.message,
-                        variant: "warning",
-                    });
+                    notificationService.showNotification("Ha ocurrido un error: " + error.message, "warning");
                 }).finally(() => {
                     this.emitter.emit('reloadCommunitiesList');
                     this.emitter.emit('reloadCommunitiesDropdown');

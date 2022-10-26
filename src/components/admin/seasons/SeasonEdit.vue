@@ -53,7 +53,7 @@
 <script lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-import {competitionService, seasonService} from "@/_services";
+import {competitionService, notificationService, seasonService} from "@/_services";
 import {Season} from "@/types/Season";
 import {Competition} from "@/types/Competition";
 
@@ -106,21 +106,13 @@ export default defineComponent({
                 totalEvents: this.season!.totalEvents
             }
             seasonService.editSeason(this.season!, data).then((result) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "Se ha editado correctamente la temporada `" + result.name + "`",
-                    variant: "success",
-                });
+                notificationService.showNotification("Se ha editado correctamente la temporada `" + result.name + "`");
 
                 this.$router.push({
                     name: 'adminSeasons'
                 })
             }).catch((error) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: error.message,
-                    variant: "danger",
-                });
+                notificationService.showNotification(error.message, "danger");
             });
         }
     }

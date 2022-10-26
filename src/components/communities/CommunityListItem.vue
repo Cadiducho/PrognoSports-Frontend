@@ -55,6 +55,7 @@ import ConfirmJoinCommunityModal from "@/components/communities/ConfirmJoinCommu
 
 import {defineComponent, PropType} from "vue";
 import {useDayjs} from "@/composables/useDayjs";
+import {useProgrammatic} from "@oruga-ui/oruga-next";
 
 export default defineComponent({
     name: "CommunityListItem",
@@ -71,8 +72,10 @@ export default defineComponent({
     },
     setup() {
         const dayjs = useDayjs();
+        const oruga = useProgrammatic().oruga;
+
         const humanDateTime = dayjs.humanDateTime;
-        return { humanDateTime }
+        return { humanDateTime, oruga }
     },
     data() {
         return {
@@ -82,7 +85,7 @@ export default defineComponent({
     },
     methods: {
         tryJoinCommunity() {
-            this.$oruga.modal.open({
+            this.oruga.modal.open({
                 parent: this,
                 component: ConfirmJoinCommunityModal,
                 trapFocus: false,
@@ -90,7 +93,7 @@ export default defineComponent({
             });
         },
         tryLeaveCommunity() {
-            this.$oruga.modal.open({
+            this.oruga.modal.open({
                 parent: this,
                 component: ConfirmLeaveCommunityModal,
                 trapFocus: false,

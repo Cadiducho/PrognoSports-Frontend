@@ -65,7 +65,7 @@
 
 <script lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {competitionService} from "@/_services";
+import {competitionService, notificationService} from "@/_services";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {ICompetition} from "@/types/Competition";
@@ -119,21 +119,13 @@ export default defineComponent({
             }
 
             competitionService.createCompetition(data).then((result) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "Se ha registrado correctamente la competición `" + result.name + "`",
-                    variant: "success",
-                });
+                notificationService.showNotification("Se ha registrado correctamente la competición `" + result.name + "`");
 
                 this.$router.push({
                     name: 'adminCompetitions'
                 })
             }).catch((error) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: error.message,
-                    variant: "danger",
-                });
+                notificationService.showNotification(error.message, "danger");
             });
         }
     },

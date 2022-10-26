@@ -133,7 +133,7 @@
 <script lang="ts">
 import {RaceSession} from "@/types/RaceSession";
 import { SlickList, SlickItem } from 'vue-slicksort';
-import {grandPrixService} from "@/_services";
+import {grandPrixService, notificationService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Driver} from "@/types/Driver";
 import {RaceResult} from "@/types/RaceResult";
@@ -252,21 +252,12 @@ export default defineComponent({
             });
             grandPrixService.postUserTipps(this.grandPrix, this.session, this.currentCommunity, tipps).then(
                 () => {
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message: "¡Has guardado tus pronósticos!",
-                        variant: "success",
-                    });
+                    notificationService.showNotification("¡Has guardado tus pronósticos!");
                 },
                 (error: any) => {
                     let message = "Error guardando tus pronósticos: " + error.message;
 
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        duration: 5000,
-                        message: message,
-                        variant: "danger",
-                    });
+                    notificationService.showNotification(message, "danger");
                 });
         }
     },

@@ -55,7 +55,7 @@ import {useDayjs} from "@/composables/useDayjs";
 import {Dictionary} from "@/types/Dictionary";
 import {Driver} from "@/types/Driver";
 import {Constructor} from "@/types/Constructor";
-import {constructorService, driversService, grandPrixService} from "@/_services";
+import {constructorService, driversService, grandPrixService, notificationService} from "@/_services";
 import {SlickItem, SlickList} from "vue-slicksort";
 import {useStyles} from "@/composables/useStyles";
 
@@ -135,17 +135,9 @@ export default defineComponent({
         saveDrivers() {
             if (this.driversByConstructor) {
                 driversService.setDriversInGrandPrix(this.grandPrix, this.driversByConstructor).then(() => {
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message: "Lista de pilotos guardada correctamente.",
-                        variant: "success",
-                    });
+                    notificationService.showNotification( "Lista de pilotos guardada correctamente.");
                 }).catch((error) => {
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message: "Ha ocurrido un error.",
-                        variant: "danger",
-                    });
+                    notificationService.showNotification( "Ha ocurrido un error.", "danger");
                 });
             }
         },

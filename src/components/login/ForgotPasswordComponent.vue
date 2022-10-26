@@ -115,7 +115,7 @@
 </template>
 
 <script lang="ts">
-import {userService} from "@/_services";
+import {notificationService, userService} from "@/_services";
 
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
@@ -148,11 +148,7 @@ export default defineComponent({
                     this.inputPassword
                 ).then(
                     () => {
-                        this.$oruga.notification.open({
-                            position: 'top',
-                            message: "Tu contraseña ha sido restablecida",
-                            variant: "success",
-                        });
+                        notificationService.showNotification("Tu contraseña ha sido restablecida");
                         this.$router.push({
                             path: '/login',
                             query: {redirect: this.$route.query.redirect}
@@ -160,48 +156,18 @@ export default defineComponent({
                     },
                     (error) => {
                         if (error === "User email cannot be null") {
-                            this.$oruga.notification.open({
-                                position: 'top',
-                                duration: 5000,
-                                message: "Debes introducir tu dirección de email",
-                                variant: "danger",
-                            });
+                            notificationService.showNotification("Debes introducir tu dirección de email", "danger");
                         } else if (error === "User not found") {
-                            this.$oruga.notification.open({
-                                position: 'top',
-                                duration: 5000,
-                                message: "Usuario no encontrado",
-                                variant: "danger",
-                            });
+                            notificationService.showNotification("Usuario no encontrado", "danger");
                         } else if (error === "You must send the security token") {
-                            this.$oruga.notification.open({
-                                position: 'top',
-                                duration: 5000,
-                                message: "Debes escribir el código de seguridad recibido",
-                                variant: "danger",
-                            });
+                            notificationService.showNotification("Debes escribir el código de seguridad recibido", "danger");
                         } else if (error === "You must send new the password") {
-                            this.$oruga.notification.open({
-                                position: 'top',
-                                duration: 5000,
-                                message: "Debes escribir tu nueva contraseña",
-                                variant: "danger",
-                            });
+                            notificationService.showNotification("Debes escribir tu nueva contraseña", "danger");
                         } else if (error === "Token rejected") {
-                            this.$oruga.notification.open({
-                                position: 'top',
-                                duration: 5000,
-                                message: "Token rechazado. Compruebalo bien o vuelve a intentarlo en 15 minutos",
-                                variant: "danger",
-                            });
+                            notificationService.showNotification("Token rechazado. Compruebalo bien o vuelve a intentarlo en 15 minutos", "danger");
                         } else {
-                            console.log(error)
-                            this.$oruga.notification.open({
-                                position: 'top',
-                                duration: 5000,
-                                message: "Ha ocurrido desconocido cambiando la contraseña",
-                                variant: "danger",
-                            });
+                            notificationService.showNotification("Ha ocurrido desconocido cambiando la contraseña", "danger");
+                            console.log(error);
                         }
                     }
                 );
@@ -211,35 +177,16 @@ export default defineComponent({
             if (this.email) {
                 userService.sendForgotPassword(this.email).then(
                     () => {
-                        this.$oruga.notification.open({
-                            position: 'top',
-                            message: "Tu código de verificación ha sido enviado",
-                            variant: "success",
-                        });
+                        notificationService.showNotification("Tu código de verificación ha sido enviado");
                         this.showChangePasswordForm = true;
                     },
                     (error) => {
                         if (error === "User email cannot be null") {
-                            this.$oruga.notification.open({
-                                position: 'top',
-                                duration: 5000,
-                                message: "Debes introducir tu dirección de email",
-                                variant: "danger",
-                            });
+                            notificationService.showNotification("Debes introducir tu dirección de email", "danger");
                         } else if (error === "User not found") {
-                            this.$oruga.notification.open({
-                                position: 'top',
-                                duration: 5000,
-                                message: "Usuario no encontrado",
-                                variant: "danger",
-                            });
+                            notificationService.showNotification("Usuario no encontrado", "danger");
                         } else {
-                            this.$oruga.notification.open({
-                                position: 'top',
-                                duration: 5000,
-                                message: "Ha ocurrido un error solicitando el código",
-                                variant: "danger",
-                            });
+                            notificationService.showNotification("Ha ocurrido un error solicitando el código", "danger");
                         }
                     }
                 );

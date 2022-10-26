@@ -78,7 +78,7 @@
 
 <script lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {driversService} from "@/_services";
+import {driversService, notificationService} from "@/_services";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {Driver} from "@/types/Driver";
@@ -136,11 +136,7 @@ export default defineComponent({
             }
 
             driversService.createDriver(rawDriver).then((result) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "Se ha registrado correctamente el piloto `" + result.firstname + " " + result.lastname + "`",
-                    variant: "success",
-                });
+                notificationService.showNotification("Se ha registrado correctamente el piloto `" + result.firstname + " " + result.lastname + "`", "success");
 
                 this.$router.push({
                     name: 'viewDriver',
@@ -149,11 +145,7 @@ export default defineComponent({
                     }
                 })
             }).catch((error) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: error.message,
-                    variant: "danger",
-                });
+                notificationService.showNotification(error.message, "danger");
             });
         }
     }

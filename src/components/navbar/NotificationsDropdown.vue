@@ -74,11 +74,7 @@
         },
         methods: {
             clearNotification() {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "Has limpiado tus notificaciones",
-                    variant: "success",
-                });
+                notificationService.showNotification("Has limpiado tus notificaciones");
                 notificationService.clearNotifications().then(() => {
                     this.unreadNotificationsCount = 0;
                     this.leidas = true;

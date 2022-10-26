@@ -106,7 +106,7 @@
 <script lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-import {circuitService, grandPrixService, seasonService} from "@/_services";
+import {circuitService, grandPrixService, notificationService, seasonService} from "@/_services";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
 import {GrandPrix} from "@/types/GrandPrix";
@@ -174,21 +174,13 @@ export default defineComponent({
             };
 
             grandPrixService.editGrandPrix(data).then((result) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "Se ha editado correctamente el gran premio `" + result.name + "`",
-                    variant: "success",
-                });
+                notificationService.showNotification("Se ha editado correctamente el gran premio `" + result.name + "`", "danger");
 
                 this.$router.push({
                     name: 'adminGps'
                 })
             }).catch((error) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: error.message,
-                    variant: "danger",
-                });
+                notificationService.showNotification(error.message, "danger");
             });
         }
     },

@@ -71,11 +71,12 @@
 <script lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-import {competitionService} from "@/_services";
+import {competitionService, notificationService} from "@/_services";
 import {Competition} from "@/types/Competition";
 
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
+import {useProgrammatic} from "@oruga-ui/oruga-next";
 
 export default defineComponent({
     name: "CompetitionsList",
@@ -85,9 +86,10 @@ export default defineComponent({
     },
     setup() {
         const authStore = useAuthStore();
+        const oruga = useProgrammatic().oruga;
 
         const currentUser = authStore.loggedUser;
-        return { currentUser };
+        return { currentUser, oruga };
     },
     data() {
         return {
@@ -130,7 +132,7 @@ export default defineComponent({
     },
     methods: {
         confirmDeleteSeason(competition: Competition) {
-            this.$oruga.dialog.confirm({
+            this.oruga.dialog.confirm({
                 title: 'Eliminar competición',
                 message: `¿Estás seguro de que quieres <b>eliminar</b> la competición ${competition.name} (#${competition.id})? <br/>Esta acción se puede deshacer.`,
                 confirmText: 'Eliminar competición',
@@ -145,17 +147,9 @@ export default defineComponent({
                 // Elimino de la lista y por lo tanto de la tabla
                 this.competitions.splice(this.competitions.findIndex(s => s.id === competition.id),1);
 
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: `Se ha eliminado correctamente la competition ${competition.name} (#${competition.id})`,
-                    variant: "danger",
-                });
+                notificationService.showNotification(`Se ha eliminado correctamente la competition ${competition.name} (#${competition.id})`, "danger");
             }).catch((error) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: error.message,
-                    variant: "danger",
-                });
+                notificationService.showNotification(error.message, "danger");
             });
         }
     },

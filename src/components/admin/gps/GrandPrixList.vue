@@ -103,6 +103,7 @@ import {Season} from "@/types/Season";
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
+import {useProgrammatic} from "@oruga-ui/oruga-next";
 
 export default defineComponent({
     name: "GrandPrixList",
@@ -113,10 +114,11 @@ export default defineComponent({
     setup() {
         const authStore = useAuthStore();
         const communityStore = useCommunityStore();
+        const oruga = useProgrammatic().oruga;
 
         const currentUser = authStore.loggedUser;
         const currentCommunity = communityStore.community;
-        return {currentUser, currentCommunity};
+        return {currentUser, currentCommunity, oruga};
     },
     data() {
         return {
@@ -148,7 +150,7 @@ export default defineComponent({
             this.loadGrandPrixes(this.chosenSeason!.competition, this.chosenSeason!);
         },
         confirmDeleteGrandPrix(gp: GrandPrix) {
-            this.$oruga.dialog.confirm({
+            this.oruga.dialog.confirm({
                 title: 'Eliminar gran premio',
                 message: `¿Estás seguro de que quieres <b>eliminar</b> el Gran Premio ${gp.name} #${gp.season.name}? <br/>Esta acción se puede deshacer.`,
                 confirmText: 'Eliminar gran premio',

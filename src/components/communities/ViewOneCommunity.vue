@@ -177,7 +177,7 @@
 
 <script lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {communityService} from "@/_services";
+import {communityService, notificationService} from "@/_services";
 
 import {Community} from "@/types/Community";
 import {CommunityUser} from "@/types/CommunityUser";
@@ -240,12 +240,8 @@ export default defineComponent({
         clickInvitation() {
             let invitation = "https://prognosports.com/invitation/" + this.community.name + "/" + this.community.invitation;
             this.clipboard.writeText(invitation).then(() => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "Se te ha copiado la invitación al portapapeles",
-                    variant: "success",
-                })}
-            );
+                notificationService.showNotification("Se te ha copiado la invitación al portapapeles");
+            });
         },
     },
     computed: {

@@ -22,7 +22,7 @@
 
 <script lang="ts">
     import {Community} from "@/types/Community";
-    import {communityService} from "@/_services";
+    import {communityService, notificationService} from "@/_services";
     import {isValidCommunity} from "@/utils";
     import {defineComponent} from "vue";
     import {useAuthStore} from "@/store/authStore";
@@ -83,12 +83,7 @@
                         community: targetCommunity.name,
                     }
                 }).then(() => {
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message:
-                            "Has cambiado a la comunidad " + targetCommunity.name,
-                        variant: "info",
-                    });
+                    notificationService.showNotification("Has cambiado a la comunidad " + targetCommunity.name, "info");
                     this.emitter.emit('reloadCommunitiesDropdown'); // Recargar la lista, que previsiblemente quitará la target y añadirá la que estaba originalmente
                 })
             }

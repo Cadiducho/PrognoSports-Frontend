@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import {Community} from "@/types/Community";
-import {communityService} from "@/_services";
+import {communityService, notificationService} from "@/_services";
 
 import {defineComponent, inject, PropType} from "vue";
 import {useCommunityStore} from "@/store/communityStore";
@@ -48,20 +48,12 @@ export default defineComponent({
     methods: {
         joinCommunity() {
             communityService.joinCommunity(this.community).then(communityRes => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "¡Te has unido correctamente a " + communityRes.name + "!",
-                    variant: "success",
-                });
+                notificationService.showNotification("¡Te has unido correctamente a " + communityRes.name + "!");
 
                 this.setCommunity(communityRes);
                 this.$router.push(`/communities/${communityRes.name}`);
             }).catch((error) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "Ha ocurrido un error: " + error.message,
-                    variant: "warning",
-                });
+                notificationService.showNotification("Ha ocurrido un error: " + error.message, "warning");
             }).finally(() => {
                 this.emitter.emit('reloadCommunitiesList');
                 this.emitter.emit('reloadCommunitiesDropdown');

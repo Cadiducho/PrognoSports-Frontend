@@ -348,7 +348,7 @@
 
 <script lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {communityService, rulesetService} from "@/_services";
+import {communityService, notificationService, rulesetService} from "@/_services";
 
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
@@ -460,11 +460,7 @@ export default defineComponent({
                 communityData.default_rule_set = ruleset.id; // y se asigna este rule set por defecto a la nueva comunidad
 
                 communityService.createCommunity(communityData).then((community) => {
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message: "Se ha registrado correctamente la comunidad `" + community.name + "`",
-                        variant: "success",
-                    });
+                    notificationService.showNotification("Se ha registrado correctamente la comunidad `" + community.name + "`");
 
                     this.$router.push({
                         name: 'communitiesDetails',
@@ -476,23 +472,11 @@ export default defineComponent({
                     this.setCommunity(community); // Establecer en Pinia la comunidad actual
                     this.emitter.emit('reloadCommunitiesDropdown'); // Recargar dropdown del navbar
                 }).catch((error) => {
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message: error.message,
-                        variant: "danger",
-                    });
-                    rulesetService.removeRuleSet(ruleset).then(e => {
-                        console.log(e);
-                    }).catch(e => {
-                        console.log(e);
-                    });
+                    notificationService.showNotification(error.message, "danger");
+                    rulesetService.removeRuleSet(ruleset);
                 })
             }).catch((error) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: error.message,
-                    variant: "danger",
-                });
+                notificationService.showNotification(error.message, "danger");
             })
         }
     },

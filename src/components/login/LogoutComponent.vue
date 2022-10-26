@@ -6,6 +6,7 @@
 
 import {useAuthStore} from "@/store/authStore";
 import {defineComponent} from "vue";
+import {notificationService} from "@/_services";
 
 export default defineComponent({
     name: "LogoutComponent",
@@ -18,11 +19,7 @@ export default defineComponent({
     created() {
         this.signOut().then(() => {
             this.$router.push({name: 'login'});
-            this.$oruga.notification.open({
-                position: 'top',
-                message: 'Has cerrado sesión correctamente',
-                type: 'info'
-            });
+            notificationService.showNotification('Has cerrado sesión correctamente', 'info');
         });
     }
 });
