@@ -1,0 +1,11 @@
+name: Test PR
+
+on: [ pull_request ]
+
+jobs:
+  build:
+    name: Build
+    uses: Cadiducho/PrognoSports-Frontend/.github/workflows/vite.yml@develop
+    with:
+      node_version: '18.x'
+      build_command: 'buildBeta'
