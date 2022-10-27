@@ -23,7 +23,6 @@ export class Circuit implements ICircuit {
     variant: CircuitVariant;
 
     constructor(data: ICircuit) {
-        console.log("construyendo " + data.id)
         this.country = data.country;
         this.id = data.id;
         this.latitude = data.latitude;

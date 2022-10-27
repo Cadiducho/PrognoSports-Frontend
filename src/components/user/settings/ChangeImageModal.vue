@@ -41,7 +41,7 @@ export default defineComponent({
     props: {
         file: {
             type: Object as PropType <File> | null,
-            required: true
+            required: false
         },
     },
     setup(props) {
@@ -79,6 +79,7 @@ export default defineComponent({
 
                     userService.changeProfileImage(this.currentUser, blob).then(() => {
                         notificationService.showNotification("¡Has cambiado tu imagen de perfil!");
+                        this.currentUser.changedProfileImage = blob;
 
                         this.$emit('close');
                     }).catch(() => {

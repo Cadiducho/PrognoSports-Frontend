@@ -37,6 +37,7 @@ export class User implements IUser {
     updated: Date;
     username: string;
     hasProfileImage: boolean;
+    changedProfileImage?: Blob;
 
     constructor(data: IUser) {
         this.bio = data.bio ?? '';
@@ -57,6 +58,10 @@ export class User implements IUser {
     }
 
     public profileImage(): string {
+        if (this.changedProfileImage) {
+            return URL.createObjectURL(this.changedProfileImage);
+        }
+
         if (this.hasProfileImage) {
             return BASE_URL + `/user/${this.id}/image`;
         }
