@@ -11,7 +11,7 @@
             </p>
 
             <o-notification v-if="currentUser.preferences['hide-tipps-until-start'] === true" variant="info is-light" aria-close-label="Close notification">
-                Tus pronósticos están ocultos al resto de usuarios hasta {{ humanDateTime(session.closureDate()) }} (en {{ dateDiff(session.closureDate()) }})
+                Tus pronósticos están ocultos al resto de usuarios hasta {{ humanDateTime(session.closureDate()) }} ({{ dateDiff(session.closureDate()) }})
             </o-notification>
             <o-notification v-if="!thereAreFinishResults" variant="primary is-light" aria-close-label="Close notification">
                 Aún no hay resultados confirmados para esta sesión
@@ -251,7 +251,7 @@ export default defineComponent({
 
         const humanDateTime = dayjs.humanDateTime;
         const dateDiff = dayjs.dateDiff;
-        const currentUser = authStore.user;
+        const currentUser = authStore.loggedUser;
         const currentCommunity = communityStore.community;
         return { currentUser, currentCommunity, dateDiff, humanDateTime };
     },

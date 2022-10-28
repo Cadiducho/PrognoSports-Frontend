@@ -2,8 +2,6 @@
 @import "bulma/bulma";
 @import '@oruga-ui/theme-bulma/dist/scss/bulma';
 
-@import "ui/prognosection";
-@import "ui/prognocontainer";
 @import "ui/navbar";
 @import "ui/block-list";
 @import "ui/timeline";
@@ -11,7 +9,7 @@
 @import 'bulma-calendar/dist/css/bulma-calendar.css';
 
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-@import url('https://use.fontawesome.com/releases/v6.1.1/css/all.css');
+@import url('https://use.fontawesome.com/releases/v6.2.0/css/all.css');
 
 @import 'leaflet/dist/leaflet.css';
 
@@ -21,4 +19,9 @@
 
 .is-fullwidth {
   width: 100%;
+}
+
+.button {
+  height: max-content;
+  white-space: normal;
 }

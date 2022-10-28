@@ -62,11 +62,12 @@
 <script lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-import {seasonService} from "@/_services";
+import {notificationService, seasonService} from "@/_services";
 import {Season} from "@/types/Season";
 
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
+import {useProgrammatic} from "@oruga-ui/oruga-next";
 
 export default defineComponent({
     name: "SeasonsList",
@@ -76,9 +77,10 @@ export default defineComponent({
     },
     setup() {
         const authStore = useAuthStore();
+        const oruga = useProgrammatic().oruga;
 
-        const currentUser = authStore.user;
-        return { currentUser };
+        const currentUser = authStore.loggedUser;
+        return { currentUser, oruga };
     },
     data() {
         return {
@@ -122,7 +124,7 @@ export default defineComponent({
     },
     methods: {
         confirmDeleteSeason(season: Season) {
-            this.$oruga.dialog.confirm({
+            this.oruga.dialog.confirm({
                 title: 'Eliminar temporada',
                 message: `¿Estás seguro de que quieres <b>eliminar</b> la temporada ${season.name} (#${season.id})? <br/>Esta acción se puede deshacer.`,
                 confirmText: 'Eliminar temporada',
@@ -137,17 +139,9 @@ export default defineComponent({
                 // Elimino de la lista y por lo tanto de la tabla
                 this.seasons.splice(this.seasons.findIndex(s => s.id === season.id),1);
 
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: `Se ha eliminado correctamente la temporada ${season.name} (#${season.id})`,
-                    variant: "danger",
-                });
+                notificationService.showNotification(`Se ha eliminado correctamente la temporada ${season.name} (#${season.id})`, "danger");
             }).catch((error) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: error.message,
-                    variant: "danger",
-                });
+                notificationService.showNotification(error.message, "danger");
             });
         }
     },

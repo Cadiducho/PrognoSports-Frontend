@@ -3,8 +3,7 @@ import {Circuit, ICircuit} from '@/types/Circuit';
 import {CircuitVariant} from "@/types/CircuitVariant";
 import {PrognoService} from "@/_services/progno.service";
 
-export class CircuitService extends PrognoService<ICircuit, Circuit>{
-
+export class CircuitService extends PrognoService<ICircuit, Circuit> {
 
     factory(data: ICircuit): Circuit {
         return new Circuit(data);
@@ -31,7 +30,7 @@ export class CircuitService extends PrognoService<ICircuit, Circuit>{
                     variantList.push(new CircuitVariant(variant));
                 })
                 resolve(variantList);
-            }));
+            })).catch(e => reject(e));
         })
     }
 

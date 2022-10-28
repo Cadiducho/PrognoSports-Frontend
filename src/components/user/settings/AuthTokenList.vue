@@ -31,7 +31,7 @@
 <script lang="ts">
 
 import {defineComponent} from "vue";
-import {authService} from "@/_services";
+import {authService, notificationService} from "@/_services";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {AuthToken} from "@/types/AuthToken";
@@ -47,7 +47,7 @@ export default defineComponent({
         const dateDiff = dayjs.dateDiff;
         const humanDateTime = dayjs.humanDateTime;
         const humanDate = dayjs.humanDate;
-        const currentUser = authStore.user;
+        const currentUser = authStore.loggedUser;
         const currentCommunity = communityStore.community;
 
 
@@ -72,11 +72,7 @@ export default defineComponent({
                     this.authTokens = [];
                     this.authTokens.push(...tokens);
 
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message: "Has cerrado todas las demás sesiones abiertas",
-                        variant: "info",
-                    });
+                    notificationService.showNotification("Has cerrado todas las demás sesiones abiertas");
                 });
             });
         },
@@ -88,11 +84,7 @@ export default defineComponent({
                     this.authTokens = [];
                     this.authTokens.push(...tokens);
 
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message: "Has cerrado el token " + token.token,
-                        variant: "info",
-                    });
+                    notificationService.showNotification(`Has cerrado el token ${token.token}`);
                 });
             });
         }

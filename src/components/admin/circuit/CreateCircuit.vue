@@ -99,7 +99,7 @@
 
 <script lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {circuitService} from "@/_services";
+import {circuitService, notificationService} from "@/_services";
 import ViewCircuitItem from "@/components/circuits/ViewCircuitItem.vue";
 import {ICircuit} from "@/types/Circuit";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
@@ -119,7 +119,7 @@ export default defineComponent({
     setup() {
         const authStore = useAuthStore();
 
-        const currentUser = authStore.user;
+        const currentUser = authStore.loggedUser;
         return { currentUser };
     },
     data() {
@@ -165,11 +165,7 @@ export default defineComponent({
 
             // Se envia el circuito, con los datos por defecto para una variante GP que la API también creará
             circuitService.createCircuit(rawCircuit).then((result) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "Se ha registrado correctamente el circuito `" + result.name + "`",
-                    variant: "success",
-                });
+                notificationService.showNotification("Se ha registrado correctamente el circuito `" + result.name + "`");
 
                 this.$router.push({
                     name: 'circuitDetails',
@@ -180,17 +176,9 @@ export default defineComponent({
                 })
             }).catch((error) => {
                 if (error.code === 705) {
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message: "Invalid data for this new circuit",
-                        variant: "danger",
-                    });
+                    notificationService.showNotification("Invalid data for this new circuit", "danger");
                 } else {
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message: error.message,
-                        variant: "danger",
-                    });
+                    notificationService.showNotification(error.message, "danger");
                 }
             });
         }

@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {communityService} from "@/_services";
+import {communityService, notificationService} from "@/_services";
 
 import {Community} from "@/types/Community";
 
@@ -50,11 +50,7 @@ export default defineComponent({
 
             communityService.joinCommunity(community, code).then((communityRes) => {
                 setTimeout(() => {
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message: "¡Te has unido correctamente a " + communityRes.name + "!",
-                        variant: "success",
-                    });
+                    notificationService.showNotification("¡Te has unido correctamente a " + communityRes.name + "!");
                     this.setCommunity(communityRes);
                     this.$router.push({
                         name: 'communitiesDetails',
@@ -65,11 +61,7 @@ export default defineComponent({
                 }, 500);
             }).catch((reason => {
                 setTimeout(() => {
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message: "Ha ocurrido un error: " + reason.message,
-                        variant: "danger",
-                    });
+                    notificationService.showNotification("Ha ocurrido un error: " + reason.message, "danger");
                     this.$router.push({
                         name: 'communitiesList',
                     });

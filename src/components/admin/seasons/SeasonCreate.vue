@@ -64,7 +64,7 @@
 
 <script lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import {competitionService, seasonService} from "@/_services";
+import {competitionService, notificationService, seasonService} from "@/_services";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {Season} from "@/types/Season";
@@ -83,7 +83,7 @@ export default defineComponent({
     setup() {
         const authStore = useAuthStore();
 
-        const currentUser = authStore.user;
+        const currentUser = authStore.loggedUser;
         return { currentUser };
     },
     data() {
@@ -116,21 +116,13 @@ export default defineComponent({
             }
 
             seasonService.createSeason(rawSeason).then((result) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "Se ha registrado correctamente la temporada `" + result.name + "`",
-                    variant: "success",
-                });
+                notificationService.showNotification("Se ha registrado correctamente la temporada `" + result.name + "`");
 
                 this.$router.push({
                     name: 'adminSeasons'
                 })
             }).catch((error) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: error.message,
-                    variant: "danger",
-                });
+                notificationService.showNotification(error.message, "danger");
             });
         }
     },

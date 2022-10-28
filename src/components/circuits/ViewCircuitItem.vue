@@ -5,7 +5,7 @@
                 <div class="card-image">
                     <figure class="image is-4by3">
                         <img
-                            :src="circuit.variant.layout_image"
+                            :src="circuit.variant.layoutImage()"
                             alt="Esquema"
                         />
                     </figure>
@@ -14,7 +14,7 @@
                     <div class="media">
                         <div class="media-left">
                             <figure class="image is-48x48">
-                                <img :src="circuit.logo_url" alt="No Logo" />
+                                <img :src="circuit.logoImage()" alt="No Logo" />
                             </figure>
                         </div>
                         <div class="media-content">

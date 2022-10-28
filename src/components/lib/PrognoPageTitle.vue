@@ -14,3 +14,14 @@ export default defineComponent({
     }
 });
 </script>
+
+<style scoped lang="scss">
+@import "bulma/sass/utilities/_all.sass";
+
+// Resolución móvil
+@media screen and (max-width: $desktop) {
+    .title {
+        font-size: 1.5rem;
+    }
+}
+</style>

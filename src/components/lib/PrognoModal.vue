@@ -18,7 +18,7 @@
                 <footer class="modal-card-foot">
                     <slot name="footer">
                         <button class="button is-success" type="submit">Guardar cambios</button>
-                        <button class="button" @click="close()">Cancelar</button>
+                        <button class="button" type="button" @click="close()">Cancelar</button>
                     </slot>
                 </footer>
             </form>
@@ -33,7 +33,6 @@ export default defineComponent({
     name: "PrognoModal",
     methods: {
         close() {
-            console.log("close acas")
             this.$emit('close');
         },
         handle() {

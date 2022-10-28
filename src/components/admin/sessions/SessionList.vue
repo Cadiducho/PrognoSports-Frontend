@@ -66,7 +66,7 @@
 <script lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-import {sessionService} from "@/_services";
+import {notificationService, sessionService} from "@/_services";
 
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
@@ -81,7 +81,7 @@ export default defineComponent({
     setup() {
         const authStore = useAuthStore();
 
-        const currentUser = authStore.user;
+        const currentUser = authStore.loggedUser;
         return { currentUser };
     },
     data() {
@@ -137,11 +137,7 @@ export default defineComponent({
         },
         updateSession(session: RaceSession) {
             sessionService.updateSession(this.editedSession).then((r) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: `Se ha editado la sesión ${this.editedSession.name}`,
-                    variant: "primary",
-                });
+                notificationService.showNotification(`Se ha editado la sesión ${this.editedSession.name}`, "primary");
 
                 this.sessions.splice(this.sessions.findIndex(s => s.name === this.editedSession.name),1);
                 this.sessions.unshift(this.editedSession);
@@ -156,11 +152,7 @@ export default defineComponent({
         createSession() {
             // Crear nuevo
             sessionService.createSession(this.newSession).then((r) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: `Se ha creado la sesión ${this.newSession.name}`,
-                    variant: "primary",
-                });
+                notificationService.showNotification(`Se ha creado la sesión ${this.newSession.name}`, "primary");
 
                 this.sessions.unshift(this.newSession);
 
@@ -170,20 +162,12 @@ export default defineComponent({
                     uses: 0
                 } as RaceSession;
             }).catch((error) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: error.message,
-                    variant: "danger",
-                });
+                notificationService.showNotification(error.message, "danger");
             });
         },
         confirmDeleteSession(session: RaceSession) {
             if (session.uses > 0) {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "No se puede elimiar esta sesión porque está siendo usada",
-                    variant: "warning",
-                });
+                notificationService.showNotification("No se puede elimiar esta sesión porque está siendo usada", "warning");
                 return;
             }
 
@@ -205,17 +189,9 @@ export default defineComponent({
                 // Elimino de la lista y por lo tanto de la tabla
                 this.sessions.splice(this.sessions.findIndex(s => s.name === session.name),1);
 
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: `Se ha eliminado correctamente la sesión ${session.name} (${session.code})`,
-                    variant: "primary",
-                });
+                notificationService.showNotification(`Se ha eliminado correctamente la sesión ${session.name} (${session.code})`, "primary");
             }).catch((error) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: error.message,
-                    variant: "danger",
-                });
+                notificationService.showNotification(error.message, "danger");
             });
         }
     },

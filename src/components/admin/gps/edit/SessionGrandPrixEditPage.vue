@@ -72,7 +72,7 @@ import { SlickList, SlickItem } from 'vue-slicksort';
 import bulma_calendar from "bulma-calendar/dist/components/vue/bulma_calendar.vue";
 import {
     driversService,
-    grandPrixService,
+    grandPrixService, notificationService,
     sessionService
 } from "@/_services";
 import {Competition} from "@/types/Competition";
@@ -107,7 +107,7 @@ export default defineComponent({
         const authStore = useAuthStore();
         const styles = useStyles();
 
-        const currentUser = authStore.user;
+        const currentUser = authStore.loggedUser;
         const styleDriverCard = styles.styleDriverCard;
         const styleDorsal = styles.styleDorsal;
 
@@ -144,11 +144,7 @@ export default defineComponent({
     methods: {
         changeSessionData() {
             sessionService.updateSessionInGrandPrix(this.grandPrix, this.session).then(() => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "Datos de la sesión actualizados.",
-                    variant: "success",
-                });
+                notificationService.showNotification("Datos de la sesión actualizados.");
             });
         },
         saveResults() {
@@ -157,11 +153,7 @@ export default defineComponent({
                 notSendNotification: this.notSendNotification,
             };
             grandPrixService.saveResults(this.grandPrix, this.session, payload).then(() => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "¡Has guardado los resultados!",
-                    variant: "success",
-                });
+                notificationService.showNotification("¡Has guardado los resultados!");
             });
         }
     },

@@ -1,4 +1,5 @@
 import {CircuitVariant} from "@/types/CircuitVariant";
+import {BASE_URL} from "@/_services";
 
 export interface ICircuit {
     id: string;
@@ -7,7 +8,7 @@ export interface ICircuit {
     locality: string;
     latitude: number;
     longitude: number;
-    logo_url: string;
+    hasLogoImage: boolean;
     variant: CircuitVariant;
 }
 
@@ -16,9 +17,9 @@ export class Circuit implements ICircuit {
     id: string;
     latitude: number;
     locality: string;
-    logo_url: string;
     longitude: number;
     name: string;
+    hasLogoImage: boolean;
     variant: CircuitVariant;
 
     constructor(data: ICircuit) {
@@ -26,9 +27,9 @@ export class Circuit implements ICircuit {
         this.id = data.id;
         this.latitude = data.latitude;
         this.locality = data.locality;
-        this.logo_url = data.logo_url;
         this.longitude = data.longitude;
         this.name = data.name;
+        this.hasLogoImage = data.hasLogoImage;
         this.variant = new CircuitVariant(data.variant);
     }
 
@@ -39,5 +40,16 @@ export class Circuit implements ICircuit {
     public nameWithVariant(): string {
         if (!this.hasVariant()) return this.name;
         return `${this.name} - ${this.variant.name}`;
+    }
+
+    public logoImage(): string {
+        if (this.hasLogoImage) {
+            return BASE_URL + `/circuits/${this.id}/logo`;
+        } else if (this.variant.hasLayoutImage) {
+            return this.variant.layoutImage();
+        }
+
+        // ToDo: coger la imagen por defecto de los assets
+        return 'https://github.com/Cadiducho/PrognoSports-Frontend/blob/develop/src/assets/default_profile_image.jpg?raw=true';
     }
 }

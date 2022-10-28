@@ -70,7 +70,7 @@
 <script lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-import {competitionService} from "@/_services";
+import {competitionService, notificationService} from "@/_services";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
 import {marked} from "marked";
@@ -87,7 +87,7 @@ export default defineComponent({
     setup() {
         const authStore = useAuthStore();
 
-        const currentUser = authStore.user;
+        const currentUser = authStore.loggedUser;
         return { currentUser };
     },
     data() {
@@ -135,21 +135,13 @@ export default defineComponent({
                 currentSeason: this.competition!.currentSeason!.id,
             }
             competitionService.editCompetition(this.competition!, data).then((result) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "Se ha editado correctamente la competición `" + result.name + "`",
-                    variant: "success",
-                });
+                notificationService.showNotification("Se ha editado correctamente la competición `" + result.name + "`", "success");
 
                 this.$router.push({
                     name: 'adminCompetitions'
                 })
             }).catch((error) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: error.message,
-                    variant: "danger",
-                });
+                notificationService.showNotification(error.message, "danger");
             });
         }
     },

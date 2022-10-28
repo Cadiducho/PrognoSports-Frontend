@@ -4,36 +4,36 @@
             <div class="media">
                 <div class="media-left">
                     <figure class="image is-64x64 zuga">
-                        <img :src="userProfileImage(user)" alt="Profile image" class="profile-image is-rounded" />
+                        <img :src="objUser.profileImage()" alt="Profile image" class="profile-image is-rounded" />
                     </figure>
                 </div>
                 <hr />
                 <div class="media-content">
                     <div class="media-content-header">
-                        <span class="title is-4 multiline-text">{{ user.username }}</span>
+                        <span class="title is-4 multiline-text">{{ objUser.username }}</span>
 
                         <span class="content-rank">
-                            <span :style="{ color: `#${user.rank.color}`, 'border-color': `#${user.rank.color}` }" class="content-rank-name">
-                                {{ user.rank.name }}
+                            <span :style="{ color: `#${objUser.rank.color}`, 'border-color': `#${objUser.rank.color}` }" class="content-rank-name">
+                                {{ objUser.rank.name }}
                             </span>
                         </span>
                     </div>
-                    <p v-if="user.bio" class="subtitle is-6 multiline-text">{{ user.bio }}</p>
+                    <p v-if="objUser.bio" class="subtitle is-6 multiline-text">{{ objUser.bio }}</p>
                 </div>
             </div>
             <div class="divisor"></div>
             <div class="content">
-                <p v-if="user.location" class="content-icon content-location">
+                <p v-if="objUser.location" class="content-icon content-location">
                     <span class="icon is-small">
                         <i class="fas fa-map-marker-alt fa-sm mr-2"></i>
                     </span>
-                    <span class="multiline-text">{{ user.location }}</span>
+                    <span class="multiline-text">{{ objUser.location }}</span>
                 </p>
                 <p class="content-icon content-last_activity">
                     <span class="icon is-small">
                         <i class="fas fa-clock fa-sm mr-2"></i>
                     </span>
-                    <span class="multiline-text">Visto por última vez {{ dateDiff(user.last_activity) }}</span>
+                    <span class="multiline-text">Visto por última vez {{ dateDiff(objUser.last_activity) }}</span>
                 </p>
             </div>
         </div>
@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { User } from "@/types/User";
-import {defineComponent, PropType} from "vue";
+import {computed, defineComponent, PropType} from "vue";
 import {useDayjs} from "@/composables/useDayjs";
 
 export default defineComponent({
@@ -53,10 +53,11 @@ export default defineComponent({
             required: true,
         }
     },
-    setup() {
+    setup(props) {
         const dayjs = useDayjs();
         const dateDiff = dayjs.dateDiff;
-        return { dateDiff };
+        const objUser = computed(() => new User(props.user));
+        return { dateDiff, objUser };
     }
 });
 </script>

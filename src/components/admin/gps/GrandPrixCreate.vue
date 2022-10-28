@@ -122,7 +122,7 @@
 
 <script lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue"
-import {circuitService, grandPrixService, seasonService} from "@/_services";
+import {circuitService, grandPrixService, notificationService, seasonService} from "@/_services";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {GrandPrix} from "@/types/GrandPrix";
@@ -142,7 +142,7 @@ export default defineComponent({
     setup() {
         const authStore = useAuthStore();
 
-        const currentUser = authStore.user;
+        const currentUser = authStore.loggedUser;
         return { currentUser };
     },
     data() {
@@ -202,11 +202,7 @@ export default defineComponent({
                     this.createdGrandPrix.laps = oldGp.laps;
                     this.createdGrandPrix.promo_image_url = oldGp.promo_image_url;
                 }).catch((error) => {
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message: "No existe GP con esos datos",
-                        variant: "danger",
-                    });
+                    notificationService.showNotification("No existe GP con esos datos", "danger");
                 });
             }
         },
@@ -225,21 +221,13 @@ export default defineComponent({
             }
 
             grandPrixService.createGrandPrix(data).then((result) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "Se ha registrado correctamente el Gran Premio `" + result.id + "`",
-                    variant: "success",
-                });
+                notificationService.showNotification("Se ha registrado correctamente el Gran Premio `" + result.id + "`", "success");
 
                 this.$router.push({
                     name: 'adminGps'
                 })
             }).catch((error) => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: error.message,
-                    variant: "danger",
-                });
+                notificationService.showNotification(error.message, "danger");
             });
         }
     }

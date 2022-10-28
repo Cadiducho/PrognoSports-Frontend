@@ -27,7 +27,7 @@
                         </div>
                         <div class="card-image">
                             <figure class="image">
-                                <img class="logoImage" v-if="circuit.logo_url !== undefined && circuit.logo_url.length > 0" :src="circuit.logo_url" alt="Logo image">
+                                <img class="logoImage" v-if="circuit.hasLogoImage" :src="circuit.logoImage()" alt="Logo image">
                             </figure>
                         </div>
                         <div class="card-content">
@@ -83,7 +83,7 @@
                             </l-map>
                         </div>
                         <figure class="image is-4by3">
-                            <img :src="circuit.variant.layout_image" alt="Circuit layout image">
+                            <img :src="circuit.variant.layoutImage()" alt="Circuit layout image">
                         </figure>
                     </div>
                 </div>

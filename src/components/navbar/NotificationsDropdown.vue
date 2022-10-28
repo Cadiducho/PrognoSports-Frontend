@@ -58,7 +58,7 @@
 
             const dateDiff = dayjs.dateDiff;
             const humanDateTime = dayjs.humanDateTime;
-            const currentUser = authStore.user;
+            const currentUser = authStore.loggedUser;
             const currentCommunity = communityStore.community;
             return { currentUser, currentCommunity, dateDiff, humanDateTime };
         },
@@ -74,11 +74,7 @@
         },
         methods: {
             clearNotification() {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "Has limpiado tus notificaciones",
-                    variant: "success",
-                });
+                notificationService.showNotification("Has limpiado tus notificaciones");
                 notificationService.clearNotifications().then(() => {
                     this.unreadNotificationsCount = 0;
                     this.leidas = true;

@@ -2,6 +2,7 @@ import {Circuit} from "@/types/Circuit";
 import {Season} from "@/types/Season";
 import {Competition} from "@/types/Competition";
 import {IRaceSession, RaceSession} from "@/types/RaceSession";
+import {BASE_URL} from "@/_services";
 
 export interface IGrandPrix {
     id: string;
@@ -11,10 +12,10 @@ export interface IGrandPrix {
     season: Season;
     round: number;
     circuit: Circuit;
-    promo_image_url: string;
     sessions: Array<IRaceSession>
     laps: number;
     suspended: boolean;
+    hasPromoImage: boolean;
 }
 
 export class GrandPrix implements IGrandPrix {
@@ -24,23 +25,23 @@ export class GrandPrix implements IGrandPrix {
     id: string;
     laps: number;
     name: string;
-    promo_image_url: string;
     sessions: Array<RaceSession>;
     round: number;
     season: Season;
     suspended: boolean;
+    hasPromoImage: boolean;
 
     constructor(data: IGrandPrix) {
-        this.circuit = data.circuit;
+        this.circuit = new Circuit(data.circuit);
         this.code = data.code;
         this.competition = data.competition;
         this.id = data.id;
         this.laps = data.laps;
         this.name = data.name;
-        this.promo_image_url = data.promo_image_url;
         this.round = data.round;
         this.season = data.season;
         this.suspended = data.suspended;
+        this.hasPromoImage = data.hasPromoImage;
 
         this.sessions = [];
         data.sessions.forEach(session => {
@@ -65,5 +66,14 @@ export class GrandPrix implements IGrandPrix {
                 id: this.id,
             }
         };
+    }
+
+    public promoImage(): string {
+        if (this.hasPromoImage) {
+            return BASE_URL + `/gps/${this.competition.code}/${this.season.name}/${this.id}/image`;
+        }
+
+        // ToDo: coger la imagen por defecto de los assets
+        return 'https://github.com/Cadiducho/PrognoSports-Frontend/blob/develop/src/assets/default_profile_image.jpg?raw=true';
     }
 }

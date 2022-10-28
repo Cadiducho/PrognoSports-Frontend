@@ -61,6 +61,7 @@
 <script lang="ts">
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
+import {notificationService} from "@/_services";
 
 export default defineComponent({
     name: "RulesComponent",
@@ -93,11 +94,7 @@ export default defineComponent({
                     password: this.password,
                 }).then(
                     () => {
-                        this.$oruga.notification.open({
-                            position: 'top',
-                            message: "¡Has iniciado sesión correctamente!",
-                            variant: "success",
-                        });
+                        notificationService.showNotification("¡Has iniciado sesión correctamente!");
 
                         if (this.redirectTo !== undefined) {
                             // Enviar a la redirección
@@ -115,12 +112,7 @@ export default defineComponent({
                             message = "Fallo al iniciar sesión: " + error.message;
                         }
 
-                        this.$oruga.notification.open({
-                            position: 'top',
-                            duration: 5000,
-                            message: message,
-                            variant: "danger",
-                        });
+                        notificationService.showNotification(message, 'danger');
                     }
                 );
             }

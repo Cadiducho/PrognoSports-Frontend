@@ -46,10 +46,6 @@
                         <o-input v-model="editedUser.username" name="name" expanded lazy></o-input>
                     </o-field>
 
-                    <o-field label="Imagen de perfil">
-                        <o-input v-model="editedUser.profileImageUrl" name="profileImageUrl" expanded lazy></o-input>
-                    </o-field>
-
                     <o-field label="Biografía">
                         <o-input v-model="editedUser.bio" name="bio" expanded lazy></o-input>
                     </o-field>
@@ -235,7 +231,7 @@ export default defineComponent({
         const dateDiff = dayjs.dateDiff;
         const humanDateTime = dayjs.humanDateTime;
         const humanDate = dayjs.humanDate;
-        const currentUser = authStore.user;
+        const currentUser = authStore.loggedUser;
         const currentCommunity = communityStore.community;
 
         const editedUser = currentUser as Partial<User>;
@@ -293,29 +289,17 @@ export default defineComponent({
     methods: {
         save() {
             if (!this.editedUser.password) {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "Debes introducir tu contraseña actual para confirmar cambios en tus ajustes",
-                    variant: "danger",
-                });
+                notificationService.showNotification("Debes introducir tu contraseña actual para confirmar cambios en tus ajustes", "danger");
                 this.noPassword = true;
                 return;
             }
 
             this.noPassword = false;
             userService.updateUser(this.editedUser).then(() => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "Ajustes cambiados correctamente",
-                    variant: "info",
-                });
+                notificationService.showNotification("Ajustes cambiados correctamente", "info");
             }).catch((reason) => {
                 if (reason.code === 600) {
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message: "Contraseña incorrecta",
-                        variant: "danger",
-                    });
+                    notificationService.showNotification("Contraseña incorrecta", "danger");
                     this.noPassword = true;
                 }
             });
@@ -332,20 +316,12 @@ export default defineComponent({
                 newPassword: this.changePasswordModal.newPassword,
             };
             userService.changePasswordInSettings(this.currentUser, payload).then(() => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "Contraseña cambiada correctamente",
-                    variant: "info",
-                });
+                notificationService.showNotification("Contraseña cambiada correctamente", "info");
 
                 this.closeChangePassword();
             }).catch((reason) => {
                 if (reason.code === 600) {
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message: "Contraseña incorrecta",
-                        variant: "danger",
-                    });
+                    notificationService.showNotification("Contraseña incorrecta", "danger");
                     this.noPassword = true;
                 }
             });
@@ -364,34 +340,18 @@ export default defineComponent({
                 email: this.changeMailModal.newMail,
             };
             userService.changeEmail(this.currentUser, payload).then(() => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "Email cambiada correctamente",
-                    variant: "info",
-                });
+                notificationService.showNotification("Email cambiado correctamente", "info");
 
                 this.closeChangeMail();
             }).catch((reason) => {
                 if (reason.code === 600) {
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message: "Contraseña incorrecta",
-                        variant: "danger",
-                    });
+                    notificationService.showNotification("Contraseña incorrecta", "danger");
                     this.noPassword = true;
                 } else if (reason.code === 770) {
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message: "Email ya en uso por otro usuario",
-                        variant: "danger",
-                    });
+                    notificationService.showNotification("Email ya en uso por otro usuario", "danger");
                     this.noPassword = true;
                 } else if (reason.code === 700) {
-                    this.$oruga.notification.open({
-                        position: 'top',
-                        message: "Email inválido",
-                        variant: "danger",
-                    });
+                    notificationService.showNotification("Email inválido", "danger");
                     this.noPassword = true;
                 }
             });
@@ -421,11 +381,7 @@ export default defineComponent({
         },
         unlinkTelegram() {
             userService.unlinkTelegram(this.currentUser).then(() => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "Cuenta desvinculada de Telegram",
-                    variant: "warning",
-                });
+                notificationService.showNotification("Cuenta desvinculada de Telegram", "warning");
 
                 this.currentUser.preferences['telegram-id'] = '';
                 this.currentUser.preferences['telegram-firstname'] = '';
@@ -437,11 +393,7 @@ export default defineComponent({
         },
         onTelegramAuth(telegramPayload: {'id': number, 'first_name': string | null, 'username': string | null}) {
             userService.linkTelegram(this.currentUser, telegramPayload).then(() => {
-                this.$oruga.notification.open({
-                    position: 'top',
-                    message: "Cuenta enlazada a Telegram",
-                    variant: "info",
-                });
+                notificationService.showNotification("Cuenta enlazada a Telegram", "info");
 
                 this.currentUser.preferences['telegram-id'] = telegramPayload.id;
                 this.currentUser.preferences['telegram-firstname'] = telegramPayload.first_name;
