@@ -5,7 +5,7 @@
                 <div class="media-left">
                     <figure class="image is-48x48">
                         <router-link :to="'/communities/' + community.name">
-                            <img :src="community.image_url" alt="Logo">
+                            <img :src="community.communityImage()" alt="Logo">
                         </router-link>
                     </figure>
                 </div>

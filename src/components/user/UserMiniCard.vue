@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { User } from "@/types/User";
-import {defineComponent, PropType} from "vue";
+import {computed, defineComponent, PropType} from "vue";
 import {useDayjs} from "@/composables/useDayjs";
 
 export default defineComponent({
@@ -56,7 +56,7 @@ export default defineComponent({
     setup(props) {
         const dayjs = useDayjs();
         const dateDiff = dayjs.dateDiff;
-        const objUser = new User(props.user);
+        const objUser = computed(() => new User(props.user));
         return { dateDiff, objUser };
     }
 });

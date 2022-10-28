@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import {computed, defineComponent, PropType, toRef} from "vue";
-import {CircleStencil, Coordinates, Cropper, CropperResult} from 'vue-advanced-cropper';
+import {CircleStencil, Cropper, CropperResult} from 'vue-advanced-cropper';
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import {notificationService, userService} from "@/_services";
 import {useAuthStore} from "@/store/authStore";

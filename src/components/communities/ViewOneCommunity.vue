@@ -10,7 +10,7 @@
                     <div class="card">
                         <div class="card-image">
                             <figure class="image">
-                                <img :src="community.image_url" alt="Community logo">
+                                <img :src="community.communityImage()" alt="Community logo">
                             </figure>
                         </div>
                         <div class="card-content">
