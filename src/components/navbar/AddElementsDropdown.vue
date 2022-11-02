@@ -7,21 +7,21 @@
         </a>
 
         <div class="navbar-dropdown is-right">
-            <router-link class="navbar-item" to="/new/community">
+            <router-link class="navbar-item" :to="{name: 'communitiesCreate'}">
                 Crear Comunidad
             </router-link>
             <template v-if="isAdmin(currentUser)">
                 <hr class="navbar-divider">
-                <router-link class="navbar-item" to="/new/circuit">
+                <router-link class="navbar-item" :to="{name: 'circuitCreate'}">
                     Crear Circuito
                 </router-link>
-                <router-link class="navbar-item" to="/new/driver">
+                <router-link class="navbar-item" :to="{name: 'driverCreate'}">
                     Crear Piloto
                 </router-link>
-                <router-link class="navbar-item" to="/new/season">
+                <router-link class="navbar-item" :to="{name: 'seasonCreate'}">
                     Crear Temporada
                 </router-link>
-                <router-link class="navbar-item" to="/new/gp">
+                <router-link class="navbar-item" :to="{name: 'gpCreate'}">
                     Crear Gran Premio
                 </router-link>
             </template>
