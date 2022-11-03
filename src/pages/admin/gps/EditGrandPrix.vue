@@ -76,16 +76,18 @@
                                 </div>
                             </div>
 
-                            <o-field label="Imagen promocional del Gran Premio">
-                                <o-input v-model="grandPrix.promo_image_url" name="promo_image_url" expanded lazy></o-input>
-                            </o-field>
+                            <label class="label">Imagen promocional del Gran Premio</label>
+                            <figure class="image is-16by9">
+                                <img :src="grandPrix.promoImage()" alt="Promo image"/>
 
-                            <figure v-if="grandPrix.promo_image_url !== undefined" class="image is-256x256">
-                                <img :src="grandPrix.promo_image_url">
+                                <label class="icon edit-icon">
+                                    <i class="fa fa-camera"></i>
+                                    <input @change="onFileChange" accept="image/*" tabindex="-1" type="file" hidden>
+                                </label>
                             </figure>
 
 
-                            <button class="button is-primary mt-0" :disabled="!isDataOk()" @click="editGrandPrix()">Editar datos del gran premio</button>
+                            <button class="button is-primary mt-2" :disabled="!isDataOk()" @click="editGrandPrix()">Editar datos del gran premio</button>
                         </div>
                     </div>
 
@@ -101,12 +103,26 @@
             <AlertNoPermission />
         </section>
     </div>
+
+    <UploadFileModal v-show="showEditImageModal" @close="showEditImageModal = false"
+                     :stencilProps="{
+                        aspectRatio: 16/9
+                     }"
+                     :canvas="{
+                        maxWidth: 1080,
+                        maxHeight: 1024
+                     }"
+                     :file="selectedFile" stencil-component="rectangle"
+                     @submit-file="uploadPromoImage">
+        <template v-slot:title>Cambiar imagen de promoción del Gran Premio</template>
+    </UploadFileModal>
+
 </template>
 
 <script lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-import {circuitService, grandPrixService, notificationService, seasonService} from "@/_services";
+import {circuitService, grandPrixService, notificationService, seasonService, userService} from "@/_services";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
 import {GrandPrix} from "@/types/GrandPrix";
@@ -117,6 +133,7 @@ import {useAuthStore} from "@/store/authStore";
 import SessionsInGrandPrix from "@/components/admin/gps/SessionsInGrandPrix.vue";
 import DriversInGrandPrix from "@/components/admin/gps/DriversInGrandPrix.vue";
 import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
+import UploadFileModal from "@/components/lib/UploadFileModal.vue";
 
 export default defineComponent({
     name: "EditGrandPrix",
@@ -126,6 +143,7 @@ export default defineComponent({
         PrognoPageTitle,
         SessionsInGrandPrix,
         GrandPrixPagination,
+        UploadFileModal
     },
     setup() {
         const authStore = useAuthStore();
@@ -142,6 +160,9 @@ export default defineComponent({
             thereIsGrandPrix: false,
             isLoadingGrandPrix: true,
 
+            showEditImageModal: false,
+            selectedFile: null,
+
             circuitList: new Array<Circuit>(),
             seasonList: new Array<Season>(),
         }
@@ -153,7 +174,6 @@ export default defineComponent({
                 && this.grandPrix!.name == undefined
                 && this.grandPrix!.circuit!.id == undefined
                 && this.grandPrix!.laps == undefined
-                && this.grandPrix!.promo_image_url == undefined
                 && this.grandPrix!.round == undefined
                 && this.grandPrix!.season!.id == undefined
             )
@@ -168,7 +188,6 @@ export default defineComponent({
                 code: this.grandPrix!.code,
                 circuit: this.grandPrix!.circuit.id,
                 variant: this.grandPrix!.circuit.variant.name,
-                promo_image_url: this.grandPrix!.promo_image_url,
                 laps: this.grandPrix!.laps,
                 suspended: this.grandPrix!.suspended
             };
@@ -181,6 +200,23 @@ export default defineComponent({
                 })
             }).catch((error) => {
                 notificationService.showNotification(error.message, "danger");
+            });
+        },
+        onFileChange(e: any) {
+            this.showEditImageModal = false;
+            this.selectedFile = null;
+
+            let file = e.target.files[0];
+            if (file) {
+                this.selectedFile = file;
+                this.showEditImageModal = true;
+            }
+        },
+        uploadPromoImage(blob: Blob) {
+            grandPrixService.changePromoImage(this.grandPrix, blob).then(() => {
+                notificationService.showNotification("Has cambiado la imagen de promoción");
+            }).catch(() => {
+                notificationService.showNotification("Ha ocurrido un error cambiando la imagen de promoción", "danger");
             });
         }
     },

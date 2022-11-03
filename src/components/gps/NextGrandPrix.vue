@@ -12,7 +12,7 @@
             <div class="card-content">
                 <p class="subtitle has-text-weight-bold">Próximo Gran Premio</p>
                 <p class="title">{{nextGp.name}}</p>
-                <figure class="image is-4by3">
+                <figure class="image is-16by9">
                     <img v-if="nextGp.hasPromoImage" :src="nextGp.promoImage()">
                 </figure>
             </div>
