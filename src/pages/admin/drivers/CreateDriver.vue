@@ -2,7 +2,6 @@
     <div id="createDriver" class="box">
         <PrognoPageTitle class="mb-5" name="Crear piloto" />
 
-        <section v-if="isAdmin(currentUser)">
             <o-steps v-model="activeStep">
                 <o-step-item step="1" label="Datos del piloto">
                     <h2 class="title">Datos del piloto</h2>
@@ -69,10 +68,6 @@
                     </o-field>
                 </o-step-item>
             </o-steps>
-        </section>
-        <section v-else>
-            <AlertNoPermission />
-        </section>
     </div>
 </template>
 

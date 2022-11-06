@@ -1,64 +1,60 @@
 <template>
     <div id="adminSession" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de Sesión" />
+        <PrognoPageTitle class="mb-5" name="Administración de Sesión"/>
 
-        <AlertNoPermission v-if="!isAdmin(currentUser)"/>
-        <section v-else>
+        <form @submit.prevent="submitForm($event)">
+            <table class="table is-striped is-hoverable is-fullwidth">
+                <thead>
+                <tr>
+                    <th v-for="col in columns">
+                        <span>{{ col.label }}</span>
+                    </th>
+                    <th>
+                        Acciones
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td v-for="(col, colIndex) in columns">
+                        <!-- Formulario de creación nuevo elemento -->
+                        <input v-if="col.editable" class="input" :required="isEditing" :disabled="isEditing"
+                               :type="col.type" :placeholder="col.label" v-model="newSession[col.field]"
+                               @input="newSession[col.field] = newSession[col.field].toUpperCase()"
+                        >
+                        <span v-else></span>
+                    </td>
+                    <td>
+                        <button class="button is-primary is-small" type="submit">Añadir</button>
+                    </td>
+                </tr>
 
-            <form @submit.prevent="submitForm($event)">
-                <table class="table is-striped is-hoverable is-fullwidth">
-                    <thead>
-                        <tr>
-                            <th v-for="col in columns">
-                                <span>{{ col.label }}</span>
-                            </th>
-                            <th>
-                                Acciones
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td v-for="(col, colIndex) in columns">
-                                <!-- Formulario de creación nuevo elemento -->
-                                <input v-if="col.editable" class="input" :required="isEditing" :disabled="isEditing"
-                                       :type="col.type" :placeholder="col.label" v-model="newSession[col.field]"
-                                       @input="newSession[col.field] = newSession[col.field].toUpperCase()"
-                                >
-                                <span v-else></span>
-                            </td>
-                            <td>
-                                <button class="button is-primary is-small" type="submit">Añadir</button>
-                            </td>
-                        </tr>
+                <tr v-for="(session, index) in sessions" :key="index">
+                    <td v-for="(col, colIndex) in columns" :key="colIndex">
 
-                        <tr v-for="(session, index) in sessions" :key="index">
-                            <td v-for="(col, colIndex) in columns" :key="colIndex">
+                        <!-- Si no se está editando se muestra el contenido -->
+                        <template v-if="(editedSession?.name !== session.name) || !col.editable">
+                            {{ session[col.field] }}
+                        </template>
 
-                                <!-- Si no se está editando se muestra el contenido -->
-                                <template v-if="(editedSession?.name !== session.name) || !col.editable">
-                                    {{ session[col.field] }}
-                                </template>
+                        <!-- Editando: mostrar input -->
+                        <input v-else class="input" required
+                               :type="col.type" :placeholder="col.label" v-model="editedSession[col.field]"
+                               @input="editedSession[col.field] = editedSession[col.field].toUpperCase()"
+                        >
+                    </td>
 
-                                <!-- Editando: mostrar input -->
-                                <input v-else class="input" required
-                                       :type="col.type" :placeholder="col.label" v-model="editedSession[col.field]"
-                                       @input="editedSession[col.field] = editedSession[col.field].toUpperCase()"
-                                >
-                            </td>
-
-                            <td>
+                    <td>
                                 <span class="buttons are-small">
                                     <button type="submit" class="button is-primary" v-if="editedSession?.name === session.name">Guardar</button>
-                                    <button type="button" class="button is-warning" v-else @click="editedSession = session" >Editar</button>
+                                    <button type="button" class="button is-warning" v-else @click="editedSession = session">Editar</button>
                                     <button type="button" class="button is-danger" @click="confirmDeleteSession(session)">Eliminar</button>
                                 </span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </form>
-        </section>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
 
     </div>
 </template>

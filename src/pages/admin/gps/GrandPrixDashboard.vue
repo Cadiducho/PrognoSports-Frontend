@@ -2,93 +2,86 @@
     <div id="adminGps" class="box">
         <PrognoPageTitle class="mb-5" name="Administración de Grandes Premios" />
 
-        <section v-if="isAdmin(currentUser)">
-
-            <nav class="block is-flex is-justify-content-space-between">
-                <p class="control">
-                    <o-button variant="link" :to="{name: 'gpCreate'}" tag="router-link">Nuevo Gran Premio</o-button>
-                </p>
-                <o-select v-if="seasonList" v-model="chosenSeason" placeholder="Selecciona la temporada"  @change="changeSeason()" >
-                    <option
-                        v-for="season in seasonList"
-                        :value="season"
-                        :key="season.id">
-                        {{ season.name }} (#{{ season.id }}) - {{ season.competition.name }}
-                    </option>
-                </o-select>
-            </nav>
+        <nav class="block is-flex is-justify-content-space-between">
+            <p class="control">
+                <o-button variant="link" :to="{name: 'gpCreate'}" tag="router-link">Nuevo Gran Premio</o-button>
+            </p>
+            <o-select v-if="seasonList" v-model="chosenSeason" placeholder="Selecciona la temporada" @change="changeSeason()">
+                <option
+                    v-for="season in seasonList"
+                    :value="season"
+                    :key="season.id">
+                    {{ season.name }} (#{{ season.id }}) - {{ season.competition.name }}
+                </option>
+            </o-select>
+        </nav>
 
 
-            <o-field class="block">
-                <o-input
-                    v-model="filtroGrandprix"
-                    placeholder="Buscar gran premio"
-                    type="search"
-                    icon-pack="fas"
-                    icon="search"
-                ></o-input>
-            </o-field>
+        <o-field class="block">
+            <o-input
+                v-model="filtroGrandprix"
+                placeholder="Buscar gran premio"
+                type="search"
+                icon-pack="fas"
+                icon="search"
+            ></o-input>
+        </o-field>
 
-            <o-switch v-model="isPaginated">Paginated</o-switch>
+        <o-switch v-model="isPaginated">Paginated</o-switch>
 
-            <o-table :data="filteredGps"
-                    hoverable striped
-                     :paginated="isPaginated"
-                     per-page="15">
+        <o-table :data="filteredGps"
+                 hoverable striped
+                 :paginated="isPaginated"
+                 per-page="15">
 
-                <o-table-column field="round" label="Round" width="40" sortable v-slot="props">
-                    #{{ props.row.round }}
-                </o-table-column>
+            <o-table-column field="round" label="Round" width="40" sortable v-slot="props">
+                #{{ props.row.round }}
+            </o-table-column>
 
-                <o-table-column field="name" label="Name" sortable  v-slot="props">
-                    {{ props.row.name }}
-                </o-table-column>
+            <o-table-column field="name" label="Name" sortable v-slot="props">
+                {{ props.row.name }}
+            </o-table-column>
 
-                <o-table-column field="season" label="Season" sortable v-slot="props">
-                    {{ props.row.season.name }}
-                </o-table-column>
+            <o-table-column field="season" label="Season" sortable v-slot="props">
+                {{ props.row.season.name }}
+            </o-table-column>
 
-                <o-table-column field="code" label="Code" sortable v-slot="props">
-                    {{ props.row.code }}
-                </o-table-column>
+            <o-table-column field="code" label="Code" sortable v-slot="props">
+                {{ props.row.code }}
+            </o-table-column>
 
-                <o-table-column field="laps" label="Laps" width="40" sortable v-slot="props">
-                    {{ props.row.laps }}
-                </o-table-column>
+            <o-table-column field="laps" label="Laps" width="40" sortable v-slot="props">
+                {{ props.row.laps }}
+            </o-table-column>
 
-                <o-table-column field="circuit" label="Circuit" sortable v-slot="props">
-                    {{ props.row.circuit.name }}
-                    <span v-if="hasVariant(props.row.circuit)"
-                        class="tag is-info">
+            <o-table-column field="circuit" label="Circuit" sortable v-slot="props">
+                {{ props.row.circuit.name }}
+                <span v-if="hasVariant(props.row.circuit)"
+                      class="tag is-info">
                         {{ props.row.circuit.variant.name }}
                     </span>
-                </o-table-column>
+            </o-table-column>
 
-                <o-table-column field="sessions" label="Sessions" v-slot="props">
-                    <div class="tags are-small">
+            <o-table-column field="sessions" label="Sessions" v-slot="props">
+                <div class="tags are-small">
                         <span class="tag is-danger" v-if="!props.row.sessions.length">
                             No hay sesiones
                         </span>
-                        <span class="tag is-success" v-for="ses in props.row.sessions">
+                    <span class="tag is-success" v-for="ses in props.row.sessions">
                             {{ ses.name }}
                         </span>
-                    </div>
-                </o-table-column>
+                </div>
+            </o-table-column>
 
-                <o-table-column label="Actions" v-slot="props">
+            <o-table-column label="Actions" v-slot="props">
                     <span class="tags">
                         <router-link class="tag is-info" :to="`/gps/${getSlug(props.row)}`">Ver</router-link>
                         <router-link class="tag is-warning" :to="`/admin/gps/${getSlug(props.row)}`">Editar</router-link>
                         <span class="tag is-danger" @click="confirmDeleteGrandPrix(props.row)">Eliminar</span>
                     </span>
-                </o-table-column>
+            </o-table-column>
 
-            </o-table>
-
-        </section>
-        <section v-else>
-            <AlertNoPermission />
-        </section>
+        </o-table>
     </div>
 </template>
 

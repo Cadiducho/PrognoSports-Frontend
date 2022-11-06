@@ -1,52 +1,46 @@
 <template>
     <div id="seasonEdit" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de temporadas" />
+        <PrognoPageTitle class="mb-5" name="Administración de temporadas"/>
 
-        <section v-if="isAdmin(currentUser)">
+        <loading v-if="isLoading"/>
+        <template v-else>
 
-            <loading v-if="isLoading" />
+            <div class="block">
+                <o-button variant="link" to="/admin/seasons" tag="router-link">Lista de temporada</o-button>
+            </div>
+
+            <p v-if="!thereIsSeason">La temporada {{ seasonId }} no ha sido encontrada</p>
             <template v-else>
 
-                <div class="block">
-                    <o-button variant="link" to="/admin/seasons" tag="router-link">Lista de temporada</o-button>
-                </div>
+                <h2 class="title">Datos de la temporada</h2>
 
-                <p v-if="!thereIsSeason">La temporada {{ seasonId }} no ha sido encontrada</p>
-                <template v-else>
+                <o-field label="Nombre de la temporada">
+                    <o-input v-model="season.name" name="name" expanded lazy></o-input>
+                </o-field>
 
-                    <h2 class="title">Datos de la temporada</h2>
+                <o-field label="Número de eventos">
+                    <o-input v-model="season.totalEvents" name="longitude" expanded lazy type="number" step="any"></o-input>
+                </o-field>
 
-                    <o-field label="Nombre de la temporada">
-                        <o-input v-model="season.name" name="name" expanded lazy></o-input>
-                    </o-field>
+                <o-field label="Competición">
+                    <o-select v-model="season.competition.id" placeholder="Selecciona una competición" expanded>
+                        <option
+                            v-for="comp in competitions"
+                            :value="comp.id"
+                            :key="comp.id">
+                            {{ comp.name }} ({{ comp.code }}) - {{ comp.fullname }}
+                        </option>
+                    </o-select>
+                </o-field>
 
-                    <o-field label="Número de eventos">
-                        <o-input v-model="season.totalEvents" name="longitude" expanded lazy type="number" step="any"></o-input>
-                    </o-field>
-
-                    <o-field label="Competición">
-                        <o-select v-model="season.competition.id" placeholder="Selecciona una competición" expanded>
-                            <option
-                                v-for="comp in competitions"
-                                :value="comp.id"
-                                :key="comp.id">
-                                {{ comp.name }} ({{ comp.code }}) - {{ comp.fullname }}
-                            </option>
-                        </o-select>
-                    </o-field>
-
-                    <o-field>
-                        <p class="control">
-                            <o-button :disabled="!isDataOk()" label="Editar temporada" @click="editSeason()" variant="primary" />
-                        </p>
-                    </o-field>
-                </template>
+                <o-field>
+                    <p class="control">
+                        <o-button :disabled="!isDataOk()" label="Editar temporada" @click="editSeason()" variant="primary"/>
+                    </p>
+                </o-field>
             </template>
+        </template>
 
-        </section>
-        <section v-else>
-            <AlertNoPermission />
-        </section>
     </div>
 </template>
 

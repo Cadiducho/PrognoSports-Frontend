@@ -1,54 +1,48 @@
 <template>
     <div id="adminConstructor" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de Constructores" />
+        <PrognoPageTitle class="mb-5" name="Administración de Constructores"/>
 
-        <section v-if="isAdmin(currentUser)">
+        <div class="block">
+            <o-button variant="link" to="/new/constructor" tag="router-link">Nuevo constructor</o-button>
+        </div>
 
-            <div class="block">
-                <o-button variant="link" to="/new/constructor" tag="router-link">Nuevo constructor</o-button>
-            </div>
+        <o-field>
+            <o-input
+                v-model="filtroTeam"
+                placeholder="Buscar constructor"
+                type="search"
+                icon-pack="fas"
+                icon="search"
+            ></o-input>
+        </o-field>
 
-            <o-field>
-                <o-input
-                    v-model="filtroTeam"
-                    placeholder="Buscar constructor"
-                    type="search"
-                    icon-pack="fas"
-                    icon="search"
-                ></o-input>
-            </o-field>
+        <div class="block">
+            <o-switch v-model="isPaginated">Paginated</o-switch>
+        </div>
 
-            <div class="block">
-                <o-switch v-model="isPaginated">Paginated</o-switch>
-            </div>
+        <o-table :data="filteredDrivers"
+                 hoverable striped
+                 :paginated="isPaginated"
+                 per-page="15">
 
-            <o-table :data="filteredDrivers"
-                    hoverable striped
-                     :paginated="isPaginated"
-                     per-page="15">
+            <o-table-column field="id" label="ID" width="40" sortable v-slot="props">
+                {{ props.row.id }}
+            </o-table-column>
 
-                <o-table-column field="id" label="ID" width="40" sortable v-slot="props">
-                    {{ props.row.id }}
-                </o-table-column>
+            <o-table-column field="name" label="Nombre" sortable v-slot="props">
+                {{ props.row.name }}
+            </o-table-column>
 
-                <o-table-column field="name" label="Nombre" sortable v-slot="props">
-                    {{ props.row.name }}
-                </o-table-column>
-
-                <o-table-column label="Actions" v-slot="props">
+            <o-table-column label="Actions" v-slot="props">
                     <span class="tags">
                         <span class="tag is-link">Ver</span>
                         <span class="tag is-warning">Editar</span>
                         <span class="tag is-danger">Eliminar</span>
                     </span>
-                </o-table-column>
+            </o-table-column>
 
-            </o-table>
+        </o-table>
 
-        </section>
-        <section v-else>
-            <AlertNoPermission />
-        </section>
     </div>
 </template>
 

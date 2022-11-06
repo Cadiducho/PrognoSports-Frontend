@@ -10,7 +10,7 @@
             <router-link class="navbar-item" :to="{name: 'communitiesCreate'}">
                 Crear Comunidad
             </router-link>
-            <template v-if="isAdmin(currentUser)">
+            <template v-if="currentUser.isAdmin()">
                 <hr class="navbar-divider">
                 <router-link class="navbar-item" :to="{name: 'circuitCreate'}">
                     Crear Circuito

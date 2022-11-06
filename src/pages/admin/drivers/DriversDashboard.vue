@@ -1,77 +1,70 @@
 <template>
     <div id="adminDrivers" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de pilotos" />
+        <PrognoPageTitle class="mb-5" name="Administración de pilotos"/>
 
-        <section v-if="isAdmin(currentUser)">
+        <div class="block">
+            <o-button variant="link" :to="{name: 'driverCreate'}" tag="router-link">Nuevo piloto</o-button>
+        </div>
 
-            <div class="block">
-                <o-button variant="link" :to="{name: 'driverCreate'}" tag="router-link">Nuevo piloto</o-button>
-            </div>
+        <o-field>
+            <o-input
+                v-model="filtroPiloto"
+                placeholder="Buscar piloto"
+                type="search"
+                icon-pack="fas"
+                icon="search"
+            ></o-input>
+        </o-field>
 
-            <o-field>
-                <o-input
-                    v-model="filtroPiloto"
-                    placeholder="Buscar piloto"
-                    type="search"
-                    icon-pack="fas"
-                    icon="search"
-                ></o-input>
-            </o-field>
+        <div class="block">
+            <o-switch v-model="isPaginated">Paginated</o-switch>
+        </div>
 
-            <div class="block">
-                <o-switch v-model="isPaginated">Paginated</o-switch>
-            </div>
+        <o-table :data="filteredDrivers"
+                 hoverable striped
+                 :paginated="isPaginated"
+                 per-page="15">
 
-            <o-table :data="filteredDrivers"
-                    hoverable striped
-                     :paginated="isPaginated"
-                     per-page="15">
+            <o-table-column field="id" label="ID" width="40" sortable v-slot="props">
+                {{ props.row.id }}
+            </o-table-column>
 
-                <o-table-column field="id" label="ID" width="40" sortable v-slot="props">
-                    {{ props.row.id }}
-                </o-table-column>
+            <o-table-column field="first_name" label="First Name" sortable v-slot="props">
+                {{ props.row.firstname }}
+            </o-table-column>
 
-                <o-table-column field="first_name" label="First Name" sortable v-slot="props">
-                    {{ props.row.firstname }}
-                </o-table-column>
+            <o-table-column field="last_name" label="Last Name" sortable v-slot="props">
+                {{ props.row.lastname }}
+            </o-table-column>
 
-                <o-table-column field="last_name" label="Last Name" sortable v-slot="props">
-                    {{ props.row.lastname }}
-                </o-table-column>
-
-                <o-table-column field="code" label="Code" sortable v-slot="props" width="60">
+            <o-table-column field="code" label="Code" sortable v-slot="props" width="60">
                     <span class="tag is-primary is-rounded">
                         {{ props.row.code }}
                     </span>
-                </o-table-column>
+            </o-table-column>
 
-                <o-table-column field="nationality" label="Nationality" sortable v-slot="props">
-                    {{ props.row.nationality }}
-                </o-table-column>
+            <o-table-column field="nationality" label="Nationality" sortable v-slot="props">
+                {{ props.row.nationality }}
+            </o-table-column>
 
-                <o-table-column field="birth" label="Birth" centered sortable v-slot="props">
+            <o-table-column field="birth" label="Birth" centered sortable v-slot="props">
                     <span class="tag is-success" v-if="props.row.birth">
                         {{ humanDate(props.row.birth) }}
                     </span>
-                    <span class="tag is-warning" v-else>
+                <span class="tag is-warning" v-else>
                         Sin fecha
                     </span>
-                </o-table-column>
+            </o-table-column>
 
-                <o-table-column label="Actions" v-slot="props">
+            <o-table-column label="Actions" v-slot="props">
                     <span class="tags">
                         <span class="tag is-link">Ver</span>
                         <span class="tag is-warning">Editar</span>
                         <span class="tag is-danger">Eliminar</span>
                     </span>
-                </o-table-column>
+            </o-table-column>
 
-            </o-table>
-
-        </section>
-        <section v-else>
-            <AlertNoPermission />
-        </section>
+        </o-table>
     </div>
 </template>
 

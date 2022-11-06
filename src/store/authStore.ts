@@ -1,7 +1,6 @@
 import {defineStore} from 'pinia'
 import {User} from "@/types/User";
 import {Community} from "@/types/Community";
-import {isValidUser} from "@/utils";
 import {authService, userService} from "@/_services";
 import {useCommunityStore} from "@/store/communityStore";
 
@@ -14,7 +13,7 @@ export const useAuthStore = defineStore('auth', {
     }),
     getters: {
         isLoggedIn(): boolean {
-            return isValidUser(this.user);
+            return this.user.id !== 0;
         },
         loggedUser(): User {
             return new User(this.user);

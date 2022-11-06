@@ -2,78 +2,71 @@
     <div id="adminUsers" class="box">
         <PrognoPageTitle class="mb-5" name="Administración de usuarios" />
 
-        <section v-if="isAdmin(currentUser)">
+        <o-field>
+            <o-input
+                v-model="filtroUsuario"
+                placeholder="Buscar usuario"
+                type="search"
+                icon-pack="fas"
+                icon="search"
+            ></o-input>
+        </o-field>
 
+        <div class="block">
+            <o-switch v-model="isPaginated">Paginated</o-switch>
+        </div>
 
-            <o-field>
-                <o-input
-                    v-model="filtroUsuario"
-                    placeholder="Buscar usuario"
-                    type="search"
-                    icon-pack="fas"
-                    icon="search"
-                ></o-input>
-            </o-field>
+        <o-table :data="filteredUsers"
+                 hoverable striped
+                 :paginated="isPaginated"
+                 per-page="15">
 
-            <div class="block">
-                <o-switch v-model="isPaginated">Paginated</o-switch>
-            </div>
+            <o-table-column field="id" label="ID" width="40" sortable v-slot="props">
+                {{ props.row.id }}
+            </o-table-column>
 
-            <o-table :data="filteredUsers"
-                     hoverable striped
-                     :paginated="isPaginated"
-                     per-page="15">
+            <o-table-column field="username" label="Username" sortable v-slot="props">
+                {{ props.row.username }}
+            </o-table-column>
 
-                <o-table-column field="id" label="ID" width="40" sortable v-slot="props">
-                    {{ props.row.id }}
-                </o-table-column>
+            <o-table-column field="email" label="Email" sortable v-slot="props">
+                {{ props.row.email }}
+            </o-table-column>
 
-                <o-table-column field="username" label="Username" sortable v-slot="props">
-                    {{ props.row.username }}
-                </o-table-column>
-
-                <o-table-column field="email" label="Email" sortable v-slot="props">
-                    {{ props.row.email }}
-                </o-table-column>
-
-                <o-table-column field="rank.name" label="Rango" sortable v-slot="props" width="60">
+            <o-table-column field="rank.name" label="Rango" sortable v-slot="props" width="60">
                     <span class="tag is-primary is-rounded">
                         {{ props.row.rank.name }}
                     </span>
-                </o-table-column>
+            </o-table-column>
 
-                <o-table-column field="created" label="Creado" centered sortable v-slot="props">
+            <o-table-column field="created" label="Creado" centered sortable v-slot="props">
                     <span class="tag is-success" v-if="props.row.created">
                         {{ humanDateTime(props.row.created) }}
                     </span>
-                    <span class="tag is-warning" v-else>
+                <span class="tag is-warning" v-else>
                         Sin fecha
                     </span>
-                </o-table-column>
+            </o-table-column>
 
-                <o-table-column field="last_activity" label="Última actividad" centered sortable v-slot="props">
+            <o-table-column field="last_activity" label="Última actividad" centered sortable v-slot="props">
                     <span class="tag is-success" v-if="props.row.last_activity">
                         {{ humanDateTime(props.row.last_activity) }}
                     </span>
-                    <span class="tag is-warning" v-else>
+                <span class="tag is-warning" v-else>
                         Sin fecha
                     </span>
-                </o-table-column>
+            </o-table-column>
 
-                <o-table-column label="Actions" v-slot="props">
+            <o-table-column label="Actions" v-slot="props">
                     <span class="tags">
                         <span class="tag is-link">Ver</span>
                         <span class="tag is-warning">Editar</span>
                         <span class="tag is-danger">Eliminar</span>
                     </span>
-                </o-table-column>
+            </o-table-column>
 
-            </o-table>
+        </o-table>
 
-        </section>
-        <section v-else>
-            <AlertNoPermission />
-        </section>
     </div>
 </template>
 

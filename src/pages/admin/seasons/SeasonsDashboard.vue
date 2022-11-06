@@ -1,61 +1,54 @@
 <template>
     <div id="seasonList" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de temporadas" />
+        <PrognoPageTitle class="mb-5" name="Administración de temporadas"/>
 
-        <section v-if="isAdmin(currentUser)">
+        <div class="block">
+            <o-button variant="link" :to="{name: 'seasonCreate'}" tag="router-link">Nueva temporada</o-button>
+        </div>
 
-            <div class="block">
-                <o-button variant="link" :to="{name: 'seasonCreate'}" tag="router-link">Nueva temporada</o-button>
-            </div>
+        <o-field>
+            <o-input
+                v-model="filtroSeason"
+                placeholder="Buscar temporada"
+                type="search"
+                icon-pack="fas"
+                icon="search"
+            ></o-input>
+        </o-field>
 
-            <o-field>
-                <o-input
-                    v-model="filtroSeason"
-                    placeholder="Buscar temporada"
-                    type="search"
-                    icon-pack="fas"
-                    icon="search"
-                ></o-input>
-            </o-field>
+        <div class="block">
+            <o-switch v-model="isPaginated">Paginated</o-switch>
+        </div>
 
-            <div class="block">
-                <o-switch v-model="isPaginated">Paginated</o-switch>
-            </div>
+        <o-table :data="filteredSeasons"
+                 hoverable striped
+                 :paginated="isPaginated"
+                 per-page="15">
 
-            <o-table :data="filteredSeasons"
-                    hoverable striped
-                     :paginated="isPaginated"
-                     per-page="15">
+            <o-table-column field="id" label="ID" width="40" sortable numeric v-slot="props">
+                {{ props.row.id }}
+            </o-table-column>
 
-                <o-table-column field="id" label="ID" width="40" sortable numeric v-slot="props">
-                    {{ props.row.id }}
-                </o-table-column>
+            <o-table-column field="competition.name" label="Competición" sortable v-slot="props">
+                {{ props.row.competition.name }}
+            </o-table-column>
 
-                <o-table-column field="competition.name" label="Competición" sortable v-slot="props">
-                    {{ props.row.competition.name }}
-                </o-table-column>
+            <o-table-column field="name" label="Name" sortable v-slot="props">
+                {{ props.row.name }}
+            </o-table-column>
 
-                <o-table-column field="name" label="Name" sortable v-slot="props">
-                    {{ props.row.name }}
-                </o-table-column>
+            <o-table-column field="totalEvents" label="Total Events" sortable numeric v-slot="props">
+                {{ props.row.totalEvents }}
+            </o-table-column>
 
-                <o-table-column field="totalEvents" label="Total Events" sortable numeric v-slot="props">
-                        {{ props.row.totalEvents }}
-                </o-table-column>
-
-                <o-table-column label="Actions" v-slot="props">
+            <o-table-column label="Actions" v-slot="props">
                     <span class="tags">
                         <router-link class="tag is-warning" :to="'/admin/seasons/' + props.row.id">Editar</router-link>
                         <span class="tag is-danger" @click="confirmDeleteSeason(props.row)">Eliminar</span>
                     </span>
-                </o-table-column>
+            </o-table-column>
 
-            </o-table>
-
-        </section>
-        <section v-else>
-            <AlertNoPermission />
-        </section>
+        </o-table>
     </div>
 </template>
 

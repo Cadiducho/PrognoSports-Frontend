@@ -120,7 +120,7 @@ export const routes = [
     // Admin
     {
         path: '/admin',
-        meta: { requiresAuth: true, title: "Admin" },
+        meta: { requiresAuth: true, requiresAdmin: true, title: "Admin" },
         component: PrognoLayout,
         children: [
             {
@@ -232,19 +232,19 @@ export const routes = [
                 path: 'competition',
                 name: 'competitionCreate',
                 component: () => import('@/pages/admin/competitions/CreateCompetition.vue'),
-                meta: { title: "Nueva competición" }
+                meta: { title: "Nueva competición", requiresAdmin: true }
             },
             {
                 path: 'season',
                 name: 'seasonCreate',
                 component: () => import('@/pages/admin/seasons/CreateSeason.vue'),
-                meta: { title: "Nueva temporada" }
+                meta: { title: "Nueva temporada", requiresAdmin: true }
             },
             {
                 path: 'circuit',
                 name: 'circuitCreate',
                 component: () => import('@/pages/admin/circuits/CreateCircuit.vue'),
-                meta: { title: "Nuevo circuito" }
+                meta: { title: "Nuevo circuito", requiresAdmin: true }
             },
             {
                 path: 'community',
@@ -256,13 +256,13 @@ export const routes = [
                 path: 'driver',
                 name: 'driverCreate',
                 component: () => import('@/pages/admin/drivers/CreateDriver.vue'),
-                meta: { title: "Nuevo piloto" }
+                meta: { title: "Nuevo piloto", requiresAdmin: true }
             },
             {
                 path: 'grandprix',
                 name: 'gpCreate',
                 component: () => import('@/pages/admin/gps/CreateGrandPrix.vue'),
-                meta: { title: "Nuevo gran premio" }
+                meta: { title: "Nuevo gran premio", requiresAdmin: true }
             },
         ]
     },

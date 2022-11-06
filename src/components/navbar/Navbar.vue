@@ -24,10 +24,10 @@
                     <router-link class="navbar-item" to="/circuits">
                         Circuitos
                     </router-link>
-                    <router-link v-if="currentUser" class="navbar-item" to="/ranking">
+                    <router-link class="navbar-item" to="/ranking">
                         Ranking
                     </router-link>
-                    <router-link v-if="currentUser && isAdmin(currentUser)" class="navbar-item" to="/admin">
+                    <router-link v-if="currentUser.isAdmin()" class="navbar-item" to="/admin">
                         Admin
                     </router-link>
                 </div>
@@ -45,7 +45,7 @@
                     </div>
                 </div>
 
-                <div v-if="isValidUser(currentUser)" class="navbar-end" >
+                <div v-if="isLoggedIn" class="navbar-end" >
                     <CommunitiesDropdown v-if="isValidCommunity(currentCommunity)"/>
                     <NotificationsDropdown />
                     <AddElementsDropdown />

@@ -1,68 +1,61 @@
 <template>
 
-    <section class="box" v-if="isAdmin(currentUser)">
+    <loading v-if="isLoadingData"/>
+    <template v-else>
 
-        <loading v-if="isLoadingData"/>
+        <div class="columns is-variable is-5">
+            <div class="column">
+                <PrognoPageTitle :name="'Administración de ' + grandPrix.name + ' de ' + grandPrix.season.name"/>
+            </div>
+            <div class="column is-3">
+                <GrandPrixPagination isAdminPag :competition="competition" :grand-prix="grandPrix"/>
+            </div>
+        </div>
+
+        <div class="block">
+            <o-button variant="link" :to="{ name: 'adminGpEdit' }" tag="router-link">
+                Volver al Gran Premio
+            </o-button>
+        </div>
+
+        <p v-if="!dataLoaded">El Gran Premio {{ id }} {{ session }} no ha sido encontrado</p>
         <template v-else>
 
-            <div class="columns is-variable is-5">
+            <div class="columns">
+                <div class="column is-one-fifth">
+                    <SessionsInGrandPrix :grand-prix="grandPrix" :sessions="grandPrix.sessions"/>
+                </div>
+
                 <div class="column">
-                    <PrognoPageTitle :name="'Administración de ' + grandPrix.name + ' de ' + grandPrix.season.name"/>
-                </div>
-                <div class="column is-3">
-                    <GrandPrixPagination isAdminPag :competition="competition" :grand-prix="grandPrix"/>
-                </div>
-            </div>
+                    <h2 class="title">Datos del {{ grandPrix.name }} en {{ session.humanName() }}</h2>
 
-            <div class="block">
-                <o-button variant="link" :to="{ name: 'adminGpEdit' }" tag="router-link">
-                    Volver al Gran Premio
-                </o-button>
-            </div>
+                    <o-field label="Fecha de la sesión">
+                        <bulma_calendar :value="session.date" :options="calendarOptions"
+                                        v-on:input="session.date = $event;"/>
+                    </o-field>
 
-            <p v-if="!dataLoaded">El Gran Premio {{ id }} {{ session }} no ha sido encontrado</p>
-            <template v-else>
+                    <button class="button is-primary mt-0" @click="changeSessionData()">
+                        Editar datos de la sesión
+                    </button>
 
-                <div class="columns">
-                    <div class="column is-one-fifth">
-                        <SessionsInGrandPrix :grand-prix="grandPrix" :sessions="grandPrix.sessions"/>
-                    </div>
+                    <hr/>
 
-                    <div class="column">
-                        <h2 class="title">Datos del {{ grandPrix.name }} en {{ session.humanName() }}</h2>
-
-                        <o-field label="Fecha de la sesión">
-                            <bulma_calendar :value="session.date" :options="calendarOptions"
-                                            v-on:input="session.date = $event;"/>
-                        </o-field>
-
-                        <button class="button is-primary mt-0" @click="changeSessionData()">
-                            Editar datos de la sesión
-                        </button>
-
-                        <hr/>
-
-                        <!-- Si no es quali, hay resultados y grid-->
-                        <div v-if="session.hasGrid" class="columns">
-                            <div class="column">
-                                <EditResults :grandPrix="grandPrix" :session="session" :resultsInSession="resultsInSession" />
-                            </div>
-                            <div class="column">
-                                <h3 class="subtitle">Parrilla de {{ session.humanName() }}</h3>
-                            </div>
+                    <!-- Si no es quali, hay resultados y grid-->
+                    <div v-if="session.hasGrid" class="columns">
+                        <div class="column">
+                            <EditResults :grandPrix="grandPrix" :session="session" :resultsInSession="resultsInSession"/>
                         </div>
-                        <!-- En caso contrario mostrar solo selector de resultados -->
-                        <EditResults v-else :grandPrix="grandPrix" :session="session" :resultsInSession="resultsInSession" />
-
+                        <div class="column">
+                            <h3 class="subtitle">Parrilla de {{ session.humanName() }}</h3>
+                        </div>
                     </div>
-                </div>
-            </template>
-        </template>
+                    <!-- En caso contrario mostrar solo selector de resultados -->
+                    <EditResults v-else :grandPrix="grandPrix" :session="session" :resultsInSession="resultsInSession"/>
 
-    </section>
-    <section class="box" v-else>
-        <AlertNoPermission/>
-    </section>
+                </div>
+            </div>
+        </template>
+    </template>
 </template>
 
 <script lang="ts">

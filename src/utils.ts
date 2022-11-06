@@ -5,26 +5,10 @@
  * se reunen aquí tomando como parámetro el objeto que debería tener la función
  */
 
-import {UserRank} from "@/types/UserRank";
 import {Circuit} from "@/types/Circuit";
 import {Community} from "@/types/Community";
 import {RaceSession} from "@/types/RaceSession";
-import dayjs from "dayjs";
-import {User} from "@/types/User";
 import {RuleSet} from "@/types/RuleSet";
-
-/**
- * Compara un {@link UserRank} para determinar si es administrador o no
- * @param user El rango a comparar
- * @return True si es administrador
- */
-export function isAdmin(user: User): boolean {
-    if (isValidUser(user)) {
-        return user.rank.name.toLowerCase() === "admin";
-    }
-    return false;
-}
-
 
 /**
  * Comprobar si un circuito tiene una variante válida y diferente a la por defecto, "grandprix"
@@ -46,8 +30,4 @@ export function cantidadPilotosPronosticados(ruleSet: RuleSet, session: RaceSess
 
 export function isValidCommunity(community: Community): boolean {
     return community.id !== 0;
-}
-
-export function isValidUser(user: User): boolean {
-    return user.id !== 0;
 }

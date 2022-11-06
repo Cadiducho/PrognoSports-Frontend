@@ -1,107 +1,100 @@
 <template>
     <div id="adminDrivers" class="box">
 
-        <section v-if="isAdmin(currentUser)">
+        <loading v-if="isLoadingGrandPrix"/>
+        <template v-else>
 
-            <loading v-if="isLoadingGrandPrix" />
+            <div class="columns is-variable is-5">
+                <div class="column">
+                    <PrognoPageTitle :name="'Administración de ' + grandPrix.name + ' de ' + grandPrix.season.name"/>
+                </div>
+                <div class="column is-3">
+                    <GrandPrixPagination isAdminPag :competition="competition" :grand-prix="grandPrix"/>
+                </div>
+            </div>
+
+            <div class="block">
+                <o-button variant="link" to="/admin/gps" tag="router-link">Lista de grandes premios</o-button>
+            </div>
+
+            <p v-if="!thereIsGrandPrix">El Gran Premio {{ id }} no ha sido encontrado</p>
             <template v-else>
 
-                <div class="columns is-variable is-5">
+                <div class="columns">
+                    <div class="column is-one-fifth">
+                        <SessionsInGrandPrix :grand-prix="grandPrix" :sessions="grandPrix.sessions"/>
+                    </div>
                     <div class="column">
-                        <PrognoPageTitle :name="'Administración de ' + grandPrix.name + ' de ' + grandPrix.season.name" />
-                    </div>
-                    <div class="column is-3">
-                        <GrandPrixPagination isAdminPag :competition="competition" :grand-prix="grandPrix"/>
+                        <h2 class="title">Datos del {{ grandPrix.name }}</h2>
+
+                        <div class="columns">
+                            <div class="column is-four-fifths">
+                                <o-field label="Nombre">
+                                    <o-input v-model="grandPrix.name" name="name" expanded lazy></o-input>
+                                </o-field>
+                            </div>
+                            <div class="column">
+                                <o-field label="Estado">
+                                    <o-switch
+                                        class="mt-2"
+                                        v-model="grandPrix.suspended"
+                                        variant="danger"
+                                        passive-variant="primary">
+                                        {{ grandPrix.suspended ? "Suspendido" : "Activo" }}
+                                    </o-switch>
+                                </o-field>
+                            </div>
+                        </div>
+
+                        <o-field label="Código del Gran Premio">
+                            <o-input v-model="grandPrix.code" name="code" expanded lazy></o-input>
+                        </o-field>
+
+                        <o-field label="Circuito del Gran Premio">
+                            <o-select v-model="grandPrix.circuit" placeholder="Selecciona un circuito" expanded>
+                                <option
+                                    v-for="circuit in circuitList"
+                                    :value="circuit"
+                                    :key="circuit.id + '-' + circuit.variant.name">
+                                    {{ circuit.nameWithVariant() }}
+                                </option>
+                            </o-select>
+                        </o-field>
+
+                        <div class="columns">
+                            <div class="column">
+                                <o-field label="Ronda del Gran Premio">
+                                    <o-input v-model="grandPrix.round" name="round" expanded lazy :min=0 type="number"></o-input>
+                                </o-field>
+                            </div>
+                            <div class="column">
+                                <o-field label="Vueltas del Gran Premio">
+                                    <o-input v-model="grandPrix.laps" name="laps" expanded lazy :min=0 type="number"></o-input>
+                                </o-field>
+                            </div>
+                        </div>
+
+                        <label class="label">Imagen promocional del Gran Premio</label>
+                        <figure class="image is-16by9">
+                            <img :src="grandPrix.promoImage()" alt="Promo image"/>
+
+                            <label class="icon edit-icon">
+                                <i class="fa fa-camera"></i>
+                                <input @change="onFileChange" accept="image/*" tabindex="-1" type="file" hidden>
+                            </label>
+                        </figure>
+
+
+                        <button class="button is-primary mt-2" :disabled="!isDataOk()" @click="editGrandPrix()">Editar datos del gran premio</button>
                     </div>
                 </div>
 
-                <div class="block">
-                    <o-button variant="link" to="/admin/gps" tag="router-link">Lista de grandes premios</o-button>
-                </div>
+                <hr/>
 
-                <p v-if="!thereIsGrandPrix">El Gran Premio {{ id }} no ha sido encontrado</p>
-                <template v-else>
+                <DriversInGrandPrix v-if="thereIsGrandPrix" :grand-prix="grandPrix"/>
 
-                    <div class="columns">
-                        <div class="column is-one-fifth">
-                            <SessionsInGrandPrix :grand-prix="grandPrix" :sessions="grandPrix.sessions" />
-                        </div>
-                        <div class="column">
-                            <h2 class="title">Datos del {{ grandPrix.name }}</h2>
-
-                            <div class="columns">
-                                <div class="column is-four-fifths">
-                                    <o-field label="Nombre">
-                                        <o-input v-model="grandPrix.name" name="name" expanded lazy></o-input>
-                                    </o-field>
-                                </div>
-                                <div class="column">
-                                    <o-field label="Estado">
-                                        <o-switch
-                                            class="mt-2"
-                                            v-model="grandPrix.suspended"
-                                            variant="danger"
-                                            passive-variant="primary">
-                                            {{ grandPrix.suspended ? "Suspendido" : "Activo"}}
-                                        </o-switch>
-                                    </o-field>
-                                </div>
-                            </div>
-
-                            <o-field label="Código del Gran Premio">
-                                <o-input v-model="grandPrix.code" name="code" expanded lazy></o-input>
-                            </o-field>
-
-                            <o-field label="Circuito del Gran Premio">
-                                <o-select v-model="grandPrix.circuit" placeholder="Selecciona un circuito" expanded>
-                                    <option
-                                        v-for="circuit in circuitList"
-                                        :value="circuit"
-                                        :key="circuit.id + '-' + circuit.variant.name">
-                                        {{ circuit.nameWithVariant() }}
-                                    </option>
-                                </o-select>
-                            </o-field>
-
-                            <div class="columns">
-                                <div class="column">
-                                    <o-field label="Ronda del Gran Premio">
-                                        <o-input v-model="grandPrix.round" name="round" expanded lazy :min=0 type="number"></o-input>
-                                    </o-field>
-                                </div>
-                                <div class="column">
-                                    <o-field label="Vueltas del Gran Premio">
-                                        <o-input v-model="grandPrix.laps" name="laps" expanded lazy :min=0 type="number"></o-input>
-                                    </o-field>
-                                </div>
-                            </div>
-
-                            <label class="label">Imagen promocional del Gran Premio</label>
-                            <figure class="image is-16by9">
-                                <img :src="grandPrix.promoImage()" alt="Promo image"/>
-
-                                <label class="icon edit-icon">
-                                    <i class="fa fa-camera"></i>
-                                    <input @change="onFileChange" accept="image/*" tabindex="-1" type="file" hidden>
-                                </label>
-                            </figure>
-
-
-                            <button class="button is-primary mt-2" :disabled="!isDataOk()" @click="editGrandPrix()">Editar datos del gran premio</button>
-                        </div>
-                    </div>
-
-                    <hr />
-
-                    <DriversInGrandPrix v-if="thereIsGrandPrix" :grand-prix="grandPrix" />
-
-                </template>
             </template>
-
-        </section>
-        <section v-else>
-            <AlertNoPermission />
-        </section>
+        </template>
     </div>
 
     <UploadFileModal v-show="showEditImageModal" @close="showEditImageModal = false"

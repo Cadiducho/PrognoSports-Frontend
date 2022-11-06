@@ -48,7 +48,7 @@
                     <CircuitCard :circuit="grandPrix.circuit" :laps="grandPrix.laps" />
                     <PitLaneStartGrid v-if="thereIsGrid" :grid="startGrid"/>
 
-                    <section v-if="isAdmin(this.currentUser)" class="mt-2">
+                    <section v-if="this.currentUser.isAdmin()" class="mt-2">
                         <hr/>
                         <o-button variant="primary" expanded tag="router-link"
                                   :to="{ name: 'adminGpEdit', params: {competition: competition.code, season: season.name, id: grandPrix.id} } ">

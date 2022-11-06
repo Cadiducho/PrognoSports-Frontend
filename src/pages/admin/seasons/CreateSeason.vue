@@ -2,63 +2,58 @@
     <div id="createSeason" class="box">
         <PrognoPageTitle class="mb-5" name="Crear temporada" />
 
-        <section v-if="isAdmin(currentUser)">
-            <o-steps v-model="activeStep">
-                <o-step-item step="1" label="Datos de la temporada">
-                    <h2 class="title">Datos de la temporada</h2>
+        <o-steps v-model="activeStep">
+            <o-step-item step="1" label="Datos de la temporada">
+                <h2 class="title">Datos de la temporada</h2>
 
-                    <o-field label="Nombre de la temporada">
-                        <o-input v-model="createdSeason.name" name="name" expanded lazy></o-input>
-                    </o-field>
+                <o-field label="Nombre de la temporada">
+                    <o-input v-model="createdSeason.name" name="name" expanded lazy></o-input>
+                </o-field>
 
-                    <o-field label="Número de eventos">
-                        <o-input v-model="createdSeason.totalEvents" name="longitude" expanded lazy type="number" step="any"></o-input>
-                    </o-field>
+                <o-field label="Número de eventos">
+                    <o-input v-model="createdSeason.totalEvents" name="longitude" expanded lazy type="number" step="any"></o-input>
+                </o-field>
 
-                    <o-field label="Competición">
-                        <o-select v-model:class="createdSeason.competition" placeholder="Selecciona una competición" expanded>
-                            <option
-                                v-for="comp in competitions"
-                                :value="comp"
-                                :key="comp.id">
-                                {{ comp.name }} ({{ comp.code }}) - {{ comp.fullname }}
-                            </option>
-                        </o-select>
-                    </o-field>
+                <o-field label="Competición">
+                    <o-select v-model:class="createdSeason.competition" placeholder="Selecciona una competición" expanded>
+                        <option
+                            v-for="comp in competitions"
+                            :value="comp"
+                            :key="comp.id">
+                            {{ comp.name }} ({{ comp.code }}) - {{ comp.fullname }}
+                        </option>
+                    </o-select>
+                </o-field>
 
-                    <hr/>
+                <hr/>
 
-                </o-step-item>
+            </o-step-item>
 
-                <o-step-item step="2" label="Finalizar">
-                    <h2 class="title">Finalizar</h2>
+            <o-step-item step="2" label="Finalizar">
+                <h2 class="title">Finalizar</h2>
 
-                    <AlertInvalidData :object="createdSeason.name" message="No has introducido nombre para esta temporada" />
-                    <AlertInvalidData :object="createdSeason.totalEvents" message="No has introducido número de eventos para esta temporada" />
-                    <AlertInvalidData :object="createdSeason.competition" message="No has introducido competición para esta temporada" />
+                <AlertInvalidData :object="createdSeason.name" message="No has introducido nombre para esta temporada"/>
+                <AlertInvalidData :object="createdSeason.totalEvents" message="No has introducido número de eventos para esta temporada"/>
+                <AlertInvalidData :object="createdSeason.competition" message="No has introducido competición para esta temporada"/>
 
-                    <div class="notification has-background-primary">
-                        Revisa los datos, se va a crear la siguiente temporada
-                    </div>
+                <div class="notification has-background-primary">
+                    Revisa los datos, se va a crear la siguiente temporada
+                </div>
 
-                    <div class="content">
-                        <p class="card-text"><b>Nombre de la temporada: </b>{{ createdSeason.name }}</p>
-                        <p class="card-text"><b>Eventos de la temporada: </b>{{ createdSeason.totalEvents }}</p>
-                        <p class="card-text" v-if="createdSeason.competition"><b>Competición: </b>{{ createdSeason.competition.name}}</p>
-                    </div>
+                <div class="content">
+                    <p class="card-text"><b>Nombre de la temporada: </b>{{ createdSeason.name }}</p>
+                    <p class="card-text"><b>Eventos de la temporada: </b>{{ createdSeason.totalEvents }}</p>
+                    <p class="card-text" v-if="createdSeason.competition"><b>Competición: </b>{{ createdSeason.competition.name }}</p>
+                </div>
 
-                    <hr/>
-                    <o-field>
-                        <p class="control">
-                            <o-button :disabled="!isDataOk()" label="Crear temporada" @click="registerSeason()" variant="primary" />
-                        </p>
-                    </o-field>
-                </o-step-item>
-            </o-steps>
-        </section>
-        <section v-else>
-            <AlertNoPermission />
-        </section>
+                <hr/>
+                <o-field>
+                    <p class="control">
+                        <o-button :disabled="!isDataOk()" label="Crear temporada" @click="registerSeason()" variant="primary"/>
+                    </p>
+                </o-field>
+            </o-step-item>
+        </o-steps>
     </div>
 </template>
 
