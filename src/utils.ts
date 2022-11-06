@@ -6,7 +6,6 @@
  */
 
 import {Circuit} from "@/types/Circuit";
-import {Community} from "@/types/Community";
 import {RaceSession} from "@/types/RaceSession";
 import {RuleSet} from "@/types/RuleSet";
 
@@ -26,8 +25,4 @@ export function hasVariant(circuit: Circuit): boolean {
  */
 export function cantidadPilotosPronosticados(ruleSet: RuleSet, session: RaceSession): number {
     return ruleSet?.data?.predictedPositions[session.name] || 0;
-}
-
-export function isValidCommunity(community: Community): boolean {
-    return community.id !== 0;
 }

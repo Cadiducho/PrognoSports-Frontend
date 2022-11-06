@@ -46,7 +46,7 @@
                 </div>
 
                 <div v-if="isLoggedIn" class="navbar-end" >
-                    <CommunitiesDropdown v-if="isValidCommunity(currentCommunity)"/>
+                    <CommunitiesDropdown v-if="thereIsCurrentCommunity"/>
                     <NotificationsDropdown />
                     <AddElementsDropdown />
                     <AvatarComponent/>
@@ -74,8 +74,9 @@
 
             const isLoggedIn = authStore.isLoggedIn;
             const currentUser = authStore.loggedUser;
-            const currentCommunity = communityStore.community;
-            return {isLoggedIn, currentUser, currentCommunity};
+            const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
+            const currentCommunity = communityStore.currentCommunity;
+            return {isLoggedIn, currentUser, currentCommunity, thereIsCurrentCommunity};
         },
         data() {
             return {

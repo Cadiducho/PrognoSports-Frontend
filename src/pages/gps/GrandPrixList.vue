@@ -89,7 +89,7 @@
             const dayjs = useDayjs();
             const emitter = useEmitter();
 
-            const currentCommunity = communityStore.community;
+            const currentCommunity = communityStore.currentCommunity;
             const humanDayMonth = dayjs.humanDayMonth;
             const humanMonth = dayjs.humanMonth;
             const isBefore = dayjs.isBefore;

@@ -119,7 +119,6 @@ import {Competition} from "@/types/Competition";
 import {marked} from 'marked';
 import {competitionService} from "@/_services";
 import {RuleSet} from "@/types/RuleSet";
-import {isValidCommunity} from "@/utils";
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
@@ -131,9 +130,10 @@ export default defineComponent({
         const communityStore = useCommunityStore();
 
         const currentUser = authStore.loggedUser;
-        const currentCommunity = communityStore.community;
+        const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
+        const currentCommunity = communityStore.currentCommunity;
 
-        return { currentUser, currentCommunity };
+        return { currentUser, currentCommunity, thereIsCurrentCommunity };
     },
     data() {
         return {
@@ -142,7 +142,7 @@ export default defineComponent({
         }
     },
     mounted() {
-        if (isValidCommunity(this.currentCommunity)) {
+        if (this.thereIsCurrentCommunity) {
             competitionService.getCompetition(this.currentCommunity.competition.code)
                 .then(c => {
                     this.competition = c;

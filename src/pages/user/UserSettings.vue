@@ -232,7 +232,7 @@ export default defineComponent({
         const humanDateTime = dayjs.humanDateTime;
         const humanDate = dayjs.humanDate;
         const currentUser = authStore.loggedUser;
-        const currentCommunity = communityStore.community;
+        const currentCommunity = communityStore.currentCommunity;
 
         const editedUser = currentUser as Partial<User>;
         delete editedUser.currentCommunity;

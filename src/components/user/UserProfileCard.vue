@@ -117,7 +117,7 @@ export default defineComponent({
         const humanDate = dayjs.humanDate;
         const currentUser = authStore.loggedUser;
 
-        const currentCommunity = communityStore.community;
+        const currentCommunity = communityStore.currentCommunity;
         return {currentUser, currentCommunity, dateDiff, humanDateTime, humanDate};
     },
     data() {

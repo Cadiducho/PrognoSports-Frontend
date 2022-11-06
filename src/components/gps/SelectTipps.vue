@@ -179,7 +179,7 @@ export default defineComponent({
         const styles = useStyles();
 
         const currentUser = authStore.loggedUser;
-        const currentCommunity = communityStore.community;
+        const currentCommunity = communityStore.currentCommunity;
         const styleDriverCard = styles.styleDriverCard;
         const styleDorsal = styles.styleDorsal;
 

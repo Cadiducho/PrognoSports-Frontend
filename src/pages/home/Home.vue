@@ -45,7 +45,7 @@ export default defineComponent({
 
         const currentUser = authStore.loggedUser;
         const isLoggedIn = authStore.isLoggedIn;
-        const currentCommunity = communityStore.community;
+        const currentCommunity = communityStore.currentCommunity;
         return {isLoggedIn, currentUser, currentCommunity};
     },
 });

@@ -39,7 +39,7 @@ export default defineComponent({
         const emitter = useEmitter();
         const communityStore = useCommunityStore();
 
-        const currentCommunity = communityStore.community;
+        const currentCommunity = communityStore.currentCommunity;
         const removeCommunity = communityStore.removeCommunity;
         return { removeCommunity, currentCommunity, emitter };
     },

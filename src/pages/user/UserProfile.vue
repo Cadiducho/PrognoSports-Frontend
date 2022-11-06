@@ -61,7 +61,7 @@ export default defineComponent({
         const humanDateTime = dayjs.humanDateTime;
         const humanDate = dayjs.humanDate;
         const currentUser = authStore.loggedUser;
-        const currentCommunity = communityStore.community;
+        const currentCommunity = communityStore.currentCommunity;
         return {currentUser, currentCommunity, emitter, dateDiff, humanDateTime, humanDate};
     },
     data() {

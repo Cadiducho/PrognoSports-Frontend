@@ -1,18 +1,20 @@
 import {defineStore} from "pinia";
 import {User} from "@/types/User";
 import {Community, ICommunity} from "@/types/Community";
-import {isValidCommunity} from "@/utils";
 import {useAuthStore} from "@/store/authStore";
 import {communityService} from "@/_services";
 
 export const useCommunityStore = defineStore('community', {
     state: () => ({
-        community: new Community({id: 0} as ICommunity),
+        community: {id: 0} as ICommunity,
         communityId: Number.parseInt(localStorage.getItem('community') ?? '0') ?? 0,
     }),
     getters: {
         thereIsCurrentCommunity(): boolean {
-            return isValidCommunity(this.community);
+            return this.community.id !== 0;
+        },
+        currentCommunity(): Community {
+            return new Community(this.community);
         },
         storedCommunityId(): number {
             return this.communityId;

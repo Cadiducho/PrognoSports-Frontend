@@ -23,7 +23,6 @@
 <script lang="ts">
     import {Community} from "@/types/Community";
     import {communityService, notificationService} from "@/_services";
-    import {isValidCommunity} from "@/utils";
     import {defineComponent} from "vue";
     import {useAuthStore} from "@/store/authStore";
     import {useCommunityStore} from "@/store/communityStore";
@@ -38,10 +37,11 @@
             const communityStore = useCommunityStore();
 
             const currentUser = authStore.loggedUser;
-            const currentCommunity = communityStore.community;
+            const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
+            const currentCommunity = communityStore.currentCommunity;
             const setCommunity = communityStore.setCommunity;
 
-            return { currentUser, currentCommunity, setCommunity, emitter };
+            return { currentUser, currentCommunity, thereIsCurrentCommunity, setCommunity, emitter };
         },
         data() {
             return {
@@ -58,7 +58,7 @@
                 this.getCommunityList();
             });
 
-            if (isValidCommunity(this.currentCommunity)) {
+            if (this.thereIsCurrentCommunity) {
                 this.getCommunityList();
             }
         },
