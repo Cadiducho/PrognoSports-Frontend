@@ -44,12 +44,8 @@ export class UserService  extends PrognoService<IUser, User> {
     }
 
     public async getUserResume(user: User, community: Community, competition: Competition, season: Season): Promise<UserResume> {
-        return new Promise((resolve, reject) => {
-            axios.get(`/user/${user.id}/communities/${community.id}/${competition.id}/${season.id}/resume`).then(data => {
-                const resumeData = data as unknown as IUserResume;
-                resolve(new UserResume(resumeData));
-            }).catch(e => reject(e))
-        });
+        const resumeData = await axios.get(`/user/${user.id}/communities/${community.id}/${competition.id}/${season.id}/resume`) as IUserResume;
+        return new UserResume(resumeData);
     }
 
     public async updateUser(user: Partial<User>): Promise<string> {
