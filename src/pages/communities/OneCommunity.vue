@@ -4,111 +4,128 @@
         <loading v-if="isLoading" />
 
         <p v-if="!thereIsCommunity">La comunidad con nombre <i>{{ this.$route.params.community }}</i> no ha sido encontrada</p>
-        <template v-else>
-            <div class="columns">
-                <div class='column is-3'>
-                    <div class="card">
-                        <div class="card-image">
-                            <figure class="image">
-                                <img :src="community.communityImage()" alt="Community logo">
-                            </figure>
+        <div v-else class="columns">
+            <div class='column is-3'>
+                <div class="card">
+                    <div class="card-image">
+                        <figure class="image">
+                            <img :src="community.communityImage()" alt="Community logo">
+                        </figure>
+                    </div>
+                    <div class="card-content">
+                        <div class="media">
+                            <div class="media-content">
+                                <p class="title is-4">{{ community.name }}</p>
+                                <p class="subtitle is-6">{{ community.description }}</p>
+                            </div>
                         </div>
-                        <div class="card-content">
-                            <div class="media">
-                                <div class="media-content">
-                                    <p class="title is-4">{{community.name}}</p>
-                                    <p class="subtitle is-6">{{community.description}}</p>
-                                </div>
-                            </div>
 
-                            <div class="content">
-                                <p class="card-text"><b>Fecha de creación: </b>{{ humanDateTime(community.created) }}</p>
-                                <p class="card-text">
-                                    <b>Creador: </b>
-                                    <router-link :to="{name: 'user', params: { user: community.owner.username}}">
-                                        {{community.owner.username}}
-                                    </router-link>
+                        <div class="content">
+                            <p class="card-text"><b>Fecha de creación: </b>{{ humanDateTime(community.created) }}</p>
+                            <p class="card-text">
+                                <b>Creador: </b>
+                                <router-link :to="{name: 'user', params: { user: community.owner.username}}">
+                                    {{ community.owner.username }}
+                                </router-link>
+                            </p>
+                            <p v-if="community.open" class="card-text has-text-success">Comunidad abierta/pública</p>
+                            <p v-else class="card-text has-text-danger">Comunidad cerrada/privada</p>
+
+                            <o-field
+                                v-if="!community.open && isUserInCommunity"
+                                grouped
+                                label="URL de Invitación:"
+                                variant="rounded is-info">
+
+                                <input class="input is-rounded is-small" type="text" :value="community.invitation">
+                                <p class="control">
+                                    <o-button class="button is-primary is-small is-rounded" @click="clickInvitation">Copiar</o-button>
                                 </p>
-                                <p v-if="community.open" class="card-text has-text-success">Comunidad abierta/pública</p>
-                                <p v-else class="card-text has-text-danger">Comunidad cerrada/privada</p>
+                            </o-field>
 
-                                    <o-field
-                                        v-if="!community.open && isUserInCommunity"
-                                        grouped
-                                        label="URL de Invitación:"
-                                        variant="rounded is-info">
-
-                                        <input class="input is-rounded is-small" type="text" :value="community.invitation">
-                                        <p class="control">
-                                            <o-button class="button is-primary is-small is-rounded" @click="clickInvitation">Copiar</o-button>
-                                        </p>
-                                    </o-field>
-
-                                <p class="card-text"><b>Usuarios apuntados: </b> {{ community.members_amount }}</p>
-                            </div>
+                            <p class="card-text"><b>Usuarios apuntados: </b> {{ community.members_amount }}</p>
                         </div>
                     </div>
                 </div>
-                <div class="column">
-                    <div class="card">
-                        <div v-if="community.open || isUserInCommunity" class="card-content">
-                            <div class="media">
-                                <div class="media-content">
-                                    <p class="title is-4">Usuarios participando</p>
-                                </div>
+            </div>
+            <div class="column">
+                <div class="card">
+                    <div v-if="!community.open && !isUserInCommunity" class="card-content">
+                        <div class="media">
+                            <div class="media-content">
+                                <p class="title is-4">Comunidad cerrada</p>
+                                <p class="subtitle is-6">
+                                    Esta comunidad tiene la privacidad cerrada y
+                                    por lo tanto no puedes ver su lista de participantes si tú no eres miembro
+                                </p>
                             </div>
+                        </div>
+                    </div>
+                    <div v-else-if="!members.length" class="card-content">
+                        <div class="media">
+                            <div class="media-content">
+                                <p class="title is-4">Comunidad sin participantes</p>
+                                <p class="subtitle is-6">
+                                    Esta comunidad no tiene participantes en este momento
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else class="card-content">
+                        <div class="media">
+                            <div class="media-content">
+                                <p class="title is-4">Usuarios participando</p>
+                            </div>
+                        </div>
 
-                            <o-collapse :open="false" class="mb-2">
-                                <template #trigger>
-                                    <o-button
-                                        label="Opciones de ordenado"
-                                        variant="primary" />
-                                </template>
+                        <div class="busqueda-ordenada">
+                            <o-button label="Ordenar" variant="primary" aria-controls="opcionesOrdenado" @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen"/>
 
-                                <div class="box">
-                                    <o-field label="Orderar lista de miembros">
-                                        <o-radio v-model='orderType' :native-value='0'>Por nombre de usuario</o-radio>
-                                        <o-radio v-model='orderType' :native-value='1'>Por rango</o-radio>
-                                        <o-radio v-model='orderType' :native-value='2'>Por conexión reciente</o-radio>
-                                        <o-radio v-model='orderType' :native-value='3'>Por fecha de registro</o-radio>
-                                    </o-field>
-                                    <o-field>
-                                        <o-switch v-model="orderAscendent">
-                                            Orden {{ orderAscendent ? "ascendente" : "descendente" }}
-                                        </o-switch>
-                                    </o-field>
-                                </div>
-                            </o-collapse>
-
-                            <o-field>
-                                <o-input
-                                    v-model="searchInput"
-                                    placeholder="Buscar miembro"
-                                    type="search"
-                                    icon-pack="fas"
-                                    icon="search"
-                                />
+                            <o-field class="is-fullwidth">
+                                <o-input v-model="searchInput" placeholder="Buscar miembro..." type="search" icon-pack="fas" icon="search"></o-input>
                             </o-field>
+                        </div>
 
-                            <div class="mt-5 columns is-multiline is-4">
-                                <div class="column is-half" v-for="cu in filteredMembers">
-                                    <div class="box">
-                                        <article class="media">
-                                            <div class="media-left">
-                                                <figure class="image is-64x64">
-                                                    <img :src="cu.user.profileImageUrl || 'https://prognosports.com/logo_bw.png'" alt="User image">
-                                                </figure>
-                                            </div>
-                                            <div class="media-content">
-                                                <div class="content">
-                                                    <p>
+                        <o-collapse :open="opcionesOrdenadoOpen" class="mb-2">
+                            <template #trigger>
+                            </template>
+
+                            <div class="box">
+                                <o-field label="Orderar lista de miembros">
+                                    <o-radio v-model='orderType' :native-value='0'>Por nombre de usuario</o-radio>
+                                    <o-radio v-model='orderType' :native-value='1'>Por rango</o-radio>
+                                    <o-radio v-model='orderType' :native-value='2'>Por conexión reciente</o-radio>
+                                    <o-radio v-model='orderType' :native-value='3'>Por fecha de registro</o-radio>
+                                </o-field>
+                                <o-field>
+                                    <o-switch v-model="orderAscendent">
+                                        Orden {{ orderAscendent ? "ascendente" : "descendente" }}
+                                    </o-switch>
+                                </o-field>
+                            </div>
+                        </o-collapse>
+
+                        <div class="mt-5 columns is-multiline is-4">
+                            <div class="column is-half" v-for="cu in filteredMembers">
+                                <div class="box">
+                                    <article class="media">
+                                        <div class="media-left">
+                                            <figure class="image is-64x64">
+                                                <img :src="cu.user.profileImage()" alt="User image">
+                                            </figure>
+                                        </div>
+                                        <div class="media-content">
+                                            <div class="content">
+                                                <p class="is-flex is-justify-content-space-between">
+                                                    <span>
                                                         <strong>
                                                             <router-link :to="{name: 'user', params: { user: cu.user.username}}">
-                                                                {{cu.user.username}}
+                                                                {{ cu.user.username }}
                                                             </router-link>
                                                         </strong>
-                                                        <small :style="{ color : '#' + cu.user.rank.color }">{{cu.user.rank.name}}</small>
-                                                        <small>
+                                                        <small class="ml-2" :style="{ color : '#' + cu.user.rank.color }">{{ cu.user.rank.name }}</small>
+                                                    </span>
+                                                    <small>
                                                             <span class="icon-text" v-if="cu.user.last_activity">
                                                                 <span class="icon">
                                                                     <i class="fas fa-clock"></i>
@@ -119,58 +136,50 @@
                                                                     </o-tooltip>
                                                                 </span>
                                                             </span>
-                                                        </small>
-                                                        <br>
-                                                        {{cu.user.bio}}
-                                                    </p>
-                                                    <p>
-                                                        <span class="icon-text">
-                                                            <span class="icon">
-                                                                <i class="fas fa-calendar"></i>
-                                                            </span>
-                                                            <span>Se unió el {{ humanDateTime(cu.user.created) }}</span>
+                                                    </small>
+                                                </p>
+                                                <p>{{ cu.user.bio }}</p>
+                                                <p>
+                                                    <span class="icon-text">
+                                                        <span class="icon">
+                                                            <i class="fas fa-calendar"></i>
                                                         </span>
-                                                    </p>
-                                                </div>
-
-                                                <span class="icon-text"  v-if="cu.can_kick_users">
-                                                    <span class="icon">
-                                                        <i class="fas fa-ban"></i>
+                                                        <span>Se unió el {{ humanDateTime(cu.user.created) }}</span>
                                                     </span>
-                                                    <span>Puede expulsar usuarios</span>
-                                                </span>
-
-                                                <span class="icon-text" v-if="cu.can_modify_permissions">
-                                                    <span class="icon">
-                                                        <i class="fas fa-user-edit"></i>
-                                                    </span>
-                                                    <span >Puede modificar permisos</span>
-                                                </span>
-
-                                                <span class="icon-text" v-if="cu.can_recreate_invitation">
-                                                    <span class="icon">
-                                                        <i class="fas fa-envelope"></i>
-                                                    </span>
-                                                    <span>Puede recrear invitaciones</span>
-                                                </span>
+                                                </p>
                                             </div>
-                                        </article>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div v-else class="card-content">
-                            <div class="media">
-                                <div class="media-content">
-                                    <p class="title is-4">Comunidad cerrada</p>
-                                    <p class="subtitle is-6">Esta comunidad tiene la privacidad cerrada y por lo tanto no puedes ver su lista de participantes si tú no eres miembro</p>
+
+                                            <span class="icon-text" v-if="cu.can_kick_users">
+                                                <span class="icon">
+                                                    <i class="fas fa-ban"></i>
+                                                </span>
+                                                <span>Puede expulsar usuarios</span>
+                                            </span>
+
+                                            <span class="icon-text ml-1" v-if="cu.can_modify_permissions">
+                                                <span class="icon">
+                                                    <i class="fas fa-user-edit"></i>
+                                                </span>
+                                                <span>Puede modificar permisos</span>
+                                            </span>
+
+                                            <span class="icon-text" v-if="cu.can_recreate_invitation">
+                                                <span class="icon">
+                                                    <i class="fas fa-envelope"></i>
+                                                </span>
+                                                <span>Puede recrear invitaciones</span>
+                                            </span>
+                                        </div>
+                                    </article>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+
                 </div>
             </div>
-        </template>
+        </div>
     </div>
 </template>
 
@@ -188,10 +197,12 @@ import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {useDayjs} from "@/composables/useDayjs";
 import {useClipboard} from "@/composables/clipboard";
+import Loading from "@/components/lib/Loading.vue";
 
 export default defineComponent({
     name: "OneCommunity",
     components: {
+        Loading,
         PrognoPageTitle
     },
     setup() {
@@ -217,6 +228,7 @@ export default defineComponent({
             searchInput: '',
             orderType: 2,
             orderAscendent: false,
+            opcionesOrdenadoOpen: false
         }
     },
     created() {

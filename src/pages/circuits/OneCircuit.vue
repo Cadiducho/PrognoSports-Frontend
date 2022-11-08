@@ -1,9 +1,7 @@
 <template>
     <div id="circuitDetails" class="box">
         <progno-page-title class="mb-5" :name="circuitName" />
-        <div v-if="isLoading">
-            <loading />
-        </div>
+        <loading v-if="isLoading"/>
 
         <p v-if="!thereIsCircuit">El circuito buscado con nombre <i>{{ getRawCircuitName }}</i> no ha sido encontrado</p>
         <template v-else>
@@ -22,9 +20,6 @@
             <div class="columns">
                 <div class="column">
                     <div class="card">
-                        <div class="card-content">
-                            <h2 class="title is-3">Resumen</h2>
-                        </div>
                         <div class="card-image">
                             <figure class="image">
                                 <img class="logoImage" v-if="circuit.hasLogoImage" :src="circuit.logoImage()" alt="Logo image">
@@ -58,10 +53,46 @@
                             </div>
                         </div>
                     </div>
+
+                    <h3 class="title is-3 mt-5">Grandes Premios que usaron el circuito</h3>
+                    <article class="mt-4 columns is-multiline" v-if="grandPrixesUsingCircuit.length">
+                        <div class="is-inline-block zoom mr-3 mb-3" v-for="gp in grandPrixesUsingCircuit">
+                            <div class="card">
+                                <div class="card-content">
+                                    <p class="title is-5">
+                                        {{ gp.name }} de {{ gp.season.name }}
+                                    </p>
+                                    <p class="subtitle is-6">
+                                        {{ gp.circuit.name }}, {{ gp.circuit.locality }} ({{ gp.circuit.country }})
+                                    </p>
+                                    <p class="subtitle is-6">
+                                        <span v-for="session in gp.sessions">
+                                            {{ session.humanName() }}: {{ humanDate(session.date) }} ({{ dateDiff(session.date) }}) <br/>
+                                        </span>
+                                    </p>
+                                </div>
+
+                                <router-link
+                                    class="button is-info is-inverted is-fullwidth"
+                                    :to="{
+                                            name: 'gpdetails',
+                                            params: {
+                                                competition: gp.competition.code,
+                                                season: gp.season.name,
+                                                id: gp.id,
+                                            }
+                                          }"
+                                >
+                                    Detalles
+                                </router-link>
+                            </div>
+                        </div>
+                    </article>
+                    <span v-else>No se ha usado este circuito en ningún Gran Premio</span>
                 </div>
                 <div class="column">
                     <div class="box">
-                        <h2 class="title is-3">Localización</h2>
+                        <h3 class="title is-4">Localización</h3>
                         <div style="height: 500px; width: 100%">
                             <l-map
                                 :zoom="zoom"
@@ -88,46 +119,6 @@
                     </div>
                 </div>
             </div>
-            <div class="columns">
-                <div class="column">
-                    <div class="box">
-                        <h2 class="title is-3">Grandes Premios que usaron el circuito</h2>
-                        <article class="mt-5 columns is-multiline">
-                            <div class="is-inline-block zoom ml-4 mr-4 mb-4" v-for="gp in grandPrixesUsingCircuit">
-                                <div class="card">
-                                    <div class="card-content">
-                                        <p class="title">
-                                            {{gp.name}} de {{gp.season.name}}
-                                        </p>
-                                        <p class="subtitle">
-                                            {{gp.circuit.name}}, {{gp.circuit.locality}} ({{gp.circuit.country}})
-                                        </p>
-                                        <p class="subtitle">
-                                            <span v-for="session in gp.sessions">
-                                                {{ session.humanName() }}: {{ humanDate(session.date) }} ({{ dateDiff(session.date) }}) <br />
-                                            </span>
-                                        </p>
-                                    </div>
-
-                                    <router-link
-                                        class="button is-info is-light is-expanded"
-                                        :to="{
-                                            name: 'gpdetails',
-                                            params: {
-                                                competition: gp.competition.code,
-                                                season: gp.season.name,
-                                                id: gp.id,
-                                            }
-                                          }"
-                                    >
-                                        Detalles
-                                    </router-link>
-                                </div>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-            </div>
 
         </template>
     </div>
@@ -148,10 +139,12 @@ import {hasVariant} from "@/utils";
 import {defineComponent} from "vue";
 import useEmitter from "@/composables/useEmitter";
 import {useDayjs} from "@/composables/useDayjs";
+import Loading from "@/components/lib/Loading.vue";
 
 export default defineComponent({
     name: "OneCircuit",
     components: {
+        Loading,
         CircuitCard,
         PrognoPageTitle,
         LMap,
@@ -220,7 +213,8 @@ export default defineComponent({
          * @return True si el parámetro es undefined o es igual a "grandprix"
          */
         thereIsVariant(variantId: string): boolean {
-            return !(variantId === undefined || variantId === "grandprix");
+            console.log("there is variant? " + variantId)
+            return !(variantId === undefined || variantId === "" || variantId === "grandprix");
         }
     },
     computed: {

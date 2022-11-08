@@ -30,10 +30,12 @@ import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import { Circuit } from "@/types/Circuit";
 import { circuitService } from "@/_services";
 import {defineComponent} from "vue";
+import Loading from "@/components/lib/Loading.vue";
 
 export default defineComponent({
     name: "CircuitList",
     components: {
+        Loading,
         ViewCircuitItem,
         PrognoPageTitle,
     },

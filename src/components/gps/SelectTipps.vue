@@ -4,7 +4,7 @@
             <div class="column is-6">
                 <h3 class="is-unselectable">Lista de pilotos</h3>
 
-                <div class="ordenar">
+                <div class="busqueda-ordenada">
                     <o-button label="Ordenar" variant="primary" aria-controls="opcionesOrdenado" @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen"/>
 
                     <o-field class="is-fullwidth">
@@ -306,10 +306,6 @@ export default defineComponent({
     content: 'Coloca aquí tus pilotos en orden';
 }
 
-.ordenar {
-    display: flex;
-}
-
 .box-ordenado {
     margin-bottom: 0.5rem !important;
 }
@@ -327,23 +323,9 @@ export default defineComponent({
     height: calc(100% - 10rem);
 }
 
-// Solo en escritorio
-@media screen and (min-width: $desktop) {
-    .ordenar {
-        .field {
-            margin-left: 0.25rem;
-        }
-    }
-}
 
 // Resolución móvil
 @media screen and (max-width: $desktop) {
-    .ordenar {
-        flex-direction: column-reverse;
-        .field {
-            margin-bottom: 0.25rem;
-        }
-    }
     .box-ordenado {
         font-size: 0.9rem;
     }/*
