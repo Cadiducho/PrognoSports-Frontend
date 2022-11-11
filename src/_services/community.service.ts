@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {Community, ICommunity} from "@/types/Community";
 import {User} from "@/types/User";
-import {CommunityUser} from "@/types/CommunityUser";
+import {CommunityUser, ICommunityUser} from "@/types/CommunityUser";
 import {PrognoService} from "@/_services/progno.service";
 
 export class CommunityService extends PrognoService<ICommunity, Community> {
@@ -32,7 +32,8 @@ export class CommunityService extends PrognoService<ICommunity, Community> {
     }
 
     public async getMembers(community: Community): Promise<Array<CommunityUser>> {
-        return await axios.get(`/communities/${community.id}/members`)
+        const userData = await axios.get(`/communities/${community.id}/members`) as ICommunityUser[];
+        return userData.map(data => new CommunityUser(data));
     }
 
     public async createCommunity(data: any): Promise<Community> {

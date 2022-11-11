@@ -12,7 +12,7 @@
             <div class="card-content">
                 <p class="subtitle has-text-weight-bold">Próximo Gran Premio</p>
                 <p class="title">{{nextGp.name}}</p>
-                <figure class="image is-4by3">
+                <figure class="image is-16by9">
                     <img v-if="nextGp.hasPromoImage" :src="nextGp.promoImage()">
                 </figure>
             </div>
@@ -49,7 +49,6 @@
 
     import {defineComponent} from "vue";
     import {useCommunityStore} from "@/store/communityStore";
-    import {isValidCommunity} from "@/utils";
     import {grandPrixService} from "@/_services";
     import {useDayjs} from "@/composables/useDayjs";
 
@@ -61,8 +60,9 @@
 
             const humanDate = dayjs.humanDate;
             const dateDiff = dayjs.dateDiff;
-            const currentCommunity = communityStore.community;
-            return { currentCommunity, humanDate, dateDiff };
+            const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
+            const currentCommunity = communityStore.currentCommunity;
+            return { currentCommunity, thereIsCurrentCommunity, humanDate, dateDiff };
         },
         data() {
             return {
@@ -72,7 +72,7 @@
             }
         },
         mounted() {
-            if (isValidCommunity(this.currentCommunity)) {
+            if (this.thereIsCurrentCommunity) {
                 this.fetchNextGrandPrixData();
             }
         },

@@ -98,7 +98,7 @@ import {useDayjs} from "@/composables/useDayjs";
 import {useAuthStore} from "@/store/authStore";
 
 export default defineComponent({
-    name: "PrognoView",
+    name: "LandingFooter",
     setup() {
         const branchName = import.meta.env.VITE_GIT_BRANCH_NAME;
         const commitHash = import.meta.env.VITE_GIT_COMMIT_HASH;

@@ -6,7 +6,6 @@ import {RaceSession} from "@/types/RaceSession";
 import {Dictionary} from "@/types/Dictionary";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
-import {User} from "@/types/User";
 
 export class ScoreService {
 

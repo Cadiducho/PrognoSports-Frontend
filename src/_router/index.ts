@@ -1,7 +1,7 @@
 import {createRouter, createWebHistory} from 'vue-router'
 
 import {routes} from "@/_router/routes";
-import {auth, community, home, data} from "@/_router/middleware";
+import {auth, community, admin, home, data} from "@/_router/middleware";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,6 +16,9 @@ router.beforeEach(auth);
 
 // Se comprueba si la ruta especificada requiere comunidad activa, si no manda a /communities
 router.beforeEach(community);
+
+// Verificación admin
+router.beforeEach(admin);
 
 // Si está iniciado sesión y solicita /, mandar a /home
 router.beforeEach(home);

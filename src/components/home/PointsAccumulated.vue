@@ -18,7 +18,6 @@ import {User} from "@/types/User";
 import {grandPrixService, seasonService, userService} from "@/_services";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
-import {isValidCommunity} from "@/utils";
 
 interface IChartType {
     name: string,
@@ -46,10 +45,10 @@ export default defineComponent({
         const communityStore = useCommunityStore();
 
         const currentUser = authStore.loggedUser;
-        const currentCommunity = communityStore.community;
+        const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
+        const currentCommunity = communityStore.currentCommunity;
 
-
-        return {currentUser, currentCommunity};
+        return {currentUser, currentCommunity, thereIsCurrentCommunity};
     },
     data() {
         return {
@@ -123,7 +122,7 @@ export default defineComponent({
     },
     mounted() {
         this.loading = true;
-        if (isValidCommunity(this.currentCommunity)) {
+        if (this.thereIsCurrentCommunity) {
             this.fetchData();
         }
     },

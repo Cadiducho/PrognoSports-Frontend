@@ -40,7 +40,7 @@
             const communityStore = useCommunityStore();
 
             const currentUser = authStore.loggedUser;
-            const currentCommunity = communityStore.community;
+            const currentCommunity = communityStore.currentCommunity;
             return { currentUser, currentCommunity };
         },
         methods: {

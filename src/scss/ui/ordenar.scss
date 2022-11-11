@@ -1,0 +1,26 @@
+@import "bulma/sass/utilities/initial-variables";
+
+
+.busqueda-ordenada {
+  display: flex;
+}
+
+// Solo en escritorio
+@media screen and (min-width: $desktop) {
+  .busqueda-ordenada {
+    .field {
+      margin-left: 0.25rem;
+    }
+  }
+}
+
+// Resolución móvil
+@media screen and (max-width: $desktop) {
+  .busqueda-ordenada {
+    flex-direction: column-reverse;
+
+    .field {
+      margin-bottom: 0.25rem;
+    }
+  }
+}

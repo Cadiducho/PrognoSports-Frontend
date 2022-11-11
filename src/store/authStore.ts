@@ -1,20 +1,19 @@
 import {defineStore} from 'pinia'
-import {User} from "@/types/User";
+import {IUser, User} from "@/types/User";
 import {Community} from "@/types/Community";
-import {isValidUser} from "@/utils";
 import {authService, userService} from "@/_services";
 import {useCommunityStore} from "@/store/communityStore";
 
 export const useAuthStore = defineStore('auth', {
 
     state: () => ({
-        user: {id: 0} as User,
+        user: {id: 0} as IUser,
         mail: "",
         token: localStorage.getItem('token') ?? null
     }),
     getters: {
         isLoggedIn(): boolean {
-            return isValidUser(this.user);
+            return this.user.id !== 0;
         },
         loggedUser(): User {
             return new User(this.user);

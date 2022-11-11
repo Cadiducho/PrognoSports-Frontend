@@ -71,7 +71,13 @@
         </div>
     </div>
 
-    <ChangeImageModal v-show="showEditImageModal" @close="showEditImageModal = false" :file="selectedFile" />
+    <UploadFileModal v-show="showEditImageModal" @close="showEditImageModal = false"
+                     :file="selectedFile" stencil-component="circle"
+                     @submit-file="uploadProfileImage">
+        <template v-slot:title>Cambiar imagen de perfil</template>
+        <template v-slot:label>¿Quieres cambiar tu imagen de perfil?</template>
+    </UploadFileModal>
+
 
 </template>
 
@@ -82,12 +88,13 @@ import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {User} from "@/types/User";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
-import ChangeImageModal from "@/components/user/settings/ChangeImageModal.vue";
+import UploadFileModal from "@/components/lib/UploadFileModal.vue";
+import {notificationService, userService} from "@/_services";
 
 export default defineComponent({
     name: "UserProfileCard",
     components: {
-        ChangeImageModal,
+        UploadFileModal,
         PrognoModal
     },
     props: {
@@ -110,7 +117,7 @@ export default defineComponent({
         const humanDate = dayjs.humanDate;
         const currentUser = authStore.loggedUser;
 
-        const currentCommunity = communityStore.community;
+        const currentCommunity = communityStore.currentCommunity;
         return {currentUser, currentCommunity, dateDiff, humanDateTime, humanDate};
     },
     data() {
@@ -130,6 +137,19 @@ export default defineComponent({
                 this.showEditImageModal = true;
             }
         },
+        uploadProfileImage(blob: Blob) {
+            if (blob.size > 2_097_152) {
+                notificationService.showNotification("El archivo escogido es demasiado grande. El tamaño máximo es de 2Mb.", "danger");
+                return;
+            }
+
+            userService.changeProfileImage(this.currentUser, blob).then(() => {
+                notificationService.showNotification("¡Has cambiado tu imagen de perfil!");
+                this.currentUser.changedProfileImage = blob;
+            }).catch(() => {
+                notificationService.showNotification("Ha ocurrido un error cambiado tu imagen de perfil", "danger");
+            });
+        }
     }
 });
 </script>
@@ -139,23 +159,6 @@ export default defineComponent({
 
 .photoOpacity {
     opacity: 0.75;
-}
-
-.edit-icon {
-    font-size: 1.2rem;
-    opacity: 0.85;
-    position: absolute;
-    color: #fff;
-    bottom: 50%;
-    left: 50%;
-    i {
-        background: hsl(171, 100%, 41%);
-        padding: 1.5rem;
-        border-radius: 50%;
-    }
-    i:hover {
-        background: #00c4a7;
-    }
 }
 
 // Resolución móvil

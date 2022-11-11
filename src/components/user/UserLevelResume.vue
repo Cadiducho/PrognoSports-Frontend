@@ -85,8 +85,7 @@
 <script lang="ts">
 import {UserResume} from "@/types/User";
 
-import {defineComponent, PropType} from "vue";
-import {isValidCommunity} from "@/utils";
+import {defineComponent} from "vue";
 import {userService} from "@/_services";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
@@ -98,8 +97,9 @@ export default defineComponent({
         const communityStore = useCommunityStore();
 
         const currentUser = authStore.loggedUser;
-        const currentCommunity = communityStore.community;
-        return { currentUser, currentCommunity };
+        const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
+        const currentCommunity = communityStore.currentCommunity;
+        return { currentUser, currentCommunity, thereIsCurrentCommunity };
     },
     data() {
         return {
@@ -107,7 +107,7 @@ export default defineComponent({
         }
     },
     mounted() {
-        if (isValidCommunity(this.currentCommunity)) {
+        if (this.thereIsCurrentCommunity) {
             const competition = this.currentCommunity.competition;
             const season = competition.currentSeason;
 

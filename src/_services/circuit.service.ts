@@ -1,6 +1,6 @@
 import axios from "axios";
 import {Circuit, ICircuit} from '@/types/Circuit';
-import {CircuitVariant} from "@/types/CircuitVariant";
+import {CircuitVariant, ICircuitVariant} from "@/types/CircuitVariant";
 import {PrognoService} from "@/_services/progno.service";
 
 export class CircuitService extends PrognoService<ICircuit, Circuit> {
@@ -22,16 +22,8 @@ export class CircuitService extends PrognoService<ICircuit, Circuit> {
     }
 
     public async listCircuitVariant(circuit: Circuit): Promise<Array<CircuitVariant>> {
-        const variantList: Array<CircuitVariant> = [];
-        return new Promise((resolve, reject) => {
-            axios.get(`/circuits/${circuit.id}/variants`).then((data => {
-                const variantsData = data as unknown as CircuitVariant[];
-                variantsData.forEach(variant => {
-                    variantList.push(new CircuitVariant(variant));
-                })
-                resolve(variantList);
-            })).catch(e => reject(e));
-        })
+        const circuitData = await axios.get(`/circuits/${circuit.id}/variants`) as ICircuitVariant[];
+        return circuitData.map(data => new CircuitVariant(data));
     }
 
     public async createCircuit(data: any): Promise<Circuit> {

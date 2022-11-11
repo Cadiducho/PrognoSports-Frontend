@@ -1,7 +1,6 @@
 import {Competition} from "@/types/Competition";
 import axios from "axios";
 import {Season} from "@/types/Season";
-import {Circuit} from "@/types/Circuit";
 
 export class SeasonService {
 

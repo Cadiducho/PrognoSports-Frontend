@@ -5,6 +5,7 @@
 @import "ui/navbar";
 @import "ui/block-list";
 @import "ui/timeline";
+@import "ui/ordenar";
 
 @import 'bulma-calendar/dist/css/bulma-calendar.css';
 
@@ -24,4 +25,21 @@
 .button {
   height: max-content;
   white-space: normal;
+}
+
+.edit-icon {
+  font-size: 1.2rem;
+  opacity: 0.85;
+  position: absolute;
+  color: #fff;
+  bottom: 50%;
+  left: 50%;
+  i {
+    background: hsl(171, 100%, 41%);
+    padding: 1.5rem;
+    border-radius: 50%;
+  }
+  i:hover {
+    background: #00c4a7;
+  }
 }

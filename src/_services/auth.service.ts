@@ -1,6 +1,5 @@
 import axios from "axios";
 import {AuthToken, IAuthToken} from "@/types/AuthToken";
-import {CircuitVariant} from "@/types/CircuitVariant";
 
 export class AuthService {
 
@@ -22,12 +21,8 @@ export class AuthService {
     }
 
     public async getAuthTokens(): Promise<Array<AuthToken>> {
-        return new Promise((resolve, reject) => {
-            axios.get('/auth/tokens').then((data => {
-                const tokenData = data as unknown as IAuthToken[];
-                resolve(tokenData.map(t => new AuthToken(t)));
-            }));
-        })
+        const tokenData = await axios.get(`/auth/tokens`) as IAuthToken[];
+        return tokenData.map(data => new AuthToken(data));
     }
 
     public async deleteOneAuthToken(token: AuthToken): Promise<Array<AuthToken>> {

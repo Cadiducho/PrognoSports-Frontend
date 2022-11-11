@@ -57,6 +57,14 @@ export class User implements IUser {
         this.hasProfileImage = data.hasProfileImage;
     }
 
+    /**
+     * Compara el {@link UserRank} del usuario para determinar si es administrador o no
+     * @return True si es administrador
+     */
+    public isAdmin(): boolean {
+        return this.rank.name.toLowerCase() === "admin";
+    }
+
     public profileImage(): string {
         if (this.changedProfileImage) {
             return URL.createObjectURL(this.changedProfileImage);
