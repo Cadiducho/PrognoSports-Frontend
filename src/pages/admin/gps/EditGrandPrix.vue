@@ -14,6 +14,10 @@
             </div>
 
             <div class="block">
+                <o-button variant="success" :to="{ name: 'gpdetails', params: {id: grandPrix.id, season: grandPrix.season.name, competition: grandPrix.competition.code} }"
+                          tag="router-link" class="mr-2">
+                    Ir al Gran Premio
+                </o-button>
                 <o-button variant="link" to="/admin/gps" tag="router-link">Lista de grandes premios</o-button>
             </div>
 
@@ -46,46 +50,52 @@
                             </div>
                         </div>
 
-                        <o-field label="Código del Gran Premio">
-                            <o-input v-model="grandPrix.code" name="code" expanded lazy></o-input>
-                        </o-field>
-
-                        <o-field label="Circuito del Gran Premio">
-                            <o-select v-model="grandPrix.circuit" placeholder="Selecciona un circuito" expanded>
-                                <option
-                                    v-for="circuit in circuitList"
-                                    :value="circuit"
-                                    :key="circuit.id + '-' + circuit.variant.name">
-                                    {{ circuit.nameWithVariant() }}
-                                </option>
-                            </o-select>
-                        </o-field>
-
                         <div class="columns">
                             <div class="column">
+                                <o-field label="Código del Gran Premio">
+                                    <o-input v-model="grandPrix.code" name="code" expanded lazy></o-input>
+                                </o-field>
+
                                 <o-field label="Ronda del Gran Premio">
                                     <o-input v-model="grandPrix.round" name="round" expanded lazy :min=0 type="number"></o-input>
                                 </o-field>
+
+                                <button class="button is-primary mt-2" :disabled="!isDataOk()" @click="editGrandPrix()">Editar datos del gran premio</button>
+
                             </div>
                             <div class="column">
+                                <o-field label="Circuito del Gran Premio">
+                                    <o-select v-model="grandPrix.circuit" placeholder="Selecciona un circuito" expanded>
+                                        <option
+                                            v-for="circuit in circuitList"
+                                            :value="circuit"
+                                            :key="circuit.id + '-' + circuit.variant.name">
+                                            {{ circuit.nameWithVariant() }}
+                                        </option>
+                                    </o-select>
+                                </o-field>
+
                                 <o-field label="Vueltas del Gran Premio">
                                     <o-input v-model="grandPrix.laps" name="laps" expanded lazy :min=0 type="number"></o-input>
                                 </o-field>
                             </div>
                         </div>
 
-                        <label class="label">Imagen promocional del Gran Premio</label>
-                        <figure class="image is-16by9">
-                            <img :src="grandPrix.promoImage()" alt="Promo image"/>
+                        <div class="columns">
+                            <div class="column is-half">
 
-                            <label class="icon edit-icon">
-                                <i class="fa fa-camera"></i>
-                                <input @change="onFileChange" accept="image/*" tabindex="-1" type="file" hidden>
-                            </label>
-                        </figure>
+                                <label class="label mt-2">Imagen promocional del Gran Premio</label>
+                                <figure class="image is-16by9">
+                                    <img :src="grandPrix.promoImage()" alt="Promo image"/>
 
+                                    <label class="icon edit-icon">
+                                        <i class="fa fa-camera"></i>
+                                        <input @change="onFileChange" accept="image/*" tabindex="-1" type="file" hidden>
+                                    </label>
+                                </figure>
+                            </div>
+                        </div>
 
-                        <button class="button is-primary mt-2" :disabled="!isDataOk()" @click="editGrandPrix()">Editar datos del gran premio</button>
                     </div>
                 </div>
 
