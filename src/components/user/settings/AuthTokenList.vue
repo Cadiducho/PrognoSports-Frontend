@@ -2,7 +2,7 @@
 
     <h2 class="subtitle">Tokens de inicio de sesión</h2>
 
-    <ul class="block-list no-select is-outlined">
+    <ul class="block-list is-unselectable is-outlined">
         <li
             v-for="token in authTokens"
             class="has-text-weight-semibold is-flex is-justify-content-space-between" style="background: #f5f5f5;">

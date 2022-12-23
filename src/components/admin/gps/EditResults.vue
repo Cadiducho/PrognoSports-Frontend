@@ -3,7 +3,7 @@
 
     <section v-if="session.name === 'RACE'" class="mb-4">
         <o-field label="Vuelta rápida">
-            <o-select v-model="fastLap" placeholder="Selecciona un circuito" expanded>
+            <o-select v-model="fastLap" placeholder="Selecciona un piloto" expanded>
                 <option
                     v-for="driver in sessionResults"
                     :value="driver"
@@ -12,8 +12,9 @@
                 </option>
             </o-select>
         </o-field>
+
+        <hr/>
     </section>
-    <hr/>
 
     <label class="label">Resultados</label>
     <SlickList v-model:list="sessionResults" tag="ul" :distance="1"
