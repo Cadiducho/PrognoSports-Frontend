@@ -34,7 +34,7 @@
                     <h2 class="title">Datos del {{ grandPrix.name }} en {{ session.humanName() }}</h2>
 
                     <o-field label="Fecha de la sesión">
-                        <bulma_calendar :value="session.date" :options="calendarOptions"
+                        <Calendar :value="session.date" :options="calendarOptions"
                                         v-on:input="session.date = $event;"/>
                     </o-field>
 
@@ -66,7 +66,6 @@
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import { SlickList, SlickItem } from 'vue-slicksort';
-import bulma_calendar from "bulma-calendar/dist/components/vue/bulma_calendar.vue";
 import {
     driversService,
     grandPrixService, notificationService,
@@ -85,12 +84,15 @@ import {useStyles} from "@/composables/useStyles";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
 import EditResults from "@/components/admin/gps/EditResults.vue";
+import EditGrid from "@/components/admin/gps/EditGrid.vue";
+import Calendar from "@/components/lib/Calendar.vue";
 
 // ToDo: Alterar grid si no contiene QUALIFY
 // ToDo: Vuelta rápida si es RACE
 export default defineComponent({
     name: "EditSessionGrandPrix",
     components: {
+        EditGrid,
         EditResults,
         AlertNoPermission,
         PrognoPageTitle,
@@ -98,7 +100,7 @@ export default defineComponent({
         SlickList,
         SlickItem,
         GrandPrixPagination,
-        bulma_calendar
+        Calendar
     },
     setup() {
         const authStore = useAuthStore();

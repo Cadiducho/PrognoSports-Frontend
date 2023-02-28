@@ -55,7 +55,7 @@
                     </o-field>
 
                     <o-field label="Cumpleaños">
-                        <bulma_calendar :value="editedUser.birthdate" :options="calendarOptions" v-on:input="editedUser.birthdate = $event;" />
+                        <Calendar :value="editedUser.birthdate" :options="calendarOptions" v-on:input="editedUser.birthdate = $event;" />
                     </o-field>
 
                 </div>
@@ -194,7 +194,6 @@
 <script lang="ts">
 import UserLevelResume from "@/components/user/UserLevelResume.vue";
 import UserProfileCard from "@/components/user/UserProfileCard.vue";
-import bulma_calendar from "bulma-calendar/dist/components/vue/bulma_calendar.vue";
 
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
@@ -207,6 +206,7 @@ import {User} from "@/types/User";
 import {notificationService, userService} from "@/_services";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import AuthTokenList from "@/components/user/settings/AuthTokenList.vue";
+import Calendar from "@/components/lib/Calendar.vue";
 
 interface Timezone {
     id: string,
@@ -220,7 +220,7 @@ export default defineComponent({
         PrognoModal,
         UserLevelResume,
         UserProfileCard,
-        bulma_calendar
+        Calendar
     },
     setup() {
         const dayjs = useDayjs();
