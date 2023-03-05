@@ -46,7 +46,7 @@
                     </div>
                 </o-collapse>
 
-                <SlickList v-model:list="pilotosDisponibles" :group="session.name" :accept="[session.name]" tag="ul"
+                <SlickList v-model:list="pilotosDisponiblesFiltrados" :group="session.name" :accept="[session.name]" tag="ul" @sort-insert="insertToDisponibles($event)"
                            class="block-list has-radius is-unselectable">
 
                     <SlickItem v-for="(item, index) in pilotosDisponiblesFiltrados" :key="item.id" :index="index" tag="li"
@@ -78,7 +78,7 @@
 
             <div class="column is-6">
                 <h3 class="is-unselectable">Pilotos pronosticados</h3>
-                <SlickList v-model:list="pilotosPronosticados" :group="session.name" :accept="[session.name]" tag="ul"
+                <SlickList v-model:list="pilotosPronosticados" :group="session.name" :accept="[session.name]" tag="ul" @sort-insert="insertToPronosticados($event)"
                            class="block-list is-unselectable pilotos-pronosticados">
 
                     <SlickItem v-for="(item, index) in pilotosPronosticados" :key="item.id" :index="index" tag="li"
@@ -259,40 +259,54 @@ export default defineComponent({
 
                     notificationService.showNotification(message, "danger");
                 });
+        },
+        insertToPronosticados(event: { newIndex: number, value: any }) {
+            const { newIndex, value } = event;
+
+            this.pilotosDisponibles.splice(this.pilotosDisponibles.findIndex(d => d.id === value.id), 1);
+        },
+        insertToDisponibles(event: { newIndex: number, value: any }) {
+            const { value } = event;
+
+            this.pilotosDisponibles.push(value);
         }
     },
     computed: {
-        pilotosDisponiblesFiltrados(): Array<Driver> {
-            const sortAlfabetico = (d1: Driver, d2: Driver) => (d1.lastname < d2.lastname ? -1 : 1);
-            const sortEquipos = (d1: Driver, d2: Driver) => (d1.team.name < d2.team.name ? -1 : 1);
-            const sortDorsal = (d1: Driver, d2: Driver) => (d1.number < d2.number ? -1 : 1);
-            const sortParrilla = (d1: Driver, d2: Driver) => (this.indexedGrid.get(d1.number)! < this.indexedGrid.get(d2.number)! ? -1 : 1);
+        pilotosDisponiblesFiltrados: {
+            get(): Array<Driver> {
+                const sortAlfabetico = (d1: Driver, d2: Driver) => (d1.lastname < d2.lastname ? -1 : 1);
+                const sortEquipos = (d1: Driver, d2: Driver) => (d1.team.name < d2.team.name ? -1 : 1);
+                const sortDorsal = (d1: Driver, d2: Driver) => (d1.number < d2.number ? -1 : 1);
+                const sortParrilla = (d1: Driver, d2: Driver) => (this.indexedGrid.get(d1.number)! < this.indexedGrid.get(d2.number)! ? -1 : 1);
 
 
-            let pickedSort: (d1: Driver, d2: Driver) => (number);
-            switch (this.orderType) {
-                case 1: pickedSort = sortEquipos; break;
-                case 2: pickedSort = sortDorsal; break;
-                case 3: pickedSort = sortParrilla; break;
-                default: pickedSort = sortAlfabetico;
+                let pickedSort: (d1: Driver, d2: Driver) => (number);
+                switch (this.orderType) {
+                    case 1: pickedSort = sortEquipos; break;
+                    case 2: pickedSort = sortDorsal; break;
+                    case 3: pickedSort = sortParrilla; break;
+                    default: pickedSort = sortAlfabetico;
+                }
+                let listaOrdenada = this.pilotosDisponibles.sort(pickedSort);
+
+                if (this.orderAscendent) {
+                    listaOrdenada = listaOrdenada.reverse();
+                }
+                if (!this.filtroPiloto.trim()) {
+                    return listaOrdenada;
+                }
+
+                let filtroLowerCase = this.filtroPiloto.toLowerCase();
+                return listaOrdenada.filter(driver => {
+                    return driver.lastname.toLowerCase().includes(filtroLowerCase)
+                        || driver.firstname.toLowerCase().includes(filtroLowerCase)
+                        || driver.team.name.toLowerCase().includes(filtroLowerCase)
+                        || driver.team.longname.toLowerCase().includes(filtroLowerCase)
+                        || driver.team.carname.toLowerCase().includes(filtroLowerCase);
+                })
+            },
+            set(value: Array<Driver>) {
             }
-            let listaOrdenada = this.pilotosDisponibles.sort(pickedSort);
-
-            if (this.orderAscendent) {
-                listaOrdenada = listaOrdenada.reverse();
-            }
-            if (!this.filtroPiloto.trim()) {
-                return listaOrdenada;
-            }
-
-            let filtroLowerCase = this.filtroPiloto.toLowerCase();
-            return listaOrdenada.filter(driver => {
-                return driver.lastname.toLowerCase().includes(filtroLowerCase)
-                    || driver.firstname.toLowerCase().includes(filtroLowerCase)
-                    || driver.team.name.toLowerCase().includes(filtroLowerCase)
-                    || driver.team.longname.toLowerCase().includes(filtroLowerCase)
-                    || driver.team.carname.toLowerCase().includes(filtroLowerCase);
-            })
         }
     }
 });
