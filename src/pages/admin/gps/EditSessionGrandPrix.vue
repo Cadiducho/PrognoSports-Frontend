@@ -84,7 +84,7 @@ import {useStyles} from "@/composables/useStyles";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
 import EditResults from "@/components/admin/gps/EditResults.vue";
-import EditGrid from "@/components/admin/gps/EditGrid.vue";
+//import EditGrid from "@/components/admin/gps/EditGrid.vue";
 import Calendar from "@/components/lib/Calendar.vue";
 
 // ToDo: Alterar grid si no contiene QUALIFY
@@ -92,7 +92,7 @@ import Calendar from "@/components/lib/Calendar.vue";
 export default defineComponent({
     name: "EditSessionGrandPrix",
     components: {
-        EditGrid,
+        //EditGrid,
         EditResults,
         AlertNoPermission,
         PrognoPageTitle,
