@@ -4,7 +4,7 @@
 
             <PrognoPageTitle name="Ranking" />
             <o-field label="Temporada" :label-position="'on-border'">
-                <o-select v-if="Object.keys(chosenSeason).length" v-model="chosenSeason" placeholder="Selecciona la temporada"  @input="changeSeason()" >
+                <o-select v-if="Object.keys(chosenSeason).length" v-model="chosenSeason" placeholder="Selecciona la temporada" @change="changeSeason()" >
                     <option
                         v-for="season in seasonList"
                         :value="season"

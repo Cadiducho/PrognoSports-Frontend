@@ -147,7 +147,7 @@ export default defineComponent({
         return {
             competition: {id: 0} as Competition,
             compiledRules: "",
-            chosenSeason: {} as Season,
+            chosenSeason: {id: 0} as Season,
             ruleSet: {id: 0} as RuleSet,
             seasonList: new Array<Season>(),
         }
