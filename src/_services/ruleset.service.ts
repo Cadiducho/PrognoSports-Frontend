@@ -3,6 +3,7 @@ import {IRuleSet, RuleSet} from "@/types/RuleSet";
 import axios from "axios";
 import {Community} from "@/types/Community";
 import {GrandPrix} from "@/types/GrandPrix";
+import {Season} from "@/types/Season";
 
 export class RuleSetService extends PrognoService<IRuleSet, RuleSet> {
 
@@ -18,8 +19,12 @@ export class RuleSetService extends PrognoService<IRuleSet, RuleSet> {
         return this.getObjectListFromAPI(`/rulesets`);
     }
 
+    public async getRuleSetInSeason(community: Community, season: Season): Promise<RuleSet> {
+        return this.getObjectFromAPI(`/rulesets/communities/${community.id}/${season.id}`);
+    }
+
     public async getRuleSetInGrandPrix(community: Community, grandPrix: GrandPrix): Promise<RuleSet> {
-        return this.getObjectFromAPI(`/rulesets/${community.id}/${grandPrix.competition.id}/${grandPrix.season.id}/${grandPrix.id}`);
+        return this.getObjectFromAPI(`/rulesets/communities/${community.id}/${grandPrix.competition.id}/${grandPrix.season.id}/${grandPrix.id}`);
     }
 
     public async createRuleSet(data: any): Promise<RuleSet> {

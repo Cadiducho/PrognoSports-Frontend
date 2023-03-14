@@ -39,7 +39,7 @@
                     </o-select>
                 </o-field>
                 <o-field label="Fecha">
-                    <bulma_calendar :value="newSession.date" :options="calendarOptions" v-on:input="newSession.date = $event;" />
+                    <Calendar :value="newSession.date" :options="calendarOptions" v-on:input="newSession.date = $event;" />
                 </o-field>
                 <button class="button is-primary is-fullwidth" @click="addSessionToGP()">Añadir</button>
             </section>
@@ -53,11 +53,11 @@ import {GrandPrix} from "@/types/GrandPrix";
 import {useDayjs} from "@/composables/useDayjs";
 import {RaceSession} from "@/types/RaceSession";
 import {sessionService} from "@/_services";
-import bulma_calendar from "bulma-calendar/dist/components/vue/bulma_calendar.vue";
+import Calendar from "@/components/lib/Calendar.vue";
 
 export default defineComponent({
     name: "SessionsInGrandPrix",
-    components: { bulma_calendar },
+    components: { Calendar },
     props: {
         grandPrix: {
             type: Object as PropType<GrandPrix>,

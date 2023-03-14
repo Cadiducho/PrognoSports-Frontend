@@ -22,8 +22,18 @@
 
         <section class="content" v-if="currentCommunity && competition.id !== 0">
             <h2>Normas y puntuaciones de la comunidad {{ currentCommunity.name }}</h2>
-            <section>
-                <p>Esta comunidad usa el conjunto de reglas <i>{{ currentCommunity.defaultRuleSet.displayname }}.</i>
+            <o-field label="Temporada" :label-position="'on-border'">
+                <o-select v-if="Object.keys(chosenSeason).length" v-model="chosenSeason" placeholder="Selecciona la temporada" @change="changeSeason()" >
+                    <option
+                        v-for="season in seasonList"
+                        :value="season"
+                        :key="season.id">
+                        {{ season.competition.name }} {{ season.name }}
+                    </option>
+                </o-select>
+            </o-field>
+            <section v-if="ruleSet.id !== 0">
+                <p>Esta comunidad en la temporada {{ chosenSeason.name }} usa el conjunto de reglas <i>{{ ruleSet.displayname }}.</i>
                 </p>
 
                 <div class="content">
@@ -33,7 +43,7 @@
                 <div class="content">
                     <ul>
                         <li v-for="session in competition.availableSessions" :key="session.name">
-                            <b>{{ session.humanName() }}:</b> {{ currentCommunity.defaultRuleSet.data.predictedPositions[session.name] || 4 }} posiciones.
+                            <b>{{ session.humanName() }}:</b> {{ ruleSet.data.predictedPositions[session.name] || 4 }} posiciones.
                         </li>
                     </ul>
                     <hr/>
@@ -57,8 +67,10 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th>Posición</th>
-                                <th v-for="session in competition.availableSessions">{{ session.humanName() }}</th>
+                                <th>Total</th>
+                                <td v-for="session in competition.availableSessions">
+                                    {{ maxPointsPerSession[session.name] || 0 }}
+                                </td>
                             </tr>
                         </tfoot>
                     </table>
@@ -97,12 +109,6 @@
                                 <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsIfIsNotInResults[session.name] || 0 }}</td>
                             </tr>
                         </tbody>
-                        <tfoot>
-                            <tr>
-                                <th></th>
-                                <th v-for="session in competition.availableSessions">{{ session.humanName() }}</th>
-                            </tr>
-                        </tfoot>
                     </table>
                 </div>
             </section>
@@ -117,11 +123,13 @@
 <script lang="ts">
 import {Competition} from "@/types/Competition";
 import {marked} from 'marked';
-import {competitionService} from "@/_services";
+import {competitionService, rulesetService, seasonService} from "@/_services";
 import {RuleSet} from "@/types/RuleSet";
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
+import {Season} from "@/types/Season";
+import {Community} from "@/types/Community";
 
 export default defineComponent({
     name: "Rules",
@@ -138,22 +146,29 @@ export default defineComponent({
     data() {
         return {
             competition: {id: 0} as Competition,
-            compiledRules: ""
+            compiledRules: "",
+            chosenSeason: {id: 0} as Season,
+            ruleSet: {id: 0} as RuleSet,
+            seasonList: new Array<Season>(),
         }
     },
     mounted() {
         if (this.thereIsCurrentCommunity) {
+            seasonService.getSeasonList().then((seasons) => {
+                this.seasonList = [];
+                this.seasonList.push(...seasons);
+            });
             competitionService.getCompetition(this.currentCommunity.competition.code)
                 .then(c => {
                     this.competition = c;
+                    this.chosenSeason = c.currentSeason;
                     this.compiledRules = marked(c.rules ?? "");
+
+                    this.getRuleSetOfSeason(this.currentCommunity, this.chosenSeason);
                 });
         }
     },
     computed: {
-        ruleSet(): RuleSet {
-            return this.currentCommunity.defaultRuleSet;
-        },
         maxPosInRuleSet(): number {
             let max = 0;
             this.competition.availableSessions.forEach(session => {
@@ -173,6 +188,30 @@ export default defineComponent({
                 postions.push(i);
             }
             return postions;
+        },
+        maxPointsPerSession() {
+            let sessions: Record<string, number> = {};
+            this.competition.availableSessions.forEach(session => {
+                let map = this.ruleSet.data.pointsByEqualsPosition[session.name];
+                if (map !== undefined) {
+                    sessions[session.name] = 0;
+                    for (let kPos of Object.values(map)) {
+                        const point = Number.parseInt(kPos);
+                        sessions[session.name] += point;
+                    }
+                }
+            });
+            return sessions;
+        }
+    },
+    methods: {
+        changeSeason() {
+            this.getRuleSetOfSeason(this.currentCommunity, this.chosenSeason!);
+        },
+        getRuleSetOfSeason(community: Community, season: Season) {
+            rulesetService.getRuleSetInSeason(community, season).then((rules) => {
+                this.ruleSet = rules;
+            });
         }
     }
 });
