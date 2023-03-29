@@ -1223,6 +1223,11 @@ vue-slicksort@^2.0.5:
   resolved "https://registry.yarnpkg.com/vue-slicksort/-/vue-slicksort-2.0.5.tgz#d080829de9d04b16e8d194ed8b4e219a501091a2"
   integrity sha512-fXz1YrNjhUbJK7o0tMk27mIr4pMAZYLSYvtmLazCtfpvz+zafPCn34ILDL8B7hT7WLVZKreYs6JVe5VWymqmzA==
 
+vue-sonner@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/vue-sonner/-/vue-sonner-0.3.1.tgz#8d9f7b4e1b08b464b32f906a8e70f18f70d30f80"
+  integrity sha512-jexivp2iuP3gqj2u7Q5jnLv4vjOnW1Gdrtjb6qVEzIVuqoiU80B+iLi/5VmgC5D2Mk+hi16jr7ZYOaR71Gqecw==
+
 vue3-apexcharts@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/vue3-apexcharts/-/vue3-apexcharts-1.4.1.tgz#ea561308430a1c5213b7f17c44ba3c845f6c490d"
