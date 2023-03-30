@@ -1,12 +1,12 @@
 <template>
     <div id="pointsChart">
-        <loading v-if="loading"></loading>
-        <VueApexCharts v-else
-                       height="400"
-                       :type="getChartType()"
-                       :options="chartOptions"
-                       :series="chartSeries">
-        </VueApexCharts>
+        <loading class="m-4" v-show="loading"></loading>
+        <VueApexCharts v-show="!loading"
+            height="400"
+            :type="getChartType()"
+            :options="chartOptions"
+            :series="chartSeries"
+        ></VueApexCharts>
         <o-button @click="changeGraphType()" variant="info is-light" expanded>
             Cambiar tipo de gráfica
         </o-button>
@@ -52,6 +52,20 @@ export default defineComponent({
     },
     data() {
         return {
+            chartOptionss: {
+                chart: {
+                id: "vuechart-example",
+                },
+                xaxis: {
+                categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998],
+                },
+            },
+            series: [
+                {
+                name: "series-1",
+                data: [30, 40, 35, 50, 49, 60, 70, 91],
+                },
+            ],
             loading: false,
             grandPrixes: new Map<string, string>(),
             chartTypeIndex: 0,
@@ -159,7 +173,6 @@ export default defineComponent({
                         }
                     }
                 }).then(() => {
-
                     userService.getCumulatedPointsInCommunity(this.user, this.currentCommunity, competition, season).then(cumulatedPoints => {
                         let dataAcumulada = [...Object.values(cumulatedPoints)];
                         userService.getPointsInCommunity(this.user, this.currentCommunity, competition, season).then(points => {
@@ -175,7 +188,6 @@ export default defineComponent({
                                     data: dataPoints
                                 }
                             ]
-
                             this.loading = false;
                         });
                     });
