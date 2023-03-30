@@ -96,7 +96,7 @@ export const routes = [
     {
         path: '/user/:user?',
         alias: ['/u/:user?'],
-        meta: { requiresAuth: true, requiresCommunity: true, title: "Usuarios" },
+        meta: { requiresAuth: true, title: "Usuarios" },
         component: PrognoLayout,
         children: [{
             path: '',
@@ -107,7 +107,7 @@ export const routes = [
     },
     {
         path: '/settings',
-        meta: { requiresAuth: true, requiresCommunity: true, title: "Ajustes" },
+        meta: { requiresAuth: true, title: "Ajustes" },
         component: PrognoLayout,
         children: [{
             path: '',
