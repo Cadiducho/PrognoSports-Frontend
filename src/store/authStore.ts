@@ -82,6 +82,9 @@ export const useAuthStore = defineStore('auth', {
             );
         },
         userRequest(): Promise<User> {
+            if (!this.token) {
+                return Promise.reject();
+            }
             return userService.getMe().then(
                 user => {
                     //console.log("[🍍] user success: " + user.username);
