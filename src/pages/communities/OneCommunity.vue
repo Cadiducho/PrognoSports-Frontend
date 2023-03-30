@@ -24,7 +24,7 @@
                             <p class="card-text"><b>Fecha de creación: </b>{{ humanDateTime(community.created) }}</p>
                             <p class="card-text">
                                 <b>Creador: </b>
-                                <router-link :to="{name: 'user', params: { user: community.owner.username}}">
+                                <router-link :to="{name: 'user', params: { user: community.owner.id }}">
                                     {{ community.owner.username }}
                                 </router-link>
                             </p>
@@ -119,7 +119,7 @@
                                                 <p class="is-flex is-justify-content-space-between">
                                                     <span>
                                                         <strong>
-                                                            <router-link :to="{name: 'user', params: { user: cu.user.username}}">
+                                                            <router-link :to="{name: 'user', params: { user: cu.user.id }}">
                                                                 {{ cu.user.username }}
                                                             </router-link>
                                                         </strong>
