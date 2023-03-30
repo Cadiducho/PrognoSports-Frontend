@@ -83,7 +83,7 @@
                         community: targetCommunity.name,
                     }
                 }).then(() => {
-                    notificationService.showNotification("Has cambiado a la comunidad " + targetCommunity.name, "info");
+                    notificationService.showNotification("Has cambiado a la comunidad " + targetCommunity.name, "success");
                     this.emitter.emit('reloadCommunitiesDropdown'); // Recargar la lista, que previsiblemente quitará la target y añadirá la que estaba originalmente
                 })
             }
