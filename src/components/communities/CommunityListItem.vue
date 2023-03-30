@@ -53,8 +53,6 @@
 
 <script lang="ts">
 import {Community} from "@/types/Community";
-import ConfirmLeaveCommunityModal from "@/components/communities/ConfirmLeaveCommunityModal.vue";
-import ConfirmJoinCommunityModal from "@/components/communities/ConfirmJoinCommunityModal.vue";
 
 import {defineComponent, PropType} from "vue";
 import {useDayjs} from "@/composables/useDayjs";
@@ -65,7 +63,7 @@ import useEmitter from "@/composables/useEmitter";
 
 export default defineComponent({
     name: "CommunityListItem",
-    components: {PrognoModal, ConfirmJoinCommunityModal, ConfirmLeaveCommunityModal},
+    components: {PrognoModal},
     props: {
         community: {
             type: Object as PropType<Community>,
