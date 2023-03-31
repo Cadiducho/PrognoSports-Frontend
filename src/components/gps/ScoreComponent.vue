@@ -70,8 +70,7 @@
                     <template v-slot="props">
                         <o-tooltip
                             position="right"
-                            variant="light"
-                            append-to-body>
+                            variant="light">
                             <template v-slot:content>
                                 <!-- User mini card -->
                                 <UserMiniCard :user="props.row.user" />
