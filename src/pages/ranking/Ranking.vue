@@ -15,7 +15,9 @@
             </o-field>
         </nav>
 
-        <template v-if="!isLoading">
+
+        <loading v-if="isLoading" />
+        <template v-else>
 
             <o-notification v-if="!tableHasData" variant="warning">
                 No hay datos de esta temporada
@@ -226,13 +228,9 @@
                         :series="chartStandings">
                     </VueApexCharts>
                 </o-tab-item>
-                <o-tab-item label="Estadisticas de usuarios" :value="3" disabled>
-
-                </o-tab-item>
             </o-tabs>
 
         </template>
-        <loading v-else />
     </div>
 </template>
 
@@ -299,7 +297,12 @@
                             opacity: 1
                         },
                         zoom: {
-                            enabled: false
+                            type: 'x',
+                            enabled: true,
+                            autoScaleYaxis: true
+                        },
+                        toolbar: {
+                            autoSelected: 'zoom'
                         }
                     },
                     dataLabels: {
@@ -393,6 +396,7 @@
                     const members = result[1];
 
                     this.gps = gpList;
+                    this.updateChartsLegend();
 
                     this.communityMembers = new Map<string, User>();
                     members.forEach(miembro => {
@@ -512,6 +516,23 @@
             },
             checkWinnerCell(gp: string, score: number) {
                 return (this.maxAccumulatedPointsInGrandPrix.get(gp)! == score);
+            },
+            updateChartsLegend() {
+                // Actualizar leyenda con los codigos de los gps
+                const xaxis = {
+                    categories: [...this.gps.map(gp => gp.code)],
+                }
+
+                this.chartOptions = {
+                    ...this.chartOptions,
+
+                    // @ts-ignore
+                    xaxis
+                }
+                this.chartStandingsOptions = {
+                    ...this.chartStandingsOptions,
+                    xaxis
+                }
             }
         },
     });

@@ -52,12 +52,6 @@ export default defineComponent({
     },
     data() {
         return {
-            series: [
-                {
-                name: "series-1",
-                data: [30, 40, 35, 50, 49, 60, 70, 91],
-                },
-            ],
             loading: false,
             grandPrixes: new Map<string, string>(),
             chartTypeIndex: 0,
@@ -90,7 +84,12 @@ export default defineComponent({
                         opacity: 1
                     },
                     zoom: {
-                        enabled: false
+                        type: 'x',
+                        enabled: true,
+                        autoScaleYaxis: true
+                    },
+                    toolbar: {
+                        autoSelected: 'zoom'
                     }
                 },
                 dataLabels: {
