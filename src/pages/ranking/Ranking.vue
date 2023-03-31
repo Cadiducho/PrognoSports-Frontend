@@ -113,8 +113,7 @@
                             <template v-slot="props">
                                 <o-tooltip
                                     position="right"
-                                    variant="light"
-                                    append-to-body>
+                                    variant="light">
                                     <template v-slot:content>
                                         <UserMiniCard :user="communityMembers.get(props.row.user.username)" />
                                     </template>
@@ -178,8 +177,7 @@
                             <template v-slot="props">
                                 <o-tooltip
                                     position="right"
-                                    variant="light"
-                                    append-to-body>
+                                    variant="light">
                                     <template v-slot:content>
                                         <UserMiniCard :user="communityMembers.get(props.row.user.username)" />
                                     </template>
