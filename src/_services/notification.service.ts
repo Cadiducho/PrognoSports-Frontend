@@ -1,7 +1,9 @@
 import axios from 'axios';
 import {INotification, Notification} from "@/types/Notification";
 import {PrognoService} from "@/_services/progno.service";
-import { useProgrammatic } from '@oruga-ui/oruga-next'
+import { toast } from 'vue-sonner'
+import {Position, ToastTypes} from "vue-sonner/lib/types";
+import {useToastStore} from "@/store/toastStore";
 
 export class NotificationService extends PrognoService<INotification, Notification> {
 
@@ -22,13 +24,21 @@ export class NotificationService extends PrognoService<INotification, Notificati
     }
 
     public showNotification(message: string,
-                            variant: "primary" | "info" | "success" | "warning" | "danger" = "success",
-                            position: "top-right" | "top" | "top-left" | "bottom-right" | "bottom" | "bottom-left" = "top") {
+                            variant: ToastTypes = "success",
+                            position: Position = "top-right") {
 
-        useProgrammatic().oruga.notification.open({
-            position: position,
-            message: message,
-            variant: variant,
-        });
+        const toastStore = useToastStore();
+        toastStore.position = position;
+
+        switch (variant) {
+            case "error":
+                toast.error(message);
+                return;
+            case "success":
+                toast.success(message);
+                return;
+        }
+
+        toast.message(message);
     }
 }

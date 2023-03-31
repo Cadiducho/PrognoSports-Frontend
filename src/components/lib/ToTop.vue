@@ -1,5 +1,5 @@
 <template>
-    <div v-show="show" class="is-fab is-right p-4" >
+    <div v-show="show" class="is-fab p-4" >
         <o-tooltip label="Volver arriba" position="left" @click="scrollToTop">
             <button class="button is-primary is-rounded">
                 <span class="icon">
@@ -47,11 +47,6 @@ export default defineComponent({
     position: fixed;
     bottom: 0;
     right: 16px;
-}
-
-.is-right {
-    display: flex;
-    justify-content: end;
 }
 
 .button {

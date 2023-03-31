@@ -14,7 +14,7 @@
                             <router-link to="/faq" class="list-item">FAQ</router-link>
                         </li>
                         <li>
-                            <a href="https://api.prognosports.com/docs" class="list-item">Documentación</a>
+                            <a href="https://api.prognosports.com/swagger" class="list-item">Documentación</a>
                         </li>
                         <li>
                             <a href="https://github.com/Cadiducho/PrognoSports-Frontend" class="list-item">Github</a>

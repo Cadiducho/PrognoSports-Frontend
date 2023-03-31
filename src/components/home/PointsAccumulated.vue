@@ -1,12 +1,12 @@
 <template>
     <div id="pointsChart">
-        <loading v-if="loading"></loading>
-        <VueApexCharts v-else
-                       height="400"
-                       :type="getChartType()"
-                       :options="chartOptions"
-                       :series="chartSeries">
-        </VueApexCharts>
+        <loading class="m-4" v-show="loading"></loading>
+        <VueApexCharts v-show="!loading"
+            height="400"
+            :type="getChartType()"
+            :options="chartOptions"
+            :series="chartSeries"
+        ></VueApexCharts>
         <o-button @click="changeGraphType()" variant="info is-light" expanded>
             Cambiar tipo de gráfica
         </o-button>
@@ -84,7 +84,12 @@ export default defineComponent({
                         opacity: 1
                     },
                     zoom: {
-                        enabled: false
+                        type: 'x',
+                        enabled: true,
+                        autoScaleYaxis: true
+                    },
+                    toolbar: {
+                        autoSelected: 'zoom'
                     }
                 },
                 dataLabels: {
@@ -159,7 +164,6 @@ export default defineComponent({
                         }
                     }
                 }).then(() => {
-
                     userService.getCumulatedPointsInCommunity(this.user, this.currentCommunity, competition, season).then(cumulatedPoints => {
                         let dataAcumulada = [...Object.values(cumulatedPoints)];
                         userService.getPointsInCommunity(this.user, this.currentCommunity, competition, season).then(points => {
@@ -175,7 +179,6 @@ export default defineComponent({
                                     data: dataPoints
                                 }
                             ]
-
                             this.loading = false;
                         });
                     });

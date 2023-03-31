@@ -5,7 +5,7 @@ import {useCommunityStore} from "@/store/communityStore";
 export default function fetchDataFromClient(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
     const authStore = useAuthStore();
     const communityStore = useCommunityStore();
-    authStore.userRequest().finally(() => {
+    authStore.userRequest().then(() => {
         const loggedIn = authStore.isLoggedIn;
         //console.log("[🍍] Logged in? " + loggedIn)
         if (loggedIn) {
@@ -27,5 +27,7 @@ export default function fetchDataFromClient(to: RouteLocationNormalized, from: R
             // Si no existe usuario, paso al siguiente middleware
             next();
         }
+    }).catch(() => {
+        next();
     });
 }

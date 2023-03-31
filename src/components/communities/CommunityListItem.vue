@@ -26,40 +26,44 @@
                 <i>Comunidad creada el <time :datetime="community.created">{{ humanDateTime(community.created) }}</time></i>
                 <br />
                 <div class="buttons mt-2">
-                    <o-button v-if="community.open && !isUserInCommunity" variant="success" @click="tryJoinCommunity">Unirse</o-button>
-                    <o-button v-if="isUserInCommunity" variant="danger" @click="tryLeaveCommunity">Dejar comunidad</o-button>
+                    <o-button v-if="community.open && !isUserInCommunity" variant="success" @click="this.isJoinModalActive = true">Unirse</o-button>
+                    <o-button v-if="isUserInCommunity" variant="danger" @click="this.isLeaveModalActive = true">Dejar comunidad</o-button>
                     <o-button tag="router-link" variant="link is-light" :to="'/communities/' + community.name">Detalles</o-button>
                 </div>
             </div>
         </div>
 
-        <o-modal
-            v-model="isJoinModalActive"
-            has-modal-card
-            :can-cancel="true">
-            <ConfirmJoinCommunityModal />
-        </o-modal>
-        <o-modal
-            v-model="isLeaveModalActive"
-            has-modal-card
-            :can-cancel="true">
-            <ConfirmLeaveCommunityModal />
-        </o-modal>
+        <PrognoModal v-show="isJoinModalActive" @close="isJoinModalActive = false" @handle="joinCommunity()">
+            <template v-slot:title>¿Unirse a la comunidad?</template>
+            <template v-slot:content>
+                ¿Deseas unirte a la comunidad <span class="has-text-weight-semibold">{{ community.name }}</span>?
+            </template>
+            <template v-slot:saveText>Unirse a la comunidad</template>
+        </PrognoModal>
+
+        <PrognoModal v-show="isLeaveModalActive" @close="isLeaveModalActive = false" @handle="leaveCommunity()">
+            <template v-slot:title>¿Salir de la comunidad?</template>
+            <template v-slot:content>
+                Estás seguro de que deseas abandonar la comunidad <span class="has-text-weight-semibold">{{ community.name }}</span>?
+            </template>
+            <template v-slot:saveText>Dejar comunidad</template>
+        </PrognoModal>
     </div>
 </template>
 
 <script lang="ts">
 import {Community} from "@/types/Community";
-import ConfirmLeaveCommunityModal from "@/components/communities/ConfirmLeaveCommunityModal.vue";
-import ConfirmJoinCommunityModal from "@/components/communities/ConfirmJoinCommunityModal.vue";
 
 import {defineComponent, PropType} from "vue";
 import {useDayjs} from "@/composables/useDayjs";
-import {useProgrammatic} from "@oruga-ui/oruga-next";
+import PrognoModal from "@/components/lib/PrognoModal.vue";
+import {communityService, notificationService} from "@/_services";
+import {useCommunityStore} from "@/store/communityStore";
+import useEmitter from "@/composables/useEmitter";
 
 export default defineComponent({
     name: "CommunityListItem",
-    components: {ConfirmJoinCommunityModal, ConfirmLeaveCommunityModal},
+    components: {PrognoModal},
     props: {
         community: {
             type: Object as PropType<Community>,
@@ -72,10 +76,15 @@ export default defineComponent({
     },
     setup() {
         const dayjs = useDayjs();
-        const oruga = useProgrammatic().oruga;
+        const emitter = useEmitter();
+        const communityStore = useCommunityStore();
 
         const humanDateTime = dayjs.humanDateTime;
-        return { humanDateTime, oruga }
+
+        const currentCommunity = communityStore.currentCommunity;
+        const setCommunity = communityStore.setCommunity;
+        const removeCommunity = communityStore.removeCommunity;
+        return { humanDateTime, emitter, currentCommunity, setCommunity, removeCommunity }
     },
     data() {
         return {
@@ -84,21 +93,35 @@ export default defineComponent({
         }
     },
     methods: {
-        tryJoinCommunity() {
-            this.oruga.modal.open({
-                parent: this,
-                component: ConfirmJoinCommunityModal,
-                trapFocus: false,
-                props: {community: this.community}
+        joinCommunity() {
+            communityService.joinCommunity(this.community).then(communityRes => {
+                notificationService.showNotification("¡Te has unido correctamente a " + communityRes.name + "!");
+
+                this.setCommunity(communityRes);
+                this.$router.push(`/communities/${communityRes.name}`);
+            }).catch((error) => {
+                notificationService.showNotification("Ha ocurrido un error: " + error.message, "error");
+            }).finally(() => {
+                this.emitter.emit('reloadCommunitiesList');
+                this.emitter.emit('reloadCommunitiesDropdown');
+                this.isJoinModalActive = false;
             });
         },
-        tryLeaveCommunity() {
-            this.oruga.modal.open({
-                parent: this,
-                component: ConfirmLeaveCommunityModal,
-                trapFocus: false,
-                props: {community: this.community}
-            });
+        leaveCommunity() {
+            if (this.community.id == this.currentCommunity.id) {
+                notificationService.showNotification("No puedes dejar la comunidad en la que estás en este momento", "error");
+                this.$emit('close');
+            } else {
+                communityService.quitCommunity(this.community).then(() => {
+                    notificationService.showNotification("¡Has dejado la comunidad " + this.community.name + "!");
+                }).catch((error) => {
+                    notificationService.showNotification("Ha ocurrido un error: " + error.message, "error");
+                }).finally(() => {
+                    this.emitter.emit('reloadCommunitiesList');
+                    this.emitter.emit('reloadCommunitiesDropdown');
+                    this.isLeaveModalActive = false;
+                });
+            }
         }
     }
 });

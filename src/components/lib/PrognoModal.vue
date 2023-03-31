@@ -17,8 +17,16 @@
                 </section>
                 <footer class="modal-card-foot">
                     <slot name="footer">
-                        <button class="button is-success" type="submit">Guardar cambios</button>
-                        <button class="button" type="button" @click="close()">Cancelar</button>
+                        <button class="button is-success" type="submit">
+                            <slot name="saveText">
+                                Guardar cambios
+                            </slot>
+                        </button>
+                        <button class="button" type="button" @click="close()">
+                            <slot name="cancelText">
+                                Cancelar
+                            </slot>
+                        </button>
                     </slot>
                 </footer>
             </form>

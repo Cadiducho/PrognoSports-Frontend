@@ -5,7 +5,7 @@ import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
 import {PrognoService} from "@/_services/progno.service";
 
-export class UserService  extends PrognoService<IUser, User> {
+export class UserService extends PrognoService<IUser, User> {
 
     factory(data: IUser): User {
         return new User(data);

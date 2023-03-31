@@ -5,7 +5,7 @@ import {useCommunityStore} from "@/store/communityStore";
 export default function checkCommunity(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
     const communityStore = useCommunityStore();
     if (to.matched.some(record => record.meta.requiresCommunity)) {
-        // Si no está logged in y la ruta lo requiere, mandar al login
+        // Si no tiene comunidad pero la ruta lo requiere, mandar a /communities
         let hasCommunity = communityStore.thereIsCurrentCommunity;
         if (!hasCommunity) {
             next({

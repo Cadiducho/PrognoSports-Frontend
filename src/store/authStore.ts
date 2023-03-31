@@ -70,7 +70,7 @@ export const useAuthStore = defineStore('auth', {
         },
         register(payload: { username: string, email: string, password: string }): Promise<any> {
             let {username, email, password} = payload;
-            return authService.register(username, email, password).then(
+            return authService.register(email, username, password).then(
                 response => {
                     this.changeMailState(email);
                     return Promise.resolve(response);
@@ -82,6 +82,9 @@ export const useAuthStore = defineStore('auth', {
             );
         },
         userRequest(): Promise<User> {
+            if (!this.token) {
+                return Promise.reject();
+            }
             return userService.getMe().then(
                 user => {
                     //console.log("[🍍] user success: " + user.username);
