@@ -1,5 +1,6 @@
 import {User} from "@/types/User";
 import {Dictionary} from "@/types/Dictionary";
+import {RaceSession} from "@/types/RaceSession";
 
 export interface IRuleSet {
     id: number;
@@ -37,6 +38,15 @@ export class RuleSet implements IRuleSet {
         this.id = iData.id;
         this.isPublic = iData.isPublic;
     }
+
+    /**
+     * Obtener la cantidad de posiciones a pronosticar para una comunidad y sesión de Gran Premio concreta
+     * @param session La sesión de Gran Premio
+     */
+    public cantidadPilotosPronosticados(session: RaceSession): number {
+        return this.data?.predictedPositions[session.name] || 0;
+    }
+
 }
 
 export class RuleSetData implements IRuleSetData {
