@@ -1,5 +1,5 @@
 <template>
-    <nav class="level">
+    <nav class="level" v-if="userResume.standings !== 0">
         <div class="level-item has-text-centered">
             <o-tooltip multilined variant="light">
                 <template v-slot:content>
@@ -83,15 +83,21 @@
 </template>
 
 <script lang="ts">
-import {UserResume} from "@/types/User";
+import {User, UserResume} from "@/types/User";
 
-import {defineComponent} from "vue";
+import {defineComponent, PropType} from "vue";
 import {userService} from "@/_services";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 
 export default defineComponent({
     name: "UserLevelResume",
+    props: {
+        user: {
+            type: Object as PropType<User>,
+            required: true
+        },
+    },
     setup() {
         const authStore = useAuthStore();
         const communityStore = useCommunityStore();
@@ -103,7 +109,7 @@ export default defineComponent({
     },
     data() {
         return {
-            userResume: {} as UserResume,
+            userResume: {standings: 0} as UserResume,
         }
     },
     mounted() {
@@ -111,8 +117,14 @@ export default defineComponent({
             const competition = this.currentCommunity.competition;
             const season = competition.currentSeason;
 
-            userService.getUserResume(this.currentUser, this.currentCommunity, competition, season).then((resume) => {
-                this.userResume = resume;
+            userService.getUserResume(this.user, this.currentCommunity, competition, season).then((response) => {
+                this.userResume = response;
+            }).catch((error) => {
+                // Mostrar el error por consola si no es un Unauthorized.
+                // Esto es porque el usuario puede no tener permisos para ver el ranking de la comunidad
+                if (!error.message.includes("Unauthorized")) {
+                    console.error(error);
+                }
             });
         }
     },

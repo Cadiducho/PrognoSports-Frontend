@@ -1,7 +1,7 @@
 <template>
     <loading v-if="isLoading" />
     <div v-else>
-        <section class="section" v-if="thereIsUserParam && !profile">
+        <section class="section" v-if="profile.id === 0">
             <div class="container">
                 <div class="columns is-vcentered">
                     <div class="column has-text-centered">
@@ -22,7 +22,7 @@
 
                 <hr/>
 
-                <UserLevelResume />
+                <UserLevelResume :user="profile" />
 
             </article>
 
@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import {User, UserResume} from "@/types/User";
+import {User} from "@/types/User";
 import {userService} from "@/_services";
 import UserLevelResume from "@/components/user/UserLevelResume.vue";
 
@@ -68,42 +68,37 @@ export default defineComponent({
         return {
             thereIsUserParam: false,
             isLoading: true,
-            profile: {} as User | null,
-            userResume: null as UserResume | null,
+            profile: {id: 0} as User,
         }
     },
     mounted() {
-        const findProfile = new Promise<User | null>((resolve, reject) => {
-            // Si se ha buscado un user en la URL, se procesa
-            if (this.$route.params.user) {
-                this.thereIsUserParam = true;
-                userService.getUser(this.$route.params.user).then((user) => {
-                    this.profile = user;
-                }).catch(() => {
-                }).finally(() => {
-                    this.isLoading = false;
+        this.isLoading = true;
 
-                    resolve(this.profile);
-                })
-            } else {
-                // Si no, se utiliza el usuario que ha iniciado sesión
+        // si hay un usuario en la URL, se busca
+        if (this.$route.params.user) {
+            userService.getUser(this.$route.params.user as string).then((user: User) => {
+                this.profile = user;
+                this.changeBreadcrumb(this.profile?.username);
                 this.isLoading = false;
-                this.profile = this.currentUser;
-                resolve(this.profile);
-            }
-        });
-
-        findProfile.then((profile) => {
-            this.changeBreadcrumb(this.profile?.username || 'Perfil desconocido');
-        });
+            }).catch((error: any) => {
+                console.log(error);
+                this.changeBreadcrumb("Perfil no encontrado");
+                this.isLoading = false;
+            });
+        } else {
+            console.log("usando el actual")
+            // si no, se utiliza el usuario que ha iniciado sesión
+            this.profile = this.currentUser;
+            this.changeBreadcrumb("Tu perfil");
+            this.isLoading = false;
+        }
     },
     methods: {
         changeBreadcrumb(name: string) {
-            this.emitter.emit('breadcrumbLastname', name);
+            setTimeout(() => {
+                this.emitter.emit('breadcrumbLastname', name);
+            }, 50);
         }
     }
 });
 </script>
-
-<style lang="css">
-</style>
