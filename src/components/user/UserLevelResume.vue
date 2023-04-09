@@ -116,8 +116,9 @@ export default defineComponent({
         if (this.thereIsCurrentCommunity) {
             const competition = this.currentCommunity.competition;
             const season = competition.currentSeason;
+            const user = this.user ?? this.currentUser;
 
-            userService.getUserResume(this.user, this.currentCommunity, competition, season).then((response) => {
+            userService.getUserResume(user, this.currentCommunity, competition, season).then((response) => {
                 this.userResume = response;
             }).catch((error) => {
                 // Mostrar el error por consola si no es un Unauthorized.
