@@ -1,31 +1,38 @@
-import {Competition} from "@/types/Competition";
-import {GrandPrix} from "@/types/GrandPrix";
+import {Competition, ICompetition} from "@/types/Competition";
+import {GrandPrix, IGrandPrix} from "@/types/GrandPrix";
 import {useDayjs} from "@/composables/useDayjs";
 
 export interface IRaceSession {
+    id: number;
     name: string;
     code: string;
     hasGrid: boolean;
-    competition: Competition;
-    grandPrix: GrandPrix;
+    competition?: ICompetition;
+    grandPrix?: IGrandPrix;
     date: Date | string;
     uses: number;
 }
 
 export class RaceSession implements IRaceSession {
-    competition: Competition;
-    date: Date;
-    hasGrid: boolean;
-    grandPrix: GrandPrix;
+    id: number;
     name: string;
     code: string;
+    hasGrid: boolean;
+    competition?: Competition;
+    grandPrix?: GrandPrix;
+    date: Date | string;
     uses: number;
 
     constructor(data: IRaceSession) {
-        this.competition = data.competition;
+        this.id = data.id;
+        if (data.competition) {
+            this.competition = new Competition(data.competition);
+        }
         this.date = new Date(data.date);
         this.hasGrid = data.hasGrid;
-        this.grandPrix = data.grandPrix;
+        if (data.grandPrix) {
+            this.grandPrix = new GrandPrix(data.grandPrix);
+        }
         this.name = data.name;
         this.code = data.code;
         this.uses = data.uses;

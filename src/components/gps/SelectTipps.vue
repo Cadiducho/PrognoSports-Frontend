@@ -49,29 +49,7 @@
                 <SlickList v-model:list="pilotosDisponiblesFiltrados" :group="session.name" :accept="[session.name]" tag="ul" @sort-insert="insertToDisponibles($event)"
                            class="block-list has-radius is-unselectable">
 
-                    <SlickItem v-for="(item, index) in pilotosDisponiblesFiltrados" :key="item.id" :index="index" tag="li"
-                               class="is-highlighted has-text-weight-semibold driver-card is-justify-content-space-between"
-                               :style="styleDriverCard(item)">
-                        <span>
-                            {{ item.firstname }} {{ item.lastname }}
-
-                            <span class="tag is-rounded" v-bind:style="styleDorsal(item)">#{{ item.number }}</span>
-
-                            <o-tooltip class="ml-1 driver-card-team"
-                                       :label="(currentUser.preferences['use-long-team-names'] ? item.team.name : item.team.longname) + ' (' +item.team.carname + ')'">
-                                <span v-if="currentUser.preferences['use-long-team-names']">{{ item.team.longname }}</span>
-                                <span v-else>{{ item.team.name }}</span>
-                            </o-tooltip>
-                        </span>
-
-                        <!--
-                        <a @click="moveToTippList(item, index)" class="pl-3 pr-3 arrow-col has-text-primary">
-                            <i class="is-hidden-touch mr-0 fas fa-angle-right"></i>
-                            <i class="is-hidden-touch ml-0 fas fa-angle-right"></i>
-                            <i class="is-hidden-desktop mt-0 fas fa-angle-up"></i>
-                            <i class="is-hidden-desktop mb-0 fas fa-angle-up"></i>
-                        </a>-->
-                    </SlickItem>
+                    <SlickDriverCard v-for="(item, index) in pilotosDisponiblesFiltrados" :key="item.id" :index="index" :driver="item" :showPosition="false"/>
                 </SlickList>
 
             </div>
@@ -81,30 +59,7 @@
                 <SlickList v-model:list="pilotosPronosticados" :group="session.name" :accept="[session.name]" tag="ul" @sort-insert="insertToPronosticados($event)"
                            class="block-list is-unselectable pilotos-pronosticados">
 
-                    <SlickItem v-for="(item, index) in pilotosPronosticados" :key="item.id" :index="index" tag="li"
-                               class="is-highlighted has-text-weight-semibold has-radius driver-card is-justify-content-left"
-                               :style="styleDriverCard(item)">
-
-                        <!--
-                        <a @click="moveToAvailableList(item, index)" class="mr-3 pl-3 arrow-col has-text-primary">
-                            <i class="is-hidden-touch mr-0 fas fa-angle-left"></i>
-                            <i class="is-hidden-touch ml-0 fas fa-angle-left"></i>
-                            <i class="is-hidden-desktop mt-0 fas fa-angle-down"></i>
-                            <i class="is-hidden-desktop mb-0 fas fa-angle-down"></i>
-                        </a>-->
-
-                        <span>
-                            <b>{{ index + 1 }}º.</b> {{ item.firstname }} {{ item.lastname }}
-
-                            <span class="tag is-rounded" v-bind:style="styleDorsal(item)">#{{ item.number }}</span>
-
-                            <o-tooltip class="ml-1 driver-card-team"
-                                       :label="(currentUser.preferences['use-long-team-names'] ? item.team.name : item.team.longname) + ' (' +item.team.carname + ')'">
-                                <span v-if="currentUser.preferences['use-long-team-names']">{{ item.team.longname }}</span>
-                                <span v-else>{{ item.team.name }}</span>
-                            </o-tooltip>
-                        </span>
-                    </SlickItem>
+                    <SlickDriverCard v-for="(item, index) in pilotosPronosticados" :key="item.id" :index="index" :driver="item" :showPosition="true" />
                 </SlickList>
             </div>
         </div>
@@ -144,12 +99,14 @@ import {defineComponent, PropType} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {useStyles} from "@/composables/useStyles";
+import SlickDriverCard from "@/components/gps/SlickDriverCard.vue";
 
 export default defineComponent({
     name: "SelectTipps",
     components: {
         SlickList,
         SlickItem,
+        SlickDriverCard
     },
     props: {
         session: {

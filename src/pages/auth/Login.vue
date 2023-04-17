@@ -112,7 +112,7 @@ export default defineComponent({
                             message = "Fallo al iniciar sesión: " + error.message;
                         }
 
-                        notificationService.showNotification(message, 'danger');
+                        notificationService.showNotification(message, 'error');
                     }
                 );
             }
