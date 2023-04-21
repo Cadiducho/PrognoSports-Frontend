@@ -30,7 +30,7 @@
                                 es {{ humanDateTime(session.closureDate()) }} ({{ dateDiff(session.closureDate()) }})
                             </h6>
                             <h6 class="font-weight-light">
-                                Para esta sesión se han de pronosticar {{ cantidadPilotosPronosticados(ruleSet, session) }} pilotos
+                                Para esta sesión se han de pronosticar {{ ruleSet.cantidadPilotosPronosticados(session) }} pilotos
                             </h6>
                             <SelectTipps :session="session"
                                          :grand-prix="grandPrix"

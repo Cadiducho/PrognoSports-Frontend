@@ -17,12 +17,3 @@ import {RuleSet} from "@/types/RuleSet";
 export function hasVariant(circuit: Circuit): boolean {
     return circuit.variant !== undefined && circuit.variant.name !== "grandprix";
 }
-
-/**
- * Obtener la cantidad de posiciones a pronosticar para una comunidad y sesión de Gran Premio concreta
- * @param ruleSet La normas para este Gran Premio
- * @param session La sesión de Gran Premio
- */
-export function cantidadPilotosPronosticados(ruleSet: RuleSet, session: RaceSession): number {
-    return ruleSet?.data?.predictedPositions[session.name] || 0;
-}

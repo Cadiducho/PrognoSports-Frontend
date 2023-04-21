@@ -192,7 +192,6 @@ import {RaceResult} from "@/types/RaceResult";
 import {Driver} from "@/types/Driver";
 import {CommunityUser} from "@/types/CommunityUser";
 import UserMiniCard from "@/components/user/UserMiniCard.vue";
-import {cantidadPilotosPronosticados} from "@/utils";
 import {UserPoints} from "@/types/UserPoints";
 import {Dictionary} from "@/types/Dictionary";
 import {RuleSet} from "@/types/RuleSet";
@@ -277,7 +276,7 @@ export default defineComponent({
             this.thereAreFinishResults = results.length > 0;
 
             this.sessionResults = [];
-            const pronosticados = cantidadPilotosPronosticados(this.ruleSet, this.session);
+            const pronosticados = this.ruleSet.cantidadPilotosPronosticados(this.session);
             for (let position = 0; position < pronosticados; ++position) {
                 let driver: Driver;
                 let session: RaceSession;

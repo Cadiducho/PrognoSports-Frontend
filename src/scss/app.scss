@@ -1,3 +1,8 @@
+// Tailwind stuffs
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 // Import Bulma's core
 @import "bulma/bulma";
 @import '@oruga-ui/theme-bulma/dist/scss/bulma';
@@ -43,8 +48,3 @@
     background: #00c4a7;
   }
 }
-
-// Tailwind stuffs
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
