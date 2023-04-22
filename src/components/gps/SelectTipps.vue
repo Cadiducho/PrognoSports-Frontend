@@ -91,14 +91,20 @@
 
             <div class="column is-6">
                 <h3 class="is-unselectable">Pilotos pronosticados</h3>
+
                 <SlickList
                     v-model:list="pilotosPronosticados"
                     :group="session.name"
                     :accept="[session.name]"
                     tag="ul"
                     @sort-insert="insertToPronosticados($event)"
+                    :class="pilotosPronosticados.length < 1 && 'border-2 border-gray-400'"
                     class="is-unselectable pilotos-pronosticados ml-0">
 
+                    <div v-if="pilotosPronosticados.length < 1" class="m-3">
+                        <span class="font-semibold mr-2 text-left flex-auto">Coloca aquí tus pilotos en orden</span>
+                    </div>
+                    
                     <SlickItem v-for="(item, index) in pilotosPronosticados"
                         :key="item.id"
                         :index="index"
