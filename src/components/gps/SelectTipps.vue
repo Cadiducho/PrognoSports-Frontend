@@ -99,14 +99,12 @@ import {defineComponent, PropType} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {useStyles} from "@/composables/useStyles";
-import SlickDriverCard from "@/components/gps/SlickDriverCard.vue";
 
 export default defineComponent({
     name: "SelectTipps",
     components: {
         SlickList,
-        SlickItem,
-        SlickDriverCard
+        SlickItem
     },
     props: {
         session: {
