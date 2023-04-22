@@ -47,6 +47,7 @@
                 </o-collapse>
                 
                 <SlickList
+                    :distance="1"
                     v-model:list="pilotosDisponiblesFiltrados"
                     :group="session.name"
                     :accept="[session.name]"
@@ -91,8 +92,14 @@
 
             <div class="column is-6">
                 <h3 class="is-unselectable">Pilotos pronosticados</h3>
+                <!--
+                    Hotfix: Los items desaparecen al moverlos y hacer click en un espacio vacío del slick list.
+                    Ref: https://github.com/Jexordexan/vue-slicksort/issues/186
+                    El atributo `:distance="1"` previene este error
+                -->
 
                 <SlickList
+                    :distance="1"
                     v-model:list="pilotosPronosticados"
                     :group="session.name"
                     :accept="[session.name]"
