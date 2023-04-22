@@ -45,7 +45,7 @@
                         </div>
                     </div>
                 </o-collapse>
-                aa
+                
                 <SlickList
                     v-model:list="pilotosDisponiblesFiltrados"
                     :group="session.name"
