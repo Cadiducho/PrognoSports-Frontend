@@ -45,7 +45,7 @@
                     <StartGrid :grid="startGrid"/>
                 </div>
                 <div class="column is-3">
-                    <CircuitCard :circuit="grandPrix.circuit" :laps="grandPrix.laps" />
+                    <CircuitCard :circuit="grandPrix.circuit" :variant="grandPrix.variant" :laps="grandPrix.laps" />
                     <PitLaneStartGrid v-if="thereIsGrid" :grid="startGrid"/>
 
                     <section v-if="this.currentUser.isAdmin()" class="mt-2">

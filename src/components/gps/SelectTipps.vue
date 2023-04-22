@@ -97,6 +97,7 @@
                     Ref: https://github.com/Jexordexan/vue-slicksort/issues/186
                     El atributo `:distance="1"` previene este error
                 -->
+
                 <SlickList
                     :distance="1"
                     v-model:list="pilotosPronosticados"
@@ -104,8 +105,13 @@
                     :accept="[session.name]"
                     tag="ul"
                     @sort-insert="insertToPronosticados($event)"
+                    :class="pilotosPronosticados.length < 1 && 'border-2 border-gray-400'"
                     class="is-unselectable pilotos-pronosticados ml-0">
 
+                    <div v-if="pilotosPronosticados.length < 1" class="m-3">
+                        <span class="font-semibold mr-2 text-left flex-auto">Coloca aquí tus pilotos en orden</span>
+                    </div>
+                    
                     <SlickItem v-for="(item, index) in pilotosPronosticados"
                         :key="item.id"
                         :index="index"
@@ -177,7 +183,7 @@ export default defineComponent({
     name: "SelectTipps",
     components: {
         SlickList,
-        SlickItem,
+        SlickItem
     },
     props: {
         session: {

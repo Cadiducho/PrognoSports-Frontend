@@ -23,9 +23,9 @@ function authHeader() {
     }
 }
 
-//const DEVELOP_BASE_URL = 'http://192.168.1.131:8001/v2'
-const DEVELOP_BASE_URL = 'https://api.prognosports.com/v2'
-const PRODUCTION_BASE_URL = 'https://api.prognosports.com/v2'
+const DEVELOP_BASE_URL = 'https://nightly.prognosports.com/v2'
+//const DEVELOP_BASE_URL = 'https://api.prognosports.com/v2'
+const PRODUCTION_BASE_URL = 'https://nightly.prognosports.com/v2'
 export const BASE_URL = import.meta.env.NODE_ENV === 'production' ? PRODUCTION_BASE_URL : DEVELOP_BASE_URL;
 axios.defaults.baseURL = BASE_URL;
 
