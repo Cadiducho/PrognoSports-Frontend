@@ -45,22 +45,35 @@
                         </div>
                     </div>
                 </o-collapse>
+                aa
+                <SlickList
+                    v-model:list="pilotosDisponiblesFiltrados"
+                    :group="session.name"
+                    :accept="[session.name]"
+                    tag="ul"
+                    @sort-insert="insertToDisponibles($event)"
+                    class="has-radius is-unselectable ml-0">
 
-                <SlickList v-model:list="pilotosDisponiblesFiltrados" :group="session.name" :accept="[session.name]" tag="ul" @sort-insert="insertToDisponibles($event)"
-                           class="block-list has-radius is-unselectable">
-
-                    <SlickItem v-for="(item, index) in pilotosDisponiblesFiltrados" :key="item.id" :index="index" tag="li"
-                               class="is-highlighted has-text-weight-semibold driver-card is-justify-content-space-between"
-                               :style="styleDriverCard(item)">
+                    <SlickItem
+                        v-for="(item, index) in pilotosDisponiblesFiltrados"
+                        :key="item.id"
+                        :index="index"
+                        tag="li"
+                        class="is-highlighted has-text-weight-semibold has-radius driver-card is-justify-content-left p-3 rounded-md opacity-90 bg-white"
+                        :style="styleDriverCard(item)">
+                        
                         <span>
                             {{ item.firstname }} {{ item.lastname }}
 
                             <span class="tag is-rounded" v-bind:style="styleDorsal(item)">#{{ item.number }}</span>
 
-                            <o-tooltip class="ml-1 driver-card-team"
-                                       :label="(currentUser.preferences['use-long-team-names'] ? item.team.name : item.team.longname) + ' (' +item.team.carname + ')'">
+                            <o-tooltip 
+                                class="ml-1 driver-card-team"
+                                :label="(currentUser.preferences['use-long-team-names'] ? item.team.name : item.team.longname) + ' (' +item.team.carname + ')'">
+
                                 <span v-if="currentUser.preferences['use-long-team-names']">{{ item.team.longname }}</span>
                                 <span v-else>{{ item.team.name }}</span>
+                                
                             </o-tooltip>
                         </span>
 
@@ -78,12 +91,20 @@
 
             <div class="column is-6">
                 <h3 class="is-unselectable">Pilotos pronosticados</h3>
-                <SlickList v-model:list="pilotosPronosticados" :group="session.name" :accept="[session.name]" tag="ul" @sort-insert="insertToPronosticados($event)"
-                           class="block-list is-unselectable pilotos-pronosticados">
+                <SlickList
+                    v-model:list="pilotosPronosticados"
+                    :group="session.name"
+                    :accept="[session.name]"
+                    tag="ul"
+                    @sort-insert="insertToPronosticados($event)"
+                    class="is-unselectable pilotos-pronosticados ml-0">
 
-                    <SlickItem v-for="(item, index) in pilotosPronosticados" :key="item.id" :index="index" tag="li"
-                               class="is-highlighted has-text-weight-semibold has-radius driver-card is-justify-content-left"
-                               :style="styleDriverCard(item)">
+                    <SlickItem v-for="(item, index) in pilotosPronosticados"
+                        :key="item.id"
+                        :index="index"
+                        tag="li"
+                        class="is-highlighted has-text-weight-semibold has-radius driver-card is-justify-content-left p-3 rounded-md opacity-90 bg-white"
+                        :style="styleDriverCard(item)">
 
                         <!--
                         <a @click="moveToAvailableList(item, index)" class="mr-3 pl-3 arrow-col has-text-primary">
