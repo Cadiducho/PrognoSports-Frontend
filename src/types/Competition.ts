@@ -23,7 +23,7 @@ export class Competition implements ICompetition {
 
     constructor(data: ICompetition) {
         this.availableSessions = [];
-        data.availableSessions.forEach(ses => {
+        data.availableSessions?.forEach(ses => {
             this.availableSessions.push(new RaceSession(ses));
         })
         this.code = data.code;

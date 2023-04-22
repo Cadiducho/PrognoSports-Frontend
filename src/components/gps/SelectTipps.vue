@@ -176,7 +176,7 @@ export default defineComponent({
     name: "SelectTipps",
     components: {
         SlickList,
-        SlickItem,
+        SlickItem
     },
     props: {
         session: {

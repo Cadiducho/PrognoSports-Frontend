@@ -47,12 +47,13 @@
                     <!-- Si no es quali, hay resultados y grid-->
                     <div v-if="session.hasGrid" class="columns">
                         <div class="column">
-                            <EditResults :grandPrix="grandPrix" :session="session" :resultsInSession="resultsInSession"/>
+                            <EditGrid :grandPrix="grandPrix" :session="session" :resultsInSession="resultsInSession"/>
                         </div>
                         <div class="column">
-                            <h3 class="subtitle">Parrilla de {{ session.humanName() }}</h3>
+                            <EditResults :grandPrix="grandPrix" :session="session" :resultsInSession="resultsInSession"/>
                         </div>
                     </div>
+
                     <!-- En caso contrario mostrar solo selector de resultados -->
                     <EditResults v-else :grandPrix="grandPrix" :session="session" :resultsInSession="resultsInSession"/>
 

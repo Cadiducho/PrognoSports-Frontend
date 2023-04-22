@@ -1,5 +1,6 @@
-import {CircuitVariant} from "@/types/CircuitVariant";
+import {CircuitVariant, ICircuitVariant} from "@/types/CircuitVariant";
 import {BASE_URL} from "@/_services";
+import {RaceSession} from "@/types/RaceSession";
 
 export interface ICircuit {
     id: string;
@@ -9,18 +10,18 @@ export interface ICircuit {
     latitude: number;
     longitude: number;
     hasLogoImage: boolean;
-    variant: CircuitVariant;
+    variants: Array<ICircuitVariant>;
 }
 
 export class Circuit implements ICircuit {
-    country: string;
     id: string;
-    latitude: number;
-    locality: string;
-    longitude: number;
     name: string;
+    country: string;
+    locality: string;
+    latitude: number;
+    longitude: number;
     hasLogoImage: boolean;
-    variant: CircuitVariant;
+    variants: Array<CircuitVariant>;
 
     constructor(data: ICircuit) {
         this.country = data.country;
@@ -30,7 +31,10 @@ export class Circuit implements ICircuit {
         this.longitude = data.longitude;
         this.name = data.name;
         this.hasLogoImage = data.hasLogoImage;
-        this.variant = new CircuitVariant(data.variant);
+        this.variants = [];
+        data.variants?.forEach(variant => {
+            this.variants.push(new CircuitVariant(variant));
+        })
     }
 
     public hasVariant(): boolean {
@@ -45,9 +49,9 @@ export class Circuit implements ICircuit {
     public logoImage(): string {
         if (this.hasLogoImage) {
             return BASE_URL + `/circuits/${this.id}/logo`;
-        } else if (this.variant.hasLayoutImage) {
+        } /*else if (this.variant.hasLayoutImage) {
             return this.variant.layoutImage();
-        }
+        }*/
 
         // ToDo: coger la imagen por defecto de los assets
         return 'https://github.com/Cadiducho/PrognoSports-Frontend/blob/develop/src/assets/default_profile_image.jpg?raw=true';

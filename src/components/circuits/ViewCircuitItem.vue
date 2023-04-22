@@ -5,7 +5,7 @@
                 <div class="card-image">
                     <figure class="image is-4by3">
                         <img
-                            :src="circuit.variant.layoutImage()"
+                            :src="circuit.variants[0].layoutImage()"
                             alt="Esquema"
                         />
                     </figure>
@@ -18,7 +18,7 @@
                             </figure>
                         </div>
                         <div class="media-content">
-                            <p class="title is-4">{{circuit.name}} {{ hasVariant(circuit) ? (' - ' + circuit.variant.name) : ""}}</p>
+                            <p class="title is-4">{{circuit.name}}</p>
                             <p class="subtitle is-6">
                                 {{ circuit.locality }} - {{ circuit.country }}
                             </p>
@@ -26,12 +26,6 @@
                     </div>
 
                     <div class="content quick-data mb-5">
-                        <div v-if="hasVariant(circuit)">
-                            <i class="fas fa-fw fa-random"></i>
-                            <span class="ml-1">
-                                Variante: {{ circuit.variant.name }}
-                            </span>
-                        </div>
                         <div>
                             <i class="fas fa-fw fa-map-marked-alt"></i>
                             <a target="_blank"
@@ -41,22 +35,28 @@
                                     circuit.latitude +
                                     '/' +
                                     circuit.longitude
-                                "
-                                >Ubicación</a
-                            >
+                                ">
+                                Ubicación
+                            </a>
                         </div>
                         <div>
                             <i class="fas fa-fw fa-ruler"></i>
-                            <span class="ml-2"
-                                >Distancia:
-                                {{ circuit.variant.distance }} km</span
-                            >
+                            <span class="ml-2">
+                                Distancia:
+                                {{ circuit.variants[0].distance }} km
+                            </span>
                         </div>
                         <div>
                             <i class="fas fa-fw fa-directions"></i>
-                            <span class="ml-2"
-                                >Curvas: {{ circuit.variant.turns }}</span
-                            >
+                            <span class="ml-2">
+                                Curvas: {{ circuit.variants[0].turns }}
+                            </span>
+                        </div>
+                        <div>
+                            <i class="fas fa-fw fa-map-pin"></i>
+                            <span class="ml-2">
+                                Variantes: {{ circuit.variants.map((v) => v.name).join(', ') }}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -74,8 +74,8 @@ export default defineComponent({
     props: {
         circuit: {
             type: Object as PropType<Circuit>,
-            require: true,
-        }
+            required: true,
+        },
     }
 });
 </script>

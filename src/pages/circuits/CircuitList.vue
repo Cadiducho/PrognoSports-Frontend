@@ -76,9 +76,7 @@ export default defineComponent({
                     circuit.locality
                         .toLowerCase()
                         .includes(filtroLowerCase) ||
-                    circuit.variant.name
-                        .toLowerCase()
-                        .includes(filtroLowerCase)
+                    circuit.variants.map(v => v.name.toLowerCase()).some(v => v.includes(filtroLowerCase))
                 );
             });
         }
