@@ -2,10 +2,10 @@
 
     <h2 class="subtitle">Tokens de inicio de sesión</h2>
 
-    <ul class="block-list is-unselectable is-outlined">
+    <ul class="is-unselectable is-outlined pl-0 space-y-3">
         <li
             v-for="token in authTokens"
-            class="has-text-weight-semibold is-flex is-justify-content-space-between" style="background: #f5f5f5;">
+            class="has-text-weight-semibold is-flex is-justify-content-space-between p-3" style="background: #f5f5f5;">
             <section class="is-flex is-flex-direction-column">
                 <span>
                     <b>Token: </b>{{ token.token }}

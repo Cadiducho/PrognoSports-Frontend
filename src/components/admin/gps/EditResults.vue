@@ -18,10 +18,10 @@
 
     <label class="label">Resultados</label>
     <SlickList v-model:list="sessionResults" tag="ul" :distance="1"
-               class="block-list no-select">
+               class="no-select pl-0 space-y-3">
 
         <SlickItem v-for="(item, index) in sessionResults" :key="item.id" :index="index" tag="li"
-                   class="is-highlighted has-text-weight-semibold has-radius is-flex is-justify-content-left"
+                   class="is-highlighted has-text-weight-semibold has-radius is-flex is-justify-content-left p-3"
                    :style="styleDriverCard(item)">
 
             <span>
