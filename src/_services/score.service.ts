@@ -12,14 +12,15 @@ export class ScoreService {
     /**
      * Devuelve un map del estilo:
      *
-     * "Australian Grand Prix": {
+     * "3": {
      *     "michael": 60,
      *     "fernando": 25
      *  },
-     *  "Bahrein..."
-     * @param community
-     * @param competition
-     * @param season
+     *  "5..."
+     *  Siendo 3, 5 etc. la ID del Gran Premio
+     * @param community la comunidad en la que consultar
+     * @param competition la competición en la que consultar
+     * @param season la temporada en la que consultar
      */
     public async getUserPointsByGP(community: Community, competition: Competition, season: Season): Promise<Dictionary<string, Dictionary<string, UserPoints>>> {
         return await axios.get(`/communities/${community.id}/${competition.id}/${season.id}/points`);

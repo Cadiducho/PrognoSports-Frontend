@@ -3,11 +3,9 @@
         <template v-slot:content>
             <ul>
                 <li><b>{{ gpName }}</b></li>
-                <li>
-                    <b>Clasificación</b>: {{ userPoints.pointsInQualify }}
-                </li>
-                <li>
-                    <b>Carrera</b>: {{ userPoints.pointsInRace }}
+
+                <li v-for="(points, session) in userPoints.pointsBySession">
+                    <b>{{ sessionHumanName(session) }}</b>: {{ points }}
                 </li>
                 <li>
                     <b>Gran Premio</b>: {{ userPoints.pointsInGP }}
@@ -23,7 +21,9 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import {defineComponent, PropType} from "vue";
+import {UserPoints} from "@/types/UserPoints";
+import {RaceSession} from "@/types/RaceSession";
 
 export default defineComponent({
     name: "PointsTooltipComponent",
@@ -35,9 +35,13 @@ export default defineComponent({
             type: Number
         },
         userPoints: {
-            type: Object
+            type: Object as PropType<UserPoints>
         }
-
+    },
+    methods: {
+        sessionHumanName(id: number) {
+            return RaceSession.findById(id)?.humanName() ?? "Desconocida";
+        }
     }
 });
 </script>

@@ -64,15 +64,15 @@
                             <template v-slot="props">
 
                                 <PointsTooltipComponent
-                                    v-if="props.row.gps.has(gp.name)"
+                                    v-if="props.row.gps.has(gp.id)"
                                     :gp-name="gp.name"
-                                    :user-points="props.row.gps.get(gp.name)"
-                                    :display-points="props.row.gps.get(gp.name).pointsInGP" />
+                                    :user-points="props.row.gps.get(gp.id)"
+                                    :display-points="props.row.gps.get(gp.id).pointsInGP" />
                                 <template v-else>
                                     0 :(
                                 </template>
 
-                                <o-tooltip v-if="props.row.gps.get(gp.name)?.pointsInGP && checkAndInsertTrophy(gp.name, props.row.gps.get(gp.name).pointsInGP)"
+                                <o-tooltip v-if="props.row.gps.get(gp.id)?.pointsInGP && checkAndInsertTrophy(gp.id, props.row.gps.get(gp.id).pointsInGP)"
                                            :label="'Ganador de ' + gp.name"
                                            variant="light">
                                     <o-icon pack="fas" variant="info" icon="trophy"></o-icon>
@@ -135,18 +135,18 @@
                             </template>
                             <template v-slot="props">
 
-                                <template v-if="props.row.gps.has(gp.name)">
-                                    <span class="tag is-warning" v-if="checkWinnerCell(gp.name, props.row.gps.get(gp.name).accumulatedPoints)">
+                                <template v-if="props.row.gps.has(gp.id)">
+                                    <span class="tag is-warning" v-if="checkWinnerCell(gp.id, props.row.gps.get(gp.id).accumulatedPoints)">
                                         <PointsTooltipComponent
                                             :gp-name="gp.name"
-                                            :user-points="props.row.gps.get(gp.name)"
-                                            :display-points="props.row.gps.get(gp.name).accumulatedPoints" />
+                                            :user-points="props.row.gps.get(gp.id)"
+                                            :display-points="props.row.gps.get(gp.id).accumulatedPoints" />
                                     </span>
                                     <template v-else>
                                         <PointsTooltipComponent
                                             :gp-name="gp.name"
-                                            :user-points="props.row.gps.get(gp.name)"
-                                            :display-points="props.row.gps.get(gp.name).accumulatedPoints" />
+                                            :user-points="props.row.gps.get(gp.id)"
+                                            :display-points="props.row.gps.get(gp.id).accumulatedPoints" />
                                     </template>
                                 </template>
                                 <template v-else>
@@ -200,13 +200,13 @@
                             <template v-slot="props">
 
                                 <!-- //ToDo: Tooltip desglosando puntos por sesiones-->
-                                <template v-if="props.row.gps.has(gp.name)">
-                                    <span class="tag is-warning" v-if="props.row.gps.get(gp.name).standings === 1">
-                                        {{ props.row.gps.get(gp.name).standings }}
+                                <template v-if="props.row.gps.has(gp.id)">
+                                    <span class="tag is-warning" v-if="props.row.gps.get(gp.id).standings === 1">
+                                        {{ props.row.gps.get(gp.id).standings }}
                                     </span>
                                     <template v-else>
-                                        <template v-if="props.row.gps.get(gp.name).standings >= 1">
-                                            {{ props.row.gps.get(gp.name).standings }}
+                                        <template v-if="props.row.gps.get(gp.id).standings >= 1">
+                                            {{ props.row.gps.get(gp.id).standings }}
                                         </template>
                                         <template v-else>
                                             --
@@ -251,7 +251,7 @@
 
     interface TableEntry {
         'user': User;
-        'gps': Map<string, UserPoints>;
+        'gps': Map<number, UserPoints>;
         'totalScore': number
     }
 
@@ -277,9 +277,9 @@
                 chosenSeason: {} as Season,
                 seasonList: new Array<Season>(),
                 gps: new Array<GrandPrix>(),
-                gpsWithPoints: new Array<string>(), // Only names
-                maxPointsInGrandPrix: new Map<string, number>(),
-                maxAccumulatedPointsInGrandPrix: new Map<string, number>(),
+                gpsWithPoints: new Array<number>(), // gp ids
+                maxPointsInGrandPrix: new Map<number, number>(),
+                maxAccumulatedPointsInGrandPrix: new Map<number, number>(),
                 communityMembers: new Map<string, User>(),
                 tableData: new Array<TableEntry>(),
                 tableDataAcumulada: new Array<TableEntry>(),
@@ -422,9 +422,10 @@
 
                     // Para cada gran premio
                     Object.entries(grandPrixPoints).forEach(([gp, entry]) => {
-                        this.gpsWithPoints.push(gp);
-                        this.maxPointsInGrandPrix.set(gp, -Infinity);
-                        this.maxAccumulatedPointsInGrandPrix.set(gp, -Infinity);
+                        const gpId = Number(gp);
+                        this.gpsWithPoints.push(gpId);
+                        this.maxPointsInGrandPrix.set(gpId, -Infinity);
+                        this.maxAccumulatedPointsInGrandPrix.set(gpId, -Infinity);
 
                         // Cada usuario en cada gran premio
                         for (let [slot, userPoints] of Object.entries(entry!)) {
@@ -432,18 +433,20 @@
                             // asigno entradas a los usuarios existentes, con sus resultados en el gp iterado
                             if (user !== undefined && (entradas.has(user) || entradasAcumuladas.has(user))) {
 
-                                entradas.get(user)!.gps.set(gp, userPoints!);
-                                entradasAcumuladas.get(user)!.gps.set(gp, userPoints!);
+                                entradas.get(user)!.gps.set(gpId, userPoints!);
+                                entradasAcumuladas.get(user)!.gps.set(gpId, userPoints!);
 
-                                if (userPoints!.pointsInGP! > this.maxPointsInGrandPrix.get(gp)!) {
-                                    this.maxPointsInGrandPrix.set(gp, userPoints!.pointsInGP!);
+                                if (userPoints!.pointsInGP! > this.maxPointsInGrandPrix.get(gpId)!) {
+                                    this.maxPointsInGrandPrix.set(gpId, userPoints!.pointsInGP!);
                                 }
-                                if (userPoints!.accumulatedPoints > this.maxAccumulatedPointsInGrandPrix.get(gp)!) {
-                                    this.maxAccumulatedPointsInGrandPrix.set(gp, userPoints!.accumulatedPoints!);
+                                if (userPoints!.accumulatedPoints > this.maxAccumulatedPointsInGrandPrix.get(gpId)!) {
+                                    this.maxAccumulatedPointsInGrandPrix.set(gpId, userPoints!.accumulatedPoints!);
                                 }
                             }
                         }
                     });
+
+                    console.log(entradas);
 
                     const points = await scoreService.getTotalUserPoints(this.currentCommunity, competition, season);
 
@@ -500,8 +503,6 @@
                     this.tableHasData = Object.keys(points).length > 0;
                 })
 
-                console.log("termine");
-                console.log("ranking loaded");
                 this.isLoading = false;
             },
             checkRowClass(row: any, index: number) {
@@ -509,7 +510,7 @@
                 return '';
             },
             grandPrixList(): Array<GrandPrix> {
-                return this.gps.filter((gp => this.gpsWithPoints.includes(gp.name)));
+                return this.gps.filter(gp => this.gpsWithPoints.includes(Number(gp.id)));
             },
             checkAndInsertTrophy(gp: string, score: number) {
                 return (this.maxPointsInGrandPrix.get(gp)! == score);

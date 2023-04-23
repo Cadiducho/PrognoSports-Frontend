@@ -64,4 +64,14 @@ export class RaceSession implements IRaceSession {
         const dayjs = useDayjs();
         return dayjs.isBefore(this.closureDate());
     }
+
+    public static findById(id: number): RaceSession | undefined {
+        switch (Number(id)) {
+            case 1: return new RaceSession({name: "QUALIFY"} as IRaceSession);
+            case 2: return new RaceSession({name: "RACE"} as IRaceSession);
+            case 3: return new RaceSession({name: "SPRINT_QUALIFY"} as IRaceSession);
+            case 4: return new RaceSession({name: "SPRINT_RACE"} as IRaceSession);
+            default: return undefined;
+        }
+    }
 }

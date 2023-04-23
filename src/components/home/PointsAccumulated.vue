@@ -168,9 +168,6 @@ export default defineComponent({
                     }
                 }
 
-                console.log(cumulatedPoints)
-                console.log(Object.values(cumulatedPoints))
-
 
                 // Relleno la tabla de puntos acumulados y por gran premio
                 this.chartSeries = [
@@ -185,8 +182,6 @@ export default defineComponent({
                     }
                 ];
                 this.loading = false;
-
-                console.log(this.chartSeries)
             });
         }
     },
