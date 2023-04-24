@@ -144,13 +144,13 @@
         </div>
 
         <template v-if="this.session.isBeforeClosureDate()">
-            <o-button v-if="pilotosPronosticados.length === cantidadPilotosPronosticados(ruleSet, session)"
+            <o-button v-if="pilotosPronosticados.length === ruleSet.cantidadPilotosPronosticados(session)"
                       variant="success is-fullwidth"
                       @click="enviarPronostico">Enviar pronóstico
             </o-button>
 
             <div v-else class="notification is-warning is-light">
-                El pronóstico debe tener {{ cantidadPilotosPronosticados(ruleSet, session) }} pilotos escogidos y ordenados.
+                El pronóstico debe tener {{ ruleSet.cantidadPilotosPronosticados(session) }} pilotos escogidos y ordenados.
             </div>
         </template>
 
@@ -291,7 +291,7 @@ export default defineComponent({
                 (error: any) => {
                     let message = "Error guardando tus pronósticos: " + error.message;
 
-                    notificationService.showNotification(message, "danger");
+                    notificationService.showNotification(message, "error");
                 });
         },
         insertToPronosticados(event: { newIndex: number, value: any }) {
