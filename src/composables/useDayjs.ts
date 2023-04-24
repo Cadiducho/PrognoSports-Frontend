@@ -36,7 +36,7 @@ export function useDayjs() {
         return dayjs.tz(date, timezone).format('D/M/YYYY');
     }
     const humanDateTime = (date: Date, timezone: string = "Europe/Madrid"): string => {
-        return dayjs.tz(date, timezone).format('D/M/YY [a las] H:mm');
+        return dayjs.tz(date, timezone).format('DD/MM/YY [a las] H:mm');
     }
     const humanMonth = (date: Date, timezone: string = "Europe/Madrid"): string => {
         return dayjs.tz(date, timezone).format('MMMM');
