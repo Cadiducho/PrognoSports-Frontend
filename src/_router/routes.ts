@@ -214,7 +214,7 @@ export const routes = [
                                     {
                                         path: '',
                                         name: 'adminGpsInSeason',
-                                        component: () => import('@/pages/admin/gps/GrandPrixListInSeason.vue'),
+                                        component: () => import('@/pages/admin/seasons/gps/GrandPrixListInSeason.vue'),
                                     },
                                     {
                                         path: ':gp',
@@ -224,13 +224,13 @@ export const routes = [
                                                 path: '',
                                                 name: 'adminGpEditInSeason',
                                                 meta: { title: "Editar Gran Premio" },
-                                                component: () => import('@/pages/admin/gps/EditGrandPrixInSeason.vue'),
+                                                component: () => import('@/pages/admin/seasons/gps/EditGrandPrixInSeason.vue'),
                                             },
                                             {
                                                 path: ':session',
                                                 name: 'adminGpEditSession',
                                                 meta: { title: "Editar Sesión del Gran Premio" },
-                                                component: () => import('@/pages/admin/gps/EditSessionGrandPrix.vue'),
+                                                component: () => import('@/pages/admin/seasons/gps/EditSessionGrandPrix.vue'),
                                             },
                                         ]
                                     }

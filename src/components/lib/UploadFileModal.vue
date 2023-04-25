@@ -51,7 +51,7 @@ export default defineComponent({
             default: 256
         },
         stencilComponent: {
-            type: Object as PropType<'circle' | 'rectangle'>,
+            type: String as PropType<'circle' | 'rectangle'>,
             default: 'rectangle'
         },
         stencilProps: {

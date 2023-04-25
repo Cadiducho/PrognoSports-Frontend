@@ -32,7 +32,7 @@
                         </header>
 
                         <div class="card-content">
-                            <SlickList v-model:list="driversByConstructor[constructor.id]" :group="constructor.id" :accept="true" tag="div">
+                            <SlickList v-model:list="driversByConstructor[constructor.id]" :group="constructor.id.toString()" :accept="true" tag="div">
                                 <SlickItem v-for="(driver, index) in driversByConstructor[constructor.id]"
                                            :key="driver.id" :index="index" tag="li"
                                            class="list-item">

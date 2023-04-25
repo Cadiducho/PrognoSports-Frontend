@@ -2,6 +2,9 @@
     <div id="adminDrivers" class="box">
 
         <loading v-if="isLoadingGrandPrix"/>
+        <template v-else-if="!thereIsGrandPrix">
+            <p>El Gran Premio {{ id }} no ha sido encontrado</p>
+        </template>
         <template v-else>
 
             <div class="columns is-variable is-5">
@@ -9,7 +12,7 @@
                     <PrognoPageTitle :name="'Administración de ' + grandPrix.name + ' de ' + grandPrix.season.name"/>
                 </div>
                 <div class="column is-3">
-                    <GrandPrixPagination isAdminPag :competition="competition" :grand-prix="grandPrix"/>
+                    <GrandPrixPagination isAdminPag :competition="grandPrix.competition" :grand-prix="grandPrix"/>
                 </div>
             </div>
 
@@ -20,9 +23,6 @@
                 </o-button>
                 <o-button variant="link" to="/admin/gps" tag="router-link">Lista de grandes premios</o-button>
             </div>
-
-            <p v-if="!thereIsGrandPrix">El Gran Premio {{ id }} no ha sido encontrado</p>
-            <template v-else>
 
                 <div class="columns">
                     <div class="column is-one-fifth">
@@ -69,8 +69,19 @@
                                         <option
                                             v-for="circuit in circuitList"
                                             :value="circuit"
-                                            :key="circuit.id + '-' + circuit.variant.name">
-                                            {{ circuit.nameWithVariant() }}
+                                            :key="circuit.id">
+                                            {{ circuit.name }}
+                                        </option>
+                                    </o-select>
+                                </o-field>
+
+                                <o-field label="Variante del circuito">
+                                    <o-select v-model="grandPrix.variant" placeholder="Selecciona un circuito" expanded>
+                                        <option
+                                            v-for="variant in variantsList"
+                                            :value="variant"
+                                            :key="variant.name">
+                                            {{ variant.name }}
                                         </option>
                                     </o-select>
                                 </o-field>
@@ -103,7 +114,6 @@
 
                 <DriversInGrandPrix v-if="thereIsGrandPrix" :grand-prix="grandPrix"/>
 
-            </template>
         </template>
     </div>
 
@@ -126,7 +136,6 @@
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {circuitService, grandPrixService, notificationService, seasonService, userService} from "@/_services";
-import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Circuit} from "@/types/Circuit";
@@ -137,6 +146,7 @@ import SessionsInGrandPrix from "@/components/admin/gps/SessionsInGrandPrix.vue"
 import DriversInGrandPrix from "@/components/admin/gps/DriversInGrandPrix.vue";
 import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
 import UploadFileModal from "@/components/lib/UploadFileModal.vue";
+import {CircuitVariant} from "@/types/CircuitVariant";
 
 export default defineComponent({
     name: "EditGrandPrix",
@@ -184,7 +194,6 @@ export default defineComponent({
             let data = {
                 id: this.grandPrix!.id,
                 season: this.season.id,
-                competition: this.competition.id,
                 round: this.grandPrix!.round,
                 name: this.grandPrix!.name,
                 code: this.grandPrix!.code,
@@ -195,7 +204,7 @@ export default defineComponent({
             };
 
             grandPrixService.editGrandPrix(data).then((result) => {
-                notificationService.showNotification("Se ha editado correctamente el gran premio `" + result.name + "`", "danger");
+                notificationService.showNotification("Se ha editado correctamente el gran premio `" + result.name + "`", "error");
 
                 this.$router.push({
                     name: 'adminGps'
@@ -222,22 +231,26 @@ export default defineComponent({
             });
         }
     },
+    computed: {
+        variantsList(): Array<CircuitVariant> {
+            return this.grandPrix.circuit?.variants ?? [];
+        }
+    },
     mounted() {
-        grandPrixService.getGrandPrixInSeason(this.season, this.id)
+        grandPrixService.getGrandPrixInSeason(this.season, this.id.toString())
             .then(gp => {
                 this.grandPrix = gp;
                 this.thereIsGrandPrix = true;
 
                 circuitService.getCircuitList().then((list) => {
                     this.circuitList = [];
-                    this.circuitList.push(...new Set(list));
+                    this.circuitList.push(...list);
                 });
                 seasonService.getSeasonList().then((list) => {
                     this.seasonList = [];
                     this.seasonList.push(...list);
                 });
 
-                this.competition = gp.competition;
                 this.season = gp.season;
             }).finally(() => {
                 this.isLoadingGrandPrix = false;
