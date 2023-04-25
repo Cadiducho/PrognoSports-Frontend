@@ -10,7 +10,7 @@
     <div class="columns">
 
         <div class="column is-one-fifth">
-            <label class="label">Pilotos de <router-link :to="{name: 'adminSeasonsEdit', params: grandPrix.season.id}">{{ grandPrix.season.name }}</router-link></label>
+            <label class="label">Pilotos de <router-link :to="{name: 'adminSeasonEdit', params: grandPrix.season.id}">{{ grandPrix.season.name }}</router-link></label>
 
             <SlickList v-model:list="driversInSeason" group="allDrivers" :accept="true" tag="div">
                 <SlickItem v-for="(driver, index) in driversInSeason" :key="driver.id" :index="index" tag="li"

@@ -42,8 +42,8 @@ export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
         return this.getObjectFromAPI(`/gps/${grandPrixId}`);
     }
 
-    public async getGrandPrixInSeason(competition: Competition, season: Season, id: string): Promise<GrandPrix> {
-        let comp = competition.id ?? competition.code;
+    public async getGrandPrixInSeason(season: Season, id: string): Promise<GrandPrix> {
+        let comp = 1;  // ToDo: Remove from API
         let seas = season.id ?? season.name;
 
         return this.getObjectFromAPI(`/gps/${comp}/${seas}/${id}`);

@@ -51,7 +51,7 @@
                     <section v-if="this.currentUser.isAdmin()" class="mt-2">
                         <hr/>
                         <o-button variant="primary" expanded tag="router-link"
-                                  :to="{ name: 'adminGpEdit', params: {competition: competition.code, season: season.name, id: grandPrix.id} } ">
+                                  :to="{ name: 'adminGpEdit', params: {season: season.name, gp: grandPrix.id} } ">
                             Administración
                         </o-button>
                     </section>
@@ -148,7 +148,7 @@ export default defineComponent({
         }
     },
     mounted() {
-        grandPrixService.getGrandPrixInSeason(this.competition, this.season, this.id).then(gp => {
+        grandPrixService.getGrandPrixInSeason(this.season, this.id).then(gp => {
             this.grandPrix = gp;
 
             if (this.grandPrix) {

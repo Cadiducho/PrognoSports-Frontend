@@ -12,8 +12,8 @@ export interface IGrandPrix {
     competition: Competition;
     season: Season;
     round: number;
-    circuit: ICircuit;
-    variant: ICircuitVariant;
+    circuit?: ICircuit;
+    variant?: ICircuitVariant;
     sessions: Array<IRaceSession>
     laps: number;
     suspended: boolean;
@@ -21,8 +21,8 @@ export interface IGrandPrix {
 }
 
 export class GrandPrix implements IGrandPrix {
-    circuit: Circuit;
-    variant: CircuitVariant;
+    circuit?: Circuit;
+    variant?: CircuitVariant;
     code: string;
     competition: Competition;
     id: string;
@@ -35,13 +35,16 @@ export class GrandPrix implements IGrandPrix {
     hasPromoImage: boolean;
 
     constructor(data: IGrandPrix) {
-        this.circuit = new Circuit(data.circuit);
-        this.variant = new CircuitVariant(data.variant);
-        this.code = data.code;
-        this.competition = data.competition;
         this.id = data.id;
-        this.laps = data.laps;
+        this.code = data.code;
         this.name = data.name;
+
+        this.competition = data.competition;
+        this.laps = data.laps;
+        if (data.circuit && data.variant) {
+            this.circuit = new Circuit(data.circuit);
+            this.variant = new CircuitVariant(data.variant);
+        }
         this.round = data.round;
         this.season = data.season;
         this.suspended = data.suspended;
@@ -67,7 +70,7 @@ export class GrandPrix implements IGrandPrix {
             params: {
                 competition: this.competition.code,
                 season: this.season.name,
-                id: this.id,
+                gp: this.id,
             }
         };
     }
