@@ -150,7 +150,7 @@ export default defineComponent({
             season = await seasonService.getCurrentSeason(competition);
 
             Promise.all([
-                grandPrixService.getGrandPrixesList(competition, season),
+                grandPrixService.getGrandPrixesList(season),
                 userService.getCumulatedPointsInCommunity(this.user, this.currentCommunity, competition, season),
                 userService.getPointsInCommunity(this.user, this.currentCommunity, competition, season)
             ]).then(result => {

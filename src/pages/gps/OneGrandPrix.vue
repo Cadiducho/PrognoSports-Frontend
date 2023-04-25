@@ -148,7 +148,7 @@ export default defineComponent({
         }
     },
     mounted() {
-        grandPrixService.getGrandPrix(this.competition, this.season, this.id).then(gp => {
+        grandPrixService.getGrandPrixInSeason(this.competition, this.season, this.id).then(gp => {
             this.grandPrix = gp;
 
             if (this.grandPrix) {

@@ -164,7 +164,7 @@
             },
             seasonReady(seasonReady, oldSeasonReady) {
                 if (seasonReady) {
-                    grandPrixService.getGrandPrixesList(this.competition, this.season).then((list) => {
+                    grandPrixService.getGrandPrixesList(this.season).then((list) => {
                         let activeGps = list.filter(gp => !gp.suspended);
                         let gpsWithDates = activeGps.filter(gp => !Number.isNaN(gp.lastDate().getTime()))
                         this.allGps.push(...activeGps);

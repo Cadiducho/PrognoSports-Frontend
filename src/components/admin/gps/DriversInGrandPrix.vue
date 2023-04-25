@@ -101,7 +101,7 @@ export default defineComponent({
             this.loadDriversInGrandPrix(this.grandPrix);
         });
 
-        grandPrixService.getGrandPrixesList(this.grandPrix.competition, this.grandPrix.season).then((list) => {
+        grandPrixService.getGrandPrixesList(this.grandPrix.season).then((list) => {
             this.otherGPList = [];
             this.otherGPList.push(...list);
         });

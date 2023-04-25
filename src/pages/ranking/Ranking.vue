@@ -370,13 +370,13 @@
                 },
             }
 
-            this.loadRanking(this.currentCommunity.competition, this.currentCommunity.competition.currentSeason);
+            this.loadRanking(this.currentCommunity.competition.currentSeason);
         },
         methods: {
             changeSeason() {
-                this.loadRanking(this.chosenSeason!.competition, this.chosenSeason!);
+                this.loadRanking(this.chosenSeason!);
             },
-            async loadRanking(competition: Competition, season: Season) {
+            async loadRanking(season: Season) {
                 this.isLoading = true;
 
                 this.tableData = [];
@@ -386,7 +386,7 @@
                 this.chartSeriesAcumuladas = [];
                 this.chartStandings = [];
 
-                const gpPromise = grandPrixService.getGrandPrixesList(competition, season);
+                const gpPromise = grandPrixService.getGrandPrixesList(season);
                 const membersPromise = communityService.getMembers(this.currentCommunity);
                 await Promise.all([
                     gpPromise,
@@ -403,7 +403,7 @@
                         this.communityMembers.set(miembro.user.username, miembro.user);
                     });
                 }).then(async () => {
-                    const grandPrixPoints = await scoreService.getUserPointsByGP(this.currentCommunity, competition, season);
+                    const grandPrixPoints = await scoreService.getUserPointsByGP(this.currentCommunity, season);
 
                     let entradas: Map<string, TableEntry> = new Map();
                     let entradasAcumuladas: Map<string, TableEntry> = new Map();
@@ -448,7 +448,7 @@
 
                     console.log(entradas);
 
-                    const points = await scoreService.getTotalUserPoints(this.currentCommunity, competition, season);
+                    const points = await scoreService.getTotalUserPoints(this.currentCommunity, season);
 
                     Object.entries(points).forEach(([username, totalScore]) => {
 

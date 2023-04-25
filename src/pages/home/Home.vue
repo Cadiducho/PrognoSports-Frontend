@@ -11,7 +11,7 @@
                 <div class="tile">
                     <article class="tile is-child box">
                         <p class="title">Resumen</p>
-                        <UserLevelResume />
+                        <UserLevelResume :user="currentUser" />
                         <PointsAccumulated :user="currentUser" />
                     </article>
                 </div>
