@@ -446,8 +446,6 @@
                         }
                     });
 
-                    console.log(entradas);
-
                     const points = await scoreService.getTotalUserPoints(this.currentCommunity, season);
 
                     Object.entries(points).forEach(([username, totalScore]) => {

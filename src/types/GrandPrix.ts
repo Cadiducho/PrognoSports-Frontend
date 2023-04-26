@@ -70,7 +70,7 @@ export class GrandPrix implements IGrandPrix {
             params: {
                 competition: this.competition.code,
                 season: this.season.name,
-                gp: this.id,
+                id: this.id,
             }
         };
     }

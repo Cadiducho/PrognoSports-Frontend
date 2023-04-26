@@ -22,7 +22,7 @@ export class ScoreService {
      * @param season la temporada en la que consultar
      */
     public async getUserPointsByGP(community: Community, season: Season): Promise<Dictionary<string, Dictionary<string, UserPoints>>> {
-        const competition = season.competition; // ToDo: Remove from API
+        const competition = {id: 1} as Competition; // ToDo: Remove from API
         return await axios.get(`/communities/${community.id}/${competition.id}/${season.id}/points`);
     }
 
@@ -32,7 +32,7 @@ export class ScoreService {
      * @param season
      */
     public async getTotalUserPoints(community: Community, season: Season): Promise<Dictionary<string, number>> {
-        const competition = season.competition; // ToDo: Remove from API
+        const competition = {id: 1} as Competition; // ToDo: Remove from API
         return await axios.get(`/communities/${community.id}/${competition.id}/${season.id}/totaluserpoints`);
     }
 
