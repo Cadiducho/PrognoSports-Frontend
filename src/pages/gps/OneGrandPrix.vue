@@ -45,13 +45,15 @@
                     <StartGrid :grid="startGrid"/>
                 </div>
                 <div class="column is-3">
-                    <CircuitCard :circuit="grandPrix.circuit" :variant="grandPrix.variant" :laps="grandPrix.laps" />
+                    <CircuitCard v-if="grandPrix.circuit && grandPrix.variant"
+                                 :circuit="grandPrix.circuit!" :variant="grandPrix.variant!" :laps="grandPrix.laps"
+                    />
                     <PitLaneStartGrid v-if="thereIsGrid" :grid="startGrid"/>
 
                     <section v-if="this.currentUser.isAdmin()" class="mt-2">
                         <hr/>
                         <o-button variant="primary" expanded tag="router-link"
-                                  :to="{ name: 'adminGpEdit', params: {season: season.name, gp: grandPrix.id} } ">
+                                  :to="{ name: 'adminGpEditInSeason', params: {season: season.name, gp: grandPrix.id} } ">
                             Administración
                         </o-button>
                     </section>
