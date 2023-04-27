@@ -149,7 +149,7 @@ import UploadFileModal from "@/components/lib/UploadFileModal.vue";
 import {CircuitVariant} from "@/types/CircuitVariant";
 
 export default defineComponent({
-    name: "EditGrandPrix",
+    name: "EditGrandPrixInSeason",
     components: {
         DriversInGrandPrix,
         AlertNoPermission,
