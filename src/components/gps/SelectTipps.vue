@@ -1,6 +1,7 @@
 <template>
     <div class="content mt-5">
         <div class="columns is-mobile">
+            <!--
             <div class="column is-6">
                 <h3 class="is-unselectable">Lista de pilotos</h3>
 
@@ -77,14 +78,6 @@
                                 
                             </o-tooltip>
                         </span>
-
-                        <!--
-                        <a @click="moveToTippList(item, index)" class="pl-3 pr-3 arrow-col has-text-primary">
-                            <i class="is-hidden-touch mr-0 fas fa-angle-right"></i>
-                            <i class="is-hidden-touch ml-0 fas fa-angle-right"></i>
-                            <i class="is-hidden-desktop mt-0 fas fa-angle-up"></i>
-                            <i class="is-hidden-desktop mb-0 fas fa-angle-up"></i>
-                        </a>-->
                     </SlickItem>
                 </SlickList>
 
@@ -92,12 +85,6 @@
 
             <div class="column is-6">
                 <h3 class="is-unselectable">Pilotos pronosticados</h3>
-                <!--
-                    Hotfix: Los items desaparecen al moverlos y hacer click en un espacio vacío del slick list.
-                    Ref: https://github.com/Jexordexan/vue-slicksort/issues/186
-                    El atributo `:distance="1"` previene este error
-                -->
-
                 <SlickList
                     :distance="1"
                     v-model:list="pilotosPronosticados"
@@ -119,14 +106,6 @@
                         class="is-highlighted has-text-weight-semibold has-radius driver-card is-justify-content-left p-3 rounded-md opacity-90 bg-white"
                         :style="styleDriverCard(item)">
 
-                        <!--
-                        <a @click="moveToAvailableList(item, index)" class="mr-3 pl-3 arrow-col has-text-primary">
-                            <i class="is-hidden-touch mr-0 fas fa-angle-left"></i>
-                            <i class="is-hidden-touch ml-0 fas fa-angle-left"></i>
-                            <i class="is-hidden-desktop mt-0 fas fa-angle-down"></i>
-                            <i class="is-hidden-desktop mb-0 fas fa-angle-down"></i>
-                        </a>-->
-
                         <span>
                             <b>{{ index + 1 }}º.</b> {{ item.firstname }} {{ item.lastname }}
 
@@ -141,9 +120,59 @@
                     </SlickItem>
                 </SlickList>
             </div>
+            -->
+            
+            <div class="column is-6">
+                <h3 class="is-unselectable">Pilotos por pronosticar</h3>
+                <div :id="`porPronosticar-${session.id}`" class="w-full h-full select-none space-y-2">
+                    <div 
+                        v-for="(item, index) in pilotosDisponiblesFiltrados" 
+                        class="is-highlighted has-text-weight-semibold has-radius driver-card is-justify-content-left p-3 rounded-md opacity-90 bg-white"
+                        :style="styleDriverCard(item)"
+                        :data-id="item.id">
+                        
+                        <span>
+                            {{ item.firstname }} {{ item.lastname }}
+
+                            <span class="tag is-rounded" v-bind:style="styleDorsal(item)">#{{ item.number }}</span>
+
+                            <o-tooltip  
+                                class="ml-1 driver-card-team"
+                                :label="(currentUser.preferences['use-long-team-names'] ? item.team.name : item.team.longname) + ' (' +item.team.carname + ')'">
+
+                                <span v-if="currentUser.preferences['use-long-team-names']">{{ item.team.longname }}</span>
+                                <span v-else>{{ item.team.name }}</span>
+                                
+                            </o-tooltip>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="column is-6">
+                <h3 class="is-unselectable">Pilotos pronosticados</h3>
+                <div :id="`pronosticados-${session.id}`" class="w-full h-full select-none space-y-2">
+                    <div v-for="(item, index) in pilotosPronosticados" 
+                        class="is-highlighted has-text-weight-semibold has-radius driver-card is-justify-content-left p-3 rounded-md opacity-90 bg-white"
+                        :style="styleDriverCard(item)">
+
+                        <span>
+                            <b>{{ index + 1 }}º.</b> {{ item.firstname }} {{ item.lastname }}
+
+                            <span class="tag is-rounded" v-bind:style="styleDorsal(item)">#{{ item.number }}</span>
+
+                            <o-tooltip class="ml-1 driver-card-team"
+                                       :label="(currentUser.preferences['use-long-team-names'] ? item.team.name : item.team.longname) + ' (' +item.team.carname + ')'">
+                                <span v-if="currentUser.preferences['use-long-team-names']">{{ item.team.longname }}</span>
+                                <span v-else>{{ item.team.name }}</span>
+                            </o-tooltip>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <template v-if="this.session.isBeforeClosureDate()">
+        <template v-if="session.isBeforeClosureDate()">
             <o-button v-if="pilotosPronosticados.length === ruleSet.cantidadPilotosPronosticados(session)"
                       variant="success is-fullwidth"
                       @click="enviarPronostico">Enviar pronóstico
@@ -158,8 +187,8 @@
             Ya no se puede pronosticar
         </button>
 
-        <hr v-if="(pilotosPronosticados.length > 0) && this.session.isBeforeClosureDate()"/>
-        <o-button v-if="(pilotosPronosticados.length > 0) && this.session.isBeforeClosureDate()" variant="danger is-light is-fullwidth" @click="reiniciarPronostico">Limpiar pronóstico</o-button>
+        <hr v-if="(pilotosPronosticados.length > 0) && session.isBeforeClosureDate()"/>
+        <o-button v-if="(pilotosPronosticados.length > 0) && session.isBeforeClosureDate()" variant="danger is-light is-fullwidth" @click="reiniciarPronostico">Limpiar pronóstico</o-button>
 
     </div>
 </template>
@@ -178,6 +207,8 @@ import {defineComponent, PropType} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {useStyles} from "@/composables/useStyles";
+
+import Sortable from 'sortablejs';
 
 export default defineComponent({
     name: "SelectTipps",
@@ -234,7 +265,6 @@ export default defineComponent({
         }
     },
     mounted() {
-
         this.originalPilotos.push(...this.drivers);
         this.pilotosDisponibles.push(...this.drivers);
 
@@ -260,6 +290,29 @@ export default defineComponent({
                 }
             }
         });
+
+        // Sortable
+        const listaPorPronosticar = document.getElementById(`porPronosticar-${this.session.id}`);
+        const listaPronosticados = document.getElementById(`pronosticados-${this.session.id}`);
+
+        const porPronosticar = Sortable.create(listaPorPronosticar!, {
+            group: `pilotos-${this.session.id}`,
+            animation: 150,  // ms, animation speed moving items when sorting, `0` — without animation
+        });
+        const pronosticados = Sortable.create(listaPronosticados!, {
+            group: `pilotos-${this.session.id}`,
+            animation: 150,  // ms, animation speed moving items when sorting, `0` — without animation
+            onAdd(event) {
+
+            },
+            onRemove(event) {
+                
+            },
+            onUpdate(event) {
+                
+            },
+        });
+        
     },
     methods: {
         /*
