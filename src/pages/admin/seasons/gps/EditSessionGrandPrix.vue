@@ -1,6 +1,9 @@
 <template>
 
     <loading v-if="isLoadingData"/>
+    <template v-else-if="!dataLoaded">
+        <p>El Gran Premio {{ id }} de {{ season.name }} en {{ session.name }} no ha sido encontrado</p>
+    </template>
     <template v-else>
 
         <div class="columns is-variable is-5">
@@ -47,7 +50,8 @@
                     <!-- Si no es quali, hay resultados y grid-->
                     <div v-if="session.hasGrid" class="columns">
                         <div class="column">
-                            <EditGrid :grandPrix="grandPrix" :session="session" :resultsInSession="resultsInSession"/>
+                            - EditGrid -
+                            <!--<EditGrid :grandPrix="grandPrix" :session="session" :resultsInSession="resultsInSession"/>-->
                         </div>
                         <div class="column">
                             <EditResults :grandPrix="grandPrix" :session="session" :resultsInSession="resultsInSession"/>
@@ -117,7 +121,7 @@ export default defineComponent({
         return {
             competition: {code: this.$route.params.competition} as Competition,
             season: {name: this.$route.params.season} as Season,
-            id: this.$route.params.id as string,
+            id: this.$route.params.gp as string,
             session: {name: this.$route.params.session} as RaceSession,
 
             notSendNotification: false,
@@ -201,6 +205,9 @@ export default defineComponent({
 
                     this.dataLoaded = true;
                 });
+            }).catch((error) => {
+                notificationService.showNotification("No se ha encontrado el gran premio", "error");
+                console.log(error);
             }).finally(() => {
                 this.isLoadingData = false;
             }

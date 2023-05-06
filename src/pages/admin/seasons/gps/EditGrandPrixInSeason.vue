@@ -149,7 +149,7 @@ import UploadFileModal from "@/components/lib/UploadFileModal.vue";
 import {CircuitVariant} from "@/types/CircuitVariant";
 
 export default defineComponent({
-    name: "EditGrandPrix",
+    name: "EditGrandPrixInSeason",
     components: {
         DriversInGrandPrix,
         AlertNoPermission,
@@ -252,10 +252,12 @@ export default defineComponent({
                 });
 
                 this.season = gp.season;
+            }).catch((error) => {
+                notificationService.showNotification("No se ha encontrado el gran premio", "error");
+                console.log(error)
             }).finally(() => {
                 this.isLoadingGrandPrix = false;
-            }
-        );
+        });
     }
 });
 </script>
