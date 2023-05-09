@@ -1,5 +1,5 @@
 <template>
-    <div id="communityDetails" class="box">
+    <div id="communityDetails">
         <PrognoPageTitle class="mb-5" :name="communityName" />
         <loading v-if="isLoading" />
 
@@ -72,6 +72,11 @@
                         </div>
                     </div>
                     <div v-else class="card-content">
+                        <section class="content" v-if="currentCommunity && currentCommunity.competition">
+                            <h2>Normas y puntuaciones</h2>
+                            <RulesAndPointsTable :competition="currentCommunity.competition" :community="currentCommunity" />
+                        </section>
+
                         <div class="media">
                             <div class="media-content">
                                 <p class="title is-4">Usuarios participando</p>
@@ -106,76 +111,9 @@
                         </o-collapse>
 
                         <div class="mt-5 columns is-multiline is-4">
-                            <div class="column is-half" v-for="cu in filteredMembers">
-                                <div class="box">
-                                    <article class="media">
-                                        <div class="media-left">
-                                            <figure class="image is-64x64">
-                                                <img :src="cu.user.profileImage()" alt="User image">
-                                            </figure>
-                                        </div>
-                                        <div class="media-content">
-                                            <div class="content">
-                                                <p class="is-flex is-justify-content-space-between">
-                                                    <span>
-                                                        <strong>
-                                                            <router-link :to="{name: 'user', params: { user: cu.user.id }}">
-                                                                {{ cu.user.username }}
-                                                            </router-link>
-                                                        </strong>
-                                                        <small class="ml-2" :style="{ color : '#' + cu.user.rank.color }">{{ cu.user.rank.name }}</small>
-                                                    </span>
-                                                    <small>
-                                                            <span class="icon-text" v-if="cu.user.last_activity">
-                                                                <span class="icon">
-                                                                    <i class="fas fa-clock"></i>
-                                                                </span>
-                                                                <span>
-                                                                    <o-tooltip label="Última conexión">
-                                                                        {{ dateDiff(cu.user.last_activity) }}
-                                                                    </o-tooltip>
-                                                                </span>
-                                                            </span>
-                                                    </small>
-                                                </p>
-                                                <p>{{ cu.user.bio }}</p>
-                                                <p>
-                                                    <span class="icon-text">
-                                                        <span class="icon">
-                                                            <i class="fas fa-calendar"></i>
-                                                        </span>
-                                                        <span>Se unió el {{ humanDateTime(cu.user.created) }}</span>
-                                                    </span>
-                                                </p>
-                                            </div>
-
-                                            <span class="icon-text" v-if="cu.can_kick_users">
-                                                <span class="icon">
-                                                    <i class="fas fa-ban"></i>
-                                                </span>
-                                                <span>Puede expulsar usuarios</span>
-                                            </span>
-
-                                            <span class="icon-text ml-1" v-if="cu.can_modify_permissions">
-                                                <span class="icon">
-                                                    <i class="fas fa-user-edit"></i>
-                                                </span>
-                                                <span>Puede modificar permisos</span>
-                                            </span>
-
-                                            <span class="icon-text" v-if="cu.can_recreate_invitation">
-                                                <span class="icon">
-                                                    <i class="fas fa-envelope"></i>
-                                                </span>
-                                                <span>Puede recrear invitaciones</span>
-                                            </span>
-                                        </div>
-                                    </article>
-                                </div>
-                            </div>
+                            <UserInCommunityCard v-for="member in filteredMembers" :member="member" :key="member.user.id" />
                         </div>
                     </div>
-
 
                 </div>
             </div>
@@ -198,10 +136,14 @@ import {useCommunityStore} from "@/store/communityStore";
 import {useDayjs} from "@/composables/useDayjs";
 import {useClipboard} from "@/composables/clipboard";
 import Loading from "@/components/lib/Loading.vue";
+import UserInCommunityCard from "@/components/communities/UserInCommunityCard.vue";
+import RulesAndPointsTable from "@/components/communities/RulesAndPointsTable.vue";
 
 export default defineComponent({
     name: "OneCommunity",
     components: {
+        RulesAndPointsTable,
+        UserInCommunityCard,
         Loading,
         PrognoPageTitle
     },
