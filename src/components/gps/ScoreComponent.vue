@@ -119,8 +119,8 @@
                     </template>
                 </o-table-column>
 
-                <o-table-column v-for="session in gp.sessions" :key="session.code"
-                                field="score.pointsBySession[session.id]" :label="session.code" sortable numeric v-slot="props">
+                <o-table-column v-for="session in gp.sessions" :key="session.id"
+                                :field="`score.bySession.${session.id}`" :label="session.code" sortable numeric v-slot="props">
 
                     <span v-bind:class="{'has-text-danger': (props.row.score.bySession[session.id] || 0) < 0}">
                         {{ props.row.score.bySession[session.id] || 0 }}
