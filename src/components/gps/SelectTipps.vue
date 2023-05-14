@@ -1,9 +1,9 @@
 <template>
     <div class="content mt-5">
-        <div class="columns is-mobile">
+        <div class="flex space-x-4 mb-4">
 
-            <div class="column is-6">
-                <h3 class="is-unselectable">Pilotos por pronosticar</h3>
+            <div class="flex-1">
+                <h3 class="select-none">Pilotos por pronosticar</h3>
 
                 <div class="busqueda-ordenada">
                     <o-button label="Ordenar" variant="primary" aria-controls="opcionesOrdenado" @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen"/>
@@ -75,8 +75,8 @@
                 </draggable>
             </div>
 
-            <div class="column is-6">
-                <h3 class="is-unselectable">Pilotos pronosticados</h3>
+            <div class="flex-1">
+                <h3 class="select-none">Pilotos pronosticados</h3>
                 <draggable
                     :id="`pronosticados-${session.id}`"
                     class="w-full h-full select-none space-y-2"
