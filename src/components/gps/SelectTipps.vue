@@ -1,9 +1,12 @@
 <template>
     <div class="content mt-5">
+
+        <PrognoAlert message="Arrastra las tarjetas para completar tu pronóstico." />
+
         <div class="flex space-x-4 mb-4">
 
             <div class="flex-1">
-                <h3 class="select-none">Pilotos por pronosticar</h3>
+                <h3 class="select-none">Pilotos disponibles</h3>
 
                 <div class="busqueda-ordenada">
                     <o-button label="Ordenar" variant="primary" aria-controls="opcionesOrdenado" @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen"/>
@@ -55,28 +58,15 @@
                     itemKey="name"
                 >
                     <template #item="{ element, index }">
-                        <div 
+                        <DraggableDriverCard
                             v-if="aplicaFiltrito(element)"
-                            class="is-highlighted has-text-weight-semibold has-radius driver-card is-justify-content-left p-3 rounded-md opacity-90 bg-white"
-                            :style="styleDriverCard(element)">
-                            <span>
-                                {{ element.firstname }} {{ element.lastname }}
-    
-                                <span class="tag is-rounded" v-bind:style="styleDorsal(element)">#{{ element.number }}</span>
-    
-                                <o-tooltip class="ml-1 driver-card-team"
-                                           :label="(currentUser.preferences['use-long-team-names'] ? element.team.name : element.team.longname) + ' (' +element.team.carname + ')'">
-                                    <span v-if="currentUser.preferences['use-long-team-names']">{{ element.team.longname }}</span>
-                                    <span v-else>{{ element.team.name }}</span>
-                                </o-tooltip>
-                            </span>
-                        </div>
+                            :driver="element" :index="index" :showPosition="false" />
                     </template>
                 </draggable>
             </div>
 
             <div class="flex-1">
-                <h3 class="select-none">Pilotos pronosticados</h3>
+                <h3 class="select-none">Tu pronóstico</h3>
                 <draggable
                     :id="`pronosticados-${session.id}`"
                     class="w-full h-full select-none space-y-2"
@@ -85,20 +75,7 @@
                     itemKey="name"
                 >
                     <template #item="{ element, index }">
-                        <div class="is-highlighted has-text-weight-semibold has-radius driver-card is-justify-content-left p-3 rounded-md opacity-90 bg-white"
-                        :style="styleDriverCard(element)">
-                            <span>
-                                <b>{{ index + 1 }}º.</b> {{ element.firstname }} {{ element.lastname }}
-    
-                                <span class="tag is-rounded" v-bind:style="styleDorsal(element)">#{{ element.number }}</span>
-    
-                                <o-tooltip class="ml-1 driver-card-team"
-                                           :label="(currentUser.preferences['use-long-team-names'] ? element.team.name : element.team.longname) + ' (' +element.team.carname + ')'">
-                                    <span v-if="currentUser.preferences['use-long-team-names']">{{ element.team.longname }}</span>
-                                    <span v-else>{{ element.team.name }}</span>
-                                </o-tooltip>
-                            </span>
-                        </div>
+                        <DraggableDriverCard :driver="element" :index="index" showPosition />
                     </template>
                 </draggable>
             </div>
@@ -142,10 +119,14 @@ import {useCommunityStore} from "@/store/communityStore";
 import {useStyles} from "@/composables/useStyles";
 
 import draggable from 'vuedraggable'
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
+import DraggableDriverCard from "@/components/gps/DraggableDriverCard.vue";
 
 export default defineComponent({
     name: "SelectTipps",
     components: {
+        DraggableDriverCard,
+        PrognoAlert,
         SlickList,
         SlickItem,
         draggable
@@ -289,7 +270,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import "bulma/sass/utilities/_all.sass";
+@use '@/scss/variables';
 
 .block-list:empty:before,
 .block-list > div:empty:before {
@@ -315,20 +296,9 @@ export default defineComponent({
 
 
 // Resolución móvil
-@media screen and (max-width: $desktop) {
+@media screen and (max-width: variables.$desktop) {
     .box-ordenado {
         font-size: 0.9rem;
-    }/*
-    .arrow-col {
-        display: none;
-    }*/
-    .driver-card {
-        a, span {
-            font-size: 0.8rem;
-        }
-        .tag {
-            display: none;
-        }
     }
 }
 </style>

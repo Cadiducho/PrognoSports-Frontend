@@ -155,14 +155,14 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "bulma/sass/utilities/_all.sass";
+@use '@/scss/variables';
 
 .photoOpacity {
     opacity: 0.75;
 }
 
 // Resolución móvil
-@media screen and (max-width: 768px) {
+@media screen and (max-width: variables.$tablet) {
     .image img {
         max-width: 50%;
     }
