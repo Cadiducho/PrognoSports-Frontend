@@ -37,7 +37,7 @@
                             </div>
                             <div class="field is-grouped">
                                 <div class="control">
-                                    <button type="submit" class="button is-link">
+                                    <button type="submit" class="button is-link" :disabled="isLoggingIn">
                                         Acceder
                                     </button>
                                 </div>
@@ -77,6 +77,7 @@ export default defineComponent({
             username: "",
             password: "",
             submitted: false,
+            isLoggingIn: false,
             redirectTo: this.$route.query.redirect
         }
     },
@@ -87,7 +88,11 @@ export default defineComponent({
     },
     methods: {
         handleSubmit() {
+            // Prevenir multiples clicks en el login
+            if (this.isLoggingIn) return;
+
             this.submitted = true;
+            this.isLoggingIn = true;
             if (this.username && this.password) {
                 this.login({
                     username: this.username,
@@ -111,6 +116,7 @@ export default defineComponent({
                         } else {
                             message = "Fallo al iniciar sesión: " + error.message;
                         }
+                        this.isLoggingIn = false;
 
                         notificationService.showNotification(message, 'error');
                     }
