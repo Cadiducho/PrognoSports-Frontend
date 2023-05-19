@@ -20,7 +20,7 @@
                       tag="router-link" class="mr-2">
                 Ir al Gran Premio
             </o-button>
-            <o-button variant="link" :to="{ name: 'adminGpEdit' }" tag="router-link">
+            <o-button variant="link" :to="{ name: 'adminGpEditInSeason' }" tag="router-link">
                 Volver a administración del Gran Premio
             </o-button>
         </div>
@@ -70,7 +70,6 @@
 <script lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-import { SlickList, SlickItem } from 'vue-slicksort';
 import {
     driversService,
     grandPrixService, notificationService,
@@ -102,8 +101,6 @@ export default defineComponent({
         AlertNoPermission,
         PrognoPageTitle,
         SessionsInGrandPrix,
-        SlickList,
-        SlickItem,
         GrandPrixPagination,
         Calendar
     },

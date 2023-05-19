@@ -12,12 +12,20 @@
         <div class="column is-one-fifth">
             <label class="label">Pilotos de <router-link :to="{name: 'adminSeasonEdit', params: grandPrix.season.id}">{{ grandPrix.season.name }}</router-link></label>
 
-            <SlickList v-model:list="driversInSeason" group="allDrivers" :accept="true" tag="div">
-                <SlickItem v-for="(driver, index) in driversInSeason" :key="driver.id" :index="index" tag="li"
-                           class="list-item">
-                    {{driver.firstname}} {{ driver.lastname}}
-                </SlickItem>
-            </SlickList>
+            <draggable
+                id="driversInSeason"
+                class="w-full h-full select-none space-y-2 flex flex-col text-white"
+                :list="driversInSeason"
+                group="drivers"
+                itemKey="id"
+            >
+                <template #item="{ element, index }">
+                    <div class="p-1 cursor-move rounded-lg flex items-center justify-center bg-emerald-400 hover:bg-emerald-500 shadow-lg">
+                        {{ element.firstname }} {{ element.lastname }}
+                    </div>
+                </template>
+            </draggable>
+
         </div>
         <div class="column">
 
@@ -32,13 +40,19 @@
                         </header>
 
                         <div class="card-content">
-                            <SlickList v-model:list="driversByConstructor[constructor.id]" :group="constructor.id.toString()" :accept="true" tag="div">
-                                <SlickItem v-for="(driver, index) in driversByConstructor[constructor.id]"
-                                           :key="driver.id" :index="index" tag="li"
-                                           class="list-item">
-                                    {{driver.firstname}} {{ driver.lastname}}
-                                </SlickItem>
-                            </SlickList>
+                            <draggable
+                                :id="`driversByConstructor-${constructor.id}`"
+                                class="w-full h-full select-none space-y-2"
+                                :list="driversByConstructor[constructor.id]"
+                                group="drivers"
+                                itemKey="id"
+                            >
+                                <template #item="{ element, index }">
+                                    <div class="cursor-move flex items-center justify-center">
+                                        {{ element.firstname }} {{ element.lastname }}
+                                    </div>
+                                </template>
+                            </draggable>
                         </div>
                     </div>
                 </div>
@@ -56,14 +70,15 @@ import {Dictionary} from "@/types/Dictionary";
 import {Driver} from "@/types/Driver";
 import {Constructor} from "@/types/Constructor";
 import {constructorService, driversService, grandPrixService, notificationService} from "@/_services";
-import {SlickItem, SlickList} from "vue-slicksort";
 import {useStyles} from "@/composables/useStyles";
+import DraggableDriverCard from "@/components/gps/DraggableDriverCard.vue";
+import draggable from "vuedraggable";
 
 export default defineComponent({
     name: "DriversInGrandPrix",
     components: {
-        SlickList,
-        SlickItem,
+        draggable,
+        DraggableDriverCard,
     },
     props: {
         grandPrix: {
@@ -137,7 +152,7 @@ export default defineComponent({
                 driversService.setDriversInGrandPrix(this.grandPrix, this.driversByConstructor).then(() => {
                     notificationService.showNotification( "Lista de pilotos guardada correctamente.");
                 }).catch((error) => {
-                    notificationService.showNotification( "Ha ocurrido un error.", "danger");
+                    notificationService.showNotification( "Ha ocurrido un error.", "error");
                 });
             }
         },

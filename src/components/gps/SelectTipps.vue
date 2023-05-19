@@ -105,7 +105,6 @@
 
 <script lang="ts">
 import {RaceSession} from "@/types/RaceSession";
-import { SlickList, SlickItem } from 'vue-slicksort';
 import {grandPrixService, notificationService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Driver} from "@/types/Driver";
@@ -127,8 +126,6 @@ export default defineComponent({
     components: {
         DraggableDriverCard,
         PrognoAlert,
-        SlickList,
-        SlickItem,
         draggable
     },
     props: {
