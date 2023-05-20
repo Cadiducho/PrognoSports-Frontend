@@ -85,17 +85,23 @@
                                 v-for="(position, index) in sessionResults"
                                 v-bind:key="position.position" :field="position.driver.code">
                     <template v-slot:header="{ column }">
+                        <!--
                         <o-tooltip v-if="position.driver.code !== '---'"
                                    :label="driverTooltip(position.driver)"
                                    append-to-body>
-                            {{ index + 1 }}. {{ position.driver.code }}
+
                         </o-tooltip>
+                        -->
+                        <template v-if="position.driver.code !== '---'">
+                            {{ index + 1 }}. {{ position.driver.code }}
+                        </template>
                         <template v-else>
                             {{ index + 1 }}. ---
                         </template>
                     </template>
                     <template v-slot="props">
 
+                        <!--
                         <o-tooltip
                             v-if="props.row.tipps[index] !== undefined"
                             :label="driverTooltip(props.row.tipps[index].driver)"
@@ -112,6 +118,20 @@
                             </sub>
                         </o-tooltip>
 
+                        -->
+                        <template v-if="props.row.tipps[index] !== undefined">
+                            {{ props.row.tipps[index].driver.code }}
+
+
+                            <sub v-if="pointsByPosition[props.row.user.id] !== undefined
+                                        && !!pointsByPosition[props.row.user.id][index + 1] !== undefined"
+                                 v-bind:class="{
+                                            'has-text-link': pointsByPosition[props.row.user.id][index + 1] > 0,
+                                            'has-text-danger': pointsByPosition[props.row.user.id][index + 1] < 0,
+                                 }">
+                                {{ pointsByPosition[props.row.user.id][index + 1] }}
+                            </sub>
+                        </template>
                         <!-- Si no hay pronóstico para este usuario y posición, se coloca un "---" -->
                         <template v-else>
                             ---
@@ -126,21 +146,28 @@
                         {{ props.row.score.bySession[session.id] || 0 }}
                     </span>
 
-                    <o-tooltip v-if="checkAndInsertTrophy(props.row.user.username, session)"
+                    <!--
+                    <o-tooltip
                                :label="'Ganador de la sesión de ' + session.humanName()"
                                variant="light">
                         <o-icon pack="fas" variant="info" icon="trophy"></o-icon>
                     </o-tooltip>
+                    -->
+                    <o-icon v-if="checkAndInsertTrophy(props.row.user.username, session)" pack="fas" variant="info" icon="trophy"></o-icon>
+
 
                 </o-table-column>
 
                 <o-table-column field="score.gp" label="GP" sortable numeric v-slot="props">
                     {{ props.row.score.gp }}
-                    <o-tooltip v-if="checkAndInsertTrophy(props.row.user.username, undefined)"
+                    <!--
+                    <o-tooltip
                                label="Ganador del Gran Premio"
                                variant="light">
-                        <o-icon pack="fas" variant="purple" icon="trophy"></o-icon>
+
                     </o-tooltip>
+                    -->
+                    <o-icon v-if="checkAndInsertTrophy(props.row.user.username, undefined)" pack="fas" variant="purple" icon="trophy"></o-icon>
                 </o-table-column>
 
                 <o-table-column :visible="showAdvancedStadistics"

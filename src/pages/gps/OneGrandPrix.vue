@@ -3,7 +3,7 @@
         <loading v-if="isLoadingGrandPrix || grandPrix === undefined" />
 
         <div v-else>
-            <div class="columns is-variable is-5">
+            <div class="columns is-5">
                 <div class="column">
                     <PrognoPageTitle :name="grandPrix.name + ' de ' + grandPrix.season.name" />
                 </div>
