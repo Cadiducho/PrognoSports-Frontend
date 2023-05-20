@@ -49,13 +49,12 @@
 
                     <!-- Si no es quali, hay resultados y grid-->
                     <div v-if="session.hasGrid" class="columns">
-                        <div class="column">
-                            - EditGrid -
-                            <!--<EditGrid :grandPrix="grandPrix" :session="session" :resultsInSession="resultsInSession"/>-->
-                        </div>
-                        <div class="column">
+                        <section class="column">
+                            <EditGrid :grandPrix="grandPrix" :session="session" :grid="startGrid"/>
+                        </section>
+                        <section class="column">
                             <EditResults :grandPrix="grandPrix" :session="session" :resultsInSession="resultsInSession"/>
-                        </div>
+                        </section>
                     </div>
 
                     <!-- En caso contrario mostrar solo selector de resultados -->
@@ -88,15 +87,13 @@ import {useStyles} from "@/composables/useStyles";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
 import EditResults from "@/components/admin/gps/EditResults.vue";
-//import EditGrid from "@/components/admin/gps/EditGrid.vue";
 import Calendar from "@/components/lib/Calendar.vue";
+import EditGrid from "@/components/admin/gps/EditGrid.vue";
 
-// ToDo: Alterar grid si no contiene QUALIFY
-// ToDo: Vuelta rápida si es RACE
 export default defineComponent({
     name: "EditSessionGrandPrix",
     components: {
-        //EditGrid,
+        EditGrid,
         EditResults,
         AlertNoPermission,
         PrognoPageTitle,
@@ -173,13 +170,13 @@ export default defineComponent({
                 ]).then(result => {
                     const ses = result[0];
                     const driversInGP = result[1];
-                    const startGrid = result[2];
+                    const startGridRes = result[2];
                     const rawResultsInSession = result[3];
 
                     this.session = ses;
 
                     this.startGrid = [];
-                    this.startGrid.push(...startGrid);
+                    this.startGrid.push(...startGridRes);
 
                     // Si hay resultados, agregarlos a la lista de resultados
                     this.resultsInSession = [];
@@ -191,8 +188,8 @@ export default defineComponent({
 
                         // Si hay una grid para esa sesión, ordeno los pilotos en base a eso
                         // Facilita posteriormente ordenar los resultados de la sesión
-                        if (startGrid && startGrid.length) {
-                            startGrid.forEach((gridPos) => {
+                        if (this.startGrid && this.startGrid.length) {
+                            this.startGrid.forEach((gridPos) => {
                                 this.resultsInSession.push(gridPos.driver);
                             });
                         } else {

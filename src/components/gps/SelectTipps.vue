@@ -269,26 +269,8 @@ export default defineComponent({
 <style scoped lang="scss">
 @use '@/scss/variables';
 
-.block-list:empty:before,
-.block-list > div:empty:before {
-    content: 'Coloca aquí tus pilotos en orden';
-}
-
 .box-ordenado {
     margin-bottom: 0.5rem !important;
-}
-
-.driver-card {
-    display: flex;
-    cursor: move !important;
-
-    .driver-card-team {
-        font-weight: lighter;
-    }
-}
-
-.pilotos-pronosticados {
-    height: calc(100% - 10rem);
 }
 
 

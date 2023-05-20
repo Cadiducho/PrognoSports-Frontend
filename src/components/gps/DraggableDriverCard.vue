@@ -1,15 +1,14 @@
 <template>
-    <div class="is-highlighted has-text-weight-semibold has-radius driver-card is-justify-content-left p-3 rounded-md opacity-90 bg-white"
+    <div class="is-highlighted has-text-weight-semibold has-radius driver-card is-justify-content-left p-3 rounded-md opacity-90 bg-white hover:bg-sky-50"
          :style="styleDriverCard(driver)">
         <span>
             <b v-if="showPosition">{{ index + 1 }}º.</b> {{ driver.firstname }} {{ driver.lastname }}
             <span class="tag is-rounded" v-bind:style="styleDorsal(driver)">#{{ driver.number }}</span>
 
-            <o-tooltip class="ml-1 driver-card-team"
-                       :label="(currentUser.preferences['use-long-team-names'] ? driver.team.name : driver.team.longname) + ' (' + driver.team.carname + ')'">
-                <span v-if="currentUser.preferences['use-long-team-names']">{{ driver.team.longname }}</span>
+            <span class="ml-2 font-normal">
+                <span v-if="currentUser.preferences['use-long-team-names']">{{ driver.team.longname }} ({{ driver.team.carname }})</span>
                 <span v-else>{{ driver.team.name }}</span>
-            </o-tooltip>
+            </span>
         </span>
     </div>
 </template>
@@ -55,10 +54,6 @@ export default defineComponent({
 .driver-card {
     display: flex;
     cursor: move !important;
-
-    .driver-card-team {
-        font-weight: lighter;
-    }
 }
 
 // Resolución móvil

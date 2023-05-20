@@ -19,10 +19,10 @@
     <label class="label">Resultados</label>
     <draggable
         :id="`results-${session.id}`"
-        class="w-full h-full select-none space-y-2"
+        class="w-full select-none space-y-2"
         :list="sessionResults"
-        group="people"
-        itemKey="name"
+        group="results"
+        itemKey="id"
     >
         <template #item="{ element, index }">
             <DraggableDriverCard :driver="element" :index="index" showPosition />
@@ -50,7 +50,6 @@
 <script lang="ts">
 import {defineComponent, PropType} from "vue";
 import {useAuthStore} from "@/store/authStore";
-import {useStyles} from "@/composables/useStyles";
 import {RaceSession} from "@/types/RaceSession";
 import {Driver} from "@/types/Driver";
 import {grandPrixService, notificationService} from "@/_services";
@@ -80,13 +79,9 @@ export default defineComponent({
     },
     setup() {
         const authStore = useAuthStore();
-        const styles = useStyles();
-
         const currentUser = authStore.loggedUser;
-        const styleDriverCard = styles.styleDriverCard;
-        const styleDorsal = styles.styleDorsal;
 
-        return {currentUser, styleDriverCard, styleDorsal};
+        return {currentUser};
     },
     data() {
         return {
