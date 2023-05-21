@@ -73,7 +73,7 @@ export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
     }
 
     public async getGrandPrixGrid(grandPrix: GrandPrix, session: RaceSession): Promise<Array<StartGridPosition>> {
-        return await axios.get(`/gps/${grandPrix.competition.code}/${grandPrix.season.name}/${grandPrix.id}/grid/${session.name}`);
+        return await axios.get(`/gps/${grandPrix.competition.code}/${grandPrix.season.id}/${grandPrix.id}/sessions/${session.name}/grid`);
     }
 
     public async getResults(gp: GrandPrix, session: RaceSession): Promise<Array<RaceResult>> {
@@ -86,6 +86,10 @@ export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
             notSendNotification: payload.notSendNotification,
         }
         return await axios.post(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.name}/results`, realPayload);
+    }
+
+    public async saveGrid(gp: GrandPrix, session: RaceSession, payload: { grid: { note: string | undefined; isFromPit: boolean; driver: string; position: number }[] } ): Promise<boolean> {
+        return await axios.patch(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.name}/grid`, payload);
     }
 
     public async getAllTipps(gp: GrandPrix, session: RaceSession, community: Community): Promise<Record<number, Array<RaceResult>>> {

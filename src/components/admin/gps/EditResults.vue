@@ -17,29 +17,17 @@
     </section>
 
     <label class="label">Resultados</label>
-    <SlickList v-model:list="sessionResults" tag="ul" :distance="1"
-               class="no-select pl-0 space-y-3">
-
-        <SlickItem v-for="(item, index) in sessionResults" :key="item.id" :index="index" tag="li"
-                   class="is-highlighted has-text-weight-semibold has-radius is-flex is-justify-content-left p-3"
-                   :style="styleDriverCard(item)">
-
-            <span>
-                <b>{{ index + 1 }}º.</b> {{ item.firstname }} {{ item.lastname }}
-                <span class="tag is-rounded" v-bind:style="styleDorsal(item)">#{{
-                        item.number
-                    }}</span>
-                <o-tooltip class="ml-1"
-                           :label="currentUser.preferences['use-long-team-names'] ? item.team.name : item.team.longname">
-                    <span v-if="currentUser.preferences['use-long-team-names']">{{
-                            item.team.longname
-                        }}</span>
-                    <span v-else>{{ item.team.name }}</span>
-                </o-tooltip>
-                ({{ item.team.carname }})
-            </span>
-        </SlickItem>
-    </SlickList>
+    <draggable
+        :id="`results-${session.id}`"
+        class="w-full select-none space-y-2"
+        :list="sessionResults"
+        group="results"
+        itemKey="id"
+    >
+        <template #item="{ element, index }">
+            <DraggableDriverCard :driver="element" :index="index" showPosition />
+        </template>
+    </draggable>
 
     <section class="block mt-4">
         <o-checkbox
@@ -60,22 +48,20 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, PropType} from "vue";
-import {SlickItem, SlickList} from "vue-slicksort";
+import {defineComponent, PropType} from "vue";
 import {useAuthStore} from "@/store/authStore";
-import {useStyles} from "@/composables/useStyles";
-import {Competition} from "@/types/Competition";
-import {Season} from "@/types/Season";
 import {RaceSession} from "@/types/RaceSession";
 import {Driver} from "@/types/Driver";
 import {grandPrixService, notificationService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
+import DraggableDriverCard from "@/components/gps/DraggableDriverCard.vue";
+import draggable from "vuedraggable";
 
 export default defineComponent({
     name: "EditResults",
     components: {
-        SlickList,
-        SlickItem,
+        draggable,
+        DraggableDriverCard,
     },
     props: {
         grandPrix: {
@@ -93,13 +79,9 @@ export default defineComponent({
     },
     setup() {
         const authStore = useAuthStore();
-        const styles = useStyles();
-
         const currentUser = authStore.loggedUser;
-        const styleDriverCard = styles.styleDriverCard;
-        const styleDorsal = styles.styleDorsal;
 
-        return {currentUser, styleDriverCard, styleDorsal};
+        return {currentUser};
     },
     data() {
         return {
