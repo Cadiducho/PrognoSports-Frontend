@@ -56,10 +56,10 @@
 
             <o-table-column field="circuit" label="Circuit" sortable v-slot="props">
                 {{ props.row.circuit.name }}
-                <span v-if="hasVariant(props.row.circuit)"
+                <span v-if="!props.row.variant.isDefault()"
                       class="tag is-info">
-                        {{ props.row.circuit.variant.name }}
-                    </span>
+                    {{ props.row.variant.name }}
+                </span>
             </o-table-column>
 
             <o-table-column field="sessions" label="Sessions" v-slot="props">

@@ -13,8 +13,8 @@
                     icon="search"
                 ></o-input>
             </o-field>
-            <div class="mt-5 columns is-centered is-multiline">
-                <view-circuit-item
+            <div class="flex flex-wrap -mx-4">
+                <ViewCircuitItem
                     v-for="(circuit, index) in filteredCircuits"
                     :circuit="circuit"
                     v-bind:key="index"

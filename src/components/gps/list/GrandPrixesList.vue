@@ -57,13 +57,13 @@
                         gp.code
                             .toLowerCase()
                             .includes(filtroLowerCase) ||
-                        gp.circuit.name
+                        gp.circuit?.name
                             .toLowerCase()
                             .includes(filtroLowerCase) ||
-                        gp.circuit.country
+                        gp.circuit?.country
                             .toLowerCase()
                             .includes(filtroLowerCase) ||
-                        gp.circuit.locality
+                        gp.circuit?.locality
                             .toLowerCase()
                             .includes(filtroLowerCase)
                     );

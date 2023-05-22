@@ -34,7 +34,11 @@ export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
         return this.getObjectListFromAPI(`/gps/${comp}/${seas}`);
     }
 
-    public async getGPThatUsesCircuit(circuit: Circuit, variant: CircuitVariant): Promise<Array<GrandPrix>> {
+    public async getGPThatUsesCircuit(circuit: Circuit): Promise<Array<GrandPrix>> {
+        return this.getObjectListFromAPI(`/circuits/${circuit.id}/gps`);
+    }
+
+    public async getGPThatUsesCircuitVariant(circuit: Circuit, variant: CircuitVariant): Promise<Array<GrandPrix>> {
         return this.getObjectListFromAPI(`/circuits/${circuit.id}/${variant.name}/gps`);
     }
 

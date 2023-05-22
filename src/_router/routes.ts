@@ -306,7 +306,7 @@ export const routes = [
                 component: () => import('@/pages/circuits/CircuitList.vue'),
             },
             {
-                path: ':circuit/:variant?',
+                path: ':circuit',
                 name: 'circuitDetails',
                 component: () => import('@/pages/circuits/OneCircuit.vue'),
                 meta: { title: "Detalles de circuito" }

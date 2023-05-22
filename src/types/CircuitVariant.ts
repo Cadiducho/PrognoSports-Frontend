@@ -1,6 +1,7 @@
 import {BASE_URL} from "@/_services";
 
 export interface ICircuitVariant {
+    id: number;
     circuitId: string;
     name: string;
     distance: number;
@@ -9,6 +10,7 @@ export interface ICircuitVariant {
 }
 
 export class CircuitVariant implements ICircuitVariant {
+    id: number;
     circuitId: string;
     distance: number;
     name: string;
@@ -16,6 +18,7 @@ export class CircuitVariant implements ICircuitVariant {
     hasLayoutImage: boolean;
 
     constructor(data: ICircuitVariant) {
+        this.id = data.id;
         this.distance = data.distance;
         this.name = data.name;
         this.turns = data.turns;
@@ -23,9 +26,13 @@ export class CircuitVariant implements ICircuitVariant {
         this.circuitId = data.circuitId;
     }
 
+    public isDefault(): boolean {
+        return this.name == 'GrandPrix';
+    }
+
     public layoutImage(): string {
         if (this.hasLayoutImage) {
-            return BASE_URL + `/circuits/${this.circuitId}/${this.name}/layout`;
+            return BASE_URL + `/circuits/${this.circuitId}/${this.id}/layout`;
         }
 
         // ToDo: coger la imagen por defecto de los assets

@@ -17,10 +17,6 @@ export class CircuitService extends PrognoService<ICircuit, Circuit> {
         return this.getObjectFromAPI(`/circuits/${circuitId}`);
     }
 
-    public async getCircuitWithVariant(circuitId: string, variantId: string) : Promise<Circuit> {
-        return this.getObjectFromAPI(`/circuits/${circuitId}/${variantId}`);
-    }
-
     public async listCircuitVariant(circuit: Circuit): Promise<Array<CircuitVariant>> {
         const circuitData = await axios.get(`/circuits/${circuit.id}/variants`) as ICircuitVariant[];
         return circuitData.map(data => new CircuitVariant(data));

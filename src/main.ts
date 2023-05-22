@@ -5,7 +5,6 @@ import { bulmaConfig } from '@oruga-ui/theme-bulma'
 
 import './scss/app.scss';
 import VueApexCharts from "vue3-apexcharts";
-import mixin from "@/plugins/mixin";
 import App from "@/App.vue";
 import Loading from '@/components/lib/Loading.vue'
 import router from "@/_router";
@@ -28,7 +27,6 @@ const app = createApp(App)
         ...bulmaConfig}
     )
     .use(VueApexCharts)
-    .component("Loading", Loading)
-    .mixin(mixin);
+    .component("Loading", Loading);
 
 app.mount('#app');
