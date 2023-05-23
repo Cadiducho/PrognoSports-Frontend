@@ -1,8 +1,9 @@
 <template>
     <div id="grandprix">
-        <loading v-if="isLoadingGrandPrix || grandPrix === undefined" />
+        <loading v-if="isLoadingGrandPrix" />
+        <p v-if="!thereIsGrandPrix">El Gran Premio buscado con nombre <i>{{ this.id }}</i> no ha sido encontrado</p>
 
-        <div v-else>
+        <template v-else>
             <div class="columns is-variable is-5">
                 <div class="column">
                     <PrognoPageTitle :name="grandPrix.name + ' de ' + grandPrix.season.name" />
@@ -19,7 +20,7 @@
 
             <div class="columns">
 
-                <div v-bind:class="thereIsGrid ? 'column is-6' : 'column is-9'">
+                <div v-bind:class="this.startGrid.size ? 'column is-6' : 'column is-9'">
                     <o-tabs v-model="activeTab">
                         <o-tab-item v-for="(session, index) in grandPrix.sessions"
                                     :label="session.humanName()"
@@ -41,14 +42,14 @@
                         </o-tab-item>
                     </o-tabs>
                 </div>
-                <div v-if="thereIsGrid" class="content column">
+                <div v-if="this.startGrid.size" class="content column">
                     <StartGrid :grid="startGrid"/>
                 </div>
                 <div class="column is-3">
                     <CircuitCard v-if="grandPrix.circuit && grandPrix.variant"
                                  :circuit="grandPrix.circuit!" :variant="grandPrix.variant!" :laps="grandPrix.laps"
                     />
-                    <PitLaneStartGrid v-if="thereIsGrid" :grid="startGrid"/>
+                    <PitLaneStartGrid v-if="this.startGrid.size" :grid="startGrid"/>
 
                     <section v-if="this.currentUser.isAdmin()" class="mt-2">
                         <hr/>
@@ -76,7 +77,7 @@
                                      :user-points="userPoints"/>
                 </o-tab-item>
             </o-tabs>
-        </div>
+        </template>
     </div>
 </template>
 
@@ -88,7 +89,7 @@ import StartGrid from "@/components/gps/StartGridList.vue";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
 import {GrandPrix} from "@/types/GrandPrix";
-import {communityService, driversService, grandPrixService, rulesetService, scoreService} from "@/_services";
+import {communityService, driversService, grandPrixService, notificationService, rulesetService, scoreService} from "@/_services";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import SelectTipps from "@/components/gps/SelectTipps.vue";
 import PitLaneStartGrid from "@/components/gps/PitLaneStartGrid.vue";
@@ -136,7 +137,7 @@ export default defineComponent({
         return {
             competition: {code: this.$route.params.competition} as Competition,
             season: {name: this.$route.params.season} as Season,
-            id: this.$route.params.id as string,
+            id: this.$route.params.gp as string,
 
             grandPrix: {} as GrandPrix,
             ruleSet: {} as RuleSet,
@@ -144,6 +145,7 @@ export default defineComponent({
             communityMembers: new Array<CommunityUser>(),
 
             isLoadingGrandPrix: true,
+            thereIsGrandPrix: false,
             startGrid: new Map<RaceSession, Array<StartGridPosition>>(),
             userPoints: {} as Dictionary<number, UserPoints>,
             activeTab: 0
@@ -153,44 +155,50 @@ export default defineComponent({
         grandPrixService.getGrandPrixInSeason(this.season, this.id).then(gp => {
             this.grandPrix = gp;
 
-            if (this.grandPrix) {
-                this.emitter.emit('breadcrumbLastname', this.grandPrix.name + ' de ' + this.grandPrix.season.name);
+            this.emitter.emit('breadcrumbLastname', this.grandPrix.name + ' de ' + this.grandPrix.season.name);
 
-                Promise.all([
-                    driversService.getDriversInGrandPrix(this.grandPrix!),
-                    rulesetService.getRuleSetInGrandPrix(this.currentCommunity, this.grandPrix),
-                    scoreService.getPointsInGrandPrix(this.currentCommunity, this.grandPrix!),
-                    communityService.getMembers(this.currentCommunity),
-                    this.getStartGrids(this.grandPrix)
-                ]).then(result => {
-                    this.drivers = result[0];
-                    this.ruleSet = result[1];
-                    const points = result[2];
-                    this.communityMembers = result[3];
-                    const rawStartGrids = result[4];
+            Promise.all([
+                driversService.getDriversInGrandPrix(this.grandPrix!),
+                rulesetService.getRuleSetInGrandPrix(this.currentCommunity, this.grandPrix),
+                scoreService.getPointsInGrandPrix(this.currentCommunity, this.grandPrix!),
+                communityService.getMembers(this.currentCommunity),
+                this.getStartGrids(this.grandPrix)
+            ]).then(result => {
+                this.drivers = result[0];
+                this.ruleSet = result[1];
+                const points = result[2];
+                this.communityMembers = result[3];
+                const rawStartGrids = result[4];
 
-                    points.forEach((points) => {
-                        this.userPoints[points.user.id] = points;
-                    });
 
-                    rawStartGrids.forEach((grid, index) => {
-                        const session = this.grandPrix!.sessions[index];
-                        if (grid.length > 0) {
-                            this.startGrid.set(session, grid);
-                        }
-                    });
+                this.thereIsGrandPrix = true;
 
-                    this.isLoadingGrandPrix = false;
+                points.forEach((points) => {
+                    this.userPoints[points.user.id] = points;
                 });
 
-                // Colocar la tab correcta según si es día de clasificación o carrera
-                this.grandPrix.sessions.forEach((ses, index) => {
-                    if (dayjs(ses.date).isToday()) {
-                        this.activeTab = index;
-                        return;
+                rawStartGrids.forEach((grid, index) => {
+                    const session = this.grandPrix!.sessions[index];
+                    if (grid.length > 0) {
+                        this.startGrid.set(session, grid);
                     }
-                })
-            }
+                });
+
+                this.isLoadingGrandPrix = false;
+            });
+
+            // Colocar la tab correcta según si es día de clasificación o carrera
+            this.grandPrix.sessions.forEach((ses, index) => {
+                if (dayjs(ses.date).isToday()) {
+                    this.activeTab = index;
+                    return;
+                }
+            })
+
+        }).catch((error) => {
+            this.thereIsGrandPrix = false;
+            this.isLoadingGrandPrix = false;
+            notificationService.showNotification(error.message, 'error');
         });
     },
     methods: {
@@ -202,10 +210,5 @@ export default defineComponent({
             return Promise.all(request);
         }
     },
-    computed: {
-        thereIsGrid(): boolean {
-            return this.startGrid.size !== 0
-        }
-    }
 });
 </script>

@@ -45,18 +45,18 @@
         },
         methods: {
             thereIsPrevious(grandPrix: GrandPrix): boolean {
-                return grandPrix.round > 1;
+                return !!grandPrix.previousGrandPrix.id;
             },
             thereIsNext(grandPrix: GrandPrix): boolean {
-                return (grandPrix.round + 1) <= grandPrix.season.totalEvents;
+                return !!grandPrix.nextGrandPrix.id;
             },
             push(next: boolean): void {
-                let params: RouteLocationRaw = {
-                    name: this.isAdminPag ? 'adminGpEdit' : 'gpdetails',
+                const params: RouteLocationRaw = {
+                    name: this.isAdminPag ? 'adminGpEditInSeason' : 'gpdetails',
                     params: {
                         competition: this.grandPrix.competition.code,
                         season: this.grandPrix.season.name,
-                        id: ((this.grandPrix.round + (next ? 1 : -1)).toString())
+                        gp: (next ? this.grandPrix.nextGrandPrix.id : this.grandPrix.previousGrandPrix.id)
                     }
                 };
                 this.$router.push(params);

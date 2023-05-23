@@ -143,7 +143,7 @@ export default defineComponent({
     },
     data() {
         return {
-            circuit: {} as Circuit,
+            circuit: {id: this.$route.params.circuit} as Circuit,
             selectedVariant: 0,
             isLoading: true,
             thereIsCircuit: false,
@@ -159,19 +159,17 @@ export default defineComponent({
         }
     },
     mounted() {
-        this.circuit = {id: this.$route.params.circuit} as Circuit;
-
         Promise.all([
             circuitService.getCircuit(this.circuit.id),
             grandPrixService.getGPThatUsesCircuit(this.circuit)
         ]).then(([circuit, gpsUsing]) => {
             this.circuit = circuit;
             this.thereIsCircuit = true;
-            this.center = latLng(circuit.latitude, circuit.longitude);
+            this.center = latLng(this.circuit.latitude, this.circuit.longitude);
             this.grandPrixesUsingCircuit = gpsUsing;
-        }).catch((reason) => {
+        }).catch((error) => {
             this.thereIsCircuit = false;
-            notificationService.showNotification(reason, 'error');
+            notificationService.showNotification(error.message, 'error');
         }).finally(() => {
             this.isLoading = false;
             this.emitter.emit('breadcrumbLastname', this.circuit.name);

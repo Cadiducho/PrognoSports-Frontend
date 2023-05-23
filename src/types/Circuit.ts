@@ -44,23 +44,23 @@ export class Circuit implements ICircuit {
         };
     }
 
-    public logoImage(): string | undefined {
+    public logoImage(): string {
         if (this.hasLogoImage) {
             return BASE_URL + `/circuits/${this.id}/logo`;
         }
-        return undefined;
-/*
-        // ToDo: coger la imagen por defecto de los assets
-        return 'https://github.com/Cadiducho/PrognoSports-Frontend/blob/develop/src/assets/default_profile_image.jpg?raw=true';*/
+
+        return this.layoutImage();
     }
 
-    public layoutImage(variantId?: number): string | undefined {
+    public layoutImage(variantId?: number): string {
         if (variantId) {
             return this.variants[variantId].layoutImage();
         }
         if (this.variants.length > 0) {
             return this.variants[0].layoutImage();
         }
-        return undefined;
+
+        // ToDo: coger la imagen por defecto de los assets
+        return 'https://github.com/Cadiducho/PrognoSports-Frontend/blob/develop/src/assets/default_profile_image.jpg?raw=true';
     }
 }

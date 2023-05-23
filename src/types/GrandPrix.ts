@@ -12,6 +12,8 @@ export interface IGrandPrix {
     competition: Competition;
     season: Season;
     round: number;
+    nextGrandPrix: IGrandPrix;
+    previousGrandPrix: IGrandPrix;
     circuit?: ICircuit;
     variant?: ICircuitVariant;
     sessions: Array<IRaceSession>
@@ -30,6 +32,8 @@ export class GrandPrix implements IGrandPrix {
     name: string;
     sessions: Array<RaceSession>;
     round: number;
+    nextGrandPrix: IGrandPrix;
+    previousGrandPrix: IGrandPrix;
     season: Season;
     suspended: boolean;
     hasPromoImage: boolean;
@@ -46,6 +50,8 @@ export class GrandPrix implements IGrandPrix {
             this.variant = new CircuitVariant(data.variant);
         }
         this.round = data.round;
+        this.previousGrandPrix = data.previousGrandPrix;
+        this.nextGrandPrix = data.nextGrandPrix;
         this.season = data.season;
         this.suspended = data.suspended;
         this.hasPromoImage = data.hasPromoImage;
@@ -70,7 +76,7 @@ export class GrandPrix implements IGrandPrix {
             params: {
                 competition: this.competition.code,
                 season: this.season.name,
-                id: this.id,
+                gp: this.id,
             }
         };
     }

@@ -377,7 +377,7 @@ export const routes = [
                         meta: {title: "Temporada"}
                     },
                     {
-                        path: ':id',
+                        path: ':gp',
                         name: 'gpdetails',
                         component: () => import('@/pages/gps/OneGrandPrix.vue'),
                         meta: {title: "Gran Premio"}
