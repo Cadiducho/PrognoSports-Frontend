@@ -30,8 +30,8 @@ export class CircuitVariant implements ICircuitVariant {
         return this.name == 'GrandPrix';
     }
 
-    public layoutImage(): string {
-        if (this.hasLayoutImage) {
+    public layoutImage(force: boolean = false): string {
+        if (force || this.hasLayoutImage) {
             return BASE_URL + `/circuits/${this.circuitId}/${this.id}/layout`;
         }
 

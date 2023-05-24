@@ -52,7 +52,7 @@ import {defineComponent, PropType} from "vue";
 import {GrandPrix} from "@/types/GrandPrix";
 import {useDayjs} from "@/composables/useDayjs";
 import {RaceSession} from "@/types/RaceSession";
-import {sessionService} from "@/_services";
+import {notificationService, sessionService} from "@/_services";
 import Calendar from "@/components/lib/Calendar.vue";
 
 export default defineComponent({
@@ -105,16 +105,13 @@ export default defineComponent({
                 const data = { session: this.newSession.session.name, date: this.newSession.date };
                 sessionService.addSessionInGrandPrix(this.grandPrix, data).then((session) => {
                     this.isCreatingSession = false;
-                    console.log(this.sessions);
                     this.sessions.push(session);
-                    console.log(this.sessions)
-                })
+                    notificationService.showNotification('Sesión agregada correctamente');
+                }).catch((err) => {
+                    notificationService.showNotification('Error al agregar la sesión', 'error');
+                });
             }
         }
     }
 });
 </script>
-
-<style scoped>
-
-</style>

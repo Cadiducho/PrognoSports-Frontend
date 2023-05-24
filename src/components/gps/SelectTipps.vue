@@ -85,6 +85,7 @@
         <template v-if="session.isBeforeClosureDate()">
             <o-button v-if="pilotosPronosticados.length === ruleSet.cantidadPilotosPronosticados(session)"
                       variant="success is-fullwidth"
+                      :disabled="sendingPronostico"
                       @click="enviarPronostico">Enviar pronóstico
             </o-button>
 
@@ -169,6 +170,7 @@ export default defineComponent({
             opcionesOrdenadoOpen: false,
             orderType: 1,
             orderAscendent: false,
+            sendingPronostico: false,
 
             pilotosPronosticados: new Array<Driver>(),
             pilotosDisponibles: new Array<Driver>(),
@@ -210,21 +212,25 @@ export default defineComponent({
             this.pilotosDisponibles.push(...this.originalPilotos);
         },
         async enviarPronostico() {
+            this.sendingPronostico = true;
             let tipps: Array<RaceResult> = [];
 
             this.pilotosPronosticados.forEach((driver, index, array) => {
                 tipps.push({position: index + 1, driver: {id: driver.id} as Driver} as RaceResult);
             });
-            grandPrixService.postUserTipps(this.grandPrix, this.session, this.currentCommunity, tipps)
-                .then(() => {
-                    notificationService.showNotification("¡Has guardado tus pronósticos!");
-                },
-                (error: any) => {
-                    let message = "Error guardando tus pronósticos: " + error.message;
 
-                    notificationService.showNotification(message, "error");
-                }
-            );
+            try {
+                await grandPrixService.postUserTipps(this.grandPrix, this.session, this.currentCommunity, tipps);
+                notificationService.showNotification("¡Has guardado tus pronósticos!");
+            } catch (error) {
+                let message = "Error guardando tus pronósticos: " + error.message;
+
+                notificationService.showNotification(message, "error");
+            } finally {
+                setTimeout(() => {
+                    this.sendingPronostico = false;
+                }, 1000);
+            }
         },
         aplicaFiltrito(driver: Driver) {
             let filtroLowerCase = this.filtroPiloto.toLowerCase();

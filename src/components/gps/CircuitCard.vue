@@ -5,7 +5,7 @@
                 <img v-if="circuit.hasLogoImage" :src="circuit.logoImage()" alt="Logo image">
             </figure>
             <figure class="image">
-                <img :src="variant.layoutImage()" alt="Circuit layout image">
+                <img :src="variant.layoutImage(true)" alt="Circuit layout image">
             </figure>
         </div>
         <div class="card-content">
