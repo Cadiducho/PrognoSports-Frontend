@@ -16,7 +16,7 @@
         </div>
 
         <div class="block">
-            <o-button variant="success" :to="{ name: 'gpdetails', params: {id: grandPrix.id, season: grandPrix.season.name, competition: grandPrix.competition.code} }"
+            <o-button variant="success" :to="{ name: 'gpdetails', params: {gp: grandPrix.id, season: grandPrix.season.name, competition: grandPrix.competition.code} }"
                       tag="router-link" class="mr-2">
                 Ir al Gran Premio
             </o-button>

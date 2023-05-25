@@ -75,7 +75,7 @@
 
             <o-table-column label="Actions" v-slot="props">
                     <span class="tags">
-                        <router-link class="tag is-info" :to="{name: 'gpdetails', params: {season: props.row.season.id, competition: props.row.competition.id, id: props.row.id}}">Ver</router-link>
+                        <router-link class="tag is-info" :to="{name: 'gpdetails', params: {season: props.row.season.id, competition: props.row.competition.id, gp: props.row.id}}">Ver</router-link>
                         <router-link class="tag is-warning" :to="{name: 'adminGpEditInSeason', params: {gp: props.row.id}}">Editar</router-link>
                         <span class="tag is-danger" @click="confirmDeleteGrandPrix(props.row)">Eliminar</span>
                     </span>

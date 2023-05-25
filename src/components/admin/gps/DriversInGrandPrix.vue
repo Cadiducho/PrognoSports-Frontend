@@ -20,7 +20,7 @@
                 itemKey="id"
             >
                 <template #item="{ element, index }">
-                    <div class="p-1 cursor-move rounded-lg flex items-center justify-center bg-emerald-400 hover:bg-emerald-500 shadow-lg">
+                    <div class="p-1 cursor-move rounded-lg flex items-center justify-center bg-cyan-400 hover:bg-cyan-600 shadow-lg">
                         {{ element.firstname }} {{ element.lastname }}
                     </div>
                 </template>
