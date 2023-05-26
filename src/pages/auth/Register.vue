@@ -54,7 +54,7 @@
                             </div>
                             <div class="field is-grouped">
                                 <div class="control">
-                                    <button :disabled="!tos" class="button is-link">Regístrate</button>
+                                    <button :disabled="!tos || isRegistering" class="button is-link">Regístrate</button>
                                 </div>
                             </div>
                         </form>
@@ -93,11 +93,16 @@ export default defineComponent({
             password: "",
             tos: false,
             submitted: false,
+            isRegistering: false,
         }
     },
     methods: {
         handleSubmit() {
+            // Prevenir multiples clicks en register
+            if (this.isRegistering) return;
+
             this.submitted = true;
+            this.isRegistering = true;
             if (this.email && this.username && this.password) {
                 this.register({
                     email: this.email,
@@ -114,18 +119,19 @@ export default defineComponent({
                     (error) => {
                         //ToDo: usar los códigos de error, no comparar mensajes
                         if (error === "Email cannot be null") {
-                            notificationService.showNotification("Debes introducir una dirección de email", "danger");
+                            notificationService.showNotification("Debes introducir una dirección de email", "error");
                         } else if (error === "Username cannot be null") {
-                            notificationService.showNotification("Debes introducir un nombre de usuario", "danger");
+                            notificationService.showNotification("Debes introducir un nombre de usuario", "error");
                         } else if (error === "Password cannot be null") {
-                            notificationService.showNotification("Debes introducir una contraseña", "danger");
+                            notificationService.showNotification("Debes introducir una contraseña", "error");
                         } else if (error === "Email in use") {
-                            notificationService.showNotification("Ya existe un usuario con ese email", "danger");
+                            notificationService.showNotification("Ya existe un usuario con ese email", "error");
                         } else if (error === "Username in use") {
-                            notificationService.showNotification("Ya existe un usuario con ese nombre", "danger");
+                            notificationService.showNotification("Ya existe un usuario con ese nombre", "error");
                         } else if (error === "database error") {
-                            notificationService.showNotification("Error inesperado registrando tus datos", "danger");
+                            notificationService.showNotification("Error inesperado registrando tus datos", "error");
                         }
+                        this.isRegistering = false;
                     }
                 );
             }

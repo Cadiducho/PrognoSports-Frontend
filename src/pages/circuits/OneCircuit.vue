@@ -1,124 +1,105 @@
 <template>
     <div id="circuitDetails" class="box">
-        <progno-page-title class="mb-5" :name="circuitName" />
         <loading v-if="isLoading"/>
 
-        <p v-if="!thereIsCircuit">El circuito buscado con nombre <i>{{ getRawCircuitName }}</i> no ha sido encontrado</p>
+        <p v-if="!thereIsCircuit">El circuito buscado con nombre <i>{{ this.circuit.id }}</i> no ha sido encontrado</p>
         <template v-else>
-            <div class="tabs">
-                <ul>
-                    <li v-for="tab in variantTabs"
-                        v-bind:class="{ 'is-active': (variant.name === tab.label) }">
-                        <router-link
-                            :to='"/circuits/" + circuit.id + "/" + tab.label'>
-                            {{ tab.label }}
-                        </router-link>
-                    </li>
-                </ul>
-            </div>
+            <progno-page-title class="mb-5" :name="circuit.name" />
 
-            <div class="columns">
-                <div class="column">
-                    <div class="card">
-                        <div class="card-image">
-                            <figure class="image">
-                                <img class="logoImage" v-if="circuit.hasLogoImage" :src="circuit.logoImage()" alt="Logo image">
-                            </figure>
+            <div class="flex flex-wrap">
+                <div class="w-full xl:w-2/3 p-4">
+                    <div class="relative pb-96 overflow-hidden">
+                        <img class="absolute inset-0 h-full w-full object-contain" :src="circuit.layoutImage(this.selectedVariant)" alt="Circuit layout" />
+                    </div>
+                </div>
+                <div class="w-full xl:w-1/3 p-4 text-2xl flex flex-col justify-around">
+                    <div class="inline-grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm">Nombre</p>
+                            <p class="font-bold">{{ circuit.name }}</p>
                         </div>
-                        <div class="card-content">
-                            <div class="media">
-                                <div class="media-content">
-                                    <p class="title is-4">{{circuit.name}} {{ hasVariant(circuit) ? ('- ' + circuit.variant.name) : ""}}</p>
-                                    <p class="subtitle is-6">{{circuit.locality}}, {{circuit.country}}</p>
-                                </div>
-                            </div>
-
-                            <div class="content">
-                                <p v-if="hasVariant(circuit)" class="card-text">
-                                    <i class="fas fa-fw fa-random mr-2"></i>
-                                    <b>Variante: </b>{{circuit.variant.name}}
-                                </p>
-                                <p class="card-text">
-                                    <i class="fas fa-fw fa-map-marked-alt mr-2"></i>
-                                    <b>Ubicación: </b>{{circuit.latitude}}º, {{circuit.longitude}}º
-                                </p>
-                                <p class="card-text">
-                                    <i class="fas fa-fw fa-ruler mr-2"></i>
-                                    <b>Distancia por vuelta: </b>{{circuit.variant.distance}} km
-                                </p>
-                                <p class="card-text">
-                                    <i class="fas fa-fw fa-directions mr-2"></i>
-                                    <b>Curvas: </b>{{circuit.variant.turns}}
-                                </p>
-                            </div>
+                        <div>
+                            <p class="text-sm">Variante</p>
+                            <p class="font-bold">{{ circuit.variants[this.selectedVariant].name }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm">Distancia por vuelta</p>
+                            <p class="font-bold">{{ circuit.variants[this.selectedVariant].distance }}km</p>
+                        </div>
+                        <div>
+                            <p class="text-sm">Curvas</p>
+                            <p class="font-bold">{{ circuit.variants[this.selectedVariant].turns }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm">Localidad</p>
+                            <p class="font-bold">{{ circuit.locality }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm">País</p>
+                            <p class="font-bold">{{ circuit.country }}</p>
                         </div>
                     </div>
-
-                    <h3 class="title is-3 mt-5">Grandes Premios que usaron el circuito</h3>
-                    <article class="mt-4 columns is-multiline" v-if="grandPrixesUsingCircuit.length">
-                        <div class="is-inline-block zoom mr-3 mb-3" v-for="gp in grandPrixesUsingCircuit">
-                            <div class="card">
-                                <div class="card-content">
-                                    <p class="title is-5">
-                                        {{ gp.name }} de {{ gp.season.name }}
-                                    </p>
-                                    <p class="subtitle is-6">
-                                        {{ gp.circuit.name }}, {{ gp.circuit.locality }} ({{ gp.circuit.country }})
-                                    </p>
-                                    <p class="subtitle is-6">
-                                        <span v-for="session in gp.sessions">
-                                            {{ session.humanName() }}: {{ humanDate(session.date) }} ({{ dateDiff(session.date) }}) <br/>
-                                        </span>
-                                    </p>
-                                </div>
-
-                                <router-link
-                                    class="button is-info is-inverted is-fullwidth"
-                                    :to="{
-                                            name: 'gpdetails',
-                                            params: {
-                                                competition: gp.competition.code,
-                                                season: gp.season.name,
-                                                id: gp.id,
-                                            }
-                                          }"
-                                >
-                                    Detalles
-                                </router-link>
-                            </div>
-                        </div>
-                    </article>
-                    <span v-else>No se ha usado este circuito en ningún Gran Premio</span>
+                    <section>
+                        <h4 class="font-semibold mt-5 mb-1">Variantes</h4>
+                        <button v-for="(variant, index) in circuit.variants"
+                                class="px-4 py-2 mr-3 font-semibold text-sm bg-cyan-500 text-white rounded-full shadow-sm"
+                                @click="selectedVariant = index"
+                        >
+                            {{ variant.name }}
+                        </button>
+                    </section>
                 </div>
-                <div class="column">
-                    <div class="box">
-                        <h3 class="title is-4">Localización</h3>
-                        <div style="height: 500px; width: 100%">
-                            <l-map
-                                :zoom="zoom"
-                                :center="center"
-                                :options="mapOptions"
-                                style="height: 100%"
-                            >
-                                <l-tile-layer
-                                    :url="url"
-                                    :attribution="attribution"
-                                />
-                                <l-marker :lat-lng="center">
-                                    <l-popup>
-                                        <div>
-                                            {{ circuitName }}
-                                        </div>
-                                    </l-popup>
-                                </l-marker>
-                            </l-map>
-                        </div>
-                        <figure class="image is-4by3">
-                            <img :src="circuit.variant.layoutImage()" alt="Circuit layout image">
-                        </figure>
+
+
+                <div class="w-full p-4 flex justify-center">
+                    <div class="w-5/6" style="height: 250px">
+                        <l-map
+                            :zoom="zoom"
+                            :center="center"
+                            :options="mapOptions"
+                            style="height: 100%"
+                        >
+                            <l-tile-layer
+                                :url="url"
+                                :attribution="attribution"
+                            />
+                            <l-marker :lat-lng="center">
+                                <l-popup>
+                                    <div>
+                                        {{ circuit.name }}
+                                    </div>
+                                </l-popup>
+                            </l-marker>
+                        </l-map>
                     </div>
                 </div>
             </div>
+
+            <h3 class="title is-3 mt-5">Grandes Premios que usaron el circuito</h3>
+            <section class="flex flex-wrap -mx-4" v-if="grandPrixesUsingCircuit.length">
+                <article v-for="gp in grandPrixesUsingCircuit"
+                         class="w-full sm:w-1/2 md:w-1/3 xl:w-1/5 p-4">
+                    <router-link
+                        :to="gp.gpLink()"
+                        class="c-card block bg-white shadow-md hover:shadow-xl rounded-lg overflow-hidden text-gray-700 hover:scale-110 transition ease-in-out delay-150 duration-300">
+
+                        <div class="p-4">
+                            <h2 class="mt-2 font-bold">{{ gp.name }} de {{ gp.season.name }}</h2>
+                            <span class="mb-1 inline-block px-2 py-1 leading-none bg-orange-200 text-orange-800 rounded-full font-semibold tracking-wide text-xs">
+                                Ronda #{{ gp.round }}
+                            </span>
+                            <p class="text-sm">{{ gp.circuit.name }}, {{ gp.circuit.locality }} ({{ gp.circuit.country }})</p>
+                        </div>
+
+                        <div class="p-4 border-t border-b text-xs text-gray-700">
+                            <span v-for="(session, key) in gp.sessions" :key="key" class="flex justify-between items-center mb-1">
+                                <b class="mr-1 flex">{{ session.humanName() }}:</b> {{ humanDateTime(session.date) }} ({{ dateDiff(session.date) }}) <br/>
+                            </span>
+                        </div>
+                    </router-link>
+                </article>
+            </section>
+            <span v-else>No se ha usado este circuito en ningún Gran Premio</span>
 
         </template>
     </div>
@@ -128,14 +109,12 @@
 <script lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import { Circuit } from "@/types/Circuit";
-import { CircuitVariant } from "@/types/CircuitVariant";
-import {circuitService, grandPrixService} from "@/_services";
+import {circuitService, grandPrixService, notificationService} from "@/_services";
 import CircuitCard from "@/components/gps/CircuitCard.vue";
 
 import { LatLng, latLng} from "leaflet";
 import {LMap, LTileLayer, LMarker, LPopup, LTooltip} from "@vue-leaflet/vue-leaflet";
 import {GrandPrix} from "@/types/GrandPrix";
-import {hasVariant} from "@/utils";
 import {defineComponent} from "vue";
 import useEmitter from "@/composables/useEmitter";
 import {useDayjs} from "@/composables/useDayjs";
@@ -159,16 +138,16 @@ export default defineComponent({
 
         const humanDate = dayjs.humanDate;
         const dateDiff = dayjs.dateDiff;
-        return { emitter, humanDate, dateDiff }
+        const humanDateTime = dayjs.humanDateTime;
+        return { emitter, humanDate, dateDiff, humanDateTime }
     },
     data() {
         return {
-            circuit: {} as Circuit,
-            variant: {} as CircuitVariant,
+            circuit: {id: this.$route.params.circuit} as Circuit,
+            selectedVariant: 0,
             isLoading: true,
             thereIsCircuit: false,
             grandPrixesUsingCircuit: new Array<GrandPrix>(),
-            circuitVariants: new Array<CircuitVariant>(),
 
             zoom: 14,
             center: {} as LatLng,
@@ -179,81 +158,22 @@ export default defineComponent({
             },
         }
     },
-    created() {
-        let circuitId = this.$route.params.circuit;
-        let variantId = this.$route.params.variant;
-        if (!this.thereIsVariant(variantId)) {
-            this.variant = {name: "grandprix"} as CircuitVariant;
-        } else {
-            this.variant = {name: variantId} as CircuitVariant;
-        }
-
-        circuitService.getCircuitWithVariant(circuitId, this.variant.name).then((circuit) => {
+    mounted() {
+        Promise.all([
+            circuitService.getCircuit(this.circuit.id),
+            grandPrixService.getGPThatUsesCircuit(this.circuit)
+        ]).then(([circuit, gpsUsing]) => {
             this.circuit = circuit;
             this.thereIsCircuit = true;
-            this.center = latLng(circuit.latitude, circuit.longitude);
-
-            grandPrixService.getGPThatUsesCircuit(circuit, this.variant).then((gps) => {
-                this.grandPrixesUsingCircuit = gps;
-            });
-            circuitService.listCircuitVariant(circuit).then((vars) => {
-                this.circuitVariants = vars;
-            });
-        }).catch((reason) => {
+            this.center = latLng(this.circuit.latitude, this.circuit.longitude);
+            this.grandPrixesUsingCircuit = gpsUsing;
+        }).catch((error) => {
             this.thereIsCircuit = false;
+            notificationService.showNotification(error.message, 'error');
         }).finally(() => {
             this.isLoading = false;
-            this.emitter.emit('breadcrumbLastname', this.circuitName);
-        })
-    },
-    methods: {
-        /**
-         * Comprobar si un texto que debería ser una Variante de Circuito es válida o no
-         * @param variantId la supuesta variante
-         * @return True si el parámetro es undefined o es igual a "grandprix"
-         */
-        thereIsVariant(variantId: string): boolean {
-            console.log("there is variant? " + variantId)
-            return !(variantId === undefined || variantId === "" || variantId === "grandprix");
-        }
-    },
-    computed: {
-        /**
-         * Devuelve el nombre del circuito y, si es necesario, especificando su nombre de variante
-         */
-        circuitName(): string {
-            if (this.thereIsCircuit) {
-                if (hasVariant(this.circuit)) {
-                    return this.circuit.name + " (" + this.variant.name + ")";
-                }
-                return this.circuit.name;
-            } else {
-                return "Circuito no encontrado";
-            }
-        },
-        getRawCircuitName() {
-            let variant = this.thereIsVariant(this.$route.params.variant) ? ' y la variante ' + this.$route.params.variant : "";
-            return this.$route.params.circuit + variant;
-        },
-        variantTabs() {
-            let tabs: { id: string; label: string; }[] = [];
-            if (this.circuitVariants.length > 1) {
-                this.circuitVariants.forEach((value: CircuitVariant) => {
-                    let label = value.name === "grandprix" ? "GrandPrix" : value.name;
-                    tabs.push({
-                        id: value.name.toLowerCase(),
-                        label: label,
-                    });
-                })
-            }
-            return tabs;
-        }
+            this.emitter.emit('breadcrumbLastname', this.circuit.name);
+        });
     }
 });
 </script>
-
-<style scoped>
-.logoImage {
-    max-height: 420px;
-}
-</style>

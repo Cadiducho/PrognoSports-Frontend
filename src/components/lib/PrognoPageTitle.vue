@@ -16,10 +16,10 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import "bulma/sass/utilities/_all.sass";
+@use '@/scss/variables';
 
 // Resolución móvil
-@media screen and (max-width: $desktop) {
+@media screen and (max-width: variables.$desktop) {
     .title {
         font-size: 1.5rem;
     }

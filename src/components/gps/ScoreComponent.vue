@@ -119,11 +119,11 @@
                     </template>
                 </o-table-column>
 
-                <o-table-column v-for="session in gp.sessions" :key="session.code"
-                                field="score.pointsBySession[session.name]" :label="session.code" sortable numeric v-slot="props">
+                <o-table-column v-for="session in gp.sessions" :key="session.id"
+                                :field="`score.bySession.${session.id}`" :label="session.code" sortable numeric v-slot="props">
 
-                    <span v-bind:class="{'has-text-danger': (props.row.score.bySession[session.name] || 0) < 0}">
-                        {{ props.row.score.bySession[session.name] || 0 }}
+                    <span v-bind:class="{'has-text-danger': (props.row.score.bySession[session.id] || 0) < 0}">
+                        {{ props.row.score.bySession[session.id] || 0 }}
                     </span>
 
                     <o-tooltip v-if="checkAndInsertTrophy(props.row.user.username, session)"
@@ -145,9 +145,9 @@
 
                 <o-table-column :visible="showAdvancedStadistics"
                     v-for="session in gp.sessions" :key="session.code"
-                                field="score.hitPercentageBySession[session.name]" :label="session.code + `%`" sortable numeric v-slot="props">
-                    <span v-if="props.row.score.hitPercentageBySession[session.name] >= 0">
-                        {{ Number((props.row.score.hitPercentageBySession[session.name] * 100).toFixed(2)) }}%
+                                field="score.hitPercentageBySession[session.id]" :label="session.code + `%`" sortable numeric v-slot="props">
+                    <span v-if="props.row.score.hitPercentageBySession[session.id] >= 0">
+                        {{ Number((props.row.score.hitPercentageBySession[session.id] * 100).toFixed(2)) }}%
                     </span>
                     <span v-else>
                         -
@@ -368,7 +368,7 @@ export default defineComponent({
                 if (session === undefined) {
                     pointsOfUser = value.pointsInGP;
                 } else {
-                    pointsOfUser = value.pointsBySession[session.name] ?? 0;
+                    pointsOfUser = value.pointsBySession[session.id] ?? 0;
                 }
 
                 if (pointsOfUser > maxSum) {

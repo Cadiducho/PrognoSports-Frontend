@@ -1,5 +1,5 @@
 <template>
-    <o-notification v-if="object == undefined" variant="danger" aria-close-label="Close notification" role="alert">
+    <o-notification v-if="object == undefined || object.toString().trim() === ''" variant="danger" aria-close-label="Close notification" role="alert">
         {{ message }}
     </o-notification>
 </template>

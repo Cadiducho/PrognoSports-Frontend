@@ -8,12 +8,13 @@
             icon="search"
         ></o-input>
     </o-field>
-    <div class="columns is-multiline is-3">
+    <div class="flex flex-wrap -mx-4">
         <div v-if="gps.length === 0">
             No hay grandes premios aquí... de momento
         </div>
         <GrandPrixItem
             v-for="(grandprix, index) in filteredGrandPrixes"
+            class=""
             :gp="grandprix"
             :key="grandprix.name + index"
         />
@@ -56,13 +57,13 @@
                         gp.code
                             .toLowerCase()
                             .includes(filtroLowerCase) ||
-                        gp.circuit.name
+                        gp.circuit?.name
                             .toLowerCase()
                             .includes(filtroLowerCase) ||
-                        gp.circuit.country
+                        gp.circuit?.country
                             .toLowerCase()
                             .includes(filtroLowerCase) ||
-                        gp.circuit.locality
+                        gp.circuit?.locality
                             .toLowerCase()
                             .includes(filtroLowerCase)
                     );

@@ -1,68 +1,25 @@
 <template>
-    <div class="is-inline-block zoom ml-4 mr-4 mb-4">
-        <router-link class="circuit" :to="'/circuits/' + circuit.id">
-            <div class="card circuit">
-                <div class="card-image">
-                    <figure class="image is-4by3">
-                        <img
-                            :src="circuit.variant.layoutImage()"
-                            alt="Esquema"
-                        />
-                    </figure>
-                </div>
-                <div class="card-content">
-                    <div class="media">
-                        <div class="media-left">
-                            <figure class="image is-48x48">
-                                <img :src="circuit.logoImage()" alt="No Logo" />
-                            </figure>
-                        </div>
-                        <div class="media-content">
-                            <p class="title is-4">{{circuit.name}} {{ hasVariant(circuit) ? (' - ' + circuit.variant.name) : ""}}</p>
-                            <p class="subtitle is-6">
-                                {{ circuit.locality }} - {{ circuit.country }}
-                            </p>
-                        </div>
-                    </div>
+    <article class="w-full sm:w-1/2 md:w-1/2 xl:w-1/5 p-4">
+        <router-link
+            :to="circuit.circuitLink()"
+            class="c-card block bg-white shadow-md hover:shadow-xl rounded-lg overflow-hidden text-gray-700 hover:scale-110 transition ease-in-out delay-150 duration-300">
 
-                    <div class="content quick-data mb-5">
-                        <div v-if="hasVariant(circuit)">
-                            <i class="fas fa-fw fa-random"></i>
-                            <span class="ml-1">
-                                Variante: {{ circuit.variant.name }}
-                            </span>
-                        </div>
-                        <div>
-                            <i class="fas fa-fw fa-map-marked-alt"></i>
-                            <a target="_blank"
-                                class="ml-2"
-                                :href="
-                                    'https://www.openstreetmap.org/#map=16/' +
-                                    circuit.latitude +
-                                    '/' +
-                                    circuit.longitude
-                                "
-                                >Ubicación</a
-                            >
-                        </div>
-                        <div>
-                            <i class="fas fa-fw fa-ruler"></i>
-                            <span class="ml-2"
-                                >Distancia:
-                                {{ circuit.variant.distance }} km</span
-                            >
-                        </div>
-                        <div>
-                            <i class="fas fa-fw fa-directions"></i>
-                            <span class="ml-2"
-                                >Curvas: {{ circuit.variant.turns }}</span
-                            >
-                        </div>
-                    </div>
-                </div>
+            <div class="relative pb-48 overflow-hidden">
+                <img class="absolute inset-0 h-full w-full object-contain" :src="circuit.layoutImage()" alt="" />
+            </div>
+
+            <div class="p-4">
+                <h2 class="mt-2 mb-2 font-bold">{{ circuit.name }}</h2>
+                <p class="text-sm">{{ circuit.locality }} ({{ circuit.country }})</p>
+            </div>
+
+            <div class="p-4 border-t border-b text-xs text-gray-700">
+                <span v-for="(variant, key) in circuit.variants" :key="key" class="flex justify-between items-center mb-1">
+                    <b class="mr-1 flex">{{ variant.name }}:</b> {{ variant.distance }}km. ({{ variant.turns }} curvas)<br/>
+                </span>
             </div>
         </router-link>
-    </div>
+    </article>
 </template>
 
 <script lang="ts">
@@ -74,31 +31,8 @@ export default defineComponent({
     props: {
         circuit: {
             type: Object as PropType<Circuit>,
-            require: true,
-        }
+            required: true,
+        },
     }
 });
 </script>
-
-<style scoped>
-
-.circuit {
-    width: 25em;
-    height: 34em;
-}
-
-.quick-data {
-    position: absolute;
-    bottom: 0;
-}
-
-.zoom {
-    transition: transform 0.2s;
-}
-
-.zoom:hover {
-    transform: scale(
-        1.05
-    ); 
-}
-</style>

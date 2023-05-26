@@ -9,7 +9,7 @@ export class CompetitionService extends PrognoService<ICompetition, Competition>
         return new Competition(data);
     }
 
-    public async getCompetition(competitionId: string): Promise<Competition> {
+    public async getCompetition(competitionId: string | number): Promise<Competition> {
         return this.getObjectFromAPI(`/competitions/${competitionId}`)
     }
 

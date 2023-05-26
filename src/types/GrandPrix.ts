@@ -1,8 +1,9 @@
-import {Circuit} from "@/types/Circuit";
+import {Circuit, ICircuit} from "@/types/Circuit";
 import {Season} from "@/types/Season";
 import {Competition} from "@/types/Competition";
 import {IRaceSession, RaceSession} from "@/types/RaceSession";
 import {BASE_URL} from "@/_services";
+import {CircuitVariant, ICircuitVariant} from "@/types/CircuitVariant";
 
 export interface IGrandPrix {
     id: string;
@@ -11,7 +12,10 @@ export interface IGrandPrix {
     competition: Competition;
     season: Season;
     round: number;
-    circuit: Circuit;
+    nextGrandPrix: IGrandPrix;
+    previousGrandPrix: IGrandPrix;
+    circuit?: ICircuit;
+    variant?: ICircuitVariant;
     sessions: Array<IRaceSession>
     laps: number;
     suspended: boolean;
@@ -19,7 +23,8 @@ export interface IGrandPrix {
 }
 
 export class GrandPrix implements IGrandPrix {
-    circuit: Circuit;
+    circuit?: Circuit;
+    variant?: CircuitVariant;
     code: string;
     competition: Competition;
     id: string;
@@ -27,24 +32,32 @@ export class GrandPrix implements IGrandPrix {
     name: string;
     sessions: Array<RaceSession>;
     round: number;
+    nextGrandPrix: IGrandPrix;
+    previousGrandPrix: IGrandPrix;
     season: Season;
     suspended: boolean;
     hasPromoImage: boolean;
 
     constructor(data: IGrandPrix) {
-        this.circuit = new Circuit(data.circuit);
-        this.code = data.code;
-        this.competition = data.competition;
         this.id = data.id;
-        this.laps = data.laps;
+        this.code = data.code;
         this.name = data.name;
+
+        this.competition = data.competition;
+        this.laps = data.laps;
+        if (data.circuit && data.variant) {
+            this.circuit = new Circuit(data.circuit);
+            this.variant = new CircuitVariant(data.variant);
+        }
         this.round = data.round;
+        this.previousGrandPrix = data.previousGrandPrix;
+        this.nextGrandPrix = data.nextGrandPrix;
         this.season = data.season;
         this.suspended = data.suspended;
         this.hasPromoImage = data.hasPromoImage;
 
         this.sessions = [];
-        data.sessions.forEach(session => {
+        data.sessions?.forEach(session => {
             this.sessions.push(new RaceSession(session));
         })
     }
@@ -63,7 +76,7 @@ export class GrandPrix implements IGrandPrix {
             params: {
                 competition: this.competition.code,
                 season: this.season.name,
-                id: this.id,
+                gp: this.id,
             }
         };
     }

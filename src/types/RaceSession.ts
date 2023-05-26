@@ -1,31 +1,38 @@
-import {Competition} from "@/types/Competition";
-import {GrandPrix} from "@/types/GrandPrix";
+import {Competition, ICompetition} from "@/types/Competition";
+import {GrandPrix, IGrandPrix} from "@/types/GrandPrix";
 import {useDayjs} from "@/composables/useDayjs";
 
 export interface IRaceSession {
+    id: number;
     name: string;
     code: string;
     hasGrid: boolean;
-    competition: Competition;
-    grandPrix: GrandPrix;
+    competition?: ICompetition;
+    grandPrix?: IGrandPrix;
     date: Date | string;
     uses: number;
 }
 
 export class RaceSession implements IRaceSession {
-    competition: Competition;
-    date: Date;
-    hasGrid: boolean;
-    grandPrix: GrandPrix;
+    id: number;
     name: string;
     code: string;
+    hasGrid: boolean;
+    competition?: Competition;
+    grandPrix?: GrandPrix;
+    date: Date | string;
     uses: number;
 
     constructor(data: IRaceSession) {
-        this.competition = data.competition;
+        this.id = data.id;
+        if (data.competition) {
+            this.competition = new Competition(data.competition);
+        }
         this.date = new Date(data.date);
         this.hasGrid = data.hasGrid;
-        this.grandPrix = data.grandPrix;
+        if (data.grandPrix) {
+            this.grandPrix = new GrandPrix(data.grandPrix);
+        }
         this.name = data.name;
         this.code = data.code;
         this.uses = data.uses;
@@ -56,5 +63,15 @@ export class RaceSession implements IRaceSession {
     public isBeforeClosureDate(): boolean {
         const dayjs = useDayjs();
         return dayjs.isBefore(this.closureDate());
+    }
+
+    public static findById(id: number): RaceSession | undefined {
+        switch (Number(id)) {
+            case 1: return new RaceSession({name: "QUALIFY"} as IRaceSession);
+            case 2: return new RaceSession({name: "RACE"} as IRaceSession);
+            case 3: return new RaceSession({name: "SPRINT_QUALIFY"} as IRaceSession);
+            case 4: return new RaceSession({name: "SPRINT_RACE"} as IRaceSession);
+            default: return undefined;
+        }
     }
 }

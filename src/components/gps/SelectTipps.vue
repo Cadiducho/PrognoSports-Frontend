@@ -1,8 +1,12 @@
 <template>
     <div class="content mt-5">
-        <div class="columns is-mobile">
-            <div class="column is-6">
-                <h3 class="is-unselectable">Lista de pilotos</h3>
+
+        <PrognoAlert message="Arrastra las tarjetas para completar tu pronóstico." />
+
+        <div class="flex space-x-4 mb-4">
+
+            <div class="flex-1">
+                <h3 class="select-none">Pilotos disponibles</h3>
 
                 <div class="busqueda-ordenada">
                     <o-button label="Ordenar" variant="primary" aria-controls="opcionesOrdenado" @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen"/>
@@ -34,7 +38,7 @@
                             </o-radio>
                         </div>
                         <div class="field mb-1">
-                            <o-radio v-model='orderType' :native-value='3' v-if="this.indexedGrid.size > 0">
+                            <o-radio v-model='orderType' :native-value='3' v-if="indexedGrid.size > 0">
                                 Por parrilla
                             </o-radio>
                         </div>
@@ -46,72 +50,42 @@
                     </div>
                 </o-collapse>
 
-                <SlickList v-model:list="pilotosDisponiblesFiltrados" :group="session.name" :accept="[session.name]" tag="ul" @sort-insert="insertToDisponibles($event)"
-                           class="block-list has-radius is-unselectable">
-
-                    <SlickItem v-for="(item, index) in pilotosDisponiblesFiltrados" :key="item.id" :index="index" tag="li"
-                               class="is-highlighted has-text-weight-semibold driver-card is-justify-content-space-between"
-                               :style="styleDriverCard(item)">
-                        <span>
-                            {{ item.firstname }} {{ item.lastname }}
-
-                            <span class="tag is-rounded" v-bind:style="styleDorsal(item)">#{{ item.number }}</span>
-
-                            <o-tooltip class="ml-1 driver-card-team"
-                                       :label="(currentUser.preferences['use-long-team-names'] ? item.team.name : item.team.longname) + ' (' +item.team.carname + ')'">
-                                <span v-if="currentUser.preferences['use-long-team-names']">{{ item.team.longname }}</span>
-                                <span v-else>{{ item.team.name }}</span>
-                            </o-tooltip>
-                        </span>
-
-                        <!--
-                        <a @click="moveToTippList(item, index)" class="pl-3 pr-3 arrow-col has-text-primary">
-                            <i class="is-hidden-touch mr-0 fas fa-angle-right"></i>
-                            <i class="is-hidden-touch ml-0 fas fa-angle-right"></i>
-                            <i class="is-hidden-desktop mt-0 fas fa-angle-up"></i>
-                            <i class="is-hidden-desktop mb-0 fas fa-angle-up"></i>
-                        </a>-->
-                    </SlickItem>
-                </SlickList>
-
+                <draggable
+                    :id="`pronosticados-${session.id}`"
+                    class="w-full h-full select-none space-y-2"
+                    :list="pilotosDisponiblesFiltrados"
+                    group="people"
+                    itemKey="name"
+                >
+                    <template #item="{ element, index }">
+                        <DraggableDriverCard
+                            v-if="aplicaFiltrito(element)"
+                            :driver="element" :index="index" :showPosition="false" />
+                    </template>
+                </draggable>
             </div>
 
-            <div class="column is-6">
-                <h3 class="is-unselectable">Pilotos pronosticados</h3>
-                <SlickList v-model:list="pilotosPronosticados" :group="session.name" :accept="[session.name]" tag="ul" @sort-insert="insertToPronosticados($event)"
-                           class="block-list is-unselectable pilotos-pronosticados">
-
-                    <SlickItem v-for="(item, index) in pilotosPronosticados" :key="item.id" :index="index" tag="li"
-                               class="is-highlighted has-text-weight-semibold has-radius driver-card is-justify-content-left"
-                               :style="styleDriverCard(item)">
-
-                        <!--
-                        <a @click="moveToAvailableList(item, index)" class="mr-3 pl-3 arrow-col has-text-primary">
-                            <i class="is-hidden-touch mr-0 fas fa-angle-left"></i>
-                            <i class="is-hidden-touch ml-0 fas fa-angle-left"></i>
-                            <i class="is-hidden-desktop mt-0 fas fa-angle-down"></i>
-                            <i class="is-hidden-desktop mb-0 fas fa-angle-down"></i>
-                        </a>-->
-
-                        <span>
-                            <b>{{ index + 1 }}º.</b> {{ item.firstname }} {{ item.lastname }}
-
-                            <span class="tag is-rounded" v-bind:style="styleDorsal(item)">#{{ item.number }}</span>
-
-                            <o-tooltip class="ml-1 driver-card-team"
-                                       :label="(currentUser.preferences['use-long-team-names'] ? item.team.name : item.team.longname) + ' (' +item.team.carname + ')'">
-                                <span v-if="currentUser.preferences['use-long-team-names']">{{ item.team.longname }}</span>
-                                <span v-else>{{ item.team.name }}</span>
-                            </o-tooltip>
-                        </span>
-                    </SlickItem>
-                </SlickList>
+            <div class="flex-1">
+                <h3 class="select-none">Tu pronóstico</h3>
+                <draggable
+                    :id="`pronosticados-${session.id}`"
+                    class="w-full h-full select-none space-y-2"
+                    :list="pilotosPronosticados"
+                    group="people"
+                    itemKey="name"
+                >
+                    <template #item="{ element, index }">
+                        <DraggableDriverCard :driver="element" :index="index" showPosition />
+                    </template>
+                </draggable>
             </div>
+
         </div>
 
-        <template v-if="this.session.isBeforeClosureDate()">
+        <template v-if="session.isBeforeClosureDate()">
             <o-button v-if="pilotosPronosticados.length === ruleSet.cantidadPilotosPronosticados(session)"
                       variant="success is-fullwidth"
+                      :disabled="sendingPronostico"
                       @click="enviarPronostico">Enviar pronóstico
             </o-button>
 
@@ -124,15 +98,14 @@
             Ya no se puede pronosticar
         </button>
 
-        <hr v-if="(pilotosPronosticados.length > 0) && this.session.isBeforeClosureDate()"/>
-        <o-button v-if="(pilotosPronosticados.length > 0) && this.session.isBeforeClosureDate()" variant="danger is-light is-fullwidth" @click="reiniciarPronostico">Limpiar pronóstico</o-button>
+        <hr v-if="(pilotosPronosticados.length > 0) && session.isBeforeClosureDate()"/>
+        <o-button v-if="(pilotosPronosticados.length > 0) && session.isBeforeClosureDate()" variant="danger is-light is-fullwidth" @click="reiniciarPronostico">Limpiar pronóstico</o-button>
 
     </div>
 </template>
 
 <script lang="ts">
 import {RaceSession} from "@/types/RaceSession";
-import { SlickList, SlickItem } from 'vue-slicksort';
 import {grandPrixService, notificationService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Driver} from "@/types/Driver";
@@ -145,11 +118,16 @@ import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {useStyles} from "@/composables/useStyles";
 
+import draggable from 'vuedraggable'
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
+import DraggableDriverCard from "@/components/gps/DraggableDriverCard.vue";
+
 export default defineComponent({
     name: "SelectTipps",
     components: {
-        SlickList,
-        SlickItem,
+        DraggableDriverCard,
+        PrognoAlert,
+        draggable
     },
     props: {
         session: {
@@ -192,6 +170,7 @@ export default defineComponent({
             opcionesOrdenadoOpen: false,
             orderType: 1,
             orderAscendent: false,
+            sendingPronostico: false,
 
             pilotosPronosticados: new Array<Driver>(),
             pilotosDisponibles: new Array<Driver>(),
@@ -200,7 +179,6 @@ export default defineComponent({
         }
     },
     mounted() {
-
         this.originalPilotos.push(...this.drivers);
         this.pilotosDisponibles.push(...this.drivers);
 
@@ -225,50 +203,42 @@ export default defineComponent({
                     this.pilotosPronosticados.push(value.driver);
                 }
             }
-        });
+        });        
     },
     methods: {
-        /*
-        moveToTippList(driver: Driver, index: number) {
-            console.log("Moviendo a pronosticados " + driver.code);
-            this.pilotosDisponibles.splice(index, 1);
-            this.pilotosPronosticados.push(driver);
-        },
-        moveToAvailableList(driver: Driver, index: number) {
-            console.log("Moviendo a disponibles " + driver.code);
-            this.pilotosPronosticados.splice(index, 1);
-            this.pilotosDisponibles.push(driver);
-        },*/
         reiniciarPronostico() {
             this.pilotosPronosticados = [];
             this.pilotosDisponibles = [];
             this.pilotosDisponibles.push(...this.originalPilotos);
         },
-        enviarPronostico() {
+        async enviarPronostico() {
+            this.sendingPronostico = true;
             let tipps: Array<RaceResult> = [];
 
             this.pilotosPronosticados.forEach((driver, index, array) => {
                 tipps.push({position: index + 1, driver: {id: driver.id} as Driver} as RaceResult);
             });
-            grandPrixService.postUserTipps(this.grandPrix, this.session, this.currentCommunity, tipps).then(
-                () => {
-                    notificationService.showNotification("¡Has guardado tus pronósticos!");
-                },
-                (error: any) => {
-                    let message = "Error guardando tus pronósticos: " + error.message;
 
-                    notificationService.showNotification(message, "error");
-                });
+            try {
+                await grandPrixService.postUserTipps(this.grandPrix, this.session, this.currentCommunity, tipps);
+                notificationService.showNotification("¡Has guardado tus pronósticos!");
+            } catch (error) {
+                let message = "Error guardando tus pronósticos: " + error.message;
+
+                notificationService.showNotification(message, "error");
+            } finally {
+                setTimeout(() => {
+                    this.sendingPronostico = false;
+                }, 1000);
+            }
         },
-        insertToPronosticados(event: { newIndex: number, value: any }) {
-            const { newIndex, value } = event;
-
-            this.pilotosDisponibles.splice(this.pilotosDisponibles.findIndex(d => d.id === value.id), 1);
-        },
-        insertToDisponibles(event: { newIndex: number, value: any }) {
-            const { value } = event;
-
-            this.pilotosDisponibles.push(value);
+        aplicaFiltrito(driver: Driver) {
+            let filtroLowerCase = this.filtroPiloto.toLowerCase();
+            return driver.lastname.toLowerCase().includes(filtroLowerCase)
+                || driver.firstname.toLowerCase().includes(filtroLowerCase)
+                || driver.team.name.toLowerCase().includes(filtroLowerCase)
+                || driver.team.longname.toLowerCase().includes(filtroLowerCase)
+                || driver.team.carname.toLowerCase().includes(filtroLowerCase);
         }
     },
     computed: {
@@ -292,18 +262,8 @@ export default defineComponent({
                 if (this.orderAscendent) {
                     listaOrdenada = listaOrdenada.reverse();
                 }
-                if (!this.filtroPiloto.trim()) {
-                    return listaOrdenada;
-                }
 
-                let filtroLowerCase = this.filtroPiloto.toLowerCase();
-                return listaOrdenada.filter(driver => {
-                    return driver.lastname.toLowerCase().includes(filtroLowerCase)
-                        || driver.firstname.toLowerCase().includes(filtroLowerCase)
-                        || driver.team.name.toLowerCase().includes(filtroLowerCase)
-                        || driver.team.longname.toLowerCase().includes(filtroLowerCase)
-                        || driver.team.carname.toLowerCase().includes(filtroLowerCase);
-                })
+                return listaOrdenada
             },
             set(value: Array<Driver>) {
             }
@@ -313,46 +273,17 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import "bulma/sass/utilities/_all.sass";
-
-.block-list:empty:before,
-.block-list > div:empty:before {
-    content: 'Coloca aquí tus pilotos en orden';
-}
+@use '@/scss/variables';
 
 .box-ordenado {
     margin-bottom: 0.5rem !important;
 }
 
-.driver-card {
-    display: flex;
-    cursor: move !important;
-
-    .driver-card-team {
-        font-weight: lighter;
-    }
-}
-
-.pilotos-pronosticados {
-    height: calc(100% - 10rem);
-}
-
 
 // Resolución móvil
-@media screen and (max-width: $desktop) {
+@media screen and (max-width: variables.$desktop) {
     .box-ordenado {
         font-size: 0.9rem;
-    }/*
-    .arrow-col {
-        display: none;
-    }*/
-    .driver-card {
-        a, span {
-            font-size: 0.8rem;
-        }
-        .tag {
-            display: none;
-        }
     }
 }
 </style>

@@ -18,16 +18,15 @@ import {User} from "@/types/User";
 import {grandPrixService, seasonService, userService} from "@/_services";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
+import {defineComponent, PropType} from "vue";
+import VueApexCharts from "vue3-apexcharts";
 
 interface IChartType {
     name: string,
     options: {position: string, floating: boolean}
 }
-
-import {useAuthStore} from "@/store/authStore";
-import {useCommunityStore} from "@/store/communityStore";
-import {defineComponent, PropType} from "vue";
-import VueApexCharts from "vue3-apexcharts";
 
 export default defineComponent({
     name: "PointsAccumulated",
@@ -144,45 +143,45 @@ export default defineComponent({
             this.chartOptions.legend = chartType.options;
             return chartType.name;
         },
-        fetchData(): void {
+        async fetchData(): Promise<void> {
             let season: Season;
             let competition: Competition = this.currentCommunity.competition;
 
-            seasonService.getCurrentSeason(competition).then((seasonFetched) => {
-                season = seasonFetched;
+            season = await seasonService.getCurrentSeason(competition);
 
-            }).then(() => {
-                grandPrixService.getGrandPrixesList(competition, season).then(gplist => {
-                    gplist.forEach(gp => this.grandPrixes.set(gp.code, gp.name));
+            Promise.all([
+                grandPrixService.getGrandPrixesList(season),
+                userService.getCumulatedPointsInCommunity(this.user, this.currentCommunity, competition, season),
+                userService.getPointsInCommunity(this.user, this.currentCommunity, competition, season)
+            ]).then(result => {
+                const gpList = result[0];
+                const cumulatedPoints = result[1];
+                const points = result[2];
 
-                    // Actualizar leyenda con los codigos de los gps
-                    this.chartOptions = {
-                        ...this.chartOptions,
-                        xaxis: {
-                            // @ts-ignore
-                            categories: [...this.grandPrixes.keys()],
-                        }
+                // Actualizar leyenda con los codigos de los gps
+                gpList.forEach(gp => this.grandPrixes.set(gp.code, gp.name));
+                this.chartOptions = {
+                    ...this.chartOptions,
+                    xaxis: {
+                        // @ts-ignore
+                        categories: [...this.grandPrixes.keys()],
                     }
-                }).then(() => {
-                    userService.getCumulatedPointsInCommunity(this.user, this.currentCommunity, competition, season).then(cumulatedPoints => {
-                        let dataAcumulada = [...Object.values(cumulatedPoints)];
-                        userService.getPointsInCommunity(this.user, this.currentCommunity, competition, season).then(points => {
-                            let dataPoints = [...Object.values(points)];
-                            this.chartSeries = [
-                                ...this.chartSeries,
-                                {
-                                    name: 'Puntos acumulados',
-                                    data: dataAcumulada
-                                },
-                                {
-                                    name: 'Puntos por Gran Premio',
-                                    data: dataPoints
-                                }
-                            ]
-                            this.loading = false;
-                        });
-                    });
-                });
+                }
+
+
+                // Relleno la tabla de puntos acumulados y por gran premio
+                this.chartSeries = [
+                    ...this.chartSeries,
+                    {
+                        name: 'Puntos acumulados',
+                        data: [...Object.values(cumulatedPoints)]
+                    },
+                    {
+                        name: 'Puntos por Gran Premio',
+                        data: [...Object.values(points)]
+                    }
+                ];
+                this.loading = false;
             });
         }
     },

@@ -13,8 +13,8 @@
                     icon="search"
                 ></o-input>
             </o-field>
-            <div class="mt-5 columns is-centered is-multiline">
-                <view-circuit-item
+            <div class="flex flex-wrap -mx-4">
+                <ViewCircuitItem
                     v-for="(circuit, index) in filteredCircuits"
                     :circuit="circuit"
                     v-bind:key="index"
@@ -76,9 +76,7 @@ export default defineComponent({
                     circuit.locality
                         .toLowerCase()
                         .includes(filtroLowerCase) ||
-                    circuit.variant.name
-                        .toLowerCase()
-                        .includes(filtroLowerCase)
+                    circuit.variants.map(v => v.name.toLowerCase()).some(v => v.includes(filtroLowerCase))
                 );
             });
         }

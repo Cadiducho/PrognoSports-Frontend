@@ -148,12 +148,12 @@ export const routes = [
             },
             {
                 path: 'competitions',
-                name: 'adminCompetitions',
                 component: EmptyRoutedLayout,
                 meta: { title: "Competiciones" },
                 children: [
                     {
                         path: '',
+                        name: 'adminCompetitions',
                         component: () => import('@/pages/admin/competitions/CompetitionsDashboard.vue'),
                     },
                     {
@@ -175,23 +175,15 @@ export const routes = [
                         component: () => import('@/pages/admin/gps/GrandPrixDashboard.vue'),
                     },
                     {
-                        path: ':competition/:season/:id',
+                        path: ':gp',
                         component: EmptyRoutedLayout,
-                        meta: { title: "Gran Premio" },
                         children: [
                             {
                                 path: '',
                                 name: 'adminGpEdit',
-                                meta: { title: "Editar Gran Premio" },
                                 component: () => import('@/pages/admin/gps/EditGrandPrix.vue'),
-                            },
-                            {
-                                path: ':session',
-                                name: 'adminGpEditSession',
-                                meta: { title: "Editar Sesión del Gran Premio" },
-                                component: () => import('@/pages/admin/gps/EditSessionGrandPrix.vue'),
-                            },
-                        ]
+                            }
+                        ],
                     },
                 ],
             },
@@ -207,9 +199,44 @@ export const routes = [
                     },
                     {
                         path: ':season',
-                        name: 'adminSeasonsEdit',
-                        component: () => import('@/pages/admin/seasons/EditSeason.vue'),
-                        meta: { title: "Editar temporada" }
+                        meta: { title: "Editar temporada" },
+                        component: EmptyRoutedLayout,
+                        children: [
+                            {
+                                path: '',
+                                name: 'adminSeasonEdit',
+                                component: () => import('@/pages/admin/seasons/EditSeason.vue'),
+                            },
+                            {
+                                path: 'gps',
+                                component: EmptyRoutedLayout,
+                                children: [
+                                    {
+                                        path: '',
+                                        name: 'adminGpsInSeason',
+                                        component: () => import('@/pages/admin/seasons/gps/GrandPrixListInSeason.vue'),
+                                    },
+                                    {
+                                        path: ':gp',
+                                        component: EmptyRoutedLayout,
+                                        children: [
+                                            {
+                                                path: '',
+                                                name: 'adminGpEditInSeason',
+                                                meta: { title: "Editar Gran Premio" },
+                                                component: () => import('@/pages/admin/seasons/gps/EditGrandPrixInSeason.vue'),
+                                            },
+                                            {
+                                                path: ':session',
+                                                name: 'adminGpEditSession',
+                                                meta: { title: "Editar Sesión del Gran Premio" },
+                                                component: () => import('@/pages/admin/seasons/gps/EditSessionGrandPrix.vue'),
+                                            },
+                                        ]
+                                    }
+                                ]
+                            },
+                        ]
                     },
                 ],
             },
@@ -279,7 +306,7 @@ export const routes = [
                 component: () => import('@/pages/circuits/CircuitList.vue'),
             },
             {
-                path: ':circuit/:variant?',
+                path: ':circuit',
                 name: 'circuitDetails',
                 component: () => import('@/pages/circuits/OneCircuit.vue'),
                 meta: { title: "Detalles de circuito" }
@@ -350,7 +377,7 @@ export const routes = [
                         meta: {title: "Temporada"}
                     },
                     {
-                        path: ':id',
+                        path: ':gp',
                         name: 'gpdetails',
                         component: () => import('@/pages/gps/OneGrandPrix.vue'),
                         meta: {title: "Gran Premio"}
