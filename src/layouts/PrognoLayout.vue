@@ -7,10 +7,6 @@
 
                 <Breadcrumb />
 
-                <o-notification closable variant="danger">
-                    Atención. La beta no está funcional en el Gran Premio de Azerbaiján. Visita la web de <a href="https://prognosports.com">PrognoSports</a> para su uso correcto.
-                </o-notification>
-
                 <o-notification v-if="isBeta && !betaAceptada" closable variant="warning" aria-close-label="Close notification" @close="acceptBeta()">
                     Estás utilizando PrognoSports Beta, la experiencia puede verse afectada
                 </o-notification>
