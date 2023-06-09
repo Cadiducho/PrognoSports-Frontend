@@ -29,7 +29,7 @@
 
             <h4>Reparto de puntos</h4>
             <h6>Puntos Acertar posición exacta:</h6>
-            <table class="table is-hoverable is-striped">
+            <table class="is-hoverable is-striped block overflow-x-auto whitespace-nowrap">
                 <thead>
                 <tr>
                     <th>Posición</th>
@@ -55,7 +55,7 @@
             </table>
 
             <h6>Puntos por otra combinación:</h6>
-            <table class="table is-hoverable">
+            <table class="is-hoverable block overflow-x-auto whitespace-nowrap">
                 <thead>
                 <tr>
                     <th></th>

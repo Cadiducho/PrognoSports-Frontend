@@ -77,11 +77,7 @@
                             <RulesAndPointsTable :competition="currentCommunity.competition" :community="currentCommunity" />
                         </section>
 
-                        <div class="media">
-                            <div class="media-content">
-                                <p class="title is-4">Usuarios participando</p>
-                            </div>
-                        </div>
+                        <p class="title is-4">Usuarios participando</p>
 
                         <div class="busqueda-ordenada">
                             <o-button label="Ordenar" variant="primary" aria-controls="opcionesOrdenado" @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen"/>
@@ -110,7 +106,7 @@
                             </div>
                         </o-collapse>
 
-                        <div class="mt-5 columns is-multiline is-4">
+                        <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-rows-1 sm:grid-rows-2 lg:grid-rows-3 xl:grid-rows-4 gap-2">
                             <UserInCommunityCard v-for="member in filteredMembers" :member="member" :key="member.user.id" />
                         </div>
                     </div>
