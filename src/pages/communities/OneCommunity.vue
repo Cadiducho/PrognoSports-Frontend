@@ -77,11 +77,7 @@
                             <RulesAndPointsTable :competition="currentCommunity.competition" :community="currentCommunity" />
                         </section>
 
-                        <div class="media">
-                            <div class="media-content">
-                                <p class="title is-4">Usuarios participando</p>
-                            </div>
-                        </div>
+                        <p class="title is-4">Usuarios participando</p>
 
                         <div class="busqueda-ordenada">
                             <o-button label="Ordenar" variant="primary" aria-controls="opcionesOrdenado" @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen"/>
