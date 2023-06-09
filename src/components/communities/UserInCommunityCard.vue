@@ -1,4 +1,66 @@
 <template>
+    <router-link
+        :to="{name: 'user', params: { user: member.user.id }}"
+        class="bg-white shadow-lg rounded-lg overflow-hidden my-4 w-full hover:shadow-xl hover:scale-110 transition ease-in-out delay-150 duration-300"
+        >
+        <img class="w-full h-48 object-cover object-center" :src="member.user.profileImage()" alt="User image">
+        <div class="px-6 py-2 bg-gray-200">
+            <h1 class="mx-3 text-white font-semibold text-lg text-center" :style="{ color : '#' + member.user.rank.color }">{{ member.user.rank.name }}</h1>
+        </div>
+        <div class="py-4 px-5">
+            <!-- Username -->
+            <h1 class="text-2xl font-semibold text-gray-800">{{ member.user.username }}</h1>
+            <!-- Bio -->
+            <p class="py-2 text-sm text-gray-700">{{ member.user.bio }}</p>
+            <!-- Last activity -->
+            <div class="flex mt-4 text-gray-700">
+                <span class="icon-text text-sm" v-if="member.user.last_activity">
+                    <span class="icon">
+                        <i class="fas fa-clock"></i>
+                    </span>
+                    <span>
+                        Última conexión {{ dateDiff(member.user.last_activity) }}
+                    </span>
+                </span>
+            </div>
+            <!-- User created at -->
+            <div class="flex text-gray-700">
+                <span class="icon-text text-sm" v-if="member.user.last_activity">
+                    <span class="icon-text">
+                        <span class="icon">
+                            <i class="fas fa-calendar"></i>
+                        </span>
+                        <span>Se unió el {{ humanDateTime(member.user.created) }}</span>
+                    </span>
+                </span>
+            </div>
+
+            <!-- Permissions -->
+            <!--
+            <span class="icon-text" v-if="member.can_kick_users">
+                <span class="icon">
+                    <i class="fas fa-ban"></i>
+                </span>
+                <span>Puede expulsar usuarios</span>
+            </span>
+
+            <span class="icon-text ml-1" v-if="member.can_modify_permissions">
+                <span class="icon">
+                    <i class="fas fa-user-edit"></i>
+                </span>
+                <span>Puede modificar permisos</span>
+            </span>
+
+            <span class="icon-text" v-if="member.can_recreate_invitation">
+                <span class="icon">
+                    <i class="fas fa-envelope"></i>
+                </span>
+                <span>Puede recrear invitaciones</span>
+            </span>
+            -->
+        </div>
+    </router-link>
+    <!--
     <div class="column is-half">
         <div class="box">
             <article class="media">
@@ -68,6 +130,7 @@
             </article>
         </div>
     </div>
+    -->
 </template>
 
 <script lang="ts">
