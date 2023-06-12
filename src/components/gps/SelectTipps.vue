@@ -271,19 +271,3 @@ export default defineComponent({
     }
 });
 </script>
-
-<style scoped lang="scss">
-@use '@/scss/variables';
-
-.box-ordenado {
-    margin-bottom: 0.5rem !important;
-}
-
-
-// Resolución móvil
-@media screen and (max-width: variables.$desktop) {
-    .box-ordenado {
-        font-size: 0.9rem;
-    }
-}
-</style>

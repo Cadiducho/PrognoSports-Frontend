@@ -1,12 +1,11 @@
-@import "bulma/sass/utilities/initial-variables";
-
+@use '@/scss/variables';
 
 .busqueda-ordenada {
   display: flex;
 }
 
 // Solo en escritorio
-@media screen and (min-width: $desktop) {
+@media screen and (min-width: variables.$desktop) {
   .busqueda-ordenada {
     .field {
       margin-left: 0.25rem;
@@ -15,12 +14,24 @@
 }
 
 // Resolución móvil
-@media screen and (max-width: $desktop) {
+@media screen and (max-width: variables.$desktop) {
   .busqueda-ordenada {
     flex-direction: column-reverse;
 
     .field {
       margin-bottom: 0.25rem;
     }
+  }
+}
+
+.box-ordenado {
+  margin-bottom: 0.5rem !important;
+}
+
+
+// Resolución móvil
+@media screen and (max-width: variables.$desktop) {
+  .box-ordenado {
+    font-size: 0.9rem;
   }
 }
