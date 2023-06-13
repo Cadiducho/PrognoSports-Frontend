@@ -10,10 +10,10 @@ export interface IUser {
     bio?: string;
     password?: string;
     rank: UserRank;
-    created: Date,
-    updated: Date,
-    last_activity: Date,
-    birthdate: Date,
+    created?: Date,
+    updated?: Date,
+    last_activity?: Date,
+    birthdate?: Date,
     gender: string;
     location: string;
     currentCommunity: Community;
@@ -23,38 +23,39 @@ export interface IUser {
 
 export class User implements IUser {
     bio: string;
-    birthdate: Date;
-    created: Date;
+    birthdate?: Date;
+    created?: Date;
     currentCommunity: Community;
     email: string;
     gender: string;
     id: number;
-    last_activity: Date;
+    last_activity?: Date;
     location: string;
     password: string;
     preferences: Dictionary<string, any>;
     rank: UserRank;
-    updated: Date;
+    updated?: Date;
     username: string;
     hasProfileImage: boolean;
     changedProfileImage?: Blob;
 
     constructor(data: IUser) {
         this.bio = data.bio ?? '';
-        this.birthdate = data.birthdate;
-        this.created = data.created;
         this.currentCommunity = data.currentCommunity;
         this.email = data.email;
         this.gender = data.gender;
         this.id = data.id;
-        this.last_activity = data.last_activity;
         this.location = data.location;
         this.password = data.password ?? '';
         this.preferences = data.preferences;
         this.rank = data.rank;
-        this.updated = data.updated;
         this.username = data.username;
         this.hasProfileImage = data.hasProfileImage;
+
+        if (data.birthdate) this.birthdate = new Date(data.birthdate);
+        if (data.created) this.created = new Date(data.created);
+        if (data.updated) this.updated = new Date(data.updated);
+        if (data.last_activity) this.last_activity = new Date(data.last_activity);
     }
 
     /**

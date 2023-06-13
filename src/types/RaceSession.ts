@@ -9,7 +9,7 @@ export interface IRaceSession {
     hasGrid: boolean;
     competition?: ICompetition;
     grandPrix?: IGrandPrix;
-    date: Date | string;
+    date: Date;
     uses: number;
 }
 
@@ -20,7 +20,7 @@ export class RaceSession implements IRaceSession {
     hasGrid: boolean;
     competition?: Competition;
     grandPrix?: GrandPrix;
-    date: Date | string;
+    date: Date;
     uses: number;
 
     constructor(data: IRaceSession) {
@@ -53,16 +53,16 @@ export class RaceSession implements IRaceSession {
      * Hora de cierre de un pronóstico. 5 minutos antes de la fecha de la sesión
      */
     public closureDate(): Date {
-        const dayjs = useDayjs();
-        return dayjs.minusFiveMinutes(this.date).toDate();
+        const {minusFiveMinutes} = useDayjs();
+        return minusFiveMinutes(this.date).toDate();
     }
 
     /**
      * Verdadero si la fecha actual es anterior a la fecha de cierre del pronostico
      */
     public isBeforeClosureDate(): boolean {
-        const dayjs = useDayjs();
-        return dayjs.isBefore(this.closureDate());
+        const {isBefore} = useDayjs();
+        return isBefore(this.closureDate());
     }
 
     public static findById(id: number): RaceSession | undefined {
