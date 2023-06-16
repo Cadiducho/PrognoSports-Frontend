@@ -1,7 +1,7 @@
 <template>
     <div id="grandprix">
         <loading v-if="isLoadingGrandPrix" />
-        <p v-if="!thereIsGrandPrix">El Gran Premio buscado con nombre <i>{{ this.id }}</i> no ha sido encontrado</p>
+        <p v-else-if="!thereIsGrandPrix">El Gran Premio buscado con nombre <i>{{ this.id }}</i> no ha sido encontrado</p>
 
         <template v-else>
             <div class="columns is-variable is-5">

@@ -77,11 +77,7 @@
                             <RulesAndPointsTable :competition="currentCommunity.competition" :community="currentCommunity" />
                         </section>
 
-                        <div class="media">
-                            <div class="media-content">
-                                <p class="title is-4">Usuarios participando</p>
-                            </div>
-                        </div>
+                        <p class="title is-4">Usuarios participando</p>
 
                         <div class="busqueda-ordenada">
                             <o-button label="Ordenar" variant="primary" aria-controls="opcionesOrdenado" @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen"/>
@@ -91,26 +87,42 @@
                             </o-field>
                         </div>
 
-                        <o-collapse :open="opcionesOrdenadoOpen" class="mb-2">
+                        <o-collapse :open="opcionesOrdenadoOpen" class="box-ordenado">
                             <template #trigger>
                             </template>
 
-                            <div class="box">
-                                <o-field label="Orderar lista de miembros">
-                                    <o-radio v-model='orderType' :native-value='0'>Por nombre de usuario</o-radio>
-                                    <o-radio v-model='orderType' :native-value='1'>Por rango</o-radio>
-                                    <o-radio v-model='orderType' :native-value='2'>Por conexión reciente</o-radio>
-                                    <o-radio v-model='orderType' :native-value='3'>Por fecha de registro</o-radio>
-                                </o-field>
-                                <o-field>
+                            <div class="box mt-1">
+                                <label class="label">Orderar lista de pilotos</label>
+                                <div class="field mb-0">
+                                    <o-radio v-model='orderType' :native-value='0'>
+                                        Por nombre de usuario
+                                    </o-radio>
+                                </div>
+                                <div class="field mb-0">
+                                    <o-radio v-model='orderType' :native-value='1'>
+                                        Por rango
+                                    </o-radio>
+                                </div>
+                                <div class="field mb-0">
+                                    <o-radio v-model='orderType' :native-value='2'>
+                                        Por conexión reciente
+                                    </o-radio>
+                                </div>
+                                <div class="field mb-1">
+                                    <o-radio v-model='orderType' :native-value='3'>
+                                        Por fecha de registro
+                                    </o-radio>
+                                </div>
+                                <div class="field">
                                     <o-switch v-model="orderAscendent">
                                         Orden {{ orderAscendent ? "ascendente" : "descendente" }}
                                     </o-switch>
-                                </o-field>
+                                </div>
                             </div>
+
                         </o-collapse>
 
-                        <div class="mt-5 columns is-multiline is-4">
+                        <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-rows-1 sm:grid-rows-2 lg:grid-rows-3 xl:grid-rows-4 gap-2">
                             <UserInCommunityCard v-for="member in filteredMembers" :member="member" :key="member.user.id" />
                         </div>
                     </div>
