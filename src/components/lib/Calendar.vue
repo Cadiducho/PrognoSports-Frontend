@@ -2,7 +2,7 @@
     <input ref="cal" :type="type" />
 </template>
 
-<script>
+<script lang="ts">
 import bulmaCalendar from "bulma-calendar/dist/js/bulma-calendar.min";
 import {defineComponent} from "vue";
 export default defineComponent({

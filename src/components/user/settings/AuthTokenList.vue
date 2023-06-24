@@ -1,12 +1,12 @@
 <template>
 
-    <h2 class="subtitle">Tokens de inicio de sesión</h2>
+    <h2 class="subtitle">Tokens de inicio de sesión recientes</h2>
 
     <ul class="is-unselectable is-outlined pl-0 space-y-3">
         <li
-            v-for="token in authTokens"
-            class="has-text-weight-semibold is-flex is-justify-content-space-between p-3" style="background: #f5f5f5;">
-            <section class="is-flex is-flex-direction-column">
+            v-for="token in authTokens.slice(0, 5)"
+            class="has-text-weight-semibold flex justify-between p-2 bg-slate-50">
+            <section class="flex flex-col">
                 <span>
                     <b>Token: </b>{{ token.token }}
 
@@ -18,13 +18,13 @@
                 <span><b>Creado: </b>{{ humanDateTime(token.createdAt) }}</span>
                 <span><b>Última actividad: </b>{{ humanDateTime(token.lastActivityAt) }} ({{ dateDiff(token.lastActivityAt) }})</span>
             </section>
-            <section class="is-flex is-flex-direction-column is-justify-content-space-around">
-                <button class="button is-danger" :disabled="token.current" @click="deleteOneAuthToken(token)">Cerrar sesión</button>
+            <section class="flex flex-col justify-around">
+                <button class="button is-small is-danger" :disabled="token.current" @click="deleteOneAuthToken(token)">Cerrar sesión</button>
             </section>
         </li>
     </ul>
 
-    <button class="button is-danger mb-2" @click="deleteAuthTokens()">Terminar todas las demás sesiones</button>
+    <button class="button is-danger mt-2" @click="deleteAuthTokens()">Terminar todas las demás sesiones</button>
 
 </template>
 
