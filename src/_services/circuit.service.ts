@@ -26,4 +26,11 @@ export class CircuitService extends PrognoService<ICircuit, Circuit> {
         return await axios.post(`/circuits`, data)
     }
 
+    public async editCircuit(circuit: Circuit, data: { name: string }): Promise<Circuit> {
+        return await axios.put(`/circuits/${circuit.id}`, data)
+    }
+
+    public async deleteCircuit(circuit: Circuit): Promise<boolean> {
+        return await axios.delete(`/circuits/${circuit.id}`)
+    }
 }
