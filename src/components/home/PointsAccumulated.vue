@@ -158,8 +158,10 @@ export default defineComponent({
                 const cumulatedPoints = result[1];
                 const points = result[2];
 
+                const filteredGps = gpList.filter(gp => !gp.suspended);
+
                 // Actualizar leyenda con los codigos de los gps
-                gpList.forEach(gp => this.grandPrixes.set(gp.code, gp.name));
+                filteredGps.forEach(gp => this.grandPrixes.set(gp.code, gp.name));
                 this.chartOptions = {
                     ...this.chartOptions,
                     xaxis: {
