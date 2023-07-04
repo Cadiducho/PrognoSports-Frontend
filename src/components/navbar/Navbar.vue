@@ -47,7 +47,6 @@
 
                 <div v-if="isLoggedIn" class="navbar-end" >
                     <CommunitiesDropdown v-if="thereIsCurrentCommunity"/>
-                    <NotificationsDropdown />
                     <AddElementsDropdown />
                     <AvatarComponent/>
                 </div>

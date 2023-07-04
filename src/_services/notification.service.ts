@@ -12,14 +12,6 @@ export class NotificationService extends PrognoService<INotification, Notificati
         return new Notification(data);
     }
 
-    public async getNotifications(): Promise<Array<Notification>> {
-        return this.getObjectListFromAPI("/notifications");
-    }
-
-    public async clearNotifications(): Promise<void> {
-        return await axios.delete('/notifications');
-    }
-
     /**
      * Obtener un diccionario con los métodos de notificaciones disponibles. La clave es el nombre del método y el valor es la descripción.
      */
