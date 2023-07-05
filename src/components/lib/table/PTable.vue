@@ -24,7 +24,8 @@
             </td>
             <td v-if="hasActions" :class="getTdStyle()" class="!text-right">
                 <slot name="actions" :row="row" :index="index">
-                    <button v-if="hasEditButton" class="px-3 py-1 text-sm text-black font-semibold rounded-full bg-amber-400 mr-2" @click="$emit('edit', row)">Editar</button>
+                    <button v-if="hasViewButton" class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-blue-500 mr-2" @click="$emit('view', row)">Ver</button>
+                    <button v-if="hasEditButton" class="px-3 py-1 text-sm text-black font-semibold rounded-full bg-amber-300 mr-2" @click="$emit('edit', row)">Editar</button>
                     <button v-if="hasDeleteButton" class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-red-500" @click="$emit('delete', row)">Eliminar</button>
                 </slot>
             </td>
@@ -44,6 +45,7 @@ export interface Props {
     columns: Array<Column>;
     rows: Array<T>;
     withFilter?: (original: Array<T>, filter: string) => Array<T>;
+    hasViewButton?: boolean;
     hasEditButton?: boolean;
     hasDeleteButton?: boolean;
     paginated?: boolean;
@@ -51,6 +53,7 @@ export interface Props {
     striped?: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
+    hasViewButton: false,
     hasEditButton: false,
     hasDeleteButton: false,
     paginated: false,
@@ -105,7 +108,7 @@ const sortBy = (column: Column) => {
 }
 
 const hasActions = computed(() => {
-    return props.hasEditButton || props.hasDeleteButton;
+    return props.hasViewButton || props.hasEditButton || props.hasDeleteButton;
 });
 
 </script>

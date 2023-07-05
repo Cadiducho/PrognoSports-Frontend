@@ -7,8 +7,9 @@
         </div>
 
         <p-table :columns="columns" :rows="circuits"
-                 hasEditButton hasDeleteButton paginated
+                 hasViewButton hasEditButton hasDeleteButton paginated
                  :with-filter="filteredCircuits"
+                 @view="goToView($event)"
                  @edit="goToEdit($event)"
                  @delete="confirmDeleteCircuit($event)"
         >
@@ -63,6 +64,7 @@ export default defineComponent({
             columns: [
                 {label: 'ID', field: 'id'},
                 {label: 'Nombre', field: 'name'},
+                {label: 'Localidad', field: 'locality'},
             ],
             circuits: new Array<Circuit>(),
             showConfirmDeleteModal: false,
@@ -95,6 +97,9 @@ export default defineComponent({
         })
     },
     methods: {
+        goToView(circuit: Circuit) {
+            this.$router.push({name: 'circuitDetails', params: {circuit: circuit.id}});
+        },
         goToEdit(circuit: Circuit) {
             this.$router.push({name: 'adminCircuitEdit', params: {circuit: circuit.id}});
         },
