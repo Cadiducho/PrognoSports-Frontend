@@ -57,7 +57,6 @@
 
 <script lang="ts">
     import AvatarComponent from "@/components/navbar/AvatarComponent.vue";
-    import NotificationsDropdown from "@/components/navbar/NotificationsDropdown.vue";
     import CommunitiesDropdown from "@/components/navbar/CommunitiesDropdown.vue";
     import AddElementsDropdown from "@/components/navbar/AddElementsDropdown.vue";
     import {defineComponent} from "vue";
@@ -66,7 +65,7 @@
 
     export default defineComponent({
         name: "Navbar",
-        components: {CommunitiesDropdown, NotificationsDropdown, AvatarComponent, AddElementsDropdown},
+        components: {CommunitiesDropdown, AvatarComponent, AddElementsDropdown},
         setup() {
             const authStore = useAuthStore();
             const communityStore = useCommunityStore();

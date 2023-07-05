@@ -106,8 +106,10 @@
     <div v-if="!isLoading" class="box">
         <div class="columns">
             <div class="column">
-                <!-- ToDo: Sistema de notificaciones. -->
+
                 <h2 class="subtitle">Notificaciones</h2>
+
+                <PrognoAlert message="Pulsa sobre los iconos para ajustar tus preferencias de notificaciones." />
 
                 <table class="table is-fullwidth">
                     <thead>
@@ -209,10 +211,12 @@ import PrognoModal from "@/components/lib/PrognoModal.vue";
 import AuthTokenList from "@/components/user/settings/AuthTokenList.vue";
 import Calendar from "@/components/lib/Calendar.vue";
 import {Dictionary} from "@/types/Dictionary";
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 
 export default defineComponent({
     name: "UserSettings",
     components: {
+        PrognoAlert,
         AuthTokenList,
         PrognoModal,
         UserLevelResume,
