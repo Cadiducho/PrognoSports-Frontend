@@ -135,6 +135,24 @@ export const routes = [
                 meta: { title: "Pilotos" }
             },
             {
+                path: 'circuits',
+                component: EmptyRoutedLayout,
+                meta: { title: "Circuitos" },
+                children: [
+                    {
+                        path: '',
+                        name: 'adminCircuits',
+                        component: () => import('@/pages/admin/circuits/CircuitsDashboard.vue'),
+                    },
+                    {
+                        path: ':circuit',
+                        name: 'adminCircuitEdit',
+                        component: () => import('@/pages/admin/circuits/EditCircuit.vue'),
+                        meta: { title: "Editar circuito" }
+                    },
+                ],
+            },
+            {
                 path: 'constructors',
                 name: 'adminConstructors',
                 component: () => import('@/pages/admin/constructors/ConstructorsDashboard.vue'),

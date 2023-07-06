@@ -5,7 +5,7 @@
 
         <hr/>
 
-        <UserLevelResume />
+        <UserLevelResume :user="currentUser" />
 
     </article>
 
@@ -87,13 +87,6 @@
                             Ocultar mis pronósticos hasta la hora de cierre
                         </o-radio>
                     </div>
-
-                    <o-field label="Zona Horaria">
-                        <o-select v-model="editedUser.preferences['time-zone-id']" placeholder="Selecciona una zona horaria" expanded>
-                            <option v-for="tz in timeZones"
-                                    :value="tz.id">{{ tz.id }} (UTC {{ tz.offset }})</option>
-                        </o-select>
-                    </o-field>
                 </div>
 
             </div>
@@ -110,27 +103,39 @@
         </form>
     </section>
 
-    <div class="box">
+    <div v-if="!isLoading" class="box">
         <div class="columns">
             <div class="column">
-                <!-- ToDo: Sistema de notificaciones. -->
+
                 <h2 class="subtitle">Notificaciones</h2>
+
+                <PrognoAlert message="Pulsa sobre los iconos para ajustar tus preferencias de notificaciones." />
 
                 <table class="table is-fullwidth">
                     <thead>
                     <tr>
                         <td></td>
-                        <th v-for="methodName in methods">
-                            {{ methodName }}
+                        <th v-for="(methodLabel, methodId) in notificationMethods">
+                            {{ methodLabel }}
                         </th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>Notificaciones genéricas con información</td>
-                        <td>b</td>
-                        <td>c</td>
-                        <td>d</td>
+                    <tr v-for="(typeLabel, typeId) in notificationTypes">
+                        <td>{{ typeLabel }}</td>
+
+                        <td v-for="(methodLabel, methodId) in notificationMethods">
+                            <template v-if="currentUser.preferences[`notify-${typeId}-${methodId}`]">
+                                <span class="icon has-text-success cursor-pointer" @click="toggleNotification(typeId, typeLabel, methodId, methodLabel)">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                            </template>
+                            <template v-else>
+                                <span class="icon has-text-danger cursor-pointer" @click="toggleNotification(typeId, typeLabel, methodId, methodLabel)">
+                                    <i class="fas fa-times"></i>
+                                </span>
+                            </template>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -200,22 +205,18 @@ import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import useEmitter from "@/composables/useEmitter";
 import {useDayjs} from "@/composables/useDayjs";
-import axios from "axios";
-import {Dictionary} from "@/types/Dictionary";
 import {User} from "@/types/User";
 import {notificationService, userService} from "@/_services";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import AuthTokenList from "@/components/user/settings/AuthTokenList.vue";
 import Calendar from "@/components/lib/Calendar.vue";
-
-interface Timezone {
-    id: string,
-    offset: string,
-}
+import {Dictionary} from "@/types/Dictionary";
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 
 export default defineComponent({
     name: "UserSettings",
     components: {
+        PrognoAlert,
         AuthTokenList,
         PrognoModal,
         UserLevelResume,
@@ -251,8 +252,9 @@ export default defineComponent({
                 minuteSteps: 1,
                 type: 'date',
             },
-            timeZones: new Array<Timezone>(),
-            methods: new Array<string>(),
+            notificationMethods: {} as Dictionary<string, string>,
+            notificationTypes: {} as Dictionary<string, string>,
+            isLoading: true,
             noPassword: false,
 
             changePasswordModal: {
@@ -271,35 +273,35 @@ export default defineComponent({
         }
     },
     mounted() {
-        axios.get<Dictionary<string, string>>('/timezones').then((result) => {
-            this.timeZones = [];
-            Object.entries(result).forEach(([id, offset]) => {
-                this.timeZones.push({id, offset});
-            });
-        });
-        notificationService.getNotificationMethods().then((result) => {
-            this.methods = [];
-            this.methods.push(...result);
+        Promise.all([
+            notificationService.getNotificationMethods(),
+            notificationService.getNotificationTypes(),
+        ]).then(([notificationMethods, notificationTypes]) => {
+            this.notificationMethods = notificationMethods;
+            this.notificationTypes = notificationTypes;
+            this.isLoading = false;
+        }).catch((reason) => {
+            notificationService.showNotification("Error al cargar los ajustes", "error");
+            console.error(reason);
         });
 
         // Login Telegram
         this.renderTelegramLoginAndScripts();
-
     },
     methods: {
         save() {
             if (!this.editedUser.password) {
-                notificationService.showNotification("Debes introducir tu contraseña actual para confirmar cambios en tus ajustes", "danger");
+                notificationService.showNotification("Debes introducir tu contraseña actual para confirmar cambios en tus ajustes", "error");
                 this.noPassword = true;
                 return;
             }
 
             this.noPassword = false;
             userService.updateUser(this.editedUser).then(() => {
-                notificationService.showNotification("Ajustes cambiados correctamente", "info");
+                notificationService.showNotification("Ajustes cambiados correctamente");
             }).catch((reason) => {
                 if (reason.code === 600) {
-                    notificationService.showNotification("Contraseña incorrecta", "danger");
+                    notificationService.showNotification("Contraseña incorrecta", "error");
                     this.noPassword = true;
                 }
             });
@@ -316,17 +318,16 @@ export default defineComponent({
                 newPassword: this.changePasswordModal.newPassword,
             };
             userService.changePasswordInSettings(this.currentUser, payload).then(() => {
-                notificationService.showNotification("Contraseña cambiada correctamente", "info");
+                notificationService.showNotification("Contraseña cambiada correctamente");
 
                 this.closeChangePassword();
             }).catch((reason) => {
                 if (reason.code === 600) {
-                    notificationService.showNotification("Contraseña incorrecta", "danger");
+                    notificationService.showNotification("Contraseña incorrecta", "error");
                     this.noPassword = true;
                 }
             });
         },
-
         showChangeMail() {
             this.changeMailModal.show = true;
         },
@@ -340,18 +341,18 @@ export default defineComponent({
                 email: this.changeMailModal.newMail,
             };
             userService.changeEmail(this.currentUser, payload).then(() => {
-                notificationService.showNotification("Email cambiado correctamente", "info");
+                notificationService.showNotification("Email cambiado correctamente");
 
                 this.closeChangeMail();
             }).catch((reason) => {
                 if (reason.code === 600) {
-                    notificationService.showNotification("Contraseña incorrecta", "danger");
+                    notificationService.showNotification("Contraseña incorrecta", "error");
                     this.noPassword = true;
                 } else if (reason.code === 770) {
-                    notificationService.showNotification("Email ya en uso por otro usuario", "danger");
+                    notificationService.showNotification("Email ya en uso por otro usuario", "error");
                     this.noPassword = true;
                 } else if (reason.code === 700) {
-                    notificationService.showNotification("Email inválido", "danger");
+                    notificationService.showNotification("Email inválido", "error");
                     this.noPassword = true;
                 }
             });
@@ -381,7 +382,7 @@ export default defineComponent({
         },
         unlinkTelegram() {
             userService.unlinkTelegram(this.currentUser).then(() => {
-                notificationService.showNotification("Cuenta desvinculada de Telegram", "warning");
+                notificationService.showNotification("Cuenta desvinculada de Telegram", "action");
 
                 this.currentUser.preferences['telegram-id'] = '';
                 this.currentUser.preferences['telegram-firstname'] = '';
@@ -393,20 +394,23 @@ export default defineComponent({
         },
         onTelegramAuth(telegramPayload: {'id': number, 'first_name': string | null, 'username': string | null}) {
             userService.linkTelegram(this.currentUser, telegramPayload).then(() => {
-                notificationService.showNotification("Cuenta enlazada a Telegram", "info");
+                notificationService.showNotification("Cuenta enlazada a Telegram");
 
                 this.currentUser.preferences['telegram-id'] = telegramPayload.id;
                 this.currentUser.preferences['telegram-firstname'] = telegramPayload.first_name;
                 this.currentUser.preferences['telegram-username'] = telegramPayload.username;
-                console.log(telegramPayload)
-                console.log(this.currentUser.preferences)
 
                 this.closeLinkTelegram();
             });
+        },
+        toggleNotification(typeId: string, typeLabel: string, methodId: string, methodLabel: string) {
+            this.currentUser.preferences[`notify-${typeId}-${methodId}`] = !this.currentUser.preferences[`notify-${typeId}-${methodId}`];
+
+            notificationService.changeNotificationPreference(typeId, methodId, this.currentUser.preferences[`notify-${typeId}-${methodId}`]).then(() => {
+                notificationService.showNotification(`Notificaciones de ${typeLabel} por ${methodLabel} ${this.currentUser.preferences[`notify-${typeId}-${methodId}`] ? 'activadas' : 'desactivadas'}`);
+            });
+
         }
     }
 });
 </script>
-
-<style lang="css">
-</style>

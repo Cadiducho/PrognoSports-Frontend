@@ -58,7 +58,7 @@
 
                 <p class="heading">Sesiones ganadas</p>
                 <p class="title">
-                    {{ countWonSessions(this.userResume.wonSessions) || '0' }}
+                    {{ countWonSessions(userResume.wonSessions) || '0' }}
                 </p>
             </o-tooltip>
         </div>
@@ -74,7 +74,7 @@
 
                 <p class="heading">Grandes Premios ganados</p>
                 <p class="title">
-                    {{ countWonGPs(this.userResume.wonGrandPrixes) || '0' }}
+                    {{ countWonGPs(userResume.wonGrandPrixes) || '0' }}
                 </p>
             </o-tooltip>
         </div>
