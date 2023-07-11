@@ -109,7 +109,7 @@
 
                 <h2 class="subtitle">Notificaciones</h2>
 
-                <PrognoAlert message="Pulsa sobre los iconos para ajustar tus preferencias de notificaciones." />
+                <PrognoAlert variant="info" message="Pulsa sobre los iconos para ajustar tus preferencias de notificaciones." />
 
                 <table class="table is-fullwidth">
                     <thead>
