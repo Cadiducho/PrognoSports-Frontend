@@ -34,7 +34,7 @@
                              :mobile-cards="false"
                              default-sort="totalScore"
                              default-sort-direction="DESC"
-                             :row-class="(row, index) => checkRowClass(row, index)"
+                             :row-class="checkRowClass"
                     >
 
                         <o-table-column label="Pos." sortable numeric v-slot="props">
@@ -104,7 +104,7 @@
                              :mobile-cards="false"
                              default-sort="totalScore"
                              default-sort-direction="DESC"
-                             :row-class="(row, index) => checkRowClass(row, index)"
+                             :row-class="checkRowClass"
                     >
 
                         <o-table-column label="Pos." sortable numeric v-slot="props">
@@ -172,7 +172,7 @@
                              :mobile-cards="false"
                              default-sort="totalScore"
                              default-sort-direction="DESC"
-                             :row-class="(row, index) => checkRowClass(row, index)"
+                             :row-class="checkRowClass"
                     >
 
                         <o-table-column field="user.username" label="Nombre" sortable>
@@ -241,7 +241,6 @@
     import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
     import {communityService, grandPrixService, scoreService, seasonService} from "@/_services";
     import {GrandPrix} from "@/types/GrandPrix";
-    import {Competition} from "@/types/Competition";
     import {Season} from "@/types/Season";
     import UserMiniCard from "@/components/user/UserMiniCard.vue";
     import {User} from "@/types/User";
@@ -395,7 +394,7 @@
                     const gpList = result[0];
                     const members = result[1];
 
-                    this.gps = gpList;
+                    this.gps = gpList.filter(gp => !gp.suspended); // Para el ranking siempre me van a interesar los gps que NO estén suspendidos
                     this.updateChartsLegend();
 
                     this.communityMembers = new Map<string, User>();
@@ -405,8 +404,8 @@
                 }).then(async () => {
                     const grandPrixPoints = await scoreService.getUserPointsByGP(this.currentCommunity, season);
 
-                    let entradas: Map<string, TableEntry> = new Map();
-                    let entradasAcumuladas: Map<string, TableEntry> = new Map();
+                    let entradas: Map<string, TableEntry> = new Map(); // Username -> Entrada de la tabla
+                    let entradasAcumuladas: Map<string, TableEntry> = new Map(); // Username -> Entrada de la tabla
                     this.communityMembers.forEach((member) => {
                         entradas.set(member!.username, {
                             gps: new Map(),
@@ -419,6 +418,7 @@
                             user: member!
                         });
                     });
+
 
                     // Para cada gran premio
                     Object.entries(grandPrixPoints).forEach(([gp, entry]) => {
@@ -462,18 +462,32 @@
 
 
                             let chartData = [];
-                            let accumulatedChartData = [];
-                            let standingsChartData = [];
-                            for (let uPoints of entradas.get(username)!.gps.values()) {
+                            let accumulatedChartRawData = [] as { gpId: number, points: number }[];
+                            let standingsChartRawData = [] as { gpId: number, standing: number | null }[];
+
+                            for (const [gpId, uPoints] of entradas.get(username)!.gps) {
                                 chartData.push(uPoints.pointsInGP);
 
                                 // Null para no mostrar si no existe una standing, por ejemplo, no tiene resultados las primeras carreras
                                 let standing = (uPoints.standings > 0) ? uPoints.standings : null;
-                                standingsChartData.push(standing);
+                                standingsChartRawData.push({gpId, standing});
                             }
-                            for (let uPoints of entradasAcumuladas.get(username)!.gps.values()) {
-                                accumulatedChartData.push(uPoints.accumulatedPoints);
+                            for (const [gpId, uPoints] of entradasAcumuladas.get(username)!.gps) {
+                                accumulatedChartRawData.push({gpId, points: uPoints.accumulatedPoints});
                             }
+
+                            // Ordeno los datos pusheados al array por el orden correcto de los gps
+                            accumulatedChartRawData.sort((a, b) => {
+                                return this.grandPrixList().findIndex(gp => gp.id === a.gpId) - this.grandPrixList().findIndex(gp => gp.id === b.gpId);
+                            });
+                            standingsChartRawData.sort((a, b) => {
+                                return this.grandPrixList().findIndex(gp => gp.id === a.gpId) - this.grandPrixList().findIndex(gp => gp.id === b.gpId);
+                            });
+
+                            // Convierto los datos de acumulados y ranking, ya ordenados por gps, a arrays que entiendan las gráficas
+                            const accumulatedChartData = accumulatedChartRawData.map(data => data.points);
+                            const standingsChartData = standingsChartRawData.map(data => data.standing);
+
                             // Agrego a la gráfica de puntos
                             this.chartSeries = [
                                 ...this.chartSeries,
@@ -488,14 +502,14 @@
                                     name: username,
                                     data: accumulatedChartData,
                                 },
-                            ]
+                            ];
                             this.chartStandings = [
                                 ...this.chartStandings,
                                 {
                                     name: username,
                                     data: standingsChartData,
                                 },
-                            ]
+                            ];
                         }
                     });
                     this.tableHasData = Object.keys(points).length > 0;
@@ -510,10 +524,10 @@
             grandPrixList(): Array<GrandPrix> {
                 return this.gps.filter(gp => this.gpsWithPoints.includes(Number(gp.id)));
             },
-            checkAndInsertTrophy(gp: string, score: number) {
+            checkAndInsertTrophy(gp: number, score: number) {
                 return (this.maxPointsInGrandPrix.get(gp)! == score);
             },
-            checkWinnerCell(gp: string, score: number) {
+            checkWinnerCell(gp: number, score: number) {
                 return (this.maxAccumulatedPointsInGrandPrix.get(gp)! == score);
             },
             updateChartsLegend() {
