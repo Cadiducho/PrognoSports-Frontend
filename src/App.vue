@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="transition-all dark:bg-gray-800">
       <Toaster richColors :position="toastStore.getPosition"  />
 
       <!-- La app siempre cargará router-view -->

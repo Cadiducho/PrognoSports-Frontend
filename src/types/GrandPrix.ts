@@ -6,7 +6,7 @@ import {BASE_URL} from "@/_services";
 import {CircuitVariant, ICircuitVariant} from "@/types/CircuitVariant";
 
 export interface IGrandPrix {
-    id: string;
+    id: number;
     name: string;
     code: string;
     competition: Competition;
@@ -27,7 +27,7 @@ export class GrandPrix implements IGrandPrix {
     variant?: CircuitVariant;
     code: string;
     competition: Competition;
-    id: string;
+    id: number;
     laps: number;
     name: string;
     sessions: Array<RaceSession>;

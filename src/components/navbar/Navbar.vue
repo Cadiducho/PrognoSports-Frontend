@@ -2,7 +2,7 @@
     <div id="navbarComponent">
         <nav class="navbar is-light" role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
-                <router-link class="navbar-item" to="/">
+                <router-link class="navbar-item" to="/" @click="clickEasterEgg()">
                     <img src="@/assets/logo_navbar.png" class="mr-3 ml-2" alt="PrognoSports.com">
 
                     PrognoSports
@@ -49,6 +49,7 @@
                     <CommunitiesDropdown v-if="thereIsCurrentCommunity"/>
                     <AddElementsDropdown />
                     <AvatarComponent/>
+                    <SwitchTheme v-if="darkModeActivable"/>
                 </div>
             </div>
         </nav>
@@ -62,10 +63,11 @@
     import {defineComponent} from "vue";
     import {useAuthStore} from "@/store/authStore";
     import {useCommunityStore} from "@/store/communityStore";
+    import SwitchTheme from "@/components/navbar/SwitchTheme.vue";
 
     export default defineComponent({
         name: "Navbar",
-        components: {CommunitiesDropdown, AvatarComponent, AddElementsDropdown},
+        components: {SwitchTheme, CommunitiesDropdown, AvatarComponent, AddElementsDropdown},
         setup() {
             const authStore = useAuthStore();
             const communityStore = useCommunityStore();
@@ -79,6 +81,16 @@
         data() {
             return {
                 isOpen: false,
+                counter: 0,
+                darkModeActivable: true,
+            }
+        },
+        methods: {
+            clickEasterEgg() {
+                this.counter++;
+                if (this.counter >= 33) {
+                    this.darkModeActivable = true;
+                }
             }
         }
     });

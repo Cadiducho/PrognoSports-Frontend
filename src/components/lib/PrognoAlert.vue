@@ -1,18 +1,57 @@
 <template>
-    <div class="flex items-center bg-blue-100 text-blue-700 border-blue-500 text-sm font-bold px-4 py-3 mb-4" role="alert">
-        <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.432 0c1.34 0 2.01.912 2.01 1.957 0 1.305-1.164 2.512-2.679 2.512-1.269 0-2.009-.75-1.974-1.99C9.789 1.436 10.67 0 12.432 0zM8.309 20c-1.058 0-1.833-.652-1.093-3.524l1.214-5.092c.211-.814.246-1.141 0-1.141-.317 0-1.689.562-2.502 1.117l-.528-.88c2.572-2.186 5.531-3.467 6.801-3.467 1.057 0 1.233 1.273.705 3.23l-1.391 5.352c-.246.945-.141 1.271.106 1.271.317 0 1.357-.392 2.379-1.207l.6.814C12.098 19.02 9.365 20 8.309 20z"/></svg>
+    <div v-if="variant == 'info'" class="flex items-center bg-blue-100 text-blue-700 border-blue-500 text-sm font-bold px-4 py-3 mb-4" role="alert">
+        <svg v-if="icon" class="w-6 h-6 mr-2"
+            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+        </svg>
+
         <p>{{ message }}</p>
     </div>
+
+    <div v-if="variant == 'danger'" class="flex items-center bg-red-100 text-red-500 border border-red-200 text-sm font-bold px-4 py-3 mb-4" role="alert">
+        <svg v-if="icon" class="w-6 h-6 mr-2"
+             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+        </svg>
+
+        <p>{{ message }}</p>
+    </div>
+
+    <div v-if="variant == 'warning'" class="flex items-center bg-yellow-100 border border-yellow-200 text-yellow-500 text-sm font-bold px-4 py-3 mb-4" role="alert">
+        <svg v-if="icon" class="w-6 h-6 mr-2"
+             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0M3.124 7.5A8.969 8.969 0 015.292 3m13.416 0a8.969 8.969 0 012.168 4.5" />
+        </svg>
+
+        <p>{{ message }}</p>
+    </div>
+
+    <div v-if="variant == 'success'" class="flex items-center bg-green-100 border border-green-200 text-green-500 text-sm font-bold px-4 py-3 mb-4" role="alert">
+        <svg v-if="icon" class="w-6 h-6 mr-2"
+             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+
+        <p>{{ message }}</p>
+    </div>
+
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import {defineComponent, PropType} from "vue";
 
-// ToDo: variant: warning, danger, success, info...
 export default defineComponent({
     name: "PrognoAlert",
     props: {
         message: String,
+        variant: {
+            type: String as PropType<'warning' | 'danger' | 'success' | 'info' | undefined>,
+            default: 'info',
+        },
+        icon: {
+            type: Boolean,
+            default: true,
+        }
     }
 });
 </script>

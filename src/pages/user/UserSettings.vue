@@ -109,7 +109,7 @@
 
                 <h2 class="subtitle">Notificaciones</h2>
 
-                <PrognoAlert message="Pulsa sobre los iconos para ajustar tus preferencias de notificaciones." />
+                <PrognoAlert variant="info" message="Pulsa sobre los iconos para ajustar tus preferencias de notificaciones." />
 
                 <table class="table is-fullwidth">
                     <thead>
@@ -125,13 +125,17 @@
                         <td>{{ typeLabel }}</td>
 
                         <td v-for="(methodLabel, methodId) in notificationMethods">
-                            <template v-if="currentUser.preferences[`notify-${typeId}-${methodId}`]">
-                                <span class="icon has-text-success cursor-pointer" @click="toggleNotification(typeId, typeLabel, methodId, methodLabel)">
+                            <!--
+                            Muestras el check verde cuando las preferencias están a true ó cuando no hay preferencias.
+                            El valor por defecto de las notificaciones es True
+                            -->
+                            <template v-if="currentUser.preferences[`notify-${typeId}-${methodId}`] ?? true">
+                                <span class="icon has-text-success cursor-pointer" @click="toggleNotification(typeId, typeLabel!, methodId, methodLabel!)">
                                     <i class="fas fa-check"></i>
                                 </span>
                             </template>
                             <template v-else>
-                                <span class="icon has-text-danger cursor-pointer" @click="toggleNotification(typeId, typeLabel, methodId, methodLabel)">
+                                <span class="icon has-text-danger cursor-pointer" @click="toggleNotification(typeId, typeLabel!, methodId, methodLabel!)">
                                     <i class="fas fa-times"></i>
                                 </span>
                             </template>
@@ -404,7 +408,7 @@ export default defineComponent({
             });
         },
         toggleNotification(typeId: string, typeLabel: string, methodId: string, methodLabel: string) {
-            this.currentUser.preferences[`notify-${typeId}-${methodId}`] = !this.currentUser.preferences[`notify-${typeId}-${methodId}`];
+            this.currentUser.preferences[`notify-${typeId}-${methodId}`] = !(this.currentUser.preferences[`notify-${typeId}-${methodId}`] ?? true);
 
             notificationService.changeNotificationPreference(typeId, methodId, this.currentUser.preferences[`notify-${typeId}-${methodId}`]).then(() => {
                 notificationService.showNotification(`Notificaciones de ${typeLabel} por ${methodLabel} ${this.currentUser.preferences[`notify-${typeId}-${methodId}`] ? 'activadas' : 'desactivadas'}`);
