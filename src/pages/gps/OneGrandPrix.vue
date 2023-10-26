@@ -20,7 +20,7 @@
 
             <div class="columns">
 
-                <div v-bind:class="this.startGrid.size ? 'column is-6' : 'column is-9'">
+                <div v-bind:class="startGrid.size ? 'column is-6' : 'column is-9'">
                     <o-tabs v-model="activeTab">
                         <o-tab-item v-for="(session, index) in grandPrix.sessions"
                                     :label="session.humanName()"
@@ -42,7 +42,7 @@
                         </o-tab-item>
                     </o-tabs>
                 </div>
-                <div v-if="this.startGrid.size" class="content column">
+                <div v-if="startGrid.size" class="content column">
                     <StartGrid :grid="startGrid"/>
                 </div>
                 <div class="column is-3">

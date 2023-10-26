@@ -249,9 +249,9 @@
     import VueApexCharts from "vue3-apexcharts";
 
     interface TableEntry {
-        'user': User;
-        'gps': Map<number, UserPoints>;
-        'totalScore': number
+        user: User;
+        gps: Map<number, UserPoints>;
+        totalScore: number;
     }
 
 
@@ -339,6 +339,8 @@
             }
         },
         created() {
+            this.loadRanking(this.currentCommunity.competition.currentSeason);
+
             seasonService.getSeasonList().then((seasons) => {
                 this.seasonList = [];
                 this.seasonList.push(...seasons);
@@ -368,8 +370,6 @@
                     }
                 },
             }
-
-            this.loadRanking(this.currentCommunity.competition.currentSeason);
         },
         methods: {
             changeSeason() {
@@ -387,133 +387,133 @@
 
                 const gpPromise = grandPrixService.getGrandPrixesList(season);
                 const membersPromise = communityService.getMembers(this.currentCommunity);
-                await Promise.all([
+                const pointsByGpPromise = scoreService.getUserPointsByGP(this.currentCommunity, season);
+                const totalUserPointsPromise = scoreService.getTotalUserPoints(this.currentCommunity, season);
+
+                const [gpList, members, grandPrixPoints, points] = await Promise.all([
                     gpPromise,
-                    membersPromise
-                ]).then(result => {
-                    const gpList = result[0];
-                    const members = result[1];
+                    membersPromise,
+                    pointsByGpPromise,
+                    totalUserPointsPromise
+                ]);
 
-                    this.gps = gpList.filter(gp => !gp.suspended); // Para el ranking siempre me van a interesar los gps que NO estén suspendidos
-                    this.updateChartsLegend();
+                this.gps = gpList.filter(gp => !gp.suspended); // Para el ranking siempre me van a interesar los gps que NO estén suspendidos
+                this.updateChartsLegend();
 
-                    this.communityMembers = new Map<string, User>();
-                    members.forEach(miembro => {
-                        this.communityMembers.set(miembro.user.username, miembro.user);
+                this.communityMembers = new Map<string, User>();
+                members.forEach(miembro => {
+                    this.communityMembers.set(miembro.user.username, miembro.user);
+                });
+
+                let entradas: Map<string, TableEntry> = new Map(); // Username -> Entrada de la tabla
+                let entradasAcumuladas: Map<string, TableEntry> = new Map(); // Username -> Entrada de la tabla
+
+                members.forEach((member) => {
+                    entradas.set(member!.user.username, {
+                        gps: new Map(),
+                        totalScore: 0,
+                        user: member.user!
                     });
-                }).then(async () => {
-                    const grandPrixPoints = await scoreService.getUserPointsByGP(this.currentCommunity, season);
-
-                    let entradas: Map<string, TableEntry> = new Map(); // Username -> Entrada de la tabla
-                    let entradasAcumuladas: Map<string, TableEntry> = new Map(); // Username -> Entrada de la tabla
-                    this.communityMembers.forEach((member) => {
-                        entradas.set(member!.username, {
-                            gps: new Map(),
-                            totalScore: 0,
-                            user: member!
-                        });
-                        entradasAcumuladas.set(member!.username, {
-                            gps: new Map(),
-                            totalScore: 0,
-                            user: member!
-                        });
+                    entradasAcumuladas.set(member!.user.username, {
+                        gps: new Map(),
+                        totalScore: 0,
+                        user: member.user!
                     });
+                });
 
 
-                    // Para cada gran premio
-                    Object.entries(grandPrixPoints).forEach(([gp, entry]) => {
-                        const gpId = Number(gp);
-                        this.gpsWithPoints.push(gpId);
-                        this.maxPointsInGrandPrix.set(gpId, -Infinity);
-                        this.maxAccumulatedPointsInGrandPrix.set(gpId, -Infinity);
+                // Para cada gran premio
+                Object.entries(grandPrixPoints).forEach(([gp, entry]) => {
+                    const gpId = Number(gp);
+                    this.gpsWithPoints.push(gpId);
+                    this.maxPointsInGrandPrix.set(gpId, -Infinity);
+                    this.maxAccumulatedPointsInGrandPrix.set(gpId, -Infinity);
 
-                        // Cada usuario en cada gran premio
-                        for (let [slot, userPoints] of Object.entries(entry!)) {
-                            let user = userPoints!.user!.username;
-                            // asigno entradas a los usuarios existentes, con sus resultados en el gp iterado
-                            if (user !== undefined && (entradas.has(user) || entradasAcumuladas.has(user))) {
+                    // Cada usuario en cada gran premio
+                    for (let [slot, userPoints] of Object.entries(entry!)) {
+                        let user = userPoints!.user!.username;
+                        // asigno entradas a los usuarios existentes, con sus resultados en el gp iterado
+                        if (user !== undefined && (entradas.has(user) || entradasAcumuladas.has(user))) {
 
-                                entradas.get(user)!.gps.set(gpId, userPoints!);
-                                entradasAcumuladas.get(user)!.gps.set(gpId, userPoints!);
+                            entradas.get(user)!.gps.set(gpId, userPoints!);
+                            entradasAcumuladas.get(user)!.gps.set(gpId, userPoints!);
 
-                                if (userPoints!.pointsInGP! > this.maxPointsInGrandPrix.get(gpId)!) {
-                                    this.maxPointsInGrandPrix.set(gpId, userPoints!.pointsInGP!);
-                                }
-                                if (userPoints!.accumulatedPoints > this.maxAccumulatedPointsInGrandPrix.get(gpId)!) {
-                                    this.maxAccumulatedPointsInGrandPrix.set(gpId, userPoints!.accumulatedPoints!);
-                                }
+                            if (userPoints!.pointsInGP! > this.maxPointsInGrandPrix.get(gpId)!) {
+                                this.maxPointsInGrandPrix.set(gpId, userPoints!.pointsInGP!);
+                            }
+                            if (userPoints!.accumulatedPoints > this.maxAccumulatedPointsInGrandPrix.get(gpId)!) {
+                                this.maxAccumulatedPointsInGrandPrix.set(gpId, userPoints!.accumulatedPoints!);
                             }
                         }
-                    });
+                    }
+                });
 
-                    const points = await scoreService.getTotalUserPoints(this.currentCommunity, season);
+                Object.entries(points).forEach(([username, totalScore]) => {
 
-                    Object.entries(points).forEach(([username, totalScore]) => {
+                    // Agrego a tablas y gráficas sólo si ha recibido alguna puntuación en la temporada
+                    if (totalScore != 0) {
 
-                        // Agrego a tablas y gráficas sólo si ha recibido alguna puntuación en la temporada
-                        if (totalScore != 0) {
+                        entradas.get(username)!.totalScore = totalScore || 0;
 
-                            entradas.get(username)!.totalScore = totalScore || 0;
-
-                            // Utilizo el mismo for de iterar usuarios para guardar las filas
-                            // Guardo las entradas creadas en las filas de la tabla
-                            this.tableData.push(entradas.get(username)!);
-                            this.tableDataAcumulada.push(entradasAcumuladas.get(username)!);
+                        // Utilizo el mismo for de iterar usuarios para guardar las filas
+                        // Guardo las entradas creadas en las filas de la tabla
+                        this.tableData.push(entradas.get(username)!);
+                        this.tableDataAcumulada.push(entradasAcumuladas.get(username)!);
 
 
-                            let chartData = [];
-                            let accumulatedChartRawData = [] as { gpId: number, points: number }[];
-                            let standingsChartRawData = [] as { gpId: number, standing: number | null }[];
+                        let chartData = [];
+                        let accumulatedChartRawData = [] as { gpId: number, points: number }[];
+                        let standingsChartRawData = [] as { gpId: number, standing: number | null }[];
 
-                            for (const [gpId, uPoints] of entradas.get(username)!.gps) {
-                                chartData.push(uPoints.pointsInGP);
+                        for (const [gpId, uPoints] of entradas.get(username)!.gps) {
+                            chartData.push(uPoints.pointsInGP);
 
-                                // Null para no mostrar si no existe una standing, por ejemplo, no tiene resultados las primeras carreras
-                                let standing = (uPoints.standings > 0) ? uPoints.standings : null;
-                                standingsChartRawData.push({gpId, standing});
-                            }
-                            for (const [gpId, uPoints] of entradasAcumuladas.get(username)!.gps) {
-                                accumulatedChartRawData.push({gpId, points: uPoints.accumulatedPoints});
-                            }
-
-                            // Ordeno los datos pusheados al array por el orden correcto de los gps
-                            accumulatedChartRawData.sort((a, b) => {
-                                return this.grandPrixList().findIndex(gp => gp.id === a.gpId) - this.grandPrixList().findIndex(gp => gp.id === b.gpId);
-                            });
-                            standingsChartRawData.sort((a, b) => {
-                                return this.grandPrixList().findIndex(gp => gp.id === a.gpId) - this.grandPrixList().findIndex(gp => gp.id === b.gpId);
-                            });
-
-                            // Convierto los datos de acumulados y ranking, ya ordenados por gps, a arrays que entiendan las gráficas
-                            const accumulatedChartData = accumulatedChartRawData.map(data => data.points);
-                            const standingsChartData = standingsChartRawData.map(data => data.standing);
-
-                            // Agrego a la gráfica de puntos
-                            this.chartSeries = [
-                                ...this.chartSeries,
-                                {
-                                    name: username,
-                                    data: chartData,
-                                },
-                            ]
-                            this.chartSeriesAcumuladas = [
-                                ...this.chartSeriesAcumuladas,
-                                {
-                                    name: username,
-                                    data: accumulatedChartData,
-                                },
-                            ];
-                            this.chartStandings = [
-                                ...this.chartStandings,
-                                {
-                                    name: username,
-                                    data: standingsChartData,
-                                },
-                            ];
+                            // Null para no mostrar si no existe una standing, por ejemplo, no tiene resultados las primeras carreras
+                            let standing = (uPoints.standings > 0) ? uPoints.standings : null;
+                            standingsChartRawData.push({gpId, standing});
                         }
-                    });
-                    this.tableHasData = Object.keys(points).length > 0;
-                })
+                        for (const [gpId, uPoints] of entradasAcumuladas.get(username)!.gps) {
+                            accumulatedChartRawData.push({gpId, points: uPoints.accumulatedPoints});
+                        }
+
+                        // Ordeno los datos pusheados al array por el orden correcto de los gps
+                        accumulatedChartRawData.sort((a, b) => {
+                            return this.gps.findIndex(gp => gp.id === a.gpId) - this.gps.findIndex(gp => gp.id === b.gpId);
+                        });
+                        standingsChartRawData.sort((a, b) => {
+                            return this.gps.findIndex(gp => gp.id === a.gpId) - this.gps.findIndex(gp => gp.id === b.gpId);
+                        });
+
+                        // Convierto los datos de acumulados y ranking, ya ordenados por gps, a arrays que entiendan las gráficas
+                        const accumulatedChartData = accumulatedChartRawData.map(data => data.points);
+                        const standingsChartData = standingsChartRawData.map(data => data.standing);
+
+                        // Agrego a la gráfica de puntos
+                        this.chartSeries = [
+                            ...this.chartSeries,
+                            {
+                                name: username,
+                                data: chartData,
+                            },
+                        ]
+                        this.chartSeriesAcumuladas = [
+                            ...this.chartSeriesAcumuladas,
+                            {
+                                name: username,
+                                data: accumulatedChartData,
+                            },
+                        ];
+                        this.chartStandings = [
+                            ...this.chartStandings,
+                            {
+                                name: username,
+                                data: standingsChartData,
+                            },
+                        ];
+                    }
+                });
+                this.tableHasData = Object.keys(points).length > 0;
+
 
                 this.isLoading = false;
             },
