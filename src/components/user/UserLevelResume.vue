@@ -50,9 +50,10 @@
             <o-tooltip multilined>
                 <template v-slot:content>
                     <ul>
-                        <li v-for="(gps, session) in userResume.wonSessions">
+                        <li v-if="userResume.wonSessions?.size" v-for="(gps, session) in userResume.wonSessions">
                             <b>{{ session }}</b>: {{ gps.join(', ') }}
                         </li>
+                        <li v-else>No has ganado Sesiones</li>
                     </ul>
                 </template>
 
@@ -66,9 +67,10 @@
             <o-tooltip multilined>
                 <template v-slot:content>
                     <ul>
-                        <li v-for="(name) in userResume.wonGrandPrixes">
+                        <li v-if="userResume.wonGrandPrixes?.length" v-for="(name) in userResume.wonGrandPrixes">
                             {{ name }}
                         </li>
+                        <li v-else>No has ganado Grandes Premios</li>
                     </ul>
                 </template>
 
