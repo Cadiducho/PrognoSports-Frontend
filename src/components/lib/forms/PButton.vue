@@ -1,5 +1,6 @@
 <template>
     <button type="button" class="m-1 inline-flex justify-center items-center gap-2"
+            @click="pushToLink"
         :class="{
             'small': size === 'small',
             'medium': size === 'medium',
@@ -34,6 +35,7 @@
 
 <script lang="ts">
 import {defineComponent, PropType} from 'vue'
+import {RouteLocationRaw, useRouter} from "vue-router";
 
 export default defineComponent({
     name: "PButton",
@@ -74,7 +76,22 @@ export default defineComponent({
             type: String,
             default: ""
         },
+        to: {
+            type: String as PropType<RouteLocationRaw>,
+            default: ""
+        }
     },
+    setup(props) {
+        const router = useRouter();
+
+        const pushToLink = () => {
+            if (props.to) {
+                router.push(props.to);
+            }
+        }
+
+        return {pushToLink};
+    }
 });
 </script>
 
