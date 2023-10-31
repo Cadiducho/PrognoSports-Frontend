@@ -16,7 +16,7 @@
     </div>
 </template>
 
-<style lang="css">
+<style lang="css" scoped>
 .switch {
     position: absolute;
     opacity: 0;
