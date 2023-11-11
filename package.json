@@ -12,7 +12,7 @@
     "@vitejs/plugin-vue": "4.2.3",
     "@vue-leaflet/vue-leaflet": "0.10.1",
     "apexcharts": "3.41.0",
-    "axios": "1.4.0",
+    "axios": "1.6.0",
     "bulma-calendar": "6.1.19",
     "dayjs": "1.11.8",
     "leaflet": "1.9.4",
