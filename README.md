@@ -14,13 +14,13 @@ Puedes ver los ciclos de desarrollo en el [Github Projects de PrognoSports](http
 ### Servidor de desarrollo
 
 ```
-$ yarn run dev
+$ pnpm run dev
 ```
 
 ### Compilación
 
 ```
-$ yarn run build
+$ pnpm run build
 ```
 
 

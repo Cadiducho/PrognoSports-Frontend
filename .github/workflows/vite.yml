@@ -7,7 +7,7 @@ on:
         description: "Node version to build."
         type: string
         required: false
-        default: '18.x'
+        default: '20.x'
       build_command:
         description: "Build command."
         type: string
@@ -18,15 +18,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps :
-      - uses : actions/checkout@v3
-      - uses : actions/setup-node@v3
+      - uses : actions/checkout@v4
+      - uses : pnpm/action-setup@v2
+        with :
+          version : 8
+      - uses : actions/setup-node@v4
         with :
           node-version : ${{ inputs.node_version }}
-          cache: 'npm'
+          cache: 'pnpm'
       - name : Install dependencies
-        run : yarn install
+        run : pnpm install
       - name : 🏭 Vue Build
-        run : yarn run ${{ inputs.build_command }}
+        run : pnpm run ${{ inputs.build_command }}
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
         with:

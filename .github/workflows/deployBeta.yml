@@ -9,19 +9,19 @@ jobs:
     name: Build
     uses: Cadiducho/PrognoSports-Frontend/.github/workflows/vite.yml@develop
     with:
-      node_version: '18.x'
+      node_version: '20.x'
       build_command: 'buildBeta'
   deploy:
     name: Deploy
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: frontend
           path: ./dist
       - name: Upload to server
-        uses: appleboy/scp-action@v0.1.3
+        uses: appleboy/scp-action@v0.1.6
         with:
           host: ${{ secrets.SECRET_FRONTEND_HOST }}
           username: ${{ secrets.SECRET_FRONTEND_USER }}
