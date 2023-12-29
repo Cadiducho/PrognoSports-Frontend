@@ -17,6 +17,7 @@ import {defineComponent} from "vue";
 import ToTop from "@/components/lib/ToTop.vue";
 import { Toaster } from 'vue-sonner'
 import {useToastStore} from "@/store/toastStore";
+import { useTitle } from '@vueuse/core'
 
 export default defineComponent({
     components: {
@@ -24,6 +25,12 @@ export default defineComponent({
     },
     setup() {
         const toastStore = useToastStore();
+
+        const isBeta = import.meta.env.MODE == 'beta';
+        console.log("isBeta", isBeta);
+        const title = useTitle();
+        title.value = isBeta ? 'PrognoSports (Beta)' : ' PrognoSports';
+
         return {toastStore};
     }
 });
