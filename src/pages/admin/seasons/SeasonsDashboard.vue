@@ -49,6 +49,14 @@
             </o-table-column>
 
         </o-table>
+
+        <PrognoModal v-show="isDeleteSeasonModalActive" @close="isDeleteSeasonModalActive = false" @handle="deleteSeason(seasonToDelete)">
+            <template v-slot:title>¿Eliminar esta temporada?</template>
+            <template v-slot:content>
+                ¿Estás seguro de que quieres <b>eliminar</b> la temporada <span class="has-text-weight-semibold">{{ seasonToDelete.name }} ({{seasonToDelete.id}})</span> de esta competición? <br/>Esta acción se puede deshacer.
+            </template>
+            <template v-slot:saveText>Eliminar temporada</template>
+        </PrognoModal>
     </div>
 </template>
 
@@ -60,27 +68,30 @@ import {Season} from "@/types/Season";
 
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
-import {useProgrammatic} from "@oruga-ui/oruga-next";
+import PrognoModal from "@/components/lib/PrognoModal.vue";
 
 export default defineComponent({
     name: "SeasonsDashboard",
     components: {
+        PrognoModal,
         AlertNoPermission,
         PrognoPageTitle,
     },
     setup() {
         const authStore = useAuthStore();
-        const oruga = useProgrammatic().oruga;
 
         const currentUser = authStore.loggedUser;
-        return { currentUser, oruga };
+        return { currentUser };
     },
     data() {
         return {
             isPaginated: true,
             filtroSeason: '',
 
-            seasons: new Array<Season>()
+            seasons: new Array<Season>(),
+
+            isDeleteSeasonModalActive: false,
+            seasonToDelete: {} as Season
         }
     },
     mounted() {
@@ -117,14 +128,8 @@ export default defineComponent({
     },
     methods: {
         confirmDeleteSeason(season: Season) {
-            this.oruga.dialog.confirm({
-                title: 'Eliminar temporada',
-                message: `¿Estás seguro de que quieres <b>eliminar</b> la temporada ${season.name} (#${season.id})? <br/>Esta acción se puede deshacer.`,
-                confirmText: 'Eliminar temporada',
-                type: 'danger',
-                hasIcon: true,
-                onConfirm: () => this.deleteSeason(season),
-            })
+            this.isDeleteSeasonModalActive = true;
+            this.seasonToDelete = season;
         },
         deleteSeason(season: Season) {
             seasonService.deleteSeason(season).then((ok) => {
@@ -132,9 +137,9 @@ export default defineComponent({
                 // Elimino de la lista y por lo tanto de la tabla
                 this.seasons.splice(this.seasons.findIndex(s => s.id === season.id),1);
 
-                notificationService.showNotification(`Se ha eliminado correctamente la temporada ${season.name} (#${season.id})`, "danger");
+                notificationService.showNotification(`Se ha eliminado correctamente la temporada ${season.name} (#${season.id})`, "success");
             }).catch((error) => {
-                notificationService.showNotification(error.message, "danger");
+                notificationService.showNotification(error.message, "error");
             });
         }
     },

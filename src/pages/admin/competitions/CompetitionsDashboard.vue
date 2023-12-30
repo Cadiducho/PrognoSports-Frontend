@@ -53,11 +53,19 @@
             <o-table-column label="Actions" v-slot="props">
                     <span class="tags">
                         <router-link class="tag is-warning" :to="'/admin/competitions/' + props.row.id">Editar</router-link>
-                        <span class="tag is-danger" @click="confirmDeleteSeason(props.row)">Eliminar</span>
+                        <span class="tag is-danger" @click="confirmDeleteCompetition(props.row)">Eliminar</span>
                     </span>
             </o-table-column>
 
         </o-table>
+
+        <PrognoModal v-show="isDeleteCompetitionModalActive" @close="isDeleteCompetitionModalActive = false" @handle="deleteCompetition(competitionToDelete)">
+            <template v-slot:title>¿Borrar competición?</template>
+            <template v-slot:content>
+                ¿Estás seguro de que quieres <b>eliminar</b> la competición <span class="has-text-weight-semibold">{{ competitionToDelete.name }} (id: {{competitionToDelete.id}})? <br/>Esta acción se puede deshacer. </span>
+            </template>
+            <template v-slot:saveText>Borrar competición</template>
+        </PrognoModal>
 
     </div>
 </template>
@@ -70,26 +78,29 @@ import {Competition} from "@/types/Competition";
 
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
-import {useProgrammatic} from "@oruga-ui/oruga-next";
+import PrognoModal from "@/components/lib/PrognoModal.vue";
 
 export default defineComponent({
     name: "CompetitionsDashboard",
     components: {
+        PrognoModal,
         AlertNoPermission,
         PrognoPageTitle,
     },
     setup() {
         const authStore = useAuthStore();
-        const oruga = useProgrammatic().oruga;
 
         const currentUser = authStore.loggedUser;
-        return { currentUser, oruga };
+        return { currentUser };
     },
     data() {
         return {
             isPaginated: true,
             filtroCompetition: '',
             competitions: new Array<Competition>(),
+
+            isDeleteCompetitionModalActive: false,
+            competitionToDelete: {} as Competition
         }
     },
     mounted() {
@@ -125,15 +136,9 @@ export default defineComponent({
         }
     },
     methods: {
-        confirmDeleteSeason(competition: Competition) {
-            this.oruga.dialog.confirm({
-                title: 'Eliminar competición',
-                message: `¿Estás seguro de que quieres <b>eliminar</b> la competición ${competition.name} (#${competition.id})? <br/>Esta acción se puede deshacer.`,
-                confirmText: 'Eliminar competición',
-                type: 'danger',
-                hasIcon: true,
-                onConfirm: () => this.deleteCompetition(competition),
-            })
+        confirmDeleteCompetition(competition: Competition) {
+            this.competitionToDelete = competition;
+            this.isDeleteCompetitionModalActive = true;
         },
         deleteCompetition(competition: Competition) {
             competitionService.deleteCompetition(competition).then((ok) => {
@@ -141,9 +146,9 @@ export default defineComponent({
                 // Elimino de la lista y por lo tanto de la tabla
                 this.competitions.splice(this.competitions.findIndex(s => s.id === competition.id),1);
 
-                notificationService.showNotification(`Se ha eliminado correctamente la competition ${competition.name} (#${competition.id})`, "danger");
+                notificationService.showNotification(`Se ha eliminado correctamente la competition ${competition.name} (#${competition.id})`, "success");
             }).catch((error) => {
-                notificationService.showNotification(error.message, "danger");
+                notificationService.showNotification(error.message, "error");
             });
         }
     },

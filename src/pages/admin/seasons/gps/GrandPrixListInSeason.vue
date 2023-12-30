@@ -82,6 +82,14 @@
             </o-table-column>
 
         </o-table>
+
+        <PrognoModal v-show="isDeleteGPModalActive" @close="isDeleteGPModalActive = false" @handle="deleteGrandPrixFromSeason(grandPrixToDelete)">
+            <template v-slot:title>¿Eliminar Grand Prix de esta competición?</template>
+            <template v-slot:content>
+                ¿Estás seguro de que quieres <b>eliminar</b> el Gran Premio <span class="has-text-weight-semibold">{{ grandPrixToDelete.name }} {{grandPrixToDelete.season?.name }}</span> de esta competición? <br/>Esta acción se puede deshacer.
+            </template>
+            <template v-slot:saveText>Eliminar Grand Prix</template>
+        </PrognoModal>
     </div>
 </template>
 
@@ -89,29 +97,28 @@
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {grandPrixService, seasonService} from "@/_services";
-import {Competition} from "@/types/Competition";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Season} from "@/types/Season";
 
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
-import {useProgrammatic} from "@oruga-ui/oruga-next";
+import PrognoModal from "@/components/lib/PrognoModal.vue";
 
 export default defineComponent({
     name: "GrandPrixListInSeason",
     components: {
+        PrognoModal,
         AlertNoPermission,
         PrognoPageTitle,
     },
     setup() {
         const authStore = useAuthStore();
         const communityStore = useCommunityStore();
-        const oruga = useProgrammatic().oruga;
 
         const currentUser = authStore.loggedUser;
         const currentCommunity = communityStore.currentCommunity;
-        return {currentUser, currentCommunity, oruga};
+        return {currentUser, currentCommunity};
     },
     data() {
         return {
@@ -120,7 +127,10 @@ export default defineComponent({
             filtroGrandprix: '',
             gps: new Array<GrandPrix>(),
             seasonList: new Array<Season>(),
-            chosenSeason: {} as Season
+            chosenSeason: {} as Season,
+
+            isDeleteGPModalActive: false,
+            grandPrixToDelete: {} as GrandPrix
         }
     },
     mounted() {
@@ -144,16 +154,11 @@ export default defineComponent({
             this.loadGrandPrixes(this.chosenSeason!);
         },
         confirmDeleteGrandPrix(gp: GrandPrix) {
-            this.oruga.dialog.confirm({
-                title: 'Eliminar gran premio',
-                message: `¿Estás seguro de que quieres <b>eliminar</b> el Gran Premio ${gp.name} #${gp.season.name}? <br/>Esta acción se puede deshacer.`,
-                confirmText: 'Eliminar gran premio',
-                type: 'danger',
-                hasIcon: true,
-                onConfirm: () => this.deleteCompetition(gp),
-            })
+            this.isDeleteGPModalActive = true;
+            this.grandPrixToDelete = gp;
         },
-        deleteCompetition(gp: GrandPrix) {
+        deleteGrandPrixFromSeason(gp: GrandPrix) {
+            console.log("deleteGrandPrixFromSeason", gp);
             /*
                     grandPrixService.deleteGranPrix(gp).then((ok) => {
 
