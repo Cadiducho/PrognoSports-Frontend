@@ -57,7 +57,6 @@
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {circuitService, notificationService} from "@/_services";
-import {marked} from "marked";
 
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
