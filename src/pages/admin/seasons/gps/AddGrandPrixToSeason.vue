@@ -200,7 +200,7 @@ export default defineComponent({
                     this.createdGrandPrix.laps = oldGp.laps;
                     this.createdGrandPrix.promo_image_url = oldGp.promo_image_url;
                 }).catch((error) => {
-                    notificationService.showNotification("No existe GP con esos datos", "danger");
+                    notificationService.showNotification("No existe GP con esos datos", "error");
                 });
             }
         },
@@ -225,7 +225,7 @@ export default defineComponent({
                     name: 'adminGps'
                 })
             }).catch((error) => {
-                notificationService.showNotification(error.message, "danger");
+                notificationService.showNotification(error.message, "error");
             });
         }
     }

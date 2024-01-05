@@ -139,7 +139,7 @@ export default defineComponent({
         },
         uploadProfileImage(blob: Blob) {
             if (blob.size > 2_097_152) {
-                notificationService.showNotification("El archivo escogido es demasiado grande. El tamaño máximo es de 2Mb.", "danger");
+                notificationService.showNotification("El archivo escogido es demasiado grande. El tamaño máximo es de 2Mb.", "error");
                 return;
             }
 
@@ -147,7 +147,7 @@ export default defineComponent({
                 notificationService.showNotification("¡Has cambiado tu imagen de perfil!");
                 this.currentUser.changedProfileImage = blob;
             }).catch(() => {
-                notificationService.showNotification("Ha ocurrido un error cambiado tu imagen de perfil", "danger");
+                notificationService.showNotification("Ha ocurrido un error cambiado tu imagen de perfil", "error");
             });
         }
     }

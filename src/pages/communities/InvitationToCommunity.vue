@@ -61,7 +61,7 @@ export default defineComponent({
                 }, 500);
             }).catch((reason => {
                 setTimeout(() => {
-                    notificationService.showNotification("Ha ocurrido un error: " + reason.message, "danger");
+                    notificationService.showNotification("Ha ocurrido un error: " + reason.message, "error");
                     this.$router.push({
                         name: 'communitiesList',
                     });

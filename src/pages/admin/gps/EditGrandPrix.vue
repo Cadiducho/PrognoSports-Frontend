@@ -82,7 +82,7 @@ export default defineComponent({
             };
 
             grandPrixService.editGrandPrix(data).then((result) => {
-                notificationService.showNotification("Se ha editado correctamente el gran premio `" + result.name + "`", "danger");
+                notificationService.showNotification("Se ha editado correctamente el gran premio `" + result.name + "`", "error");
 
                 this.$router.push({
                     name: 'adminGps'

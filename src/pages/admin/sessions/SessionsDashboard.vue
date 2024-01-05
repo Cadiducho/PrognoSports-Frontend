@@ -158,7 +158,7 @@ export default defineComponent({
                     uses: 0
                 } as RaceSession;
             }).catch((error) => {
-                notificationService.showNotification(error.message, "danger");
+                notificationService.showNotification(error.message, "error");
             });
         },
         confirmDeleteSession(session: RaceSession) {
@@ -187,7 +187,7 @@ export default defineComponent({
 
                 notificationService.showNotification(`Se ha eliminado correctamente la sesión ${session.name} (${session.code})`, "primary");
             }).catch((error) => {
-                notificationService.showNotification(error.message, "danger");
+                notificationService.showNotification(error.message, "error");
             });
         }
     },

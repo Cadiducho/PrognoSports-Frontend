@@ -171,9 +171,9 @@ export default defineComponent({
                 })
             }).catch((error) => {
                 if (error.code === 705) {
-                    notificationService.showNotification("Invalid data for this new circuit", "danger");
+                    notificationService.showNotification("Invalid data for this new circuit", "error");
                 } else {
-                    notificationService.showNotification(error.message, "danger");
+                    notificationService.showNotification(error.message, "error");
                 }
             });
         }

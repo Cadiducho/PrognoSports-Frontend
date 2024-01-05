@@ -140,7 +140,7 @@ export default defineComponent({
                     }
                 })
             }).catch((error) => {
-                notificationService.showNotification(error.message, "danger");
+                notificationService.showNotification(error.message, "error");
             });
         }
     }

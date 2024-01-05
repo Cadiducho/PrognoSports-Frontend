@@ -125,7 +125,7 @@ export default defineComponent({
                     name: 'adminSeasons'
                 })
             }).catch((error) => {
-                notificationService.showNotification(error.message, "danger");
+                notificationService.showNotification(error.message, "error");
             });
         }
     }

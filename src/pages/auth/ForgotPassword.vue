@@ -156,17 +156,17 @@ export default defineComponent({
                     },
                     (error) => {
                         if (error === "User email cannot be null") {
-                            notificationService.showNotification("Debes introducir tu dirección de email", "danger");
+                            notificationService.showNotification("Debes introducir tu dirección de email", "error");
                         } else if (error === "User not found") {
-                            notificationService.showNotification("Usuario no encontrado", "danger");
+                            notificationService.showNotification("Usuario no encontrado", "error");
                         } else if (error === "You must send the security token") {
-                            notificationService.showNotification("Debes escribir el código de seguridad recibido", "danger");
+                            notificationService.showNotification("Debes escribir el código de seguridad recibido", "error");
                         } else if (error === "You must send new the password") {
-                            notificationService.showNotification("Debes escribir tu nueva contraseña", "danger");
+                            notificationService.showNotification("Debes escribir tu nueva contraseña", "error");
                         } else if (error === "Token rejected") {
-                            notificationService.showNotification("Token rechazado. Compruebalo bien o vuelve a intentarlo en 15 minutos", "danger");
+                            notificationService.showNotification("Token rechazado. Compruebalo bien o vuelve a intentarlo en 15 minutos", "error");
                         } else {
-                            notificationService.showNotification("Ha ocurrido desconocido cambiando la contraseña", "danger");
+                            notificationService.showNotification("Ha ocurrido desconocido cambiando la contraseña", "error");
                             console.log(error);
                         }
                     }
@@ -182,11 +182,11 @@ export default defineComponent({
                     },
                     (error) => {
                         if (error === "User email cannot be null") {
-                            notificationService.showNotification("Debes introducir tu dirección de email", "danger");
+                            notificationService.showNotification("Debes introducir tu dirección de email", "error");
                         } else if (error === "User not found") {
-                            notificationService.showNotification("Usuario no encontrado", "danger");
+                            notificationService.showNotification("Usuario no encontrado", "error");
                         } else {
-                            notificationService.showNotification("Ha ocurrido un error solicitando el código", "danger");
+                            notificationService.showNotification("Ha ocurrido un error solicitando el código", "error");
                         }
                     }
                 );

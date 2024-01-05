@@ -472,11 +472,11 @@ export default defineComponent({
                     this.setCommunity(community); // Establecer en Pinia la comunidad actual
                     this.emitter.emit('reloadCommunitiesDropdown'); // Recargar dropdown del navbar
                 }).catch((error) => {
-                    notificationService.showNotification(error.message, "danger");
+                    notificationService.showNotification(error.message, "error");
                     rulesetService.removeRuleSet(ruleset);
                 })
             }).catch((error) => {
-                notificationService.showNotification(error.message, "danger");
+                notificationService.showNotification(error.message, "error");
             })
         }
     },

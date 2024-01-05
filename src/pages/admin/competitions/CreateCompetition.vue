@@ -120,7 +120,7 @@ export default defineComponent({
                     name: 'adminCompetitions'
                 })
             }).catch((error) => {
-                notificationService.showNotification(error.message, "danger");
+                notificationService.showNotification(error.message, "error");
             });
         }
     },
