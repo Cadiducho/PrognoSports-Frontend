@@ -119,18 +119,15 @@
     </div>
 </template>
 
-<script lang="ts">
-import {defineComponent} from "vue";
+<script setup lang="ts">
+import { useRouter } from 'vue-router';
 
-export default defineComponent({
-    name: "LandingHome",
-    methods: {
-        sendToRegister() {
-            window.scrollTo({ top: 0, left: 0, behavior: "smooth"});
-            this.$router.push({path: '/register'});
-        }
-    }
-});
+const router = useRouter();
+const sendToRegister = () => {
+    window.scrollTo({top: 0, left: 0, behavior: "smooth"});
+
+    router.push({path: '/register'});
+};
 </script>
 
 <style lang="scss" scoped>

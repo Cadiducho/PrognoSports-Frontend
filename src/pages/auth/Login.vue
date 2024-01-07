@@ -18,8 +18,8 @@
                                         <i class="fas fa-user"></i>
                                     </span>
 
-                                    <input v-model="username" type="text" autofocus required
-                                        class="input" :class="{ 'is-danger': submitted && !username }" />
+                                    <input v-model="form.username" type="text" autofocus required
+                                        class="input" :class="{ 'is-danger': form.submitted && !form.username }" />
 
                                 </div>
                             </div>
@@ -30,14 +30,14 @@
                                         <i class="fas fa-lock"></i>
                                     </span>
 
-                                    <input v-model="password" type="password" required
-                                        class="input" :class="{ 'is-danger': submitted && !password }" />
+                                    <input v-model="form.password" type="password" required
+                                        class="input" :class="{ 'is-danger': form.submitted && !form.password }" />
 
                                 </div>
                             </div>
                             <div class="field is-grouped">
                                 <div class="control">
-                                    <button type="submit" class="button is-link" :disabled="isLoggingIn">
+                                    <button type="submit" class="button is-link" :disabled="form.isLoggingIn">
                                         Acceder
                                     </button>
                                 </div>
@@ -46,10 +46,10 @@
                     </div>
                     <div class="card-footer">
                         <div class="card-footer-item">
-                            <router-link :to="{ name: 'register', query: { redirect: this.$route.query.redirect }}">Registrarse</router-link>
+                            <router-link :to="{ name: 'register', query: { redirect: redirectTo }}">Registrarse</router-link>
                         </div>
                         <div class="card-footer-item">
-                            <router-link :to="{ name: 'forgotpassword', query: { redirect: this.$route.query.redirect }}">He olvidado mi contraseña</router-link>
+                            <router-link :to="{ name: 'forgotpassword', query: { redirect: redirectTo }}">He olvidado mi contraseña</router-link>
                         </div>
                     </div>
                 </div>
@@ -58,71 +58,50 @@
     </div>
 </template>
 
-<script lang="ts">
-import {defineComponent} from "vue";
-import {useAuthStore} from "@/store/authStore";
-import {notificationService} from "@/_services";
+<script setup lang="ts">
+import { useAuthStore } from "@/store/authStore";
+import { LocationQueryValue, useRoute } from "vue-router";
+import { onMounted, reactive } from "vue";
+import { useAuth } from "@/composables/useAuth";
 
-export default defineComponent({
-    name: "Login",
-    setup() {
-        const authStore = useAuthStore();
+const authStore = useAuthStore();
+const route = useRoute();
+const auth = useAuth();
 
-        const login = authStore.login;
-        const registeredMail = authStore.mail;
-        return { login, registeredMail }
-    },
-    data() {
-        return {
-            username: "",
-            password: "",
-            submitted: false,
-            isLoggingIn: false,
-            redirectTo: this.$route.query.redirect
-        }
-    },
-    created() {
-        if (!!this.registeredMail) {
-            this.username = this.registeredMail;
-        }
-    },
-    methods: {
-        handleSubmit() {
-            // Prevenir multiples clicks en el login
-            if (this.isLoggingIn) return;
+const redirectTo = route.query.redirect as LocationQueryValue;
 
-            this.submitted = true;
-            this.isLoggingIn = true;
-            if (this.username && this.password) {
-                this.login({
-                    username: this.username,
-                    password: this.password,
-                }).then(
-                    () => {
-                        notificationService.showNotification("¡Has iniciado sesión correctamente!");
+const registeredMail = authStore.mail;
+const form = reactive({
+    username: "",
+    password: "",
+    submitted: false,
+    isLoggingIn: false,
+});
 
-                        if (this.redirectTo !== undefined) {
-                            // Enviar a la redirección
-                            this.$router.push(this.redirectTo as string);
-                        } else {
-                            // Redirigir al home en caso normal
-                            this.$router.push({name: "home"});
-                        }
-                    },
-                    (error: any) => {
-                        let message: string;
-                        if (error.code === 600) {
-                            message = "Fallo al iniciar sesión: Credenciales inválidas";
-                        } else {
-                            message = "Fallo al iniciar sesión: " + error.message;
-                        }
-                        this.isLoggingIn = false;
-
-                        notificationService.showNotification(message, 'error');
-                    }
-                );
-            }
-        }
+onMounted(() => {
+    if (!!registeredMail) {
+        form.username = registeredMail;
     }
 });
+
+const handleSubmit = async () => {
+    // Prevenir multiples clicks en el login
+    if (form.isLoggingIn) return;
+
+    form.submitted = true;
+    form.isLoggingIn = true;
+    if (!(form.username && form.password)) {
+        return;
+    }
+
+    try {
+        const payload = {
+            username: form.username,
+            password: form.password,
+        };
+        await auth.login(payload, redirectTo);
+    } catch (error: any) {
+        form.isLoggingIn = false;
+    }
+};
 </script>

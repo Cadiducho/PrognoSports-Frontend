@@ -14,15 +14,11 @@
     </section>
 </template>
 
-<script lang="ts">
-import {defineComponent} from "vue";
+<script setup lang="ts">
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
-export default defineComponent({
-    name: "ErrorNotFound",
-    methods: {
-        back() {
-            this.$router.go(-1);
-        }
-    }
-});
+const back = () => {
+    router.go(-1);
+};
 </script>

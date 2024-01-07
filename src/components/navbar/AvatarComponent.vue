@@ -28,23 +28,18 @@
     </div>
 </template>
 
-<script lang="ts">
-    import {defineComponent} from "vue";
-    import {useAuthStore} from "@/store/authStore";
+<script setup lang="ts">
 
-    export default defineComponent({
-        name: "AvatarComponent",
-        setup() {
-            const authStore = useAuthStore();
-            const currentUser = authStore.loggedUser;
-            return { currentUser };
-        },
-        methods: {
-            logout() {
-                this.$router.push('/logout');
-            }
-        }
-    });
+import { useAuth } from "@/composables/useAuth";
+import { useAuthStore } from "@/store/authStore";
+const auth = useAuth();
+const authStore = useAuthStore();
+
+const currentUser = authStore.loggedUser;
+
+const logout = async () => {
+    await auth.logout();
+};
 </script>
 
 <style scoped>
