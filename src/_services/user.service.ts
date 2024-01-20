@@ -31,8 +31,8 @@ export class UserService extends PrognoService<IUser, User> {
         return await axios.post("/auth/forgotpassword", {"email": email});
     }
 
-    public async changePassword(email: string, inputToken: string, inputPassword: string) {
-        return await axios.patch("/auth/changepassword", {"email": email, "token": inputToken, "password": inputPassword});
+    public async changePassword(payload: { email: string; token: string; password: string }) {
+        return await axios.patch("/auth/changepassword", payload);
     }
 
     public async getPointsInCommunity(user: User, community: Community, competition: Competition, season: Season): Promise<Map<string, number>> {

@@ -20,11 +20,11 @@
                                 contraseña para tu cuenta.
                             </p>
                         </div>
-                        <form @submit.prevent="handleSubmitChangePassword()" v-if="showChangePasswordForm">
+                        <form @submit.prevent="handleSubmitChangePassword()" v-if="form.showChangePasswordForm">
                             <div class="field">
                                 <label class="label">Correo electrónico</label>
                                 <div class="control has-icons-left has-icons-right">
-                                    <input v-model="email" required
+                                    <input v-model="form.email" required
                                            class="input"
                                            type="email" />
                                     <span class="icon is-small is-left">
@@ -36,7 +36,7 @@
                                 <label class="label">Código de verificación</label>
                                 <div class="control has-icons-left has-icons-right">
                                     <input
-                                        v-model="inputToken" required
+                                        v-model="form.inputToken" required
                                         class="input"
                                         type="text" />
                                     <span class="icon is-small is-left">
@@ -47,7 +47,7 @@
                             <div class="field">
                                 <label class="label">Nueva contraseña</label>
                                 <div class="control has-icons-left has-icons-right">
-                                    <input v-model="inputPassword" required
+                                    <input v-model="form.inputPassword" required
                                            class="input"
                                            type="password" />
                                     <span class="icon is-small is-left">
@@ -63,7 +63,7 @@
                                 </div>
                                 <div class="control">
                                     <button
-                                        @click="showChangePasswordForm = false"
+                                        @click="form.showChangePasswordForm = false"
                                         class="button is-info">
                                         Enviar nuevo código
                                     </button>
@@ -75,7 +75,7 @@
                             <div class="field">
                                 <label class="label">Correo electrónico</label>
                                 <div class="control has-icons-left has-icons-right">
-                                    <input v-model="email" required
+                                    <input v-model="form.email" required
                                            class="input"
                                            type="email" />
                                     <span class="icon is-small is-left">
@@ -91,7 +91,7 @@
                                 </div>
                                 <div class="control">
                                     <button
-                                        @click="showChangePasswordForm = true"
+                                        @click="form.showChangePasswordForm = true"
                                         class="button is-info">
                                         Ya tengo un código
                                     </button>
@@ -102,10 +102,10 @@
                     </div>
                     <div class="card-footer">
                         <div class="card-footer-item">
-                            <router-link :to="{ name: 'register', query: { redirect: this.$route.query.redirect }}">Registrarse</router-link>
+                            <router-link :to="{ name: 'register', query: { redirect: redirectTo }}">Registrarse</router-link>
                         </div>
                         <div class="card-footer-item">
-                            <router-link :to="{ name: 'login', query: { redirect: this.$route.query.redirect }}">Ya tengo usuario</router-link>
+                            <router-link :to="{ name: 'login', query: { redirect: redirectTo }}">Ya tengo usuario</router-link>
                         </div>
                     </div>
                 </div>
@@ -114,84 +114,76 @@
     </div>
 </template>
 
-<script lang="ts">
+<script setup>
+import {useRoute, useRouter} from "vue-router";
+import {reactive} from "vue";
+import {useCommunityStore} from "@/store/communityStore";
 import {notificationService, userService} from "@/_services";
 
-import {defineComponent} from "vue";
-import {useAuthStore} from "@/store/authStore";
-import {useCommunityStore} from "@/store/communityStore";
+const communityStore = useCommunityStore();
+const route = useRoute();
+const router = useRouter();
 
-export default defineComponent({
-    name: "ForgotPassword",
-    setup() {
-        const authStore = useAuthStore();
-        const communityStore = useCommunityStore();
+const redirectTo = route.query.redirect;
+const form = reactive({
+    email: "",
+    inputToken: "",
+    inputPassword: "",
+    showChangePasswordForm: false
+})
 
-        const currentUser = authStore.loggedUser;
-        const currentCommunity = communityStore.currentCommunity;
-        return { currentUser, currentCommunity };
-    },
-    data() {
-        return {
-            email: "",
-            inputToken: "",
-            inputPassword: "",
-            showChangePasswordForm: false
-        }
-    },
-    methods: {
-        handleSubmitChangePassword() {
-            if (this.email) {
-                userService.changePassword(
-                    this.email,
-                    this.inputToken,
-                    this.inputPassword
-                ).then(
-                    () => {
-                        notificationService.showNotification("Tu contraseña ha sido restablecida");
-                        this.$router.push({
-                            path: '/login',
-                            query: {redirect: this.$route.query.redirect}
-                        });
-                    },
-                    (error) => {
-                        if (error === "User email cannot be null") {
-                            notificationService.showNotification("Debes introducir tu dirección de email", "error");
-                        } else if (error === "User not found") {
-                            notificationService.showNotification("Usuario no encontrado", "error");
-                        } else if (error === "You must send the security token") {
-                            notificationService.showNotification("Debes escribir el código de seguridad recibido", "error");
-                        } else if (error === "You must send new the password") {
-                            notificationService.showNotification("Debes escribir tu nueva contraseña", "error");
-                        } else if (error === "Token rejected") {
-                            notificationService.showNotification("Token rechazado. Compruebalo bien o vuelve a intentarlo en 15 minutos", "error");
-                        } else {
-                            notificationService.showNotification("Ha ocurrido desconocido cambiando la contraseña", "error");
-                            console.log(error);
-                        }
-                    }
-                );
-            }
-        },
-        handleSendCode() {
-            if (this.email) {
-                userService.sendForgotPassword(this.email).then(
-                    () => {
-                        notificationService.showNotification("Tu código de verificación ha sido enviado");
-                        this.showChangePasswordForm = true;
-                    },
-                    (error) => {
-                        if (error === "User email cannot be null") {
-                            notificationService.showNotification("Debes introducir tu dirección de email", "error");
-                        } else if (error === "User not found") {
-                            notificationService.showNotification("Usuario no encontrado", "error");
-                        } else {
-                            notificationService.showNotification("Ha ocurrido un error solicitando el código", "error");
-                        }
-                    }
-                );
-            }
+const handleSendCode = async () => {
+    if (!form.email) {
+        return;
+    }
+    try {
+        await userService.sendForgotPassword(form.email);
+        notificationService.showNotification("Se ha enviado un código de verificación a tu correo electrónico");
+        form.showChangePasswordForm = true;
+    } catch (error) {
+        if (error === "User email cannot be null") {
+            notificationService.showNotification("Debes introducir tu dirección de email", "error");
+        } else if (error === "User not found") {
+            notificationService.showNotification("Usuario no encontrado", "error");
+        } else {
+            notificationService.showNotification("Ha ocurrido un error solicitando el código", "error");
         }
     }
-});
+}
+
+const handleSubmitChangePassword = async () => {
+    if (!form.email) {
+        return;
+    }
+
+    const payload = {
+        email: form.email,
+        token: form.inputToken,
+        password: form.inputPassword
+    }
+    try {
+        await userService.changePassword(payload);
+        notificationService.showNotification("Tu contraseña ha sido restablecida");
+        router.push({
+            path: '/login',
+            query: {redirect: redirectTo}
+        });
+    } catch (error) {
+        if (error === "User email cannot be null") {
+            notificationService.showNotification("Debes introducir tu dirección de email", "error");
+        } else if (error === "User not found") {
+            notificationService.showNotification("Usuario no encontrado", "error");
+        } else if (error === "You must send the security token") {
+            notificationService.showNotification("Debes escribir el código de seguridad recibido", "error");
+        } else if (error === "You must send new the password") {
+            notificationService.showNotification("Debes escribir tu nueva contraseña", "error");
+        } else if (error === "Token rejected") {
+            notificationService.showNotification("Token rechazado. Compruebalo bien o vuelve a intentarlo en 15 minutos", "error");
+        } else {
+            notificationService.showNotification("Ha ocurrido desconocido cambiando la contraseña", "error");
+            console.log(error);
+        }
+    }
+};
+
 </script>
