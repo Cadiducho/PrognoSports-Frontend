@@ -114,17 +114,15 @@
     </div>
 </template>
 
-<script setup>
-import {useRoute, useRouter} from "vue-router";
+<script setup lang="ts">
+import {LocationQueryValue, useRoute, useRouter} from "vue-router";
 import {reactive} from "vue";
-import {useCommunityStore} from "@/store/communityStore";
 import {notificationService, userService} from "@/_services";
 
-const communityStore = useCommunityStore();
-const route = useRoute();
 const router = useRouter();
+const route = useRoute();
 
-const redirectTo = route.query.redirect;
+const redirectTo = route.query.redirect as LocationQueryValue;
 const form = reactive({
     email: "",
     inputToken: "",
@@ -168,20 +166,27 @@ const handleSubmitChangePassword = async () => {
             path: '/login',
             query: {redirect: redirectTo}
         });
-    } catch (error) {
-        if (error === "User email cannot be null") {
-            notificationService.showNotification("Debes introducir tu dirección de email", "error");
-        } else if (error === "User not found") {
-            notificationService.showNotification("Usuario no encontrado", "error");
-        } else if (error === "You must send the security token") {
-            notificationService.showNotification("Debes escribir el código de seguridad recibido", "error");
-        } else if (error === "You must send new the password") {
-            notificationService.showNotification("Debes escribir tu nueva contraseña", "error");
-        } else if (error === "Token rejected") {
-            notificationService.showNotification("Token rechazado. Compruebalo bien o vuelve a intentarlo en 15 minutos", "error");
-        } else {
-            notificationService.showNotification("Ha ocurrido desconocido cambiando la contraseña", "error");
-            console.log(error);
+    } catch (error: any) {
+        switch (error.code) {
+            case 604:
+                notificationService.showNotification("Token rechazado. Compruebalo bien o vuelve a intentarlo en 15 minutos", "error");
+                break;
+            case 608:
+                notificationService.showNotification("Debes introducir el código de seguridad recibido", "error");
+                break;
+            case 609:
+                notificationService.showNotification("Debes introducir tu nueva contraseña", "error");
+                break;
+            case 710:
+                notificationService.showNotification("Debes introducir tu dirección de email", "error");
+                break;
+            case 708:
+                notificationService.showNotification("Usuario no encontrado", "error");
+                break;
+            default:
+                notificationService.showNotification("Ha ocurrido desconocido cambiando la contraseña", "error");
+                console.log(error);
+                break;
         }
     }
 };

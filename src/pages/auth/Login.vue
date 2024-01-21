@@ -11,14 +11,14 @@
                     <div class="card-content">
                         <form @submit.prevent="handleSubmit()">
                             <div class="field">
-                                <label class="label">Usuario</label>
+                                <label class="label">Email</label>
                                 <div class="control has-icons-left has-icons-right">
 
                                     <span class="icon is-small">
                                         <i class="fas fa-user"></i>
                                     </span>
 
-                                    <input v-model="form.username" type="text" autofocus required
+                                    <input v-model="form.username" type="email" autofocus required
                                         class="input" :class="{ 'is-danger': form.submitted && !form.username }" />
 
                                 </div>
