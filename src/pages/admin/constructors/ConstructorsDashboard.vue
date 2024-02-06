@@ -2,104 +2,96 @@
     <div id="adminConstructor" class="box">
         <PrognoPageTitle class="mb-5" name="Administración de Constructores"/>
 
-        <div class="block">
-            <o-button variant="link" to="/new/constructor" tag="router-link">Nuevo constructor</o-button>
-        </div>
 
-        <o-field>
-            <o-input
-                v-model="filtroTeam"
-                placeholder="Buscar constructor"
-                type="search"
-                icon-pack="fas"
-                icon="search"
-            ></o-input>
-        </o-field>
+        <p-button label="Nuevo constructor" color="info" to="/admin/constructors/create" />
 
-        <div class="block">
-            <o-switch v-model="isPaginated">Paginated</o-switch>
-        </div>
+        <p-table :columns="columns" :rows="constructors"
+                 hasViewButton hasEditButton hasDeleteButton paginated
+                 :with-filter="filteredConstructors"
+                 @view="goToView($event as Constructor)"
+                 @edit="goToEdit($event as Constructor)"
+                 @delete="confirmDeleteConstructor($event as Constructor)"
+        >
 
-        <o-table :data="filteredDrivers"
-                 hoverable striped
-                 :paginated="isPaginated"
-                 per-page="15">
+        </p-table>
 
-            <o-table-column field="id" label="ID" width="40" sortable v-slot="props">
-                {{ props.row.id }}
-            </o-table-column>
-
-            <o-table-column field="name" label="Nombre" sortable v-slot="props">
-                {{ props.row.name }}
-            </o-table-column>
-
-            <o-table-column label="Actions" v-slot="props">
-                    <span class="tags">
-                        <span class="tag is-link">Ver</span>
-                        <span class="tag is-warning">Editar</span>
-                        <span class="tag is-danger">Eliminar</span>
-                    </span>
-            </o-table-column>
-
-        </o-table>
-
+        <PrognoModal v-show="showConfirmDeleteModal" @close="showConfirmDeleteModal = false">
+            <template v-slot:title>
+                Confirmar eliminación
+            </template>
+            <template v-slot:content>
+                ¿Está seguro que desea eliminar el constructor <strong>{{constructorToDelete?.name}}</strong>? Esta acción no se puede deshacer.
+            </template>
+            <template v-slot:footer>
+                <button class="button is-danger" @click="deleteConstructor(constructorToDelete)">Eliminar</button>
+                <button class="button" @click="showConfirmDeleteModal = false">Cancelar</button>
+            </template>
+        </PrognoModal>
     </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-import {constructorService} from "@/_services";
+import {constructorService, notificationService} from "@/_services";
 import {Constructor} from "@/types/Constructor";
+import PButton from "@/components/lib/forms/PButton.vue";
+import PTable from "@/components/lib/table/PTable.vue";
+import PrognoModal from "@/components/lib/PrognoModal.vue";
+import {onMounted, ref} from "vue";
+import {useRouter} from "vue-router";
 
-import {defineComponent} from "vue";
-import {useAuthStore} from "@/store/authStore";
+const router = useRouter();
 
-export default defineComponent({
-    name: "ConstructorsDashboard",
-    components: {
-        AlertNoPermission,
-        PrognoPageTitle,
-    },
-    setup() {
-        const authStore = useAuthStore();
+const columns = ref( [
+    {label: 'ID', field: 'id'},
+    {label: 'Nombre', field: 'name'},
+]);
+const constructors = ref(new Array<Constructor>())
+const showConfirmDeleteModal = ref(false);
+const constructorToDelete = ref(undefined as Constructor | undefined);
 
-        const currentUser = authStore.loggedUser;
-        return { currentUser };
-    },
-    data() {
-        return {
-            isPaginated: true,
-            filtroTeam: '',
-
-            constructors: new Array<Constructor>(),
-        }
-    },
-    mounted() {
-        constructorService.getAllConstructors().then((constructors) => {
-            this.constructors = [];
-            this.constructors.push(...constructors);
-        })
-    },
-    computed: {
-        filteredDrivers(): Array<Constructor> {
-            if (!this.filtroTeam.trim()) {
-                return this.constructors;
-            }
-
-            const filtroLowerCase: string = this.filtroTeam.toLowerCase().trim();
-
-            return this.constructors.filter((driver) => {
-                return (
-                    driver.id
-                        .toLowerCase()
-                        .includes(filtroLowerCase) ||
-                    driver.name
-                        .toLowerCase()
-                        .includes(filtroLowerCase)
-                );
-            });
-        }
-    }
+const filteredConstructors = ((original: Constructor[], filter: string): Constructor[] => {
+    return original.filter((constructor) => {
+        return (
+            constructor.id
+                .toString()
+                .includes(filter) ||
+            constructor.name
+                .toLowerCase()
+                .includes(filter)
+        );
+    });
 });
+
+onMounted(async () => {
+    const response = await constructorService.getAllConstructors();
+    constructors.value.push(...response);
+});
+
+const goToView = (constructor: Constructor) => {
+    router.push({name: 'constructorDetails', params: {constructor: constructor.id}});
+}
+
+const goToEdit = (constructor: Constructor) => {
+    router.push({name: 'adminConstructorEdit', params: {constructor: constructor.id}});
+}
+const confirmDeleteConstructor = (constructor: Constructor) => {
+    constructorToDelete.value = constructor;
+    showConfirmDeleteModal.value = true;
+}
+
+const deleteConstructor = async (constructor?: Constructor) => {
+    try {
+        if (!constructor) {
+            return;
+        }
+        await constructorService.deleteConstructor(constructor);
+        constructors.value.splice(constructors.value.findIndex(s => s.id === constructor.id),1);
+        notificationService.showNotification(`Se ha eliminado correctamente el constructor ${constructor.name} (#${constructor.id})`);
+    } catch (error: any) {
+        notificationService.showNotification(error.message, "error");
+    } finally {
+        showConfirmDeleteModal.value = false;
+    }
+}
 </script>

@@ -154,9 +154,27 @@ export const routes = [
             },
             {
                 path: 'constructors',
-                name: 'adminConstructors',
-                component: () => import('@/pages/admin/constructors/ConstructorsDashboard.vue'),
-                meta: { title: "Constructores" }
+                component: EmptyRoutedLayout,
+                meta: { title: "Constructores" },
+                children: [
+                    {
+                        path: '',
+                        name: 'adminConstructors',
+                        component: () => import('@/pages/admin/constructors/ConstructorsDashboard.vue'),
+                    },
+                    {
+                        path: 'create',
+                        name: 'adminConstructorCreate',
+                        component: () => import('@/pages/admin/constructors/CreateConstructor.vue'),
+                        meta: { title: "Nuevo constructor" }
+                    },
+                    {
+                        path: ':constructor',
+                        name: 'adminConstructorEdit',
+                        component: () => import('@/pages/admin/constructors/EditConstructor.vue'),
+                        meta: { title: "Editar constructor" }
+                    },
+                ],
             },
             {
                 path: 'users',

@@ -41,7 +41,7 @@
 import {computed, ref} from "vue";
 import Pagination from "@/components/lib/Pagination.vue";
 
-export interface Props {
+export interface Props<T> {
     columns: Array<Column>;
     rows: Array<T>;
     withFilter?: (original: Array<T>, filter: string) => Array<T>;
@@ -52,7 +52,7 @@ export interface Props {
     perPage?: number;
     striped?: boolean;
 }
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props<any>>(), {
     hasViewButton: false,
     hasEditButton: false,
     hasDeleteButton: false,
@@ -62,6 +62,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 defineEmits<{
+    view: [element: T],
     edit: [element: T],
     delete: [element: T]
 }>();

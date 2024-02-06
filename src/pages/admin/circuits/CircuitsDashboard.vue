@@ -2,9 +2,7 @@
     <div id="adminDrivers" class="box">
         <PrognoPageTitle class="mb-5" name="Administración de circuitos"/>
 
-        <div class="block">
-            <o-button variant="link" :to="{name: 'circuitCreate'}" tag="router-link">Nuevo circuito</o-button>
-        </div>
+        <p-button label="Nuevo circuito" color="info" :to="{name: 'circuitCreate'}" />
 
         <p-table :columns="columns" :rows="circuits"
                  hasViewButton hasEditButton hasDeleteButton paginated
@@ -42,10 +40,12 @@ import {useAuthStore} from "@/store/authStore";
 import {Circuit} from "@/types/Circuit";
 import PTable from "@/components/lib/table/PTable.vue";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
 
 export default defineComponent({
     name: "CompetitionsDashboard",
     components: {
+        PButton,
         PrognoModal,
         PTable,
         AlertNoPermission,
@@ -59,7 +59,6 @@ export default defineComponent({
     },
     data() {
         return {
-            isPaginated: true,
             filtroCircuit: '',
             columns: [
                 {label: 'ID', field: 'id'},

@@ -32,7 +32,7 @@ export class ConstructorService extends PrognoService<IConstructor, Constructor>
         return this.getObjectListFromAPI(`/seasons/${season.id}/constructors`);
     }
 
-    public async createConstructor(data: any): Promise<Constructor> {
+    public async createConstructor(data: {name: string}): Promise<Constructor> {
         return await axios.post(`/constructors`, data);
     }
 
