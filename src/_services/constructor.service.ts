@@ -11,10 +11,10 @@ export class ConstructorService extends PrognoService<IConstructor, Constructor>
 
     /**
      * Devuelve un constructor
-     * @param sessionName el nombre del constructor
+     * @param constructorId el id del constructor
      */
-    public async getConstructor(constructorName: string): Promise<Constructor> {
-        return this.getObjectFromAPI(`/constructors/${constructorName}`)
+    public async getConstructor(constructorId: string): Promise<Constructor> {
+        return this.getObjectFromAPI(`/constructors/${constructorId}`)
     }
 
     /**
@@ -36,7 +36,7 @@ export class ConstructorService extends PrognoService<IConstructor, Constructor>
         return await axios.post(`/constructors`, data);
     }
 
-    public async updateConstructor(constructor: Constructor): Promise<Array<Constructor>> {
+    public async updateConstructor(constructor: Partial<Constructor>): Promise<Array<Constructor>> {
         return await axios.put(`/constructors/${constructor.id}`, constructor);
     }
 

@@ -22,7 +22,6 @@ const router = useRouter();
 const name = ref('');
 
 const createConstructor = async () => {
-    console.log(name.value);
     if (!name.value) {
         return;
     }

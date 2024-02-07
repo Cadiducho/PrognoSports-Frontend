@@ -1,5 +1,5 @@
 export interface IConstructor {
-    id: string;
+    id: number;
     name: string;
     carname: string;
     longname: string;
@@ -8,7 +8,7 @@ export interface IConstructor {
 
 export class Constructor implements IConstructor {
 
-    id: string;
+    id: number;
     name: string;
     carname: string;
     longname: string;

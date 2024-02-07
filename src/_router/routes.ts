@@ -169,7 +169,7 @@ export const routes = [
                         meta: { title: "Nuevo constructor" }
                     },
                     {
-                        path: ':constructor',
+                        path: ':constructorId',
                         name: 'adminConstructorEdit',
                         component: () => import('@/pages/admin/constructors/EditConstructor.vue'),
                         meta: { title: "Editar constructor" }

@@ -69,11 +69,11 @@ onMounted(async () => {
 });
 
 const goToView = (constructor: Constructor) => {
-    router.push({name: 'constructorDetails', params: {constructor: constructor.id}});
+    router.push({name: 'constructorDetails', params: {constructorId: constructor.id}});
 }
 
 const goToEdit = (constructor: Constructor) => {
-    router.push({name: 'adminConstructorEdit', params: {constructor: constructor.id}});
+    router.push({name: 'adminConstructorEdit', params: {constructorId: constructor.id}});
 }
 const confirmDeleteConstructor = (constructor: Constructor) => {
     constructorToDelete.value = constructor;
