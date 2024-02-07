@@ -3,7 +3,7 @@
         <PrognoPageTitle class="mb-5" name="Administración de Constructores"/>
 
 
-        <p-button label="Nuevo constructor" color="info" to="/admin/constructors/create" />
+        <p-button class="mb-4" label="Nuevo constructor" color="info" to="/admin/constructors/create" />
 
         <p-table :columns="columns" :rows="constructors"
                  hasViewButton hasEditButton hasDeleteButton paginated

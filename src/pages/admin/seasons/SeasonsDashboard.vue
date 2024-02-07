@@ -2,146 +2,103 @@
     <div id="seasonList" class="box">
         <PrognoPageTitle class="mb-5" name="Administración de temporadas"/>
 
-        <div class="block">
-            <o-button variant="link" :to="{name: 'seasonCreate'}" tag="router-link">Nueva temporada</o-button>
-        </div>
+        <p-button class="mb-4" label="Nueva temporada" color="info" to="/admin/seasons/create" />
 
-        <o-field>
-            <o-input
-                v-model="filtroSeason"
-                placeholder="Buscar temporada"
-                type="search"
-                icon-pack="fas"
-                icon="search"
-            ></o-input>
-        </o-field>
+        <p-table :columns="columns" :rows="seasons"
+                 hasViewButton hasEditButton hasDeleteButton paginated
+                 :with-filter="filteredSeasons"
+                 @view="goToView($event as Season)"
+                 @edit="goToEdit($event as Season)"
+                 @delete="confirmDeleteSeason($event as Season)"
+        >
 
-        <div class="block">
-            <o-switch v-model="isPaginated">Paginated</o-switch>
-        </div>
+        </p-table>
 
-        <o-table :data="filteredSeasons"
-                 hoverable striped
-                 :paginated="isPaginated"
-                 per-page="15">
-
-            <o-table-column field="id" label="ID" width="40" sortable numeric v-slot="props">
-                {{ props.row.id }}
-            </o-table-column>
-
-            <o-table-column field="competition.name" label="Competición" sortable v-slot="props">
-                {{ props.row.competition.name }}
-            </o-table-column>
-
-            <o-table-column field="name" label="Name" sortable v-slot="props">
-                {{ props.row.name }}
-            </o-table-column>
-
-            <o-table-column field="totalEvents" label="Total Events" sortable numeric v-slot="props">
-                {{ props.row.totalEvents }}
-            </o-table-column>
-
-            <o-table-column label="Actions" v-slot="props">
-                    <span class="tags">
-                        <router-link class="tag is-warning" :to="'/admin/seasons/' + props.row.id">Editar</router-link>
-                        <span class="tag is-danger" @click="confirmDeleteSeason(props.row)">Eliminar</span>
-                    </span>
-            </o-table-column>
-
-        </o-table>
-
-        <PrognoModal v-show="isDeleteSeasonModalActive" @close="isDeleteSeasonModalActive = false" @handle="deleteSeason(seasonToDelete)">
-            <template v-slot:title>¿Eliminar esta temporada?</template>
-            <template v-slot:content>
-                ¿Estás seguro de que quieres <b>eliminar</b> la temporada <span class="has-text-weight-semibold">{{ seasonToDelete.name }} ({{seasonToDelete.id}})</span> de esta competición? <br/>Esta acción se puede deshacer.
+        <PrognoModal v-show="showConfirmDeleteModal" @close="showConfirmDeleteModal = false">
+            <template v-slot:title>
+                Confirmar eliminación
             </template>
-            <template v-slot:saveText>Eliminar temporada</template>
+            <template v-slot:content>
+                ¿Está seguro que desea eliminar el constructor <strong>{{seasonToDelete?.name}}</strong>? Esta acción no se puede deshacer.
+            </template>
+            <template v-slot:footer>
+                <button class="button is-danger" @click="deleteSeason(seasonToDelete)">Eliminar</button>
+                <button class="button" @click="showConfirmDeleteModal = false">Cancelar</button>
+            </template>
         </PrognoModal>
     </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
+import PrognoModal from "@/components/lib/PrognoModal.vue";
+import PTable from "@/components/lib/table/PTable.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
+import {useRouter} from "vue-router";
+import {onMounted, ref} from "vue";
 import {notificationService, seasonService} from "@/_services";
 import {Season} from "@/types/Season";
 
-import {defineComponent} from "vue";
-import {useAuthStore} from "@/store/authStore";
-import PrognoModal from "@/components/lib/PrognoModal.vue";
+const router = useRouter();
 
-export default defineComponent({
-    name: "SeasonsDashboard",
-    components: {
-        PrognoModal,
-        AlertNoPermission,
-        PrognoPageTitle,
-    },
-    setup() {
-        const authStore = useAuthStore();
+const columns = ref( [
+    {label: 'ID', field: 'id'},
+    {label: 'Nombre', field: 'name'},
+    {label: 'Competición', field: 'competition.name'},
+    {label: 'Código', field: 'competition.code'},
+]);
+const seasons = ref(new Array<Season>())
+const showConfirmDeleteModal = ref(false);
+const seasonToDelete = ref(undefined as Season | undefined);
 
-        const currentUser = authStore.loggedUser;
-        return { currentUser };
-    },
-    data() {
-        return {
-            isPaginated: true,
-            filtroSeason: '',
-
-            seasons: new Array<Season>(),
-
-            isDeleteSeasonModalActive: false,
-            seasonToDelete: {} as Season
-        }
-    },
-    mounted() {
-        seasonService.getSeasonList().then((seasons) => {
-            this.seasons = [];
-            this.seasons.push(...seasons);
-        })
-    },
-    computed: {
-        filteredSeasons(): Array<Season> {
-            if (!this.filtroSeason.trim()) {
-                return this.seasons;
-            }
-
-            const filtroLowerCase: string = this.filtroSeason.toLowerCase().trim();
-
-            return this.seasons.filter((season) => {
-                return (
-                    season.id
-                        .toString()
-                        .includes(filtroLowerCase) ||
-                    season.name
-                        .toLowerCase()
-                        .includes(filtroLowerCase) ||
-                    season.competition.name
-                        .toLowerCase()
-                        .includes(filtroLowerCase) ||
-                    season.competition.code
-                        .toLowerCase()
-                        .includes(filtroLowerCase)
-                );
-            });
-        }
-    },
-    methods: {
-        confirmDeleteSeason(season: Season) {
-            this.isDeleteSeasonModalActive = true;
-            this.seasonToDelete = season;
-        },
-        deleteSeason(season: Season) {
-            seasonService.deleteSeason(season).then((ok) => {
-
-                // Elimino de la lista y por lo tanto de la tabla
-                this.seasons.splice(this.seasons.findIndex(s => s.id === season.id),1);
-
-                notificationService.showNotification(`Se ha eliminado correctamente la temporada ${season.name} (#${season.id})`, "success");
-            }).catch((error) => {
-                notificationService.showNotification(error.message, "error");
-            });
-        }
-    },
+const filteredSeasons = ((original: Season[], filter: string): Season[] => {
+    return original.filter((season) => {
+        return (
+            season.id
+                .toString()
+                .includes(filter) ||
+            season.name
+                .toLowerCase()
+                .includes(filter) ||
+            season.competition.name
+                .toLowerCase()
+                .includes(filter) ||
+            season.competition.code
+                .toLowerCase()
+                .includes(filter)
+        );
+    });
 });
+
+onMounted(async () => {
+    const response = await seasonService.getSeasonList();
+    seasons.value.push(...response);
+});
+
+const goToView = (season: Season) => {
+    router.push({name: 'adminGpsInSeason', params: {season: season.id}});
+}
+
+const goToEdit = (season: Season) => {
+    router.push({name: 'adminSeasonEdit', params: {season: season.id}});
+}
+
+const confirmDeleteSeason = (season: Season) => {
+    showConfirmDeleteModal.value = true;
+    seasonToDelete.value = season;
+}
+
+const deleteSeason = async (season?: Season) => {
+    if (!season) {
+        return;
+    }
+    try {
+        await seasonService.deleteSeason(season);
+        notificationService.showNotification("Se ha eliminado correctamente la temporada `" + season.name + "`", "success");
+        seasons.value.splice(seasons.value.findIndex(s => s.id === season.id),1);
+    } catch (e: any) {
+        notificationService.showNotification(e.response.data.message, "error");
+        console.error(e.response.data.message);
+    }
+}
 </script>

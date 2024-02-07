@@ -234,6 +234,12 @@ export const routes = [
                         component: () => import('@/pages/admin/seasons/SeasonsDashboard.vue'),
                     },
                     {
+                        path: 'create',
+                        name: 'adminSeasonCreate',
+                        component: () => import('@/pages/admin/seasons/CreateSeason.vue'),
+                        meta: { title: "Nueva temporada" }
+                    },
+                    {
                         path: ':season',
                         meta: { title: "Editar temporada" },
                         component: EmptyRoutedLayout,
@@ -296,12 +302,6 @@ export const routes = [
                 name: 'competitionCreate',
                 component: () => import('@/pages/admin/competitions/CreateCompetition.vue'),
                 meta: { title: "Nueva competición", requiresAdmin: true }
-            },
-            {
-                path: 'season',
-                name: 'seasonCreate',
-                component: () => import('@/pages/admin/seasons/CreateSeason.vue'),
-                meta: { title: "Nueva temporada", requiresAdmin: true }
             },
             {
                 path: 'circuit',

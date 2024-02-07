@@ -2,7 +2,7 @@
     <div id="adminDrivers" class="box">
         <PrognoPageTitle class="mb-5" name="Administración de circuitos"/>
 
-        <p-button label="Nuevo circuito" color="info" :to="{name: 'circuitCreate'}" />
+        <p-button class="mb-4" label="Nuevo circuito" color="info" :to="{name: 'circuitCreate'}" />
 
         <p-table :columns="columns" :rows="circuits"
                  hasViewButton hasEditButton hasDeleteButton paginated
