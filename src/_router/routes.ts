@@ -145,6 +145,12 @@ export const routes = [
                         component: () => import('@/pages/admin/circuits/CircuitsDashboard.vue'),
                     },
                     {
+                        path: 'create',
+                        name: 'circuitCreate',
+                        component: () => import('@/pages/admin/circuits/CreateCircuit.vue'),
+                        meta: { title: "Nuevo circuito" }
+                    },
+                    {
                         path: ':circuit',
                         name: 'adminCircuitEdit',
                         component: () => import('@/pages/admin/circuits/EditCircuit.vue'),
@@ -302,12 +308,6 @@ export const routes = [
                 name: 'competitionCreate',
                 component: () => import('@/pages/admin/competitions/CreateCompetition.vue'),
                 meta: { title: "Nueva competición", requiresAdmin: true }
-            },
-            {
-                path: 'circuit',
-                name: 'circuitCreate',
-                component: () => import('@/pages/admin/circuits/CreateCircuit.vue'),
-                meta: { title: "Nuevo circuito", requiresAdmin: true }
             },
             {
                 path: 'community',

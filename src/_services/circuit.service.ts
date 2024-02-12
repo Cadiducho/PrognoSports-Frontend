@@ -26,8 +26,36 @@ export class CircuitService extends PrognoService<ICircuit, Circuit> {
         return await axios.post(`/circuits`, data)
     }
 
-    public async editCircuit(circuit: Circuit, data: { name: string }): Promise<Circuit> {
+    public async createCircuitVariant(circuit: Circuit, data: Partial<CircuitVariant>): Promise<CircuitVariant> {
+        return await axios.post(`/circuits/${circuit.id}`, data);
+    }
+
+    public async editCircuit(circuit: Circuit, data: Partial<Circuit>): Promise<Circuit> {
         return await axios.put(`/circuits/${circuit.id}`, data)
+    }
+
+    public async editCircuitVariant(circuit: Circuit, variant: CircuitVariant, data: Partial<CircuitVariant>): Promise<CircuitVariant> {
+        return await axios.put(`/circuits/${circuit.id}/${variant.id}`, data)
+    }
+
+    public async changeCircuitLogo(circuit: Circuit, blob: Blob | string) {
+        const formData = new FormData();
+        formData.append('image', blob);
+        return await axios.post(`/circuits/${circuit.id}/logo`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+    }
+
+    public async changeVariantLayout(circuit: Circuit, variant: CircuitVariant, blob: Blob | string) {
+        const formData = new FormData();
+        formData.append('image', blob);
+        return await axios.post(`/circuits/${circuit.id}/${variant.id}/layout`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
     }
 
     public async deleteCircuit(circuit: Circuit): Promise<boolean> {

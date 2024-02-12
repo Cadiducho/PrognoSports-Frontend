@@ -16,6 +16,8 @@ export class CircuitVariant implements ICircuitVariant {
     name: string;
     turns: number;
     hasLayoutImage: boolean;
+    temporalLayoutImage?: Blob;
+    isNew?: boolean;
 
     constructor(data: ICircuitVariant) {
         this.id = data.id;
@@ -31,6 +33,9 @@ export class CircuitVariant implements ICircuitVariant {
     }
 
     public layoutImage(force: boolean = false): string {
+        if (this.temporalLayoutImage) {
+            return URL.createObjectURL(this.temporalLayoutImage);
+        }
         if (force || this.hasLayoutImage) {
             return BASE_URL + `/circuits/${this.circuitId}/${this.id}/layout`;
         }

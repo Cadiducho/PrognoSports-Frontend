@@ -5,114 +5,195 @@
         <loading v-if="isLoading"/>
         <template v-else>
 
-            <div class="block">
-                <o-button variant="link" to="/admin/competitions" tag="router-link">Lista de circuitos</o-button>
-            </div>
+            <p-button class="mb-4" label="Volver a lista de circuitos" color="info" to="/admin/circuits" />
 
             <p v-if="!thereIsCircuit">El circuito {{ circuitId }} no ha sido encontrada</p>
             <template v-else>
 
-                <h2 class="title">Datos del circuito</h2>
+                <div class="flex">
+                    <section class="w-1/2 mr-2">
+                        <h2 class="title">Datos del circuito</h2>
 
-                <o-field label="Nombre del circuito">
-                    <o-input v-model="circuit.name" name="name" expanded lazy></o-input>
-                </o-field>
+                        <p-input label="Nombre del circuito" name="name" v-model="circuit!.name"/>
+                        <p-input label="Localidad del circuito" name="locality" v-model="circuit!.locality"/>
+                        <p-input label="País del circuito" name="country" v-model="circuit!.country"/>
+                        <p-input label="Latitud del circuito" name="latitude" type="number" v-model="circuit!.latitude"/>
+                        <p-input label="Longitud del circuito" name="longitude" type="number" v-model="circuit!.longitude"/>
 
-                <o-field label="Localidad del circuito">
-                    <o-input v-model="circuit.locality" name="name" expanded lazy></o-input>
-                </o-field>
+                        <PButton type="ghost" size="small" :label="(circuit!.hasLogoImage ? 'Editar' : 'Agregar') + ' imagen de logo'" />
+                        <input type="file" @change="onFileChange" class="block w-full text-sm text-slate-500
+                          file:mr-4 file:py-2 file:px-4
+                          file:rounded-full file:border-0
+                          file:text-sm file:font-semibold
+                          file:bg-violet-50 file:text-violet-700
+                          hover:file:bg-violet-100
+                        "/>
 
-                <o-field label="País del circuito">
-                    <o-input v-model="circuit.country" name="name" expanded lazy></o-input>
-                </o-field>
+                        <img v-if="circuit?.hasLogoImage" :src="circuit?.logoImage()" class="h-48" alt="Variant layout">
+                    </section>
 
-                <o-field label="Latitud del circuito">
-                    <o-input v-model="circuit.latitude" name="name" expanded lazy></o-input>
-                </o-field>
+                    <section class="w-1/2 border-l-4">
+                        <h2 class="font-bold mb-2 ml-3 text-2xl">Variantes del circuito</h2>
+                        <div class="flex flex-wrap">
+                            <EditCircuitVariant v-for="variant in circuit?.variants" :variant="variant" @removeVariant="removeVariant($event)" class="last:border-b-0"/>
 
-                <o-field label="Longitud del circuito">
-                    <o-input v-model="circuit.longitude" name="name" expanded lazy></o-input>
-                </o-field>
+                            <PButton class="p-2" block label="Agregar una nueva variante" type="soft" color="green" @click="createNewVariant()" />
+                        </div>
+                    </section>
+                </div>
 
-                Variantes:
-                <ul>
-                    <li v-for="variant in circuit.variants">
-                        {{ variant.name }}
-                    </li>
-                </ul>
 
-                <hr/>
-                <o-field>
-                    <p class="control">
-                        <o-button :disabled="!isDataOk()" label="Editar circuito" @click="editCircuit()" variant="primary"/>
-                    </p>
-                </o-field>
+
+                <PButton block :disabled="!isDataOk()" label="Editar circuito" @click="editCircuit()" variant="primary" />
+
             </template>
         </template>
 
     </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {circuitService, notificationService} from "@/_services";
 
-import {defineComponent} from "vue";
-import {useAuthStore} from "@/store/authStore";
+import {onMounted, ref} from "vue";
 import {Circuit} from "@/types/Circuit";
+import PButton from "@/components/lib/forms/PButton.vue";
+import EditCircuitVariant from "@/pages/admin/circuits/EditCircuitVariant.vue";
+import PInput from "@/components/lib/forms/PInput.vue";
 
-export default defineComponent({
-    name: "EditCircuit",
-    components: {
-        AlertNoPermission,
-        PrognoPageTitle,
-    },
-    setup() {
-        const authStore = useAuthStore();
+import {useRoute, useRouter} from "vue-router";
+import {CircuitVariant} from "@/types/CircuitVariant";
 
-        const currentUser = authStore.loggedUser;
-        return { currentUser };
-    },
-    data() {
-        return {
-            isLoading: true,
-            thereIsCircuit: false,
-            circuit: {} as Circuit,
-            circuitId: this.$route.params.circuit,
-        }
-    },
-    mounted() {
-        circuitService.getCircuit(this.circuitId).then((circuit) => {
-            this.circuit = circuit;
-            this.thereIsCircuit = true;
-        }).finally(() => {
-            this.isLoading = false;
-        })
-    },
-    methods: {
-        isDataOk(): boolean {
-            return (this.circuit !== undefined)
-                && !(this.circuit.id == undefined)
-        },
-        editCircuit(): void {
-            let data = {
-                name: this.circuit!.name,
-                locality: this.circuit!.locality,
-                country: this.circuit!.country,
-                latitude: this.circuit!.latitude,
-                longitude: this.circuit!.longitude,
-            }
-            circuitService.editCircuit(this.circuit!, data).then((result) => {
-                notificationService.showNotification("Se ha editado correctamente el circuito `" + result.name + "`");
+const route = useRoute();
+const router = useRouter();
 
-                this.$router.push({
-                    name: 'adminCircuits'
-                })
-            }).catch((error) => {
-                notificationService.showNotification(error.message, "error");
-            });
-        }
-    },
+const isLoading = ref(true);
+const thereIsCircuit = ref(false);
+const circuit = ref<Circuit>();
+const circuitId = route.params.circuit;
+
+onMounted(() => {
+    circuitService.getCircuit(circuitId.toString()).then(response => {
+        circuit.value = response;
+        thereIsCircuit.value = true;
+    }).finally(() => {
+        isLoading.value = false;
+    })
 });
+
+const removeVariant = (variant: CircuitVariant) => {
+    const index = circuit.value?.variants.findIndex(cv => cv.id === variant.id);
+    if (index) {
+        circuit.value?.variants.splice(index, 1);
+    }
+}
+const createNewVariant = () => {
+    let newVariantId = 0;
+    if (circuit.value?.variants?.length) {
+        newVariantId = Math.max(...circuit.value!.variants.map(value => value.id));
+    }
+    newVariantId++;
+    const variant = new CircuitVariant({
+        id: newVariantId, circuitId: circuitId.toString(), hasLayoutImage: false,
+        name: "Nueva variante", turns: 0, distance: 0
+    });
+    variant.isNew = true;
+    circuit.value!.variants.push(variant);
+}
+
+const isDataOk = (): boolean => {
+    if (!circuit.value) {
+        notificationService.showNotification("Datos inválidos", "error");
+        return false;
+    }
+    if (!circuit.value.variants.length) {
+        notificationService.showNotification("El circuito debe de tener al menos una variante", "error");
+        return false;
+    }
+    if (!circuit.value.name) {
+        notificationService.showNotification("El circuito debe de tener Nombre", "error");
+        return false;
+    }
+    if (!circuit.value.locality) {
+        notificationService.showNotification("El circuito debe de tener Localidad", "error");
+        return false;
+    }
+    if (!circuit.value.country) {
+        notificationService.showNotification("El circuito debe de tener País", "error");
+        return false;
+    }
+    if (!circuit.value.latitude) {
+        notificationService.showNotification("El circuito debe de tener coordenada de Latitud", "error");
+        return false;
+    }
+    if (!circuit.value.longitude) {
+        notificationService.showNotification("El circuito debe de tener coordenada de Longitud", "error");
+        return false;
+    }
+    for (const variant of circuit.value.variants) {
+        if (!variant.name) {
+            notificationService.showNotification("Las variantes deben de tener nombre", "error");
+            return false;
+        }
+        if (!variant.distance) {
+            notificationService.showNotification("Las variantes deben de tener distancia", "error");
+            return false;
+        }
+        if (!variant.turns) {
+            notificationService.showNotification("Las variantes deben de tener número de curvas", "error");
+            return false;
+        }
+    }
+    return true;
+}
+
+const editCircuit = () => {
+    if (!isDataOk()) {
+        return;
+    }
+    debugger;
+
+    if (circuit.value?.temporalLogoImage) {
+        circuitService.changeCircuitLogo(circuit.value!, circuit.value?.temporalLogoImage)
+    }
+    circuit.value?.variants.forEach(variant => {
+        if (variant.temporalLayoutImage) {
+            circuitService.changeVariantLayout(circuit.value!, variant, variant.temporalLayoutImage)
+        }
+    })
+
+    circuit.value?.variants.forEach(variant => {
+        if (variant.isNew) {
+            circuitService.createCircuitVariant(circuit.value!, variant);
+        } else {
+            circuitService.editCircuitVariant(circuit.value!, variant, variant)
+        }
+    })
+
+    const data = {
+        name: circuit.value!.name,
+        locality: circuit.value!.locality,
+        country: circuit.value!.country,
+        latitude: circuit.value!.latitude,
+        longitude: circuit.value!.longitude,
+    }
+    circuitService.editCircuit(circuit.value!, data).then((result) => {
+        notificationService.showNotification("Se ha editado correctamente el circuito `" + result.name + "`");
+
+        router.push({
+            name: 'adminCircuits'
+        })
+    }).catch((error) => {
+        notificationService.showNotification(error.message, "error");
+    });
+}
+
+const onFileChange = (e: any) => {
+    let file = e.target.files[0];
+    if (file) {
+        circuit.value!.temporalLogoImage = file;
+    }
+}
+
 </script>

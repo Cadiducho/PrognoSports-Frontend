@@ -22,6 +22,7 @@ export class Circuit implements ICircuit {
     longitude: number;
     hasLogoImage: boolean;
     variants: Array<CircuitVariant>;
+    temporalLogoImage?: Blob;
 
     constructor(data: ICircuit) {
         this.country = data.country;
@@ -45,6 +46,9 @@ export class Circuit implements ICircuit {
     }
 
     public logoImage(): string {
+        if (this.temporalLogoImage) {
+            return URL.createObjectURL(this.temporalLogoImage);
+        }
         if (this.hasLogoImage) {
             return BASE_URL + `/circuits/${this.id}/logo`;
         }
