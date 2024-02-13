@@ -148,28 +148,31 @@ const isDataOk = (): boolean => {
     return true;
 }
 
-const editCircuit = () => {
+const editCircuit = async () => {
     if (!isDataOk()) {
         return;
     }
-    debugger;
 
     if (circuit.value?.temporalLogoImage) {
         circuitService.changeCircuitLogo(circuit.value!, circuit.value?.temporalLogoImage)
     }
-    circuit.value?.variants.forEach(variant => {
+
+    for (const variant of circuit.value?.variants!) {
+        try {
+            if (variant.isNew) {
+                await circuitService.createCircuitVariant(circuit.value!, variant);
+            } else {
+                await circuitService.editCircuitVariant(circuit.value!, variant, variant)
+            }
+        } catch (error: any) {
+            notificationService.showNotification(error.message, "error");
+            return;
+        }
+
         if (variant.temporalLayoutImage) {
             circuitService.changeVariantLayout(circuit.value!, variant, variant.temporalLayoutImage)
         }
-    })
-
-    circuit.value?.variants.forEach(variant => {
-        if (variant.isNew) {
-            circuitService.createCircuitVariant(circuit.value!, variant);
-        } else {
-            circuitService.editCircuitVariant(circuit.value!, variant, variant)
-        }
-    })
+    }
 
     const data = {
         name: circuit.value!.name,
