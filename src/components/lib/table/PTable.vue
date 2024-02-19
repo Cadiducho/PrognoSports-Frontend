@@ -20,7 +20,22 @@
         <tbody>
         <tr v-for="(row, index) in visibleData" :class="getRowStyle(index)">
             <td v-for="col in columns" :class="getTdStyle()">
-                {{ row[col.field] }}
+                <template v-if="col.type === 'boolean'">
+                    <span v-if="row[col.field] === true" class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-green-500">Sí</span>
+                    <span v-else class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-red-500">No</span>
+                </template>
+                <template v-else-if="col.type === 'date'">
+                    {{ humanDate(row[col.field]) }}
+                </template>
+                <template v-else-if="col.type === 'datetime'">
+                    {{ humanDateTime(row[col.field]) }}
+                </template>
+                <template v-else-if="col.type === 'datediff'">
+                    {{ dateDiff(row[col.field]) }}
+                </template>
+                <template v-else>
+                    {{ row[col.field] }}
+                </template>
             </td>
             <td v-if="hasActions" :class="getTdStyle()" class="!text-right">
                 <slot name="actions" :row="row" :index="index">
@@ -40,6 +55,12 @@
 <script setup lang="ts" generic="T">
 import {computed, ref} from "vue";
 import Pagination from "@/components/lib/Pagination.vue";
+import {useDayjs} from "@/composables/useDayjs";
+
+const dayjs = useDayjs();
+const dateDiff = dayjs.dateDiff;
+const humanDateTime = dayjs.humanDateTime;
+const humanDate = dayjs.humanDate;
 
 export interface Props<T> {
     columns: Array<Column>;
@@ -103,10 +124,6 @@ const visibleData = computed(() => {
     const end = start + perPage;
     return filteredRows.value.slice(start, end);
 });
-
-const sortBy = (column: Column) => {
-    console.log("sort by " + column.label);
-}
 
 const hasActions = computed(() => {
     return props.hasViewButton || props.hasEditButton || props.hasDeleteButton;

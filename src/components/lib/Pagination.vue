@@ -11,7 +11,7 @@
                     Mostrando de
                     <span class="font-medium"> {{ ((current - 1) * perPage) + 1}}</span>
                     a
-                    <span class="font-medium">{{ (current * perPage) }}</span>
+                    <span class="font-medium">{{ maxElementInThisPage }}</span>
                     de un total de
                     <span class="font-medium">{{ total }}</span>
                     resultados
@@ -131,6 +131,12 @@ export default defineComponent({
             }
             return pages
         },
+        /**
+         *
+         */
+        maxElementInThisPage() {
+            return Math.min(this.current * this.perPage, this.total)
+        }
     },
     methods: {
         updatePage(page: number) {
