@@ -19,7 +19,7 @@
                 Confirmar eliminación
             </template>
             <template v-slot:content>
-                ¿Está seguro que desea eliminar el constructor <strong>{{seasonToDelete?.name}}</strong>? Esta acción no se puede deshacer.
+                ¿Está seguro que desea eliminar la temporada <strong>{{seasonToDelete?.name}}</strong>? Esta acción no se puede deshacer.
             </template>
             <template v-slot:footer>
                 <button class="button is-danger" @click="deleteSeason(seasonToDelete)">Eliminar</button>
@@ -96,6 +96,7 @@ const deleteSeason = async (season?: Season) => {
         await seasonService.deleteSeason(season);
         notificationService.showNotification("Se ha eliminado correctamente la temporada `" + season.name + "`", "success");
         seasons.value.splice(seasons.value.findIndex(s => s.id === season.id),1);
+        showConfirmDeleteModal.value = false;
     } catch (e: any) {
         notificationService.showNotification(e.response.data.message, "error");
         console.error(e.response.data.message);

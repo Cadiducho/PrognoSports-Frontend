@@ -290,9 +290,27 @@ export const routes = [
             },
             {
                 path: 'sessions',
-                name: 'adminSessions',
-                component: () => import('@/pages/admin/sessions/SessionsDashboard.vue'),
+                component: EmptyRoutedLayout,
                 meta: { title: "Sesiones" },
+                children: [
+                    {
+                        path: '',
+                        name: 'adminSessions',
+                        component: () => import('@/pages/admin/sessions/SessionsDashboard.vue'),
+                    },
+                    {
+                        path: 'create',
+                        name: 'adminSessionCreate',
+                        component: () => import('@/pages/admin/sessions/CreateSession.vue'),
+                        meta: { title: "Nueva sesión" }
+                    },
+                    {
+                        path: ':session',
+                        name: 'adminSessionEdit',
+                        component: () => import('@/pages/admin/sessions/EditSession.vue'),
+                        meta: { title: "Editar sesión" }
+                    }
+                ]
             },
         ]
     },

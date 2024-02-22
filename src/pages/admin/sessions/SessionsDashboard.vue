@@ -1,195 +1,98 @@
 <template>
-    <div id="adminSession" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de Sesión"/>
+    <div id="sessionList" class="box">
+        <PrognoPageTitle class="mb-5" name="Administración de sesiones"/>
 
-        <form @submit.prevent="submitForm($event)">
-            <table class="table is-striped is-hoverable is-fullwidth">
-                <thead>
-                <tr>
-                    <th v-for="col in columns">
-                        <span>{{ col.label }}</span>
-                    </th>
-                    <th>
-                        Acciones
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td v-for="(col, colIndex) in columns">
-                        <!-- Formulario de creación nuevo elemento -->
-                        <input v-if="col.editable" class="input" :required="isEditing" :disabled="isEditing"
-                               :type="col.type" :placeholder="col.label" v-model="newSession[col.field]"
-                               @input="newSession[col.field] = newSession[col.field].toUpperCase()"
-                        >
-                        <span v-else></span>
-                    </td>
-                    <td>
-                        <button class="button is-primary is-small" type="submit">Añadir</button>
-                    </td>
-                </tr>
+        <p-button class="mb-4" label="Nueva sesión" color="info" to="/admin/sessions/create" />
 
-                <tr v-for="(session, index) in sessions" :key="index">
-                    <td v-for="(col, colIndex) in columns" :key="colIndex">
+        <p-table :columns="columns" :rows="sessions"
+                 hasEditButton hasDeleteButton paginated
+                 :with-filter="filteredSessions"
+                 @edit="goToEdit($event as RaceSession)"
+                 @delete="confirmDeleteSeason($event as RaceSession)"
+        >
 
-                        <!-- Si no se está editando se muestra el contenido -->
-                        <template v-if="(editedSession?.name !== session.name) || !col.editable">
-                            {{ session[col.field] }}
-                        </template>
+        </p-table>
 
-                        <!-- Editando: mostrar input -->
-                        <input v-else class="input" required
-                               :type="col.type" :placeholder="col.label" v-model="editedSession[col.field]"
-                               @input="editedSession[col.field] = editedSession[col.field].toUpperCase()"
-                        >
-                    </td>
-
-                    <td>
-                                <span class="buttons are-small">
-                                    <button type="submit" class="button is-primary" v-if="editedSession?.name === session.name">Guardar</button>
-                                    <button type="button" class="button is-warning" v-else @click="editedSession = session">Editar</button>
-                                    <button type="button" class="button is-danger" @click="confirmDeleteSession(session)">Eliminar</button>
-                                </span>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </form>
-
+        <PrognoModal v-show="showConfirmDeleteModal" @close="showConfirmDeleteModal = false">
+            <template v-slot:title>
+                Confirmar eliminación
+            </template>
+            <template v-slot:content>
+                ¿Está seguro que desea eliminar la sesión <strong>{{ sessionToDelete?.name }}</strong>? Esta acción no se puede deshacer.
+            </template>
+            <template v-slot:footer>
+                <button class="button is-danger" @click="deleteSeason(sessionToDelete)">Eliminar</button>
+                <button class="button" @click="showConfirmDeleteModal = false">Cancelar</button>
+            </template>
+        </PrognoModal>
     </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
+import PrognoModal from "@/components/lib/PrognoModal.vue";
+import PTable from "@/components/lib/table/PTable.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
+import {useRouter} from "vue-router";
+import {onMounted, ref} from "vue";
 import {notificationService, sessionService} from "@/_services";
-
-import {defineComponent} from "vue";
-import {useAuthStore} from "@/store/authStore";
 import {RaceSession} from "@/types/RaceSession";
 
-export default defineComponent({
-    name: "SessionsDashboard",
-    components: {
-        AlertNoPermission,
-        PrognoPageTitle,
-    },
-    setup() {
-        const authStore = useAuthStore();
+const router = useRouter();
 
-        const currentUser = authStore.loggedUser;
-        return { currentUser };
-    },
-    data() {
-        return {
-            sessions: new Array<RaceSession>(),
-            newSession: {
-                name: "",
-                code: "",
-                uses: 0
-            } as RaceSession,
-            editedSession: {} as RaceSession,
-            columns: [
-                {
-                    editable: true,
-                    isEditing: false,
-                    type: 'text',
-                    field: 'name',
-                    label: 'Nombre',
-                },
-                {
-                    editable: true,
-                    isEditing: false,
-                    type: 'text',
-                    field: 'code',
-                    label: 'Código',
-                },
-                {
-                    field: 'uses',
-                    label: 'Usos en GPs',
-                }
-            ]
-        }
-    },
-    mounted() {
-        sessionService.getSessionList().then((sessions) => {
-            this.sessions = [];
-            this.sessions.push(...sessions);
-        })
-    },
-    computed: {
-        isEditing(): boolean {
-            return !!this.editedSession?.name;
-        }
-    },
-    methods: {
-        submitForm() {
-            // Si se está editando
-            if (this.editedSession?.name) {
-                this.updateSession(this.editedSession);
-            } else {
-                this.createSession();
-            }
-        },
-        updateSession(session: RaceSession) {
-            sessionService.updateSession(this.editedSession).then((r) => {
-                notificationService.showNotification(`Se ha editado la sesión ${this.editedSession.name}`, "primary");
+const columns = ref( [
+    {label: 'ID', field: 'id'},
+    {label: 'Nombre', field: 'name'},
+    {label: 'Código', field: 'code'},
+    {label: 'Grid', field: 'hasGrid', type: 'boolean'},
+    {label: 'FastLap', field: 'hasFastLap', type: 'boolean'},
+]);
+const sessions = ref(new Array<RaceSession>())
+const showConfirmDeleteModal = ref(false);
+const sessionToDelete = ref(undefined as RaceSession | undefined);
 
-                this.sessions.splice(this.sessions.findIndex(s => s.name === this.editedSession.name),1);
-                this.sessions.unshift(this.editedSession);
-
-                this.editedSession = {
-                    name: "",
-                    code: "",
-                    uses: 0
-                } as RaceSession;
-            });
-        },
-        createSession() {
-            // Crear nuevo
-            sessionService.createSession(this.newSession).then((r) => {
-                notificationService.showNotification(`Se ha creado la sesión ${this.newSession.name}`, "primary");
-
-                this.sessions.unshift(this.newSession);
-
-                this.newSession = {
-                    name: "",
-                    code: "",
-                    uses: 0
-                } as RaceSession;
-            }).catch((error) => {
-                notificationService.showNotification(error.message, "error");
-            });
-        },
-        confirmDeleteSession(session: RaceSession) {
-            if (session.uses > 0) {
-                notificationService.showNotification("No se puede elimiar esta sesión porque está siendo usada", "warning");
-                return;
-            }
-
-            // ToDo: Pedir confirmación
-            this.deleteSession(session);
-            /*
-            this.$oruga.dialog.confirm({
-                title: 'Eliminar sesión',
-                message: `¿Estás seguro de que quieres <b>eliminar</b> la sesión ${session.name} (${session.code})? <br/>Esta acción se puede deshacer.`,
-                confirmText: 'Eliminar sesión',
-                type: 'danger',
-                hasIcon: true,
-                onConfirm: () => this.deleteSession(session),
-            })*/
-        },
-        deleteSession(session: RaceSession) {
-            sessionService.deleteSession(session).then((ok) => {
-
-                // Elimino de la lista y por lo tanto de la tabla
-                this.sessions.splice(this.sessions.findIndex(s => s.name === session.name),1);
-
-                notificationService.showNotification(`Se ha eliminado correctamente la sesión ${session.name} (${session.code})`, "primary");
-            }).catch((error) => {
-                notificationService.showNotification(error.message, "error");
-            });
-        }
-    },
+const filteredSessions = ((original: RaceSession[], filter: string): RaceSession[] => {
+    return original.filter((session) => {
+        return (
+            session.id
+                .toString()
+                .includes(filter) ||
+            session.name
+                .toLowerCase()
+                .includes(filter) ||
+            session.code
+                .toLowerCase()
+                .includes(filter)
+        );
+    });
 });
+
+onMounted(async () => {
+    const response = await sessionService.getSessionList();
+    sessions.value.push(...response);
+});
+
+const goToEdit = (session: RaceSession) => {
+    router.push({name: 'adminSessionEdit', params: {session: session.id}});
+}
+
+const confirmDeleteSeason = (session: RaceSession) => {
+    showConfirmDeleteModal.value = true;
+    sessionToDelete.value = session;
+}
+
+const deleteSeason = async (session?: RaceSession) => {
+    if (!session) {
+        return;
+    }
+    try {
+        await sessionService.deleteSession(session);
+        notificationService.showNotification("Se ha eliminado correctamente la sesión `" + session.name + "`", "success");
+        sessions.value.splice(sessions.value.findIndex(s => s.id === session.id),1);
+        showConfirmDeleteModal.value = false;
+    } catch (e: any) {
+        notificationService.showNotification(e.response.data.message, "error");
+        console.error(e.response.data.message);
+    }
+}
 </script>

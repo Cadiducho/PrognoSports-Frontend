@@ -7,6 +7,7 @@ export interface IRaceSession {
     name: string;
     code: string;
     hasGrid: boolean;
+    hasFastLap: boolean;
     competition?: ICompetition;
     grandPrix?: IGrandPrix;
     date: Date;
@@ -18,6 +19,7 @@ export class RaceSession implements IRaceSession {
     name: string;
     code: string;
     hasGrid: boolean;
+    hasFastLap: boolean;
     competition?: Competition;
     grandPrix?: GrandPrix;
     date: Date;
@@ -30,6 +32,7 @@ export class RaceSession implements IRaceSession {
         }
         this.date = new Date(data.date);
         this.hasGrid = data.hasGrid;
+        this.hasFastLap = data.hasFastLap;
         if (data.grandPrix) {
             this.grandPrix = new GrandPrix(data.grandPrix);
         }

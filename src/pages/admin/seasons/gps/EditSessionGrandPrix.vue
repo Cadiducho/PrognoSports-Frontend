@@ -116,7 +116,7 @@ export default defineComponent({
             competition: {code: this.$route.params.competition} as Competition,
             season: {name: this.$route.params.season} as Season,
             id: this.$route.params.gp as string,
-            session: {name: this.$route.params.session} as RaceSession,
+            session: {id: parseInt(this.$route.params.session)} as RaceSession,
 
             notSendNotification: false,
             notOverrideGrid: false,
@@ -163,7 +163,7 @@ export default defineComponent({
                 this.season = gp.season;
 
                 Promise.all([
-                    sessionService.getOneSessionInGrandPrix(this.grandPrix, this.session.name),
+                    sessionService.getOneSessionInGrandPrix(this.grandPrix, this.session.id),
                     driversService.getDriversInGrandPrix(gp),
                     grandPrixService.getGrandPrixGrid(this.grandPrix, this.session),
                     grandPrixService.getResults(this.grandPrix, this.session)

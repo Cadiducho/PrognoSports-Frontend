@@ -10,11 +10,11 @@ export class SessionService extends PrognoService<IRaceSession, RaceSession> {
     }
 
     /**
-     * Devuelve una sesión. RACE, QUALIFY...
-     * @param sessionName
+     * Devuelve una sesión
+     * @param sessionId
      */
-    public async getSession(sessionName: string): Promise<RaceSession> {
-        return this.getObjectFromAPI(`/sessions/${sessionName}`)
+    public async getSession(sessionId: number): Promise<RaceSession> {
+        return this.getObjectFromAPI(`/sessions/${sessionId}`)
     }
 
     /**
@@ -37,7 +37,7 @@ export class SessionService extends PrognoService<IRaceSession, RaceSession> {
      * @param session La sesión con los datos a actualizar
      */
     public async updateSession(session: Partial<RaceSession>): Promise<RaceSession> {
-        return await axios.put(`/sessions/${session.name}`, session);
+        return await axios.put(`/sessions/${session.id}`, session);
     }
 
     /**
@@ -45,26 +45,26 @@ export class SessionService extends PrognoService<IRaceSession, RaceSession> {
      * @param session La sesión
      */
     public async deleteSession(session: RaceSession): Promise<boolean> {
-        return await axios.delete(`/sessions/${session.name}`)
+        return await axios.delete(`/sessions/${session.id}`)
     }
 
     public async listSessionsInGrandPrix(gp: GrandPrix): Promise<Array<RaceSession>> {
         return this.getObjectListFromAPI(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions`);
     }
 
-    public async getOneSessionInGrandPrix(gp: GrandPrix, sessionName: string): Promise<RaceSession> {
-        return this.getObjectFromAPI(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${sessionName}`);
+    public async getOneSessionInGrandPrix(gp: GrandPrix, sessionId: number): Promise<RaceSession> {
+        return this.getObjectFromAPI(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${sessionId}`);
     }
 
-    public async addSessionInGrandPrix(gp: GrandPrix, data: { session: string, date: Date }): Promise<RaceSession> {
+    public async addSessionInGrandPrix(gp: GrandPrix, data: { session: number, date: Date }): Promise<RaceSession> {
         return this.postObjectToAPI(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions`, data);
     }
 
     public async updateSessionInGrandPrix(gp: GrandPrix, session: RaceSession): Promise<Array<RaceSession>> {
-        return await axios.put(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.name}`, session);
+        return await axios.put(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.id}`, session);
     }
 
     public async removeSessionFromGrandPrix(gp: GrandPrix, session: RaceSession): Promise<Array<RaceSession>> {
-        return await axios.delete(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.name}`);
+        return await axios.delete(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.id}`);
     }
 }

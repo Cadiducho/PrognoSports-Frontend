@@ -88,6 +88,7 @@ const deleteConstructor = async (constructor?: Constructor) => {
         await constructorService.deleteConstructor(constructor);
         constructors.value.splice(constructors.value.findIndex(s => s.id === constructor.id),1);
         notificationService.showNotification(`Se ha eliminado correctamente el constructor ${constructor.name} (#${constructor.id})`);
+        showConfirmDeleteModal.value = false;
     } catch (error: any) {
         notificationService.showNotification(error.message, "error");
     } finally {
