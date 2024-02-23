@@ -5,7 +5,7 @@
             class="c-card block bg-white shadow-md hover:shadow-xl rounded-lg overflow-hidden text-gray-700 hover:scale-110 transition ease-in-out delay-150 duration-300">
            
             <div class="relative pb-48 overflow-hidden">
-                <img class="absolute inset-0 h-full w-full object-contain" :src="gp.circuit?.logoImage()" alt="" />
+                <img class="absolute inset-0 h-full w-full object-contain" :src="gp.circuit?.layoutImage()" alt="" />
             </div>
 
             <div class="p-4">

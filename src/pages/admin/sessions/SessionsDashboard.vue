@@ -46,7 +46,7 @@ const columns = ref( [
     {label: 'Código', field: 'code'},
     {label: 'Grid', field: 'hasGrid', type: 'boolean'},
     {label: 'FastLap', field: 'hasFastLap', type: 'boolean'},
-]);
+] as Column[]);
 const sessions = ref(new Array<RaceSession>())
 const showConfirmDeleteModal = ref(false);
 const sessionToDelete = ref(undefined as RaceSession | undefined);
