@@ -77,11 +77,11 @@ export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
     }
 
     public async getGrandPrixGrid(grandPrix: GrandPrix, session: RaceSession): Promise<Array<StartGridPosition>> {
-        return await axios.get(`/gps/${grandPrix.competition.code}/${grandPrix.season.id}/${grandPrix.id}/sessions/${session.name}/grid`);
+        return await axios.get(`/gps/${grandPrix.competition.code}/${grandPrix.season.id}/${grandPrix.id}/sessions/${session.id}/grid`);
     }
 
     public async getResults(gp: GrandPrix, session: RaceSession): Promise<Array<RaceResult>> {
-        return await axios.get(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.name}/results`);
+        return await axios.get(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.id}/results`);
     }
 
     public async saveResults(gp: GrandPrix, session: RaceSession, payload: {results: Map<number, string>, notSendNotification: boolean}): Promise<Array<RaceResult>> {
@@ -89,23 +89,23 @@ export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
             results: Object.fromEntries(payload.results!),
             notSendNotification: payload.notSendNotification,
         }
-        return await axios.post(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.name}/results`, realPayload);
+        return await axios.post(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.id}/results`, realPayload);
     }
 
     public async saveGrid(gp: GrandPrix, session: RaceSession, payload: { grid: { note: string | undefined; isFromPit: boolean; driver: string; position: number }[] } ): Promise<boolean> {
-        return await axios.patch(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.name}/grid`, payload);
+        return await axios.patch(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.id}/grid`, payload);
     }
 
     public async getAllTipps(gp: GrandPrix, session: RaceSession, community: Community): Promise<Record<number, Array<RaceResult>>> {
-        return await axios.get(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.name}/tipps/${community.id}`);
+        return await axios.get(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.id}/tipps/${community.id}`);
     }
 
     public async getUserTipps(gp: GrandPrix, session: RaceSession, community: Community, user: User): Promise<Dictionary<number, RaceResult>> {
-        return await axios.get(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.name}/tipps/${community.id}/${user.id}`);
+        return await axios.get(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.id}/tipps/${community.id}/${user.id}`);
     }
 
     public async postUserTipps(gp: GrandPrix, session: RaceSession, community: Community, tipps: Array<RaceResult>): Promise<string> {
-        return await axios.post(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.name}/tipps/${community.id}`, {tipps: tipps});
+        return await axios.post(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.id}/tipps/${community.id}`, {tipps: tipps});
     }
 
     public async deleteGrandPrix(gp: GrandPrix): Promise<string> {

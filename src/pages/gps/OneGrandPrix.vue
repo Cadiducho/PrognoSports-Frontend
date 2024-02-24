@@ -24,7 +24,7 @@
                     <o-tabs v-model="activeTab">
                         <o-tab-item v-for="(session, index) in grandPrix.sessions"
                                     :label="session.humanName()"
-                                    :key="session.name"
+                                    :key="session.id"
                                     :value="index">
                             <h6 class="font-weight-light">
                                 La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
@@ -64,7 +64,7 @@
             <o-tabs v-model="activeTab">
                 <o-tab-item v-for="(session, index) in grandPrix.sessions"
                             :label="session.humanName()"
-                            :key="session.name"
+                            :key="session.id"
                             :value="index">
                     <h6 class="font-weight-light">
                         La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
