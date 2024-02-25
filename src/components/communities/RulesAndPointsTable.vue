@@ -1,19 +1,18 @@
 <template>
-
-    <o-field label="Temporada" :label-position="'on-border'">
-        <o-select v-if="Object.keys(chosenSeason).length" v-model="chosenSeason" placeholder="Selecciona la temporada" @change="changeSeason()" >
-            <option
-                v-for="season in seasonList"
-                :value="season"
-                :key="season.id">
-                {{ season.competition.name }} {{ season.name }}
-            </option>
-        </o-select>
-    </o-field>
-
     <section v-if="ruleSet.id !== 0">
-        <p>Esta comunidad en la temporada {{ chosenSeason.name }} usa el conjunto de reglas <i>{{ ruleSet.displayname }}.</i>
-        </p>
+
+        <o-field label="Temporada" :label-position="'on-border'">
+            <o-select v-if="Object.keys(chosenSeason).length" v-model="chosenSeason" placeholder="Selecciona la temporada" @change="changeSeason()" >
+                <option
+                    v-for="season in seasonList"
+                    :value="season"
+                    :key="season.id">
+                    {{ season.competition.name }} {{ season.name }}
+                </option>
+            </o-select>
+        </o-field>
+
+        <p>Esta comunidad en la temporada {{ chosenSeason.name }} usa el conjunto de reglas <i>{{ ruleSet.displayname }}.</i></p>
 
         <div class="content">
             <h5>Cantidad de posiciones pronosticadas:</h5>
@@ -21,8 +20,8 @@
 
         <div class="content">
             <ul>
-                <li v-for="session in competition.availableSessions" :key="session.name">
-                    <b>{{ session.humanName() }}:</b> {{ ruleSet.data.predictedPositions[session.name] || 4 }} posiciones.
+                <li v-for="session in competition.availableSessions" :key="session.id">
+                    <b>{{ session.humanName() }}:</b> {{ ruleSet.data.predictedPositions[session.id] || 4 }} posiciones.
                 </li>
             </ul>
             <hr/>
@@ -40,7 +39,7 @@
                 <tr v-for="pos in positionsInRuleSet">
                     <th>{{ pos }}º</th>
                     <td v-for="session in competition.availableSessions">
-                        {{ (ruleSet.data.pointsByEqualsPosition[session.name] || 0)[pos] || 0}}
+                        {{ (ruleSet.data.pointsByEqualsPosition[session.id] || 0)[pos] || 0 }}
                     </td>
                 </tr>
                 </tbody>
@@ -48,7 +47,7 @@
                 <tr>
                     <th>Total</th>
                     <td v-for="session in competition.availableSessions">
-                        {{ maxPointsPerSession[session.name] || 0 }}
+                        {{ maxPointsPerSession[session.id] || 0 }}
                     </td>
                 </tr>
                 </tfoot>
@@ -65,27 +64,27 @@
                 <tbody>
                 <tr>
                     <td>Posición siguiente</td>
-                    <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsByNextPosition[session.name] || 0 }}</td>
+                    <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsByNextPosition[session.id] || 0 }}</td>
                 </tr>
                 <tr>
                     <td>Posición siguiente de la siguiente</td>
-                    <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsByNextOfFollowingPosition[session.name] || 0 }}</td>
+                    <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsByNextOfFollowingPosition[session.id] || 0 }}</td>
                 </tr>
                 <tr>
                     <td>Posición anterior</td>
-                    <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsByPreviousPosition[session.name] || 0 }}</td>
+                    <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsByPreviousPosition[session.id] || 0 }}</td>
                 </tr>
                 <tr>
                     <td>Posición anterior de la anterior</td>
-                    <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsByPreviousOfPreviousPosition[session.name] || 0 }}</td>
+                    <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsByPreviousOfPreviousPosition[session.id] || 0 }}</td>
                 </tr>
                 <tr>
                     <td>No en el podio</td>
-                    <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsIfIsNotInPodium[session.name] || 0 }}</td>
+                    <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsIfIsNotInPodium[session.id] || 0 }}</td>
                 </tr>
                 <tr>
                     <td>No en los resultados</td>
-                    <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsIfIsNotInResults[session.name] || 0 }}</td>
+                    <td v-for="session in competition.availableSessions">{{ ruleSet.data.pointsIfIsNotInResults[session.id] || 0 }}</td>
                 </tr>
                 </tbody>
             </table>
@@ -153,12 +152,12 @@ export default defineComponent({
         maxPointsPerSession() {
             let sessions: Record<string, number> = {};
             this.competition.availableSessions.forEach(session => {
-                const map = this.ruleSet.data.pointsByEqualsPosition[session.name];
+                const map = this.ruleSet.data.pointsByEqualsPosition[session.id];
                 if (map) {
-                    sessions[session.name] = 0;
+                    sessions[session.id] = 0;
                     for (const kPos of Object.values(map)) {
                         const point = Number.parseInt(kPos);
-                        sessions[session.name] += point;
+                        sessions[session.id] += point;
                     }
                 }
             });
@@ -172,6 +171,8 @@ export default defineComponent({
         async getRuleSetOfSeason(community: Community, season: Season) {
             const rules = await rulesetService.getRuleSetInSeason(community, season);
             this.ruleSet = rules;
+
+            console.log(this.ruleSet)
         }
     }
 })

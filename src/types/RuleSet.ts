@@ -12,14 +12,14 @@ export interface IRuleSet {
 }
 
 export interface IRuleSetData {
-    predictedPositions: Dictionary<string, number>;
-    pointsByEqualsPosition: Dictionary<string, Dictionary<number, number>>;
-    pointsByNextPosition: Dictionary<string, number>;
-    pointsByNextOfFollowingPosition: Dictionary<string, number>;
-    pointsByPreviousPosition: Dictionary<string, number>;
-    pointsByPreviousOfPreviousPosition: Dictionary<string, number>;
-    pointsIfIsNotInPodium: Dictionary<string, number>;
-    pointsIfIsNotInResults: Dictionary<string, number>;
+    predictedPositions: Dictionary<number, number>;
+    pointsByEqualsPosition: Dictionary<number, Dictionary<number, number>>;
+    pointsByNextPosition: Dictionary<number, number>;
+    pointsByNextOfFollowingPosition: Dictionary<number, number>;
+    pointsByPreviousPosition: Dictionary<number, number>;
+    pointsByPreviousOfPreviousPosition: Dictionary<number, number>;
+    pointsIfIsNotInPodium: Dictionary<number, number>;
+    pointsIfIsNotInResults: Dictionary<number, number>;
 }
 
 export class RuleSet implements IRuleSet {
@@ -44,20 +44,20 @@ export class RuleSet implements IRuleSet {
      * @param session La sesión de Gran Premio
      */
     public cantidadPilotosPronosticados(session: RaceSession): number {
-        return this.data?.predictedPositions[session.name] || 0;
+        return this.data?.predictedPositions[session.id] || 0;
     }
 
 }
 
 export class RuleSetData implements IRuleSetData {
-    predictedPositions: Dictionary<string, number>;
-    pointsByEqualsPosition: Dictionary<string, Dictionary<number, number>>;
-    pointsByNextOfFollowingPosition: Dictionary<string, number>;
-    pointsByNextPosition: Dictionary<string, number>;
-    pointsByPreviousOfPreviousPosition: Dictionary<string, number>;
-    pointsByPreviousPosition: Dictionary<string, number>;
-    pointsIfIsNotInPodium: Dictionary<string, number>;
-    pointsIfIsNotInResults: Dictionary<string, number>;
+    predictedPositions: Dictionary<number, number>; // Session ID -> Number of predicted positions
+    pointsByEqualsPosition: Dictionary<number, Dictionary<number, number>>;
+    pointsByNextOfFollowingPosition: Dictionary<number, number>;
+    pointsByNextPosition: Dictionary<number, number>; // Session ID -> Points
+    pointsByPreviousOfPreviousPosition: Dictionary<number, number>;
+    pointsByPreviousPosition: Dictionary<number, number>;
+    pointsIfIsNotInPodium: Dictionary<number, number>;
+    pointsIfIsNotInResults: Dictionary<number, number>;
 
     constructor(data: IRuleSetData) {
         this.predictedPositions = data.predictedPositions;
