@@ -1,7 +1,7 @@
 <template>
     <h3 class="subtitle">Resultados en {{ session.humanName() }}</h3>
 
-    <section v-if="session.name === 'RACE'" class="mb-4">
+    <section v-if="session.hasFastLap" class="mb-4">
         <o-field label="Vuelta rápida">
             <o-select v-model="fastLap" placeholder="Selecciona un piloto" expanded>
                 <option

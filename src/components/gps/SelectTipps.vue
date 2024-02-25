@@ -183,7 +183,7 @@ export default defineComponent({
         this.pilotosDisponibles.push(...this.drivers);
 
         for (let [session, grid] of this.startGrids) {
-            if (session.name === this.session.name) {
+            if (session.id === this.session.id) {
                 grid.forEach(gpos => {
                     this.indexedGrid.set(gpos.driver.number, gpos.position);
                 })

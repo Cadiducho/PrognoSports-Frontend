@@ -39,7 +39,7 @@
                 <tr v-for="pos in positionsInRuleSet">
                     <th>{{ pos }}º</th>
                     <td v-for="session in competition.availableSessions">
-                        {{ (ruleSet.data.pointsByEqualsPosition[session.id] || 0)[pos] || 0 }}
+                        {{ ruleSet.data.pointsByEqualsPosition[session.id][pos] || 0 }}
                     </td>
                 </tr>
                 </tbody>
@@ -132,7 +132,7 @@ export default defineComponent({
         maxPosInRuleSet(): number {
             let max = 0;
             this.competition.availableSessions.forEach(session => {
-                let map = this.ruleSet.data.pointsByEqualsPosition[session.name];
+                let map = this.ruleSet.data.pointsByEqualsPosition[session.id];
                 if (map !== undefined) {
                     for (let kPos of Object.keys(map)) {
                         const pos = Number.parseInt(kPos);
@@ -171,8 +171,6 @@ export default defineComponent({
         async getRuleSetOfSeason(community: Community, season: Season) {
             const rules = await rulesetService.getRuleSetInSeason(community, season);
             this.ruleSet = rules;
-
-            console.log(this.ruleSet)
         }
     }
 })

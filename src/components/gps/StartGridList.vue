@@ -9,7 +9,7 @@
                     <option
                         v-for="session in availableSessions"
                         :value="session"
-                        :key="session.name">
+                        :key="session.id">
                         {{ session.humanName() }}
                     </option>
                 </o-select>

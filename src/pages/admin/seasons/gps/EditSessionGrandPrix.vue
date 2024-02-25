@@ -68,7 +68,6 @@
 
 <script lang="ts">
 import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
-import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {
     driversService,
     grandPrixService, notificationService,
@@ -95,7 +94,6 @@ export default defineComponent({
     components: {
         EditGrid,
         EditResults,
-        AlertNoPermission,
         PrognoPageTitle,
         SessionsInGrandPrix,
         GrandPrixPagination,
@@ -116,7 +114,7 @@ export default defineComponent({
             competition: {code: this.$route.params.competition} as Competition,
             season: {name: this.$route.params.season} as Season,
             id: this.$route.params.gp as string,
-            session: {id: parseInt(this.$route.params.session)} as RaceSession,
+            session: {id: parseInt(this.$route.params.session.toString())} as RaceSession,
 
             notSendNotification: false,
             notOverrideGrid: false,

@@ -8,7 +8,7 @@
         </div>
 
         <div v-for="ses in sessions" class="column">
-            <router-link class="circuit" :to="{ name: 'adminGpEditSession', params: { session: ses.name } }">
+            <router-link class="circuit" :to="{ name: 'adminGpEditSession', params: { session: ses.id } }">
                 <article class="card">
                     <div class="card-content">
                         <p class="subtitle mb-2">
