@@ -8,11 +8,18 @@
         </div>
 
         <div v-for="ses in sessions" class="column">
-            <router-link class="circuit" :to="{ name: 'adminGpEditSession', params: { session: ses.id } }">
-                <article class="card">
+            <router-link :to="{ name: 'adminGpEditSession', params: { session: ses.id } }">
+                <article class="card" :class="{
+                    '!bg-cyan-200': currentSession?.id === ses.id,
+                    'hover:!bg-cyan-100': currentSession?.id !== ses.id
+                }">
                     <div class="card-content">
                         <p class="subtitle mb-2">
                             {{ ses.humanName() }}
+                            <span v-if="currentSession?.id === ses.id"
+                                  class="inline-block px-2 py-1 leading-none bg-orange-200 text-orange-800 rounded-full font-semibold uppercase tracking-wide text-xs">
+                                Editando
+                            </span>
                         </p>
 
                         <div class="content">
@@ -66,6 +73,10 @@ export default defineComponent({
         sessions: {
             type: Object as PropType<Array<RaceSession>>,
             required: true
+        },
+        currentSession: {
+            type: Object as PropType<RaceSession>,
+            required: false
         }
     },
     setup() {

@@ -12,6 +12,7 @@ export interface IRaceSession {
     grandPrix?: IGrandPrix;
     date: Date;
     uses: number;
+    defineGridOf: Array<RaceSession>;
 }
 
 export class RaceSession implements IRaceSession {
@@ -24,6 +25,7 @@ export class RaceSession implements IRaceSession {
     grandPrix?: GrandPrix;
     date: Date;
     uses: number;
+    defineGridOf: Array<RaceSession>;
 
     constructor(data: IRaceSession) {
         this.id = data.id;
@@ -39,6 +41,10 @@ export class RaceSession implements IRaceSession {
         this.name = data.name;
         this.code = data.code;
         this.uses = data.uses;
+        this.defineGridOf = data.defineGridOf || [];
+        if (this.defineGridOf.length) {
+            this.defineGridOf = this.defineGridOf.map(session => new RaceSession(session));
+        }
     }
 
     // ToDo: i18n

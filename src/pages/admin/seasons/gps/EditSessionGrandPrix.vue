@@ -30,11 +30,11 @@
 
             <div class="columns">
                 <div class="column is-one-fifth">
-                    <SessionsInGrandPrix :grand-prix="grandPrix" :sessions="grandPrix.sessions"/>
+                    <SessionsInGrandPrix :grand-prix="grandPrix" :sessions="grandPrix.sessions" :current-session="session"/>
                 </div>
 
                 <div class="column">
-                    <h2 class="title">Datos del {{ grandPrix.name }} en {{ session.humanName() }}</h2>
+                    <h2 class="title">{{ session.humanName() }} en {{ grandPrix.name }} </h2>
 
                     <o-field label="Fecha de la sesión">
                         <Calendar :value="session.date" :options="calendarOptions"
@@ -45,7 +45,12 @@
                         Editar datos de la sesión
                     </button>
 
+                    <h3 v-if="session.defineGridOf?.length" class="subtitle mt-3">
+                        Esta sesión define la parrilla de la sesión: {{ session.defineGridOf.map(ses => ses.humanName()).join(', ') }}
+                    </h3>
+
                     <hr/>
+
 
                     <!-- Si no es quali, hay resultados y grid-->
                     <div v-if="session.hasGrid" class="columns">
