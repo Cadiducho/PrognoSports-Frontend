@@ -35,7 +35,8 @@ export default defineComponent({
             type: Number
         },
         userPoints: {
-            type: Object as PropType<UserPoints>
+            type: Object as PropType<UserPoints>,
+            required: true
         }
     },
     methods: {
