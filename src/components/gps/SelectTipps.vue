@@ -90,7 +90,7 @@
             </o-button>
 
             <div v-else class="notification is-warning is-light">
-                El pronóstico debe tener {{ ruleSet.cantidadPilotosPronosticados(session) }} pilotos escogidos y ordenados.
+                El pronóstico debe tener {{ ruleSet.cantidadPilotosPronosticados(session) }} pilotos escogidos y ordenados (Has escogido {{ pilotosPronosticados.length}} ).
             </div>
         </template>
 
@@ -113,7 +113,7 @@ import {RaceResult} from "@/types/RaceResult";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import {RuleSet} from "@/types/RuleSet";
 
-import {defineComponent, PropType} from "vue";
+import {defineComponent, PropType, ref} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {useStyles} from "@/composables/useStyles";
@@ -215,14 +215,14 @@ export default defineComponent({
             this.sendingPronostico = true;
             let tipps: Array<RaceResult> = [];
 
-            this.pilotosPronosticados.forEach((driver, index, array) => {
+            this.pilotosPronosticados.forEach((driver: Driver, index: number, array: Driver[]) => {
                 tipps.push({position: index + 1, driver: {id: driver.id} as Driver} as RaceResult);
             });
 
             try {
                 await grandPrixService.postUserTipps(this.grandPrix, this.session, this.currentCommunity, tipps);
                 notificationService.showNotification("¡Has guardado tus pronósticos!");
-            } catch (error) {
+            } catch (error: any) {
                 let message = "Error guardando tus pronósticos: " + error.message;
 
                 notificationService.showNotification(message, "error");

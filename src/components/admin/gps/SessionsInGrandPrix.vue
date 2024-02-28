@@ -113,7 +113,7 @@ export default defineComponent({
     methods: {
         addSessionToGP() {
             if (Object.keys(this.newSession.session).length != 0) {
-                const data = { session: this.newSession.session.name, date: this.newSession.date };
+                const data = { session: this.newSession.session.id, date: this.newSession.date };
                 sessionService.addSessionInGrandPrix(this.grandPrix, data).then((session) => {
                     this.isCreatingSession = false;
                     this.sessions.push(session);
