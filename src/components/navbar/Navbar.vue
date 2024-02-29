@@ -82,7 +82,7 @@
             return {
                 isOpen: false,
                 counter: 0,
-                darkModeActivable: true,
+                darkModeActivable: localStorage.getItem('dark-mode') ?? false,
             }
         },
         methods: {
@@ -90,6 +90,7 @@
                 this.counter++;
                 if (this.counter >= 33) {
                     this.darkModeActivable = true;
+                    localStorage.setItem('dark-mode', true)
                 }
             }
         }

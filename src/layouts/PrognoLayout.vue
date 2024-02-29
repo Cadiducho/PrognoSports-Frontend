@@ -5,7 +5,7 @@
         <section class="section">
             <section class="container prognocontainer">
 
-                <Breadcrumb />
+                <!-- <Breadcrumb /> -->
 
                 <o-notification v-if="isBeta && !betaAceptada" closable variant="warning" aria-close-label="Close notification" @close="acceptBeta()">
                     Estás utilizando PrognoSports Beta, la experiencia puede verse afectada

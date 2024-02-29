@@ -1,7 +1,7 @@
 <template>
     <div id="grandprix">
         <loading v-if="isLoadingGrandPrix" />
-        <p v-else-if="!thereIsGrandPrix">El Gran Premio buscado con nombre <i>{{ this.id }}</i> no ha sido encontrado</p>
+        <p v-else-if="!thereIsGrandPrix">El Gran Premio buscado con nombre <i>{{ id }}</i> no ha sido encontrado</p>
 
         <template v-else>
             <div class="columns is-variable is-5">
@@ -26,11 +26,11 @@
                                     :label="session.humanName()"
                                     :key="session.id"
                                     :value="index">
-                            <h6 class="font-weight-light">
-                                La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
+                            <h6 class="dark:text-gray-300">
+                                La hora de cierre de este pronóstico para la <span class="font-bold dark:text-gray-200">{{ session.humanName() }}</span>
                                 es {{ humanDateTime(session.closureDate()) }} ({{ dateDiff(session.closureDate()) }})
                             </h6>
-                            <h6 class="font-weight-light">
+                            <h6 class="dark:text-gray-300">
                                 Para esta sesión se han de pronosticar {{ ruleSet.cantidadPilotosPronosticados(session) }} pilotos
                             </h6>
                             <SelectTipps :session="session"
@@ -49,9 +49,9 @@
                     <CircuitCard v-if="grandPrix.circuit && grandPrix.variant"
                                  :circuit="grandPrix.circuit!" :variant="grandPrix.variant!" :laps="grandPrix.laps"
                     />
-                    <PitLaneStartGrid v-if="this.startGrid.size" :grid="startGrid"/>
+                    <PitLaneStartGrid v-if="startGrid.size" :grid="startGrid"/>
 
-                    <section v-if="this.currentUser.isAdmin()" class="mt-2">
+                    <section v-if="currentUser.isAdmin()" class="mt-2">
                         <hr/>
                         <o-button variant="primary" expanded tag="router-link"
                                   :to="{ name: 'adminGpEditInSeason', params: {season: season.name, gp: grandPrix.id} } ">
@@ -66,8 +66,8 @@
                             :label="session.humanName()"
                             :key="session.id"
                             :value="index">
-                    <h6 class="font-weight-light">
-                        La hora de cierre de este pronóstico para la <strong>{{ session.humanName() }}</strong>
+                    <h6 class="dark:text-gray-300">
+                        La hora de cierre de este pronóstico para la <span class="font-bold dark:text-gray-200">{{ session.humanName() }}</span>
                         es {{ humanDateTime(session.closureDate()) }} ({{ dateDiff(session.closureDate()) }})
                     </h6>
                     <ScoreComponents :gp="grandPrix"
