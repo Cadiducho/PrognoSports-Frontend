@@ -1,11 +1,12 @@
 <template>
-    <div class="is-highlighted has-text-weight-semibold has-radius driver-card is-justify-content-left p-3 rounded-md opacity-90 bg-white hover:bg-sky-50"
+    <div class="font-semibold driver-card justify-start p-3 rounded-md opacity-90 bg-white
+        hover:bg-sky-50 dark:bg-gray-900 dark:hover:bg-gray-700 shadow-sm"
          :style="styleDriverCard(driver)">
-        <span>
+        <span class="dark:text-gray-100">
             <b v-if="showPosition">{{ index + 1 }}º.</b> {{ driver.firstname }} {{ driver.lastname }}
             <span class="tag is-rounded" v-bind:style="styleDorsal(driver)">#{{ driver.number }}</span>
 
-            <span class="ml-2 font-normal">
+            <span class="margin-left-card font-normal">
                 <span v-if="currentUser.preferences['use-long-team-names']">{{ driver.team.longname }} ({{ driver.team.carname }})</span>
                 <span v-else>{{ driver.team.name }}</span>
             </span>
@@ -55,6 +56,9 @@ export default defineComponent({
     display: flex;
     cursor: move !important;
 }
+.margin-left-card {
+    margin-left: 0.5rem;
+}
 
 // Resolución móvil
 @media screen and (max-width: variables.$desktop) {
@@ -65,6 +69,10 @@ export default defineComponent({
         .tag {
             display: none;
         }
+    }
+    .margin-left-card {
+        display: block;
+        margin-left: 0.0rem;
     }
 }
 </style>

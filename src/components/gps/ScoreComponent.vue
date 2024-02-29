@@ -2,9 +2,9 @@
     <div>
         <loading v-if="!loaded" />
         <template v-else>
-            <span class="title is-5">Puntuaciones de {{ session.humanName() }} </span> <br/>
-            <span class="title is-6">Leyenda</span>
-            <p class="content">
+            <span class="title is-5 dark:text-gray-300">Puntuaciones de {{ session.humanName() }} </span> <br/>
+            <span class="title is-6 dark:text-gray-300">Leyenda</span>
+            <p class="m-0 p-0 mb-6 dark:text-gray-300">
                 Tus puntuaciones salen reflejadas con color <span class="tag is-primary">verde</span> <br/>
                 El ganador del Gran Premio es reflejado con color <span class="tag is-warning">dorado</span> <br/>
                 Los ganadores de cada sesión tendrán representado un <o-icon pack="fas" icon="trophy"></o-icon>
@@ -99,6 +99,7 @@
                         <o-tooltip
                             v-if="props.row.tipps[index] !== undefined"
                             :label="driverTooltip(props.row.tipps[index].driver)"
+                            :style="styleCodeInResults(props.row.tipps[index].driver)"
                             append-to-body>
                             {{ props.row.tipps[index].driver.code }}
 
@@ -172,8 +173,8 @@
             </o-table>
 
             <hr />
-            <h6 class="subtitle">Opciones de la tabla</h6>
-            <section class="is-flex is-flex-direction-column" style="gap: 0.6rem">
+            <h6 class="subtitle dark:text-gray-300">Opciones de la tabla</h6>
+            <section class="flex flex-col gap-2">
                 <o-checkbox v-model="showAdvancedStadistics">Mostrar estadísticas avanzadas</o-checkbox>
                 <o-checkbox v-model="showResults">Mostrar resultados</o-checkbox>
                 <o-checkbox v-model="showColorUser">Mostrar color en tu usuario</o-checkbox>
@@ -216,6 +217,7 @@ import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import {useDayjs} from "@/composables/useDayjs";
+import {useStyles} from "@/composables/useStyles";
 
 export default defineComponent({
     name: "LandingNavbar",
@@ -246,12 +248,15 @@ export default defineComponent({
         const dayjs = useDayjs();
         const authStore = useAuthStore();
         const communityStore = useCommunityStore();
+        const styles = useStyles();
 
         const humanDateTime = dayjs.humanDateTime;
         const dateDiff = dayjs.dateDiff;
         const currentUser = authStore.loggedUser;
         const currentCommunity = communityStore.currentCommunity;
-        return { currentUser, currentCommunity, dateDiff, humanDateTime };
+        const styleCodeInResults = styles.styleCodeInResults;
+
+        return { currentUser, currentCommunity, dateDiff, humanDateTime, styleCodeInResults };
     },
     data() {
         return {

@@ -26,8 +26,8 @@ export function useStyles() {
     const styleDriverCard = (driver: Driver): any => {
         return {
             color: 'black',
-            'border': '1px solid #'+ driver.team.teamcolor,
-            'border-left': '10px #'+ driver.team.teamcolor + ' solid',
+            'border': '1px solid #' + driver.team.teamcolor,
+            'border-left': '10px #' + driver.team.teamcolor + ' solid',
             'border-right-image-source': 'linear-gradient(to left, #'+ driver.team.teamcolor + ', #ffffff)',
             opacity: 0.9,
         }
@@ -39,6 +39,16 @@ export function useStyles() {
             backgroundColor: '#' + driver.team.teamcolor,
         }
     }
+    const styleCodeInResults = (driver: Driver): any => {
+        if (driver.code === '???') return {}
+        return {
+            color: 'black',
+            'padding-left': '5px',
+            'border-left': '4px #' + driver.team.teamcolor + ' solid',
+            'border-right-image-source': 'linear-gradient(to left, #' + driver.team.teamcolor + ', #ffffff)',
+            opacity: 0.9,
+        }
+    }
 
-    return {invertColor, styleDriverCard, styleDorsal};
+    return {invertColor, styleDriverCard, styleDorsal, styleCodeInResults};
 }

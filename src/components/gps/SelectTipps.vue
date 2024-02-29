@@ -6,7 +6,7 @@
         <div class="flex space-x-4 mb-4">
 
             <div class="flex-1">
-                <h3 class="select-none">Pilotos disponibles</h3>
+                <h3 class="select-none dark:text-gray-300">Pilotos disponibles</h3>
 
                 <div class="busqueda-ordenada">
                     <o-button label="Ordenar" variant="primary" aria-controls="opcionesOrdenado" @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen"/>
@@ -66,7 +66,7 @@
             </div>
 
             <div class="flex-1">
-                <h3 class="select-none">Tu pronóstico</h3>
+                <h3 class="select-none dark:text-gray-300">Tu pronóstico</h3>
                 <draggable
                     :id="`pronosticados-${session.id}`"
                     class="w-full h-full select-none space-y-2"
