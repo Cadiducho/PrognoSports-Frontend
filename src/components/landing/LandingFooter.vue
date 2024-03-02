@@ -1,15 +1,15 @@
 <template>
-    <div class="landing-footer">
-        <footer class="base-footer">
-            <div class="footer-top">
-                <div class="footer-div">
-                <router-link to="/">
-                    <img src="@/assets/logo.png" class="image is-128x128" alt="Logo PrognoSports"/>
-                </router-link>
+    <div class="flex min-h-[60vh] bg-neutral-100 dark:bg-gray-900">
+        <footer class="m-0 p-20 pt-14 flex-1 text-center">
+            <div class="flex mb-4 lg:flex-row flex-col">
+                <div class="flex-1 p-4 basis-0 md:mr-80">
+                    <router-link to="/">
+                        <img src="@/assets/logo.png" class="image is-128x128" alt="Logo PrognoSports"/>
+                    </router-link>
                 </div>
-                <div class="footer-div footer-left">
-                    <div class="footer-title">PrognoSports</div>
-                    <ul class="footer-ul">
+                <div class="flex-1 p-4 basis-0">
+                    <div class="mb-3 text-left font-bold text-stone-500 dark:text-gray-200">PrognoSports</div>
+                    <ul class="flex flex-col items-start list-none">
                         <li>
                             <router-link to="/faq" class="list-item">FAQ</router-link>
                         </li>
@@ -21,59 +21,39 @@
                         </li>
                     </ul>
                 </div>
-                <div class="footer-div">
-                    <div class="footer-title">Conecta</div>
-                    <ul class="footer-ul">
+                <div class="flex-1 p-4 basis-0">
+                    <div class="mb-3 text-left font-bold text-stone-500 dark:text-gray-200">Conecta</div>
+                    <ul class="flex flex-col items-start list-none">
                         <li>
                             <router-link to="/contact" class="list-item">
-                                <o-icon
-                                    pack="fas"
-                                    icon="envelope"
-                                    size="is-small">
-                                </o-icon> Contacta con el equipo
+                                <i class="fas fa-envelope px-1"></i> Contacta con el equipo
                             </router-link>
                         </li>
                         <li>
                             <a href="https://twitter.com/PrognoSports" class="list-item">
-                                <o-icon
-                                    pack="fab"
-                                    icon="twitter"
-                                    size="is-small">
-                                </o-icon> Twitter
+                                <i class="fab fa-twitter px-1"></i> Twitter
                             </a>
                         </li>
                         <li>
                             <a href="https://telegram.me/PrognoSportsInfo" class="list-item">
-                                <o-icon
-                                    pack="fab"
-                                    icon="telegram"
-                                    size="is-small">
-                                </o-icon> Telegram
+                                <i class="fab fa-telegram px-1"></i> Telegram
                             </a>
                         </li>
                         <li>
                             <a href="https://twitch.tv/PrognoSports" class="list-item">
-                                <o-icon
-                                    pack="fab"
-                                    icon="twitch"
-                                    size="is-small">
-                                </o-icon> Twitch
+                                <i class="fab fa-twitch px-1"></i> Twitch
                             </a>
                         </li>
                         <li>
                             <a href="https://instagram.com/PrognoSports" class="list-item">
-                                <o-icon
-                                    pack="fab"
-                                    icon="instagram"
-                                    size="is-small">
-                                </o-icon> Instagram
+                                <i class="fab fa-instagram px-1"></i> Instagram
                             </a>
                         </li>
                     </ul>
                 </div>
-                <div class="footer-div">
-                    <div class="footer-title">Legal</div>
-                    <ul class="footer-ul">
+                <div class="flex-1 p-4 basis-0">
+                    <div class="mb-3 text-left font-bold text-stone-500 dark:text-gray-200">Legal</div>
+                    <ul class="flex flex-col items-start list-none">
                         <li>
                             <router-link to="/terms" class="list-item">Términos de servicio</router-link>
                         </li>
@@ -86,108 +66,34 @@
                     </ul>
                 </div>
             </div>
-            <small class="footer-small">© {{ new Date().getFullYear() }} PrognoSports.com. Todos los derechos reservados</small>
-            <small class="footer-small">Versión <a :href="`https://github.com/Cadiducho/PrognoSports-Frontend/commit/${commitHash}`">{{ humanVersion }}</a> - Compilado el {{ humanDateTime(commitDate) }}</small>
+            <small class="block text-xs text-gray-500 dark:text-gray-300">© {{ new Date().getFullYear() }} PrognoSports.com. Todos los derechos reservados</small>
+            <small class="block text-xs text-gray-500 dark:text-gray-300">Versión <a :href="`https://github.com/Cadiducho/PrognoSports-Frontend/commit/${commitHash}`">{{ humanVersion }}</a> - Compilado el {{ humanDateTime(commitDate) }}</small>
         </footer>
     </div>
 </template>
 
-<script lang="ts">
-import {defineComponent} from "vue";
+<script setup lang="ts">
+import {ref} from "vue";
 import {useDayjs} from "@/composables/useDayjs";
-import {useAuthStore} from "@/store/authStore";
 
-export default defineComponent({
-    name: "LandingFooter",
-    setup() {
-        const branchName = import.meta.env.VITE_GIT_BRANCH_NAME;
-        const commitHash = import.meta.env.VITE_GIT_COMMIT_HASH;
-        const commitDate = import.meta.env.VITE_GIT_COMMIT_DATE;
+const branchName = import.meta.env.VITE_GIT_BRANCH_NAME;
+const commitHash = import.meta.env.VITE_GIT_COMMIT_HASH;
+const commitDate = import.meta.env.VITE_GIT_COMMIT_DATE;
 
-        let humanVersion;
-        if (branchName === "master") {
-            humanVersion = "estable";
-        } else {
-            humanVersion = branchName
-        }
-        humanVersion += "/" + commitHash;
+const humanVersion = ref('');
+if (branchName === "master") {
+    humanVersion.value = "estable";
+} else {
+    humanVersion.value = branchName
+}
+humanVersion.value += "/" + commitHash;
 
-
-        const dayjs = useDayjs();
-        const humanDateTime = dayjs.humanDateTime;
-
-        return {commitHash, humanVersion, commitDate, humanDateTime}
-    }
-});
-
+const dayjs = useDayjs();
+const humanDateTime = dayjs.humanDateTime;
 </script>
 
-<style lang="scss" scoped>
-* {
-    margin: 0;
-    padding: 0;
-    text-align: center;
-}
-a {
-    text-decoration: none;
-    cursor: pointer;
-}
-.landing-footer {
-    background-color: #f6f9fc;
-    display: flex;
-    min-height: 50vh;
-}
-.base-footer {
-    margin: 0 auto;
-    max-width: 1280px;
-    padding: 50px 20px 20px;
-    flex: 1;
-    // background-color: #f6f9fc;
-}
-.footer-top {
-    display: flex;
-    margin-bottom: 1rem;
-}
-.footer-div {
-    flex-grow: 1;
-    padding: 1rem;
-    flex-basis: 0;
-}
-.footer-left {
-    margin-left: 20%;
-}
-.footer-ul {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    list-style: none;
-}
-.footer-title {
-    text-align: left;
-    font-size: 16px;
-    color: #76808d;
-    margin-bottom: 12px;
-}
+<style scoped>
 .list-item {
-    color: #999;
-    text-align: left;
-    font-size: 14px;
-    line-height: 30px
-}
-.list-item:hover {
-    color: #333;
-}
-.footer-small {
-    display: block;
-    font-size: 12px;
-    color: #b9b9b9;
-}
-@media screen and (max-width: 798px) {
-    .footer-top {
-        flex-direction: column;
-    }
-    .footer-left {
-        margin-left: 0;
-    }
+    @apply text-stone-500 dark:text-gray-200 hover:text-stone-600 dark:hover:text-gray-300 text-left font-normal leading-6 no-underline
 }
 </style>
