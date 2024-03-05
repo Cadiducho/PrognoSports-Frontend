@@ -1,40 +1,20 @@
 <template>
-    <button type="button" class="m-1 inline-flex justify-center items-center gap-2"
-            @click="pushToLink"
-        :class="{
-            'small': size === 'small',
-            'medium': size === 'medium',
-            'large': size === 'large',
-            'w-full': block,
-            'rounded-full': pilled,
-            'rounded-md': rounded,
-
-            'solid': type === 'solid',
-            'outline': type === 'outline',
-            'soft': type === 'soft',
-            'ghost': type === 'ghost',
-            'disabled': disabled,
-
-            'purple': color === 'purple',
-            'pink': color === 'pink',
-            'primary': color === 'primary',
-            'teal': color === 'teal',
-            'info': color === 'info',
-            'success': color === 'success',
-            'warning': color === 'warning',
-            'danger': color === 'danger',
-            'red': color === 'red',
-            'yellow': color === 'yellow',
-            'green': color === 'green',
-            'blue': color === 'blue',
-
-    }">
-        {{ label }}
-    </button>
+    <component
+        :is="computedTag"
+        :type="computedNativeType"
+        :disabled="computedDisabled"
+        :to="to"
+        @click="pushToLink"
+        :class="buttonClasses">
+        <i v-if="icon" :class="`${icon} pr-1`"></i>
+        <slot>
+            {{ label }}
+        </slot>
+    </component>
 </template>
 
 <script lang="ts">
-import {defineComponent, PropType} from 'vue'
+import {computed, defineComponent, PropType} from 'vue'
 import {RouteLocationRaw, useRouter} from "vue-router";
 
 export default defineComponent({
@@ -47,6 +27,12 @@ export default defineComponent({
         type: {
             type: String as PropType<'solid' | 'outline' | 'soft' | 'ghost'>,
             default: "solid"
+        },
+        nativeType: {
+            type: String,
+            default: "button",
+            validator: (value: string) =>
+                ["button", "submit", "reset"].indexOf(value) >= 0,
         },
         size: {
             type: String as PropType<'small' | 'medium' | 'large'>,
@@ -76,13 +62,27 @@ export default defineComponent({
             type: String,
             default: ""
         },
+        tag: {
+            type: String as PropType<'button' | 'a' | 'router-link' | 'input'>,
+            default: "button"
+        },
         to: {
-            type: String as PropType<RouteLocationRaw>,
+            type: [String, Object] as PropType<RouteLocationRaw>,
             default: ""
         }
     },
     setup(props) {
         const router = useRouter();
+
+        const computedTag = computed(() =>
+            typeof props.disabled !== "undefined" && props.disabled
+                ? "button"
+                : props.tag,
+        );
+        const computedNativeType = computed(() =>
+            props.tag === "button" || props.tag === "input" ? props.nativeType : null,
+        );
+        const computedDisabled = computed(() => (props.disabled ? true : null));
 
         const pushToLink = () => {
             if (props.to) {
@@ -90,20 +90,38 @@ export default defineComponent({
             }
         }
 
-        return {pushToLink};
+        const buttonClasses = computed(() => ({
+            'mx-1 inline-flex justify-center items-center gap-2': true, // Estilos base
+            'small': props.size === 'small',
+            'medium': props.size === 'medium',
+            'large': props.size === 'large',
+            'w-full': props.block,
+            'rounded-full': props.pilled,
+            'rounded-md': props.rounded,
+
+            'solid': props.type === 'solid',
+            'outline': props.type === 'outline',
+            'soft': props.type === 'soft',
+            'ghost': props.type === 'ghost',
+            'disabled': props.disabled,
+
+            [props.color]: true // Colores tienen el mismo nombre que las clases
+        }));
+
+        return {pushToLink, computedTag, computedNativeType, computedDisabled, buttonClasses};
     }
 });
 </script>
 
 <style lang="scss" scoped>
 .small {
-    @apply py-2 px-3 text-xs;
+    @apply py-2 px-3 text-sm;
 }
 .medium {
-    @apply py-2 px-4 text-sm;
+    @apply py-2 px-4 text-base;
 }
 .large {
-    @apply py-3 px-5 text-base;
+    @apply py-3 px-5 text-lg;
 }
 .solid {
     @apply border border-transparent shadow-sm font-semibold;
@@ -121,7 +139,7 @@ export default defineComponent({
         @apply bg-yellow-500 hover:bg-yellow-600 dark:focus:ring-offset-gray-800 text-white;
     }
     &.green, &.success {
-        @apply bg-green-500 hover:bg-green-600 dark:focus:ring-offset-gray-800 text-white;
+        @apply bg-green-400 hover:bg-green-600 dark:focus:ring-offset-gray-800 text-white;
     }
     &.blue, &.info {
         @apply bg-blue-500 hover:bg-blue-600 dark:focus:ring-offset-gray-800 text-white;
