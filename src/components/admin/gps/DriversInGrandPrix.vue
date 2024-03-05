@@ -21,7 +21,7 @@
             >
                 <template #item="{ element, index }">
                     <div class="p-1 cursor-move rounded-lg flex items-center justify-center bg-cyan-400 hover:bg-cyan-600 shadow-lg">
-                        {{ element.firstname }} {{ element.lastname }}
+                        {{ element.firstname }} {{ element.lastname }} #{{ element.number }}
                     </div>
                 </template>
             </draggable>
@@ -49,7 +49,7 @@
                             >
                                 <template #item="{ element, index }">
                                     <div class="cursor-move flex items-center justify-center">
-                                        {{ element.firstname }} {{ element.lastname }}
+                                        {{ element.firstname }} {{ element.lastname }} #{{ element.number }}
                                     </div>
                                 </template>
                             </draggable>
