@@ -64,7 +64,7 @@
 </template>
 
 <script lang="ts">
-    import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+    import PTitle from "@/components/lib/PTitle.vue";
     import NextGrandPrix from "@/components/gps/NextGrandPrix.vue";
     import GrandPrixesList from "@/components/gps/list/GrandPrixesList.vue";
     import {Competition} from "@/types/Competition";
@@ -82,7 +82,7 @@
         components: {
             GrandPrixesList,
             NextGrandPrix,
-            PrognoPageTitle
+            PTitle
         },
         setup() {
             const communityStore = useCommunityStore();

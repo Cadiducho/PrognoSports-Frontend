@@ -1,6 +1,6 @@
 <template>
     <div id="createDriver" class="box">
-        <PrognoPageTitle class="mb-5" name="Crear piloto" />
+        <PTitle class="mb-5" name="Crear piloto" />
 
             <o-steps v-model="activeStep">
                 <o-step-item step="1" label="Datos del piloto">
@@ -72,7 +72,7 @@
 </template>
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import {driversService, notificationService} from "@/_services";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
@@ -88,7 +88,7 @@ export default defineComponent({
     components: {
         AlertNoPermission,
         AlertInvalidData,
-        PrognoPageTitle,
+        PTitle,
     },
     setup() {
         const dayjs = useDayjs();

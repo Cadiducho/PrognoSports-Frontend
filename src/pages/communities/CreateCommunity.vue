@@ -1,6 +1,6 @@
 <template>
     <div id="createCommunity" class="box">
-        <PrognoPageTitle class="mb-5" name="Crear comunidad" />
+        <PTitle class="mb-5" name="Crear comunidad" />
 
         <section>
             <o-steps v-model="activeStep">
@@ -347,7 +347,7 @@
 </template>
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import {communityService, notificationService, rulesetService} from "@/_services";
 
 import {defineComponent} from "vue";
@@ -358,7 +358,7 @@ import useEmitter from "@/composables/useEmitter";
 export default defineComponent({
     name: "CreateCommunity",
     components: {
-        PrognoPageTitle
+        PTitle
     },
     setup() {
         const emitter = useEmitter();

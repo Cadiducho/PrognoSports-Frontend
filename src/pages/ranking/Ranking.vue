@@ -2,7 +2,7 @@
     <div id="rankingComponent" class="box">
         <nav class="block is-flex is-justify-content-space-between">
 
-            <PrognoPageTitle name="Ranking" />
+            <PTitle name="Ranking" />
             <o-field label="Temporada" :label-position="'on-border'">
                 <o-select v-if="Object.keys(chosenSeason).length" v-model="chosenSeason" placeholder="Selecciona la temporada" @change="changeSeason()" >
                     <option
@@ -238,7 +238,7 @@
     import {defineComponent} from "vue";
     import {useAuthStore} from "@/store/authStore";
     import {useCommunityStore} from "@/store/communityStore";
-    import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+    import PTitle from "@/components/lib/PTitle.vue";
     import {communityService, grandPrixService, scoreService, seasonService} from "@/_services";
     import {GrandPrix} from "@/types/GrandPrix";
     import {Season} from "@/types/Season";
@@ -258,7 +258,7 @@
     export default defineComponent({
         name: "LandingNavbar",
         components: {
-            PrognoPageTitle, UserMiniCard, PointsTooltipComponent, VueApexCharts
+            PTitle, UserMiniCard, PointsTooltipComponent, VueApexCharts
         },
         setup() {
             const authStore = useAuthStore();

@@ -1,6 +1,6 @@
 <template>
     <div id="seasonEdit" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de temporadas"/>
+        <PTitle class="mb-5" name="Administración de temporadas"/>
 
         <loading v-if="isLoading"/>
         <template v-else>
@@ -64,7 +64,7 @@
 </template>
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {competitionService, notificationService, seasonService} from "@/_services";
 import {Season} from "@/types/Season";
@@ -77,7 +77,7 @@ export default defineComponent({
     name: "EditSeason",
     components: {
         AlertNoPermission,
-        PrognoPageTitle,
+        PTitle,
     },
     setup() {
         const authStore = useAuthStore();

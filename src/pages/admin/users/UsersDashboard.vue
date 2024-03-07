@@ -1,6 +1,6 @@
 <template>
     <div id="adminUsers" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de usuarios" />
+        <PTitle class="mb-5" name="Administración de usuarios" />
 
         <o-field>
             <o-input
@@ -71,7 +71,7 @@
 </template>
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import {User} from "@/types/User";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {userService} from "@/_services";
@@ -84,7 +84,7 @@ export default defineComponent({
     name: "DriversAdmin",
     components: {
         AlertNoPermission,
-        PrognoPageTitle,
+        PTitle,
     },
     setup() {
         const dayjs = useDayjs();

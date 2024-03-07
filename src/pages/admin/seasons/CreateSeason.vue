@@ -1,6 +1,6 @@
 <template>
     <div id="createSeason" class="box">
-        <PrognoPageTitle class="mb-5" name="Crear temporada"/>
+        <PTitle class="mb-5" name="Crear temporada"/>
 
         <PInput label="Nombre de la temporada" name="name" v-model="createdSeason.name" />
         <PInput label="Número de eventos totales" name="totalEvents" type="number" v-model="createdSeason.totalEvents" />
@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import {competitionService, notificationService, seasonService} from "@/_services";
 import {Competition} from "@/types/Competition";
 

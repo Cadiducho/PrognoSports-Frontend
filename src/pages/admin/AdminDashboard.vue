@@ -1,6 +1,6 @@
 <template>
     <div id="adminPage" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de PrognoSports" />
+        <PTitle class="mb-5" name="Administración de PrognoSports" />
 
         <div class="flex flex-wrap justify-between -mx-2 mb-8">
             <article class="w-full md:w-1/2 p-4">
@@ -96,5 +96,5 @@
 </template>
 
 <script setup lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 </script>

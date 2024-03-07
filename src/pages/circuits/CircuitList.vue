@@ -26,7 +26,7 @@
 
 <script lang="ts">
 import ViewCircuitItem from "@/components/circuits/ViewCircuitItem.vue";
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import { Circuit } from "@/types/Circuit";
 import { circuitService } from "@/_services";
 import {defineComponent} from "vue";
@@ -37,7 +37,7 @@ export default defineComponent({
     components: {
         Loading,
         ViewCircuitItem,
-        PrognoPageTitle,
+        PTitle,
     },
     data() {
         return {

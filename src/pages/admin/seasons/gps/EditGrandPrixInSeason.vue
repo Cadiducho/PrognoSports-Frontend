@@ -9,7 +9,7 @@
 
             <div class="columns is-variable is-5">
                 <div class="column">
-                    <PrognoPageTitle :name="'Administración de ' + grandPrix.name + ' de ' + grandPrix.season.name"/>
+                    <PTitle :name="'Administración de ' + grandPrix.name + ' de ' + grandPrix.season.name"/>
                 </div>
                 <div class="column is-3">
                     <GrandPrixPagination isAdminPag :competition="grandPrix.competition" :grand-prix="grandPrix"/>
@@ -133,7 +133,7 @@
 </template>
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {circuitService, grandPrixService, notificationService, seasonService, userService} from "@/_services";
 import {Season} from "@/types/Season";
@@ -153,7 +153,7 @@ export default defineComponent({
     components: {
         DriversInGrandPrix,
         AlertNoPermission,
-        PrognoPageTitle,
+        PTitle,
         SessionsInGrandPrix,
         GrandPrixPagination,
         UploadFileModal

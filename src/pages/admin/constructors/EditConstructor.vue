@@ -1,7 +1,7 @@
 <template>
     <loading v-if="isLoading"/>
     <div v-if="constructor.id" id="editConstrcutor" class="box">
-        <PrognoPageTitle class="mb-5" name="Editar constructor"/>
+        <PTitle class="mb-5" name="Editar constructor"/>
 
         <PInput label="Nombre del constructor" name="name" v-model="constructor.name" />
 
@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import {onMounted, ref} from "vue";

@@ -1,6 +1,6 @@
 <template>
     <div id="createGrandPrix" class="box">
-        <PrognoPageTitle class="mb-5" name="Crear gran premio"/>
+        <PTitle class="mb-5" name="Crear gran premio"/>
 
         <o-steps v-model="activeStep">
             <o-step-item step="1" label="Datos del gran premio">
@@ -119,7 +119,7 @@
 </template>
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue"
+import PTitle from "@/components/lib/PTitle.vue"
 import {circuitService, grandPrixService, notificationService, seasonService} from "@/_services";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
@@ -135,7 +135,7 @@ export default defineComponent({
     components: {
         AlertNoPermission,
         AlertInvalidData,
-        PrognoPageTitle,
+        PTitle,
     },
     setup() {
         const authStore = useAuthStore();

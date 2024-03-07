@@ -1,6 +1,6 @@
 <template>
     <div id="adminDrivers" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de pilotos"/>
+        <PTitle class="mb-5" name="Administración de pilotos"/>
 
         <div class="block">
             <o-button variant="link" :to="{name: 'driverCreate'}" tag="router-link">Nuevo piloto</o-button>
@@ -69,7 +69,7 @@
 </template>
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {Driver} from "@/types/Driver";
 import {driversService} from "@/_services";
@@ -82,7 +82,7 @@ export default defineComponent({
     name: "DriversDashboard",
     components: {
         AlertNoPermission,
-        PrognoPageTitle,
+        PTitle,
     },
     setup() {
         const dayjs = useDayjs();

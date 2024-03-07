@@ -1,6 +1,6 @@
 <template>
     <div id="circuitDetails" class="box">
-        <PrognoPageTitle class="mb-5" :name="communityName" />
+        <PTitle class="mb-5" :name="communityName" />
 
         <loading v-if="isLoading"/>
 
@@ -14,7 +14,7 @@
 
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import {communityService, notificationService} from "@/_services";
 
 import {Community} from "@/types/Community";
@@ -25,7 +25,7 @@ import {useCommunityStore} from "@/store/communityStore";
 export default defineComponent({
     name: "InvitationToCommunity",
     components: {
-        PrognoPageTitle
+        PTitle
     },
     setup() {
         const communityStore = useCommunityStore();

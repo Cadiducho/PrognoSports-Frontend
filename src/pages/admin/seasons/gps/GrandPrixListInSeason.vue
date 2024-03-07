@@ -1,6 +1,6 @@
 <template>
     <div id="adminGps" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de Grandes Premios en la temporada" />
+        <PTitle class="mb-5" name="Administración de Grandes Premios en la temporada" />
 
         <nav class="block is-flex is-justify-content-space-between">
             <p class="control">
@@ -94,7 +94,7 @@
 </template>
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {grandPrixService, seasonService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
@@ -110,7 +110,7 @@ export default defineComponent({
     components: {
         PrognoModal,
         AlertNoPermission,
-        PrognoPageTitle,
+        PTitle,
     },
     setup() {
         const authStore = useAuthStore();

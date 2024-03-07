@@ -8,7 +8,7 @@
 
         <div class="columns is-variable is-5">
             <div class="column">
-                <PrognoPageTitle :name="'Administración de ' + grandPrix.name + ' de ' + grandPrix.season.name"/>
+                <PTitle :name="'Administración de ' + grandPrix.name + ' de ' + grandPrix.season.name"/>
             </div>
             <div class="column is-3">
                 <GrandPrixPagination isAdminPag :competition="competition" :grand-prix="grandPrix"/>
@@ -72,7 +72,7 @@
 </template>
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import {
     driversService,
     grandPrixService, notificationService,
@@ -99,7 +99,7 @@ export default defineComponent({
     components: {
         EditGrid,
         EditResults,
-        PrognoPageTitle,
+        PTitle,
         SessionsInGrandPrix,
         GrandPrixPagination,
         Calendar

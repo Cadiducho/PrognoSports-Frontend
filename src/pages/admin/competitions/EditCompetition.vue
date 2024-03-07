@@ -1,6 +1,6 @@
 <template>
     <div id="adminDrivers" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de competiciones"/>
+        <PTitle class="mb-5" name="Administración de competiciones"/>
 
         <loading v-if="isLoading"/>
         <template v-else>
@@ -62,7 +62,7 @@
 </template>
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {competitionService, notificationService} from "@/_services";
 import {Competition} from "@/types/Competition";
@@ -76,7 +76,7 @@ export default defineComponent({
     name: "EditCompetition",
     components: {
         AlertNoPermission,
-        PrognoPageTitle,
+        PTitle,
     },
     setup() {
         const authStore = useAuthStore();

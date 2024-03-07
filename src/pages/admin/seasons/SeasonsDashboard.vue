@@ -1,6 +1,6 @@
 <template>
     <div id="seasonList" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de temporadas"/>
+        <PTitle class="mb-5" name="Administración de temporadas"/>
 
         <p-button class="mb-4" label="Nueva temporada" color="info" to="/admin/seasons/create" />
 
@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import PTable from "@/components/lib/table/PTable.vue";
 import PButton from "@/components/lib/forms/PButton.vue";

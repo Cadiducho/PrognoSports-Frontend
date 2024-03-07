@@ -1,6 +1,6 @@
 <template>
     <div id="communityDetails">
-        <PrognoPageTitle class="mb-5" :name="communityName" />
+        <PTitle class="mb-5" :name="communityName" />
         <loading v-if="isLoading" />
 
         <p v-if="!thereIsCommunity">La comunidad con nombre <i>{{ this.$route.params.community }}</i> no ha sido encontrada</p>
@@ -135,7 +135,7 @@
 
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import {communityService, notificationService} from "@/_services";
 
 import {Community} from "@/types/Community";
@@ -157,7 +157,7 @@ export default defineComponent({
         RulesAndPointsTable,
         UserInCommunityCard,
         Loading,
-        PrognoPageTitle
+        PTitle
     },
     setup() {
         const dayjs = useDayjs();

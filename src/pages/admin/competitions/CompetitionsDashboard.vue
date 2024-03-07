@@ -1,6 +1,6 @@
 <template>
     <div id="adminDrivers" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de competiciones"/>
+        <PTitle class="mb-5" name="Administración de competiciones"/>
 
         <div class="block">
             <o-button variant="link" :to="{name: 'competitionCreate'}" tag="router-link">Nueva competición</o-button>
@@ -71,7 +71,7 @@
 </template>
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {competitionService, notificationService} from "@/_services";
 import {Competition} from "@/types/Competition";
@@ -85,7 +85,7 @@ export default defineComponent({
     components: {
         PrognoModal,
         AlertNoPermission,
-        PrognoPageTitle,
+        PTitle,
     },
     setup() {
         const authStore = useAuthStore();

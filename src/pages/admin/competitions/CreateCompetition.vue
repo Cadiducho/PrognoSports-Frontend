@@ -1,6 +1,6 @@
 <template>
     <div id="createCompetition" class="box">
-        <PrognoPageTitle class="mb-5" name="Crear competición"/>
+        <PTitle class="mb-5" name="Crear competición"/>
 
         <o-steps v-model="activeStep">
             <o-step-item step="1" label="Datos de la competición">
@@ -59,7 +59,7 @@
 </template>
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import {competitionService, notificationService} from "@/_services";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
@@ -75,7 +75,7 @@ export default defineComponent({
     components: {
         AlertNoPermission,
         AlertInvalidData,
-        PrognoPageTitle,
+        PTitle,
     },
     setup() {
         const authStore = useAuthStore();

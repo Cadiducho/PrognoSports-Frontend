@@ -1,6 +1,6 @@
 <template>
     <div id="createSession" class="box">
-        <PrognoPageTitle class="mb-5" name="Crear sesión"/>
+        <PTitle class="mb-5" name="Crear sesión"/>
 
         <PInput label="Nombre de la sesión" name="name" v-model="createdSession.name" />
         <PInput label="Código corto de la sesión" name="code" v-model="createdSession.code" />
@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import {notificationService, sessionService} from "@/_services";
 
 import {reactive} from "vue";

@@ -1,6 +1,6 @@
 <template>
     <div id="adminConstructor" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de Constructores"/>
+        <PTitle class="mb-5" name="Administración de Constructores"/>
 
 
         <p-button class="mb-4" label="Nuevo constructor" color="info" to="/admin/constructors/create" />
@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import {constructorService, notificationService} from "@/_services";
 import {Constructor} from "@/types/Constructor";
 import PButton from "@/components/lib/forms/PButton.vue";

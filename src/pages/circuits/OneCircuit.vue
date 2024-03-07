@@ -107,7 +107,7 @@
 
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import { Circuit } from "@/types/Circuit";
 import {circuitService, grandPrixService, notificationService} from "@/_services";
 import CircuitCard from "@/components/gps/CircuitCard.vue";
@@ -125,7 +125,7 @@ export default defineComponent({
     components: {
         Loading,
         CircuitCard,
-        PrognoPageTitle,
+        PTitle,
         LMap,
         LTileLayer,
         LMarker,

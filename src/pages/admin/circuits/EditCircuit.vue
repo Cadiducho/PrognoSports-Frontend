@@ -1,6 +1,6 @@
 <template>
     <div id="adminDrivers" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de circuitos"/>
+        <PTitle class="mb-5" name="Administración de circuitos"/>
 
         <loading v-if="isLoading"/>
         <template v-else>
@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import {circuitService, notificationService} from "@/_services";
 
 import {onMounted, ref} from "vue";

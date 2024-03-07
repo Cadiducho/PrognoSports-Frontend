@@ -4,7 +4,7 @@
         <loading v-if="isLoadingGrandPrix"/>
         <template v-else>
 
-            <PrognoPageTitle :name="'Administración de ' + grandPrix.name"/>
+            <PTitle :name="'Administración de ' + grandPrix.name"/>
 
             <div class="block">
                 <o-button variant="link" to="/admin/gps" tag="router-link">Lista de grandes premios</o-button>
@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import {grandPrixService, notificationService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
 
@@ -52,7 +52,7 @@ export default defineComponent({
     name: "EditGrandPrix",
     components: {
         DriversInGrandPrix,
-        PrognoPageTitle,
+        PTitle,
     },
     setup() {
         const authStore = useAuthStore();

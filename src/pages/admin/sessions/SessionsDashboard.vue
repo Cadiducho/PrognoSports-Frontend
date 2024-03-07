@@ -1,6 +1,6 @@
 <template>
     <div id="sessionList" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de sesiones"/>
+        <PTitle class="mb-5" name="Administración de sesiones"/>
 
         <p-button class="mb-4" label="Nueva sesión" color="info" to="/admin/sessions/create" />
 
@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import PTable from "@/components/lib/table/PTable.vue";
 import PButton from "@/components/lib/forms/PButton.vue";

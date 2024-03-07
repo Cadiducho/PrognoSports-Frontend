@@ -1,6 +1,6 @@
 <template>
     <div id="adminDrivers" class="box">
-        <PrognoPageTitle class="mb-5" name="Administración de circuitos"/>
+        <PTitle class="mb-5" name="Administración de circuitos"/>
 
         <p-button class="mb-4" label="Nuevo circuito" color="info" to="/admin/circuits/create" />
 
@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {circuitService, notificationService} from "@/_services";
 
@@ -49,7 +49,7 @@ export default defineComponent({
         PrognoModal,
         PTable,
         AlertNoPermission,
-        PrognoPageTitle,
+        PTitle,
     },
     setup() {
         const authStore = useAuthStore();

@@ -1,6 +1,6 @@
 <template>
     <div class="container mt-6 mb-6">
-        <PrognoPageTitle name="Contacto" />
+        <PTitle name="Contacto" />
         <section class="dark:text-gray-200">
             <p>Si así se desea, el usuario podrá contactar con los propietarios y administración de la plataforma mediante correo electrónico a través de la dirección <a href="mailto:info@prognosports.com">info@prognosports.com</a></p>
 
@@ -37,5 +37,5 @@
     </div>
 </template>
 <script setup lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 </script>

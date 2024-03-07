@@ -1,6 +1,6 @@
 <template>
     <div id="createConstructor" class="box">
-        <PrognoPageTitle class="mb-5" name="Crear constructor"/>
+        <PTitle class="mb-5" name="Crear constructor"/>
 
         <PInput label="Nombre del constructor" name="name" v-model="name" />
 
@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import {ref} from "vue";

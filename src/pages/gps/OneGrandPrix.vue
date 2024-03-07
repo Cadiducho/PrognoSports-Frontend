@@ -6,7 +6,7 @@
         <template v-else>
             <div class="columns is-variable is-5">
                 <div class="column">
-                    <PrognoPageTitle :name="grandPrix.name + ' de ' + grandPrix.season.name" />
+                    <PTitle :name="grandPrix.name + ' de ' + grandPrix.season.name" />
                 </div>
                 <div class="column is-3">
                     <GrandPrixPagination :competition="competition" :grand-prix="grandPrix"/>
@@ -82,7 +82,7 @@
 </template>
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
 import CircuitCard from "@/components/gps/CircuitCard.vue";
 import StartGrid from "@/components/gps/StartGridList.vue";
@@ -117,7 +117,7 @@ export default defineComponent({
         PitLaneStartGrid,
         SelectTipps,
         CircuitCard,
-        PrognoPageTitle,
+        PTitle,
         GrandPrixPagination,
         StartGrid
     },

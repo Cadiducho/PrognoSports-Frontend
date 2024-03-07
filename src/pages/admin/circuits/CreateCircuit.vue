@@ -1,6 +1,6 @@
 <template>
     <div id="createCircuit" class="box">
-        <PrognoPageTitle class="mb-5" name="Crear circuito" />
+        <PTitle class="mb-5" name="Crear circuito" />
 
         <p-input label="Nombre del circuito" name="name" v-model="rawCircuit.name"/>
         <p-input label="Localidad del circuito" name="locality" v-model="rawCircuit.locality"/>
@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import {circuitService, notificationService} from "@/_services";
 
 import {reactive} from "vue";

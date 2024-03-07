@@ -1,7 +1,7 @@
 <template>
     <div id="homeComponent">
 
-        <PrognoPageTitle name="Dashboard" />
+        <PTitle name="Dashboard" />
 
         <div class="columns is-variable is-5">
             <div class="column is-4">
@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import NextGrandPrix from "@/components/gps/NextGrandPrix.vue";
 import PointsAccumulated from "@/components/home/PointsAccumulated.vue";
 import UserLevelResume from "@/components/user/UserLevelResume.vue";
@@ -34,10 +34,10 @@ import {useCommunityStore} from "@/store/communityStore";
 export default defineComponent({
     name: "Home",
     components: {
+        PTitle,
         UserLevelResume,
         PointsAccumulated,
         NextGrandPrix,
-        PrognoPageTitle,
     },
     setup() {
         const authStore = useAuthStore();

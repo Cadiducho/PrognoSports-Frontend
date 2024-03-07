@@ -87,7 +87,7 @@
 </template>
 
 <script lang="ts">
-import PrognoPageTitle from "@/components/lib/PrognoPageTitle.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 import {Community} from "@/types/Community";
 import {communityService} from "@/_services";
 import CommunityListItem from "@/components/communities/CommunityListItem.vue";
@@ -101,7 +101,7 @@ export default defineComponent({
     name: "CommunitiesList",
     components: {
         CommunityListItem,
-        PrognoPageTitle,
+        PTitle,
     },
     setup() {
         const emitter = useEmitter();
