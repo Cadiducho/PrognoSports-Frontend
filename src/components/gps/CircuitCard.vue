@@ -1,5 +1,5 @@
 <template>
-    <div class="card bg-white dark:bg-gray-900 rounded shadow-md rounded-lg relative max-w-full">
+    <PCard>
         <div class="block relative">
             <figure class="block relative">
                 <img v-if="circuit.hasLogoImage" :src="circuit.logoImage()" alt="Logo image">
@@ -26,9 +26,9 @@
                 <p v-if="hasLaps()" class="mt-2"><b>Vueltas: </b>{{ laps }}</p>
                 <p v-if="hasLaps()" class="mt-2"><b>Distancia total: </b>{{ (laps * variant.distance).toFixed(2) }}km</p>
             </div>
-            <o-button variant="info is-light is-fullwidth" tag="router-link" :to="circuit.circuitLink()">Más datos del circuito</o-button>
+            <PButton expanded tag="router-link" :to="circuit.circuitLink()" color="info" type="soft">Más datos del circuito</PButton>
         </div>
-    </div>
+    </PCard>
 </template>
 
 <script lang="ts">
@@ -39,9 +39,12 @@
     import {useAuthStore} from "@/store/authStore";
     import {useCommunityStore} from "@/store/communityStore";
     import {CircuitVariant} from "@/types/CircuitVariant";
+    import PCard from "@/components/lib/PCard.vue";
+    import PButton from "@/components/lib/forms/PButton.vue";
 
     export default defineComponent({
         name: "CircuitCard",
+        components: {PButton, PCard},
         props: {
             circuit: {
                 type: Object as PropType<Circuit>,
