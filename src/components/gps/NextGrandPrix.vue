@@ -1,47 +1,27 @@
 <template>
-    <div class="tile" v-if="noNextGp">
-        <article class="tile is-child box">
-            <p class="title">Próximo Gran Premio</p>
-            <p class="content block">
-                No hay próximo Gran Premio
-            </p>
-        </article>
-    </div>
-    <router-link v-else-if="!loadingGpData" :to="nextGp.gpLink()">
-        <div class="card" >
-            <div class="card-content">
-                <p class="subtitle has-text-weight-bold">Próximo Gran Premio</p>
-                <p class="title">{{nextGp.name}}</p>
-                <figure class="image is-16by9">
-                    <img v-if="nextGp.hasPromoImage" :src="nextGp.promoImage()">
-                </figure>
-            </div>
-            <div class="card-content">
-                <div class="columns">
-                    <div class="column">
-                        <p class="title is-4">{{ nextGp.circuit.name }}</p>
-                        <p class="subtitle mb-0">{{ nextGp.circuit.locality }} ({{ nextGp.circuit.country }})</p>
-                        <p class="subtitle mt-0">Ronda #{{ nextGp.round }}</p>
-                    </div>
-                    <div class="column">
-                        <p class="content block">
-                            <span v-for="session in nextGp.sessions">
-                                <b>{{ session.humanName() }}:</b> {{ humanDate(session.date) }} ({{ dateDiff(session.date) }}) <br />
-                            </span>
-                        </p>
-                    </div>
-                </div>
+    <PCard v-if="noNextGp">
+        <PTitle type="subtitle">Próximo Gran Premio</PTitle>
+        <PTitle tag="p">No hay próximo Gran Premio</PTitle>
+    </PCard>
 
-                <footer class="card-footer">
-                    <o-button tag="router-link"
-                              :to="nextGp.gpLink()"
-                              variant="info light" expanded>
-                        Pronosticar
-                    </o-button>
-                </footer>
-            </div>
-        </div>
-    </router-link>
+    <PCard v-else-if="!loadingGpData" class="text-black no-underline">
+        <PTitle type="subtitle" tag="h2">Próximo Gran Premio</PTitle>
+        <PTitle tag="h1">{{ nextGp.name }}</PTitle>
+        <figure class="image is-16by9">
+            <img v-if="nextGp.hasPromoImage" :src="nextGp.promoImage()" alt="Next grand prix promo image">
+        </figure>
+
+
+        <h3 class="text-2xl font-semibold mt-5">{{ nextGp.circuit?.name }} - Ronda #{{ nextGp.round }}</h3>
+        <p class="text-lg font-semibold">{{ nextGp.circuit?.locality }} ({{ nextGp.circuit?.country }})</p>
+        <ul class="list-disc list-inside " v-for="session in nextGp.sessions">
+            <li>
+                <b class="-ml-2">{{ session.humanName() }}:</b> {{ humanDateTime(session.date) }} ({{ dateDiff(session.date) }})
+            </li>
+        </ul>
+
+        <PButton expanded tag="router-link" :to="nextGp.gpLink()" color="primary" class="mt-5">Pronosticar</PButton>
+    </PCard>
 </template>
 
 <script lang="ts">
@@ -51,18 +31,22 @@
     import {useCommunityStore} from "@/store/communityStore";
     import {grandPrixService} from "@/_services";
     import {useDayjs} from "@/composables/useDayjs";
+    import PCard from "@/components/lib/PCard.vue";
+    import PTitle from "@/components/lib/PTitle.vue";
+    import PButton from "@/components/lib/forms/PButton.vue";
 
     export default defineComponent({
         name: "NextGrandPrix",
+        components: {PButton, PTitle, PCard},
         setup() {
             const dayjs = useDayjs();
             const communityStore = useCommunityStore();
 
-            const humanDate = dayjs.humanDate;
+            const humanDateTime = dayjs.humanDateTime;
             const dateDiff = dayjs.dateDiff;
             const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
             const currentCommunity = communityStore.currentCommunity;
-            return { currentCommunity, thereIsCurrentCommunity, humanDate, dateDiff };
+            return { currentCommunity, thereIsCurrentCommunity, humanDateTime, dateDiff };
         },
         data() {
             return {

@@ -3,18 +3,16 @@
 
         <PTitle name="Dashboard" />
 
-        <div class="columns is-variable is-5">
-            <div class="column is-4">
+        <div class="flex flex-wrap -mx-4">
+            <div class="w-full md:w-1/3 p-4">
                 <NextGrandPrix />
             </div>
-            <div class="column is-8">
-                <div class="tile">
-                    <article class="tile is-child box">
-                        <p class="title">Resumen</p>
-                        <UserLevelResume :user="currentUser" />
-                        <PointsAccumulated :user="currentUser" />
-                    </article>
-                </div>
+            <div class="w-full md:w-2/3 p-4">
+                <PCard>
+                    <PTitle tag="h3">Resumen</PTitle>
+                    <UserLevelResume :user="currentUser" />
+                    <PointsAccumulated :user="currentUser" />
+                </PCard>
             </div>
         </div>
 
@@ -30,10 +28,12 @@ import UserLevelResume from "@/components/user/UserLevelResume.vue";
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
+import PCard from "@/components/lib/PCard.vue";
 
 export default defineComponent({
     name: "Home",
     components: {
+        PCard,
         PTitle,
         UserLevelResume,
         PointsAccumulated,

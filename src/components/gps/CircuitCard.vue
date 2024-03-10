@@ -8,7 +8,7 @@
                 <img :src="variant.layoutImage(true)" alt="Circuit layout image">
             </figure>
         </div>
-        <div class="p-5 bg-transparent">
+        <div class="bg-transparent">
             <div class="flex items-start">
                 <div class="basis-auto grow shrink">
                     <p class="font-semibold text-xl">
@@ -16,11 +16,11 @@
                             {{ circuit.name }} {{ variant.isDefault() ? "" : ('- ' + variant.name) }}
                         </router-link>
                     </p>
-                    <p class="font-normal text-base mb-3 dark:text-gray-300">{{ circuit.locality }}, {{ circuit.country }}</p>
+                    <p class="font-normal text-base mb-3">{{ circuit.locality }}, {{ circuit.country }}</p>
                 </div>
             </div>
 
-            <div class="dark:text-gray-300 mb-3">
+            <div class="mb-3">
                 <p v-if="!variant.isDefault()"><b>Variante: </b>{{ variant.name }}</p>
                 <p class="mt-2"><b>Distancia por vuelta: </b>{{ variant.distance }}km</p>
                 <p v-if="hasLaps()" class="mt-2"><b>Vueltas: </b>{{ laps }}</p>

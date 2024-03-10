@@ -38,7 +38,7 @@ export default defineComponent({
             type: String as PropType<'small' | 'medium' | 'large'>,
             default: "medium"
         },
-        block: {
+        expanded: {
             type: Boolean,
             default: false
         },
@@ -91,11 +91,11 @@ export default defineComponent({
         }
 
         const buttonClasses = computed(() => ({
-            'mx-1 inline-flex justify-center items-center gap-2': true, // Estilos base
+            'inline-flex justify-center items-center gap-2': true, // Estilos base
             'small': props.size === 'small',
             'medium': props.size === 'medium',
             'large': props.size === 'large',
-            'w-full': props.block,
+            'w-full': props.expanded,
             'rounded-full': props.pilled,
             'rounded-md': props.rounded,
 
@@ -126,11 +126,11 @@ export default defineComponent({
 .solid {
     @apply border border-transparent shadow-sm font-semibold;
 
-    &.teal, &.primary {
+    &.teal {
         @apply bg-teal-400 hover:bg-teal-500 dark:focus:ring-offset-gray-800 text-white;
     }
-    &.purple {
-        @apply bg-purple-500 hover:bg-purple-600 dark:focus:ring-offset-gray-800 text-white;
+    &.primary {
+        @apply bg-primary hover:bg-purple-600 dark:focus:ring-offset-gray-800 text-white;
     }
     &.red, &.danger {
         @apply bg-red-500 hover:bg-red-600 dark:focus:ring-offset-gray-800 text-white;
@@ -192,7 +192,7 @@ export default defineComponent({
         @apply bg-green-100 hover:bg-green-200 dark:focus:ring-offset-gray-800 text-green-500;
     }
     &.blue, &.info {
-        @apply bg-blue-100 hover:bg-blue-200 dark:focus:ring-offset-gray-800 text-blue-500;
+        @apply bg-blue-100 hover:bg-blue-200 dark:bg-blue-400 dark:focus:ring-offset-gray-800 text-blue-500 dark:text-white;
     }
     &.pink {
         @apply bg-pink-100 hover:bg-pink-200 dark:focus:ring-offset-gray-800 text-pink-500;

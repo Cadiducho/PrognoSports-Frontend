@@ -1,52 +1,50 @@
 <template>
-    <nav class="level" v-if="userResume.standings !== 0">
-        <div class="level-item has-text-centered">
+    <nav class="flex" v-if="userResume.standings !== 0">
+        <div class="grow text-center">
             <o-tooltip multilined variant="light">
                 <template v-slot:content>
                     {{ userResume.standings }}º en el ranking de esta comunidad
                 </template>
 
-                <p class="heading">Puesto</p>
-                <p class="title">{{ userResume.standings || '0'}}º</p>
+                <p class="text-xs uppercase tracking-tight">Puesto</p>
+                <PTitle tag="p">
+                    {{ userResume.standings || '0'}}º
+                </PTitle>
             </o-tooltip>
         </div>
-        <div class="level-item has-text-centered">
-            <div>
-                <o-tooltip multilined>
-                    <template v-slot:content>
-                        <ul>
-                            <li v-for="(points, session) in userResume.totalPointsBySession">
-                                <b>{{ session }}</b>: {{ points }}
-                            </li>
-                        </ul>
-                    </template>
+        <div class="grow text-center">
+            <o-tooltip multilined>
+                <template v-slot:content>
+                    <ul>
+                        <li v-for="(points, session) in userResume.totalPointsBySession">
+                            <b>{{ session }}</b>: {{ points }}
+                        </li>
+                    </ul>
+                </template>
 
-                    <p class="heading">Puntos</p>
-                    <p class="title">
-                        {{ userResume.totalPoints || '0' }}
-                    </p>
-                </o-tooltip>
-            </div>
+                <p class="text-xs uppercase tracking-tight">Puntos</p>
+                <PTitle tag="p">
+                    {{ userResume.totalPoints || '0' }}
+                </PTitle>
+            </o-tooltip>
         </div>
-        <div class="level-item has-text-centered">
-            <div>
-                <o-tooltip multilined>
-                    <template v-slot:content>
-                        <ul>
-                            <li v-for="(points, session) in userResume.averagePointsBySession">
-                                <b>{{ session }}</b>: {{ points }}
-                            </li>
-                        </ul>
-                    </template>
+        <div class="grow text-center">
+            <o-tooltip multilined>
+                <template v-slot:content>
+                    <ul>
+                        <li v-for="(points, session) in userResume.averagePointsBySession">
+                            <b>{{ session }}</b>: {{ points }}
+                        </li>
+                    </ul>
+                </template>
 
-                    <p class="heading">Media Puntos por sesión</p>
-                    <p class="title">
-                        {{ userResume.average || '0' }}
-                    </p>
-                </o-tooltip>
-            </div>
+                <p class="text-xs uppercase tracking-tight">Media Puntos por sesión</p>
+                <PTitle tag="p">
+                    {{ userResume.average || '0' }}
+                </PTitle>
+            </o-tooltip>
         </div>
-        <div class="level-item has-text-centered">
+        <div class="grow text-center">
             <o-tooltip multilined>
                 <template v-slot:content>
                     <ul>
@@ -57,13 +55,13 @@
                     </ul>
                 </template>
 
-                <p class="heading">Sesiones ganadas</p>
-                <p class="title">
+                <p class="text-xs uppercase tracking-tight">Sesiones ganadas</p>
+                <PTitle tag="p">
                     {{ countWonSessions(userResume.wonSessions) || '0' }}
-                </p>
+                </PTitle>
             </o-tooltip>
         </div>
-        <div class="level-item has-text-centered">
+        <div class="grow text-center">
             <o-tooltip multilined>
                 <template v-slot:content>
                     <ul>
@@ -74,10 +72,10 @@
                     </ul>
                 </template>
 
-                <p class="heading">Grandes Premios ganados</p>
-                <p class="title">
+                <p class="text-xs uppercase tracking-tight">Grandes Premios ganados</p>
+                <PTitle tag="p">
                     {{ countWonGPs(userResume.wonGrandPrixes) || '0' }}
-                </p>
+                </PTitle>
             </o-tooltip>
         </div>
     </nav>
@@ -91,9 +89,11 @@ import {defineComponent, PropType} from "vue";
 import {userService} from "@/_services";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
+import PTitle from "@/components/lib/PTitle.vue";
 
 export default defineComponent({
     name: "UserLevelResume",
+    components: {PTitle},
     props: {
         user: {
             type: Object as PropType<User>,

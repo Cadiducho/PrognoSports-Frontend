@@ -7,7 +7,7 @@
             :options="chartOptions"
             :series="chartSeries"
         ></VueApexCharts>
-        <p-button label="Ir al Ranking" block type="soft" color="info" to="/ranking" />
+        <p-button label="Ir al Ranking" expanded type="soft" color="info" to="/ranking" />
     </div>
 </template>
 

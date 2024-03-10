@@ -8,7 +8,11 @@ const props = withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-    <component :is="tag" class="bg-contrast dark:bg-contrast-dark shadow-md rounded-lg max-w-full">
-        <slot></slot>
+    <component :is="tag" class="bg-contrast dark:bg-contrast-dark shadow-md rounded-lg max-w-full dark:text-gray-300">
+        <div class="p-4">
+            <slot name="header"></slot>
+            <slot></slot>
+            <slot name="footer"></slot>
+        </div>
     </component>
 </template>
