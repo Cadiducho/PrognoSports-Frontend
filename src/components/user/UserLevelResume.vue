@@ -48,7 +48,7 @@
             <o-tooltip multilined>
                 <template v-slot:content>
                     <ul>
-                        <li v-if="userResume.wonSessions?.size" v-for="(gps, session) in userResume.wonSessions">
+                        <li v-if="userResume.wonSessions?.size" v-for="([session, gps], rawKey) in userResume.wonSessions">
                             <b>{{ session }}</b>: {{ gps.join(', ') }}
                         </li>
                         <li v-else>No has ganado Sesiones</li>
@@ -135,7 +135,7 @@ export default defineComponent({
         countWonSessions(wonSessions: Map<string, string[]>) {
             let count = 0;
             if (wonSessions) {
-                Object.values(wonSessions).forEach((list, ses) => {
+                wonSessions.forEach((list, ses) => {
                     count += list.length;
                 });
             }
