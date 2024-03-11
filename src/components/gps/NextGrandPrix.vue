@@ -7,9 +7,10 @@
     <PCard v-else-if="!loadingGpData" class="text-black no-underline">
         <PTitle type="subtitle" tag="h2">Próximo Gran Premio</PTitle>
         <PTitle tag="h1">{{ nextGp.name }}</PTitle>
-        <figure class="image is-16by9">
-            <img v-if="nextGp.hasPromoImage" :src="nextGp.promoImage()" alt="Next grand prix promo image">
+        <figure v-if="nextGp.hasPromoImage" class="max-w-lg">
+            <img class="h-auto max-w-full rounded-lg" :src="nextGp.promoImage()" alt="Next grand prix promo image">
         </figure>
+        <hr v-else>
 
 
         <h3 class="text-2xl font-semibold mt-5">{{ nextGp.circuit?.name }} - Ronda #{{ nextGp.round }}</h3>

@@ -53,39 +53,11 @@
 }
 </style>
 
-<script lang="ts">
+<script setup lang="ts">
 // Autor: @Eschiclers https://github.com/Eschiclers/eschiclers.github.io
-import {defineComponent} from "vue";
+import {useThemeStore} from "@/store/themeStore";
 
-export default defineComponent({
-    name: "SwitchTheme",
-    data() {
-        return {
-            darkMode: false,
-        };
-    },
-    methods: {
-        switchTheme() {
-            if (this.darkMode) {
-                window.localStorage.setItem("dark", "true");
-                document.documentElement.classList.add("dark");
-            } else {
-                window.localStorage.setItem("dark", "false");
-                document.documentElement.classList.remove("dark");
-            }
-        },
-    },
-    mounted() {
-        if (window.localStorage.getItem("dark") === null) {
-            window.localStorage.setItem("dark", "false");
-        } // First load (have not theme saved)
-        if (window.localStorage.getItem("dark") === "true") {
-            this.darkMode = true;
-            document.documentElement.classList.add("dark");
-        } else {
-            this.darkMode = false;
-            document.documentElement.classList.remove("dark");
-        }
-    },
-});
+const styleStore = useThemeStore();
+const darkMode = styleStore.darkMode;
+const switchTheme = styleStore.toggleDarkMode;
 </script>

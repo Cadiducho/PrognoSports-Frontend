@@ -18,6 +18,7 @@ import ToTop from "@/components/lib/ToTop.vue";
 import { Toaster } from 'vue-sonner'
 import {useToastStore} from "@/store/toastStore";
 import { useTitle } from '@vueuse/core'
+import {useThemeStore} from "@/store/themeStore";
 
 export default defineComponent({
     components: {
@@ -25,11 +26,15 @@ export default defineComponent({
     },
     setup() {
         const toastStore = useToastStore();
+        const styleStore = useThemeStore();
 
         const isBeta = import.meta.env.MODE == 'beta';
         console.log("isBeta", isBeta);
         const title = useTitle();
         title.value = isBeta ? 'PrognoSports (Beta)' : ' PrognoSports';
+
+        const darkMode = styleStore.darkMode;
+        styleStore.setDarkMode(darkMode);
 
         return {toastStore};
     }

@@ -17,7 +17,7 @@ export const useAuthStore = defineStore('auth', {
         },
         loggedUser(): User {
             return new User(this.user);
-        },
+        }
     },
     actions: {
         loginSuccess(token: string): void {

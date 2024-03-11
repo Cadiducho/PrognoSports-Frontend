@@ -1,7 +1,7 @@
 <template>
     <div id="pointsChart">
         <loading class="m-4" v-show="loading"></loading>
-        <VueApexCharts v-show="!loading"
+        <VueApexCharts ref="chart" v-show="!loading"
             height="400"
             type="area"
             :options="chartOptions"
@@ -15,12 +15,12 @@
 import {User} from "@/types/User";
 import {grandPrixService, seasonService, userService} from "@/_services";
 import {Competition} from "@/types/Competition";
-import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
-import {defineComponent, PropType} from "vue";
-import VueApexCharts from "vue3-apexcharts";
+import {defineComponent, PropType, ref} from "vue";
+import VueApexCharts, {VueApexChartsComponent} from "vue3-apexcharts";
 import PButton from "@/components/lib/forms/PButton.vue";
-
+import {useThemeStore} from "@/store/themeStore";
+import {storeToRefs} from "pinia";
 
 export default defineComponent({
     name: "PointsAccumulated",
@@ -35,14 +35,15 @@ export default defineComponent({
         }
     },
     setup() {
-        const authStore = useAuthStore();
         const communityStore = useCommunityStore();
+        const themeStore = useThemeStore();
 
-        const currentUser = authStore.loggedUser;
         const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
         const currentCommunity = communityStore.currentCommunity;
+        const { darkMode } = storeToRefs(themeStore);
+        const chart = ref<VueApexChartsComponent | null>(null);
 
-        return {currentUser, currentCommunity, thereIsCurrentCommunity};
+        return {currentCommunity, thereIsCurrentCommunity, darkMode, chart};
     },
     data() {
         return {
@@ -66,7 +67,8 @@ export default defineComponent({
                     },
                     toolbar: {
                         autoSelected: 'zoom'
-                    }
+                    },
+                    background: 'transparent'
                 },
                 dataLabels: {
                     enabled: true,
@@ -98,6 +100,10 @@ export default defineComponent({
                         formatter: (codePos: number) => { return [...this.grandPrixes.values()][codePos - 1] },
                     }
                 },
+                theme: {
+                    mode: this.darkMode ? 'dark' : 'light',
+                    palette: 'palette8'
+                }
             }
         }
     },
@@ -150,6 +156,14 @@ export default defineComponent({
     watch: {
         currentCommunity(newCommunity, oldcommunity) {
             this.fetchData();
+        },
+        darkMode(newDarkMode, oldDarkMode) {
+            this.chart?.updateOptions({
+                theme: {
+                    mode: newDarkMode ? 'dark' : 'light',
+                    palette: 'palette8'
+                }
+            });
         }
     },
 });
