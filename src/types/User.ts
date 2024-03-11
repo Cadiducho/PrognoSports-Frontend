@@ -2,6 +2,7 @@ import {UserRank} from "@/types/UserRank";
 import {Community} from "@/types/Community";
 import {Dictionary} from "@/types/Dictionary";
 import {BASE_URL} from "@/_services";
+import { RaceSession } from "@/types/RaceSession";
 
 export interface IUser {
     id: number;
@@ -95,7 +96,7 @@ export interface IUserResume {
     totalPointsBySession: Map<string, number>;
     averagePointsBySession: Map<string, number>;
     participationsBySession: Map<string, number>;
-    wonSessions: Map<string, Array<string>>;
+    wonSessions: Map<number | string, Array<string>>;
     wonGrandPrixes: Array<string>;
 }
 
@@ -117,6 +118,12 @@ export class UserResume implements IUserResume {
         this.totalPoints = data.totalPoints;
         this.totalPointsBySession = data.totalPointsBySession;
         this.wonGrandPrixes = data.wonGrandPrixes;
-        this.wonSessions = data.wonSessions;
+        this.wonSessions = new Map();
+        Object.entries(data.wonSessions).forEach(([sessionId, list]) => {
+            const session = RaceSession.findById(Number(sessionId));
+            if (session) {
+                this.wonSessions.set(session.humanName(), list as Array<string>);
+            }
+        });
     }
 }
