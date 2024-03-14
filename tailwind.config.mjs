@@ -16,7 +16,7 @@ module.exports = {
                 },
                 secondary: '#A484E5',
                 contrast: {
-                    DEFAULT: colors.slate[50],
+                    DEFAULT: colors.zinc[50],
                     dark: colors.gray[900]
                 },
             },

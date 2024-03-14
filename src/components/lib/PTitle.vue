@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const computedClass = computed(() => ({
-    'font-semibold dark:text-gray-200 mb-3': true,
+    'font-semibold text-black dark:text-gray-200 mb-3': true,
     'text-2xl md:text-4xl': props.type === 'title',
     'text-xl md:text-2xl': props.type === 'subtitle'
 }));
