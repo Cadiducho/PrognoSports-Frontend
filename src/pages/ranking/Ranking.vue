@@ -1,272 +1,289 @@
 <template>
-    <div id="rankingComponent" class="box">
-        <nav class="block is-flex is-justify-content-space-between">
+    <div id="rankingComponent">
 
-            <PTitle name="Ranking" />
-            <o-field label="Temporada" :label-position="'on-border'">
-                <o-select v-if="Object.keys(chosenSeason).length" v-model="chosenSeason" placeholder="Selecciona la temporada" @change="changeSeason()" >
-                    <option
-                        v-for="season in seasonList"
-                        :value="season"
-                        :key="season.id">
-                        {{ season.competition.name }} {{ season.name }}
-                    </option>
-                </o-select>
-            </o-field>
-        </nav>
+        <PTitle name="Ranking" />
+
+        <PCard>
+            <nav class="block is-flex is-justify-content-space-between">
+
+                <o-field label="Temporada" :label-position="'on-border'">
+                    <o-select v-if="Object.keys(chosenSeason).length" v-model="chosenSeason" placeholder="Selecciona la temporada" @change="changeSeason()" >
+                        <option
+                            v-for="season in seasonList"
+                            :value="season"
+                            :key="season.id">
+                            {{ season.competition.name }} {{ season.name }}
+                        </option>
+                    </o-select>
+                </o-field>
+            </nav>
 
 
-        <loading v-if="isLoading" />
-        <template v-else>
+            <loading v-if="isLoading" />
+            <template v-else>
 
-            <o-notification v-if="!tableHasData" variant="warning">
-                No hay datos de esta temporada
-            </o-notification>
+                <o-notification v-if="!tableHasData" variant="warning">
+                    No hay datos de esta temporada
+                </o-notification>
 
-            <o-tabs v-else v-model="activeTab">
-                <o-tab-item label="Ranking por Gran Premio" :value="0">
-                    <h1 class="title is-4">Ranking por Gran Premio</h1>
-                    <p class="content">
-                        Los ganadores de cada Gran Premio tendrán representado un <o-icon pack="fas" variant="info" icon="trophy"></o-icon>
-                    </p>
-                    <o-table :data="tableData"
-                             hoverable
-                             :mobile-cards="false"
-                             default-sort="totalScore"
-                             default-sort-direction="DESC"
-                             :row-class="checkRowClass"
-                    >
+                <o-tabs v-else v-model="activeTab">
+                    <o-tab-item label="Ranking por Gran Premio" :value="0">
+                        <PTitle type="subtitle">Ranking por Gran Premio</PTitle>
+                        <p class="content">
+                            Los ganadores de cada Gran Premio tendrán representado un <o-icon pack="fas" variant="info" icon="trophy"></o-icon>
+                        </p>
+                        <o-table :data="tableData"
+                                 hoverable
+                                 :mobile-cards="false"
+                                 default-sort="totalScore"
+                                 default-sort-direction="DESC"
+                                 :row-class="checkRowClass"
+                        >
 
-                        <o-table-column label="Pos." sortable numeric v-slot="props">
-                            <span class="has-text-weight-bold">#{{ props.index + 1 }}</span>
-                        </o-table-column>
+                            <o-table-column label="Pos." sortable numeric v-slot="props">
+                                <span class="has-text-weight-bold">#{{ props.index + 1 }}</span>
+                            </o-table-column>
 
-                        <o-table-column field="user.username" label="Nombre" sortable>
-                            <template v-slot="props">
-                                <o-tooltip
-                                    position="right"
-                                    variant="light">
-                                    <template v-slot:content>
-                                        <UserMiniCard :user="communityMembers.get(props.row.user.username)" />
-                                    </template>
+                            <o-table-column field="user.username" label="Nombre" sortable>
+                                <template v-slot="props">
+                                    <o-tooltip
+                                        position="right"
+                                        variant="light">
+                                        <template v-slot:content>
+                                            <UserMiniCard :user="communityMembers.get(props.row.user.username)" />
+                                        </template>
 
-                                    <span class="has-text-weight-bold">{{ props.row.user.username }}</span>
-                                </o-tooltip>
-                            </template>
-                        </o-table-column>
-
-                        <o-table-column v-for="gp in grandPrixList()" v-bind:key="gp.code" field="pointsInGP" sortable numeric>
-                            <template v-slot:header="{ column }">
-                                <o-tooltip :label="gp.name">
-                                    {{ gp.code }}
-                                </o-tooltip>
-                            </template>
-                            <template v-slot="props">
-
-                                <PointsTooltipComponent
-                                    v-if="props.row.gps.has(gp.id)"
-                                    :gp-name="gp.name"
-                                    :user-points="props.row.gps.get(gp.id)"
-                                    :display-points="props.row.gps.get(gp.id).pointsInGP" />
-                                <template v-else>
-                                    0 :(
+                                        <span class="has-text-weight-bold">{{ props.row.user.username }}</span>
+                                    </o-tooltip>
                                 </template>
+                            </o-table-column>
 
-                                <o-tooltip v-if="props.row.gps.get(gp.id)?.pointsInGP && checkAndInsertTrophy(gp.id, props.row.gps.get(gp.id).pointsInGP)"
-                                           :label="'Ganador de ' + gp.name"
-                                           variant="light">
-                                    <o-icon pack="fas" variant="info" icon="trophy"></o-icon>
-                                </o-tooltip>
+                            <o-table-column v-for="gp in grandPrixList()" v-bind:key="gp.code" field="pointsInGP" sortable numeric>
+                                <template v-slot:header="{ column }">
+                                    <o-tooltip :label="gp.name">
+                                        {{ gp.code }}
+                                    </o-tooltip>
+                                </template>
+                                <template v-slot="props">
 
-                            </template>
-                        </o-table-column>
-
-                        <o-table-column field="totalScore" label="Total" sortable numeric v-slot="props">
-                            <span class="has-text-weight-bold">{{ props.row.totalScore }}</span>
-                        </o-table-column>
-                    </o-table>
-
-                    <h1 class="title is-4 mt-4">Puntos por Gran Premio</h1>
-                    <VueApexCharts
-                        height="400"
-                        type="line"
-                        :options="chartOptions"
-                        :series="chartSeries">
-                    </VueApexCharts>
-                </o-tab-item>
-                <o-tab-item label="Ranking acumulado" :value="1">
-                    <h1 class="title is-4 mt-4">Ranking acumulado</h1>
-                    <p class="content">
-                        La puntuación marcada en <span class="tag is-warning">dorado</span> es la máxima acumulada para ese Gran Premio<br/>
-                    </p>
-                    <o-table :data="tableDataAcumulada"
-                             hoverable
-                             :mobile-cards="false"
-                             default-sort="totalScore"
-                             default-sort-direction="DESC"
-                             :row-class="checkRowClass"
-                    >
-
-                        <o-table-column label="Pos." sortable numeric v-slot="props">
-                            <span class="has-text-weight-bold">#{{ props.index + 1 }}</span>
-                        </o-table-column>
-
-                        <o-table-column field="user.username" label="Nombre" sortable>
-                            <template v-slot="props">
-                                <o-tooltip
-                                    position="right"
-                                    variant="light">
-                                    <template v-slot:content>
-                                        <UserMiniCard :user="communityMembers.get(props.row.user.username)" />
+                                    <PointsTooltipComponent
+                                        v-if="props.row.gps.has(gp.id)"
+                                        :gp-name="gp.name"
+                                        :user-points="props.row.gps.get(gp.id)"
+                                        :display-points="props.row.gps.get(gp.id).pointsInGP" />
+                                    <template v-else>
+                                        0 :(
                                     </template>
 
-                                    <span class="has-text-weight-bold">{{ props.row.user.username }}</span>
-                                </o-tooltip>
-                            </template>
-                        </o-table-column>
+                                    <o-tooltip v-if="props.row.gps.get(gp.id)?.pointsInGP && checkAndInsertTrophy(gp.id, props.row.gps.get(gp.id).pointsInGP)"
+                                               :label="'Ganador de ' + gp.name"
+                                               variant="light">
+                                        <o-icon pack="fas" variant="info" icon="trophy"></o-icon>
+                                    </o-tooltip>
 
-                        <o-table-column v-for="gp in grandPrixList()" v-bind:key="gp.code"
-                                        :field="gp.code"
-                                        sortable numeric>
-                            <template v-slot:header="{ column }">
-                                <o-tooltip :label="gp.name">
-                                    {{ gp.code }}
-                                </o-tooltip>
-                            </template>
-                            <template v-slot="props">
+                                </template>
+                            </o-table-column>
 
-                                <template v-if="props.row.gps.has(gp.id)">
+                            <o-table-column field="totalScore" label="Total" sortable numeric v-slot="props">
+                                <span class="has-text-weight-bold">{{ props.row.totalScore }}</span>
+                            </o-table-column>
+                        </o-table>
+
+                        <h1 class="title is-4 mt-4">Puntos por Gran Premio</h1>
+                        <VueApexCharts
+                            ref="chartPointsComp"
+                            height="400"
+                            type="line"
+                            :options="chartOptions"
+                            :series="chartSeries">
+                        </VueApexCharts>
+                    </o-tab-item>
+                    <o-tab-item label="Ranking acumulado" :value="1">
+                        <PTitle type="subtitle">Ranking acumulado</PTitle>
+                        <p class="content">
+                            La puntuación marcada en <span class="tag is-warning">dorado</span> es la máxima acumulada para ese Gran Premio<br/>
+                        </p>
+                        <o-table :data="tableDataAcumulada"
+                                 hoverable
+                                 :mobile-cards="false"
+                                 default-sort="totalScore"
+                                 default-sort-direction="DESC"
+                                 :row-class="checkRowClass"
+                        >
+
+                            <o-table-column label="Pos." sortable numeric v-slot="props">
+                                <span class="has-text-weight-bold">#{{ props.index + 1 }}</span>
+                            </o-table-column>
+
+                            <o-table-column field="user.username" label="Nombre" sortable>
+                                <template v-slot="props">
+                                    <o-tooltip
+                                        position="right"
+                                        variant="light">
+                                        <template v-slot:content>
+                                            <UserMiniCard :user="communityMembers.get(props.row.user.username)" />
+                                        </template>
+
+                                        <span class="has-text-weight-bold">{{ props.row.user.username }}</span>
+                                    </o-tooltip>
+                                </template>
+                            </o-table-column>
+
+                            <o-table-column v-for="gp in grandPrixList()" v-bind:key="gp.code"
+                                            :field="gp.code"
+                                            sortable numeric>
+                                <template v-slot:header="{ column }">
+                                    <o-tooltip :label="gp.name">
+                                        {{ gp.code }}
+                                    </o-tooltip>
+                                </template>
+                                <template v-slot="props">
+
+                                    <template v-if="props.row.gps.has(gp.id)">
                                     <span class="tag is-warning" v-if="checkWinnerCell(gp.id, props.row.gps.get(gp.id).accumulatedPoints)">
                                         <PointsTooltipComponent
                                             :gp-name="gp.name"
                                             :user-points="props.row.gps.get(gp.id)"
                                             :display-points="props.row.gps.get(gp.id).accumulatedPoints" />
                                     </span>
+                                        <template v-else>
+                                            <PointsTooltipComponent
+                                                :gp-name="gp.name"
+                                                :user-points="props.row.gps.get(gp.id)"
+                                                :display-points="props.row.gps.get(gp.id).accumulatedPoints" />
+                                        </template>
+                                    </template>
                                     <template v-else>
-                                        <PointsTooltipComponent
-                                            :gp-name="gp.name"
-                                            :user-points="props.row.gps.get(gp.id)"
-                                            :display-points="props.row.gps.get(gp.id).accumulatedPoints" />
-                                    </template>
-                                </template>
-                                <template v-else>
-                                    0 :(
-                                </template>
-
-                            </template>
-                        </o-table-column>
-                    </o-table>
-
-                    <h1 class="title is-4 mt-4">Puntos acumulados</h1>
-                    <VueApexCharts
-                        height="400"
-                        type="line"
-                        :options="chartOptions"
-                        :series="chartSeriesAcumuladas">
-                    </VueApexCharts>
-                </o-tab-item>
-                <o-tab-item label="Ranking por clasificación" :value="2">
-                    <h1 class="title is-4 mt-4">Clasificaciones</h1>
-                    <o-table :data="tableDataAcumulada"
-                             hoverable
-                             :mobile-cards="false"
-                             default-sort="totalScore"
-                             default-sort-direction="DESC"
-                             :row-class="checkRowClass"
-                    >
-
-                        <o-table-column field="user.username" label="Nombre" sortable>
-                            <template v-slot="props">
-                                <o-tooltip
-                                    position="right"
-                                    variant="light">
-                                    <template v-slot:content>
-                                        <UserMiniCard :user="communityMembers.get(props.row.user.username)" />
+                                        0 :(
                                     </template>
 
-                                    <span class="has-text-weight-bold">{{ props.row.user.username }}</span>
-                                </o-tooltip>
-                            </template>
-                        </o-table-column>
+                                </template>
+                            </o-table-column>
+                        </o-table>
 
-                        <o-table-column v-for="gp in grandPrixList()" v-bind:key="gp.code"
-                                        :field="gp.code"
-                                        sortable numeric>
-                            <template v-slot:header="{ column }">
-                                <o-tooltip :label="gp.name">
-                                    {{ gp.code }}
-                                </o-tooltip>
-                            </template>
-                            <template v-slot="props">
+                        <h1 class="title is-4 mt-4">Puntos acumulados</h1>
+                        <VueApexCharts
+                            ref="chartAcumuladasComp"
+                            height="400"
+                            type="line"
+                            :options="chartOptions"
+                            :series="chartSeriesAcumuladas">
+                        </VueApexCharts>
+                    </o-tab-item>
+                    <o-tab-item label="Ranking por clasificación" :value="2">
+                        <PTitle type="subtitle">Clasificaciones</PTitle>
+                        <o-table :data="tableDataAcumulada"
+                                 hoverable
+                                 :mobile-cards="false"
+                                 default-sort="totalScore"
+                                 default-sort-direction="DESC"
+                                 :row-class="checkRowClass"
+                        >
 
-                                <!-- //ToDo: Tooltip desglosando puntos por sesiones-->
-                                <template v-if="props.row.gps.has(gp.id)">
+                            <o-table-column field="user.username" label="Nombre" sortable>
+                                <template v-slot="props">
+                                    <o-tooltip
+                                        position="right"
+                                        variant="light">
+                                        <template v-slot:content>
+                                            <UserMiniCard :user="communityMembers.get(props.row.user.username)" />
+                                        </template>
+
+                                        <span class="has-text-weight-bold">{{ props.row.user.username }}</span>
+                                    </o-tooltip>
+                                </template>
+                            </o-table-column>
+
+                            <o-table-column v-for="gp in grandPrixList()" v-bind:key="gp.code"
+                                            :field="gp.code"
+                                            sortable numeric>
+                                <template v-slot:header="{ column }">
+                                    <o-tooltip :label="gp.name">
+                                        {{ gp.code }}
+                                    </o-tooltip>
+                                </template>
+                                <template v-slot="props">
+
+                                    <!-- //ToDo: Tooltip desglosando puntos por sesiones-->
+                                    <template v-if="props.row.gps.has(gp.id)">
                                     <span class="tag is-warning" v-if="props.row.gps.get(gp.id).standings === 1">
                                         {{ props.row.gps.get(gp.id).standings }}
                                     </span>
-                                    <template v-else>
-                                        <template v-if="props.row.gps.get(gp.id).standings >= 1">
-                                            {{ props.row.gps.get(gp.id).standings }}
-                                        </template>
                                         <template v-else>
-                                            --
+                                            <template v-if="props.row.gps.get(gp.id).standings >= 1">
+                                                {{ props.row.gps.get(gp.id).standings }}
+                                            </template>
+                                            <template v-else>
+                                                --
+                                            </template>
                                         </template>
                                     </template>
+                                    <template v-else>
+                                        :(
+                                    </template>
+
                                 </template>
-                                <template v-else>
-                                    :(
-                                </template>
+                            </o-table-column>
+                        </o-table>
 
-                            </template>
-                        </o-table-column>
-                    </o-table>
+                        <VueApexCharts
+                            ref="chartStandingsComp"
+                            height="400"
+                            type="line"
+                            :options="chartStandingsOptions"
+                            :series="chartStandings">
+                        </VueApexCharts>
+                    </o-tab-item>
+                </o-tabs>
 
-                    <VueApexCharts
-                        height="400"
-                        type="line"
-                        :options="chartStandingsOptions"
-                        :series="chartStandings">
-                    </VueApexCharts>
-                </o-tab-item>
-            </o-tabs>
-
-        </template>
+            </template>
+        </PCard>
     </div>
 </template>
 
 <script lang="ts">
-    import {defineComponent} from "vue";
-    import {useAuthStore} from "@/store/authStore";
-    import {useCommunityStore} from "@/store/communityStore";
-    import PTitle from "@/components/lib/PTitle.vue";
-    import {communityService, grandPrixService, scoreService, seasonService} from "@/_services";
-    import {GrandPrix} from "@/types/GrandPrix";
-    import {Season} from "@/types/Season";
-    import UserMiniCard from "@/components/user/UserMiniCard.vue";
-    import {User} from "@/types/User";
-    import {UserPoints} from "@/types/UserPoints";
-    import PointsTooltipComponent from "@/components/ranking/PointsTooltipComponent.vue";
-    import VueApexCharts from "vue3-apexcharts";
+import {defineComponent, ref} from "vue";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
+import PTitle from "@/components/lib/PTitle.vue";
+import {communityService, grandPrixService, scoreService, seasonService} from "@/_services";
+import {GrandPrix} from "@/types/GrandPrix";
+import {Season} from "@/types/Season";
+import UserMiniCard from "@/components/user/UserMiniCard.vue";
+import {User} from "@/types/User";
+import {UserPoints} from "@/types/UserPoints";
+import PointsTooltipComponent from "@/components/ranking/PointsTooltipComponent.vue";
+import VueApexCharts, {VueApexChartsComponent} from "vue3-apexcharts";
+import {useThemeStore} from "@/store/themeStore";
+import {storeToRefs} from "pinia";
+import PCard from "@/components/lib/PCard.vue";
 
-    interface TableEntry {
-        user: User;
-        gps: Map<number, UserPoints>;
-        totalScore: number;
-    }
+interface TableEntry {
+    user: User;
+    gps: Map<number, UserPoints>;
+    totalScore: number;
+}
 
 
     export default defineComponent({
         name: "LandingNavbar",
         components: {
+            PCard,
             PTitle, UserMiniCard, PointsTooltipComponent, VueApexCharts
         },
         setup() {
             const authStore = useAuthStore();
             const communityStore = useCommunityStore();
+            const themeStore = useThemeStore();
 
             const currentUser = authStore.loggedUser;
             const currentCommunity = communityStore.currentCommunity;
-            return { currentUser, currentCommunity };
+            const { darkMode } = storeToRefs(themeStore);
+            const chartStandingsComp = ref<VueApexChartsComponent | null>(null);
+            const chartAcumuladasComp = ref<VueApexChartsComponent | null>(null);
+            const chartPointsComp = ref<VueApexChartsComponent | null>(null);
+
+            return { currentUser, currentCommunity, darkMode, chartStandingsComp, chartAcumuladasComp, chartPointsComp };
         },
         data() {
             return {
@@ -334,6 +351,10 @@
                             formatter: (codePos: number) => { return [...this.grandPrixList().values()][codePos - 1].name },
                         }
                     },
+                    theme: {
+                        mode: this.darkMode ? 'dark' : 'light',
+                        palette: 'palette8'
+                    }
                 },
                 chartStandingsOptions: {}
             }
@@ -369,6 +390,19 @@
                         }
                     }
                 },
+            }
+        },
+        watch: {
+            darkMode(newDarkMode, oldDarkMode) {
+                const theme = {
+                    theme: {
+                        mode: newDarkMode ? 'dark' : 'light',
+                        palette: 'palette8'
+                    }
+                }
+                this.chartAcumuladasComp?.updateOptions(theme);
+                this.chartPointsComp?.updateOptions(theme);
+                this.chartStandingsComp?.updateOptions(theme);
             }
         },
         methods: {
