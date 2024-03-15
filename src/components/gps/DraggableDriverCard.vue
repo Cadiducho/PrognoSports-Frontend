@@ -1,6 +1,6 @@
 <template>
-    <div class="font-semibold driver-card justify-start p-3 rounded-md opacity-90 bg-white
-        hover:bg-sky-50 dark:bg-gray-900 dark:hover:bg-gray-700 shadow-sm"
+    <div class="font-semibold driver-card justify-start p-3 rounded-md opacity-90 bg-contrast
+        hover:bg-sky-50 dark:bg-contrast-dark dark:hover:bg-gray-700 shadow-sm"
          :style="styleDriverCard(driver)">
         <span class="dark:text-gray-100">
             <b v-if="showPosition">{{ index + 1 }}º.</b> {{ driver.firstname }} {{ driver.lastname }}

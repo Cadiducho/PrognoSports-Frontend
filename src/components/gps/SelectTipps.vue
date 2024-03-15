@@ -90,7 +90,7 @@
             </o-button>
 
             <div v-else class="notification is-warning is-light">
-                El pronóstico debe tener {{ ruleSet.cantidadPilotosPronosticados(session) }} pilotos escogidos y ordenados (Has escogido {{ pilotosPronosticados.length}} ).
+                El pronóstico debe tener {{ ruleSet.cantidadPilotosPronosticados(session) }} pilotos escogidos y ordenados (Has escogido {{ pilotosPronosticados.length}}).
             </div>
         </template>
 
