@@ -17,6 +17,7 @@
     </section>
 
     <label class="label">Resultados</label>
+    <PrognoAlert v-if="!hasSavedResults" variant="warning" message="No hay resultados guardada aún" />
     <draggable
         :id="`results-${session.id}`"
         class="w-full select-none space-y-2"
@@ -56,10 +57,12 @@ import {grandPrixService, notificationService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
 import DraggableDriverCard from "@/components/gps/DraggableDriverCard.vue";
 import draggable from "vuedraggable";
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 
 export default defineComponent({
     name: "EditResults",
     components: {
+        PrognoAlert,
         draggable,
         DraggableDriverCard,
     },
@@ -76,6 +79,10 @@ export default defineComponent({
             type: Object as PropType<Array<Driver>>,
             required: true,
         },
+        hasSavedResults: {
+            type: Boolean,
+            default: false,
+        }
     },
     setup() {
         const authStore = useAuthStore();

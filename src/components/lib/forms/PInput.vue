@@ -26,7 +26,7 @@ export default defineComponent({
         },
         label: {
             type: String,
-            required: true,
+            required: false,
         },
         name: {
             type: String,
@@ -45,6 +45,10 @@ export default defineComponent({
             type: String,
             required: false,
             default: '',
+        },
+        icon: {
+            type: String,
+            default: ""
         },
     },
 })

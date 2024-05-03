@@ -41,24 +41,26 @@
                                         v-on:input="session.date = $event;"/>
                     </o-field>
 
-                    <button class="button is-primary mt-0" @click="changeSessionData()">
+                    <button class="button is-primary mt-0 mb-4" @click="changeSessionData()">
                         Editar datos de la sesión
                     </button>
 
-                    <h3 v-if="session.defineGridOf?.length" class="subtitle mt-3">
+                    <PrognoAlert v-if="session.defineGridOf?.length" variant="info">
                         Esta sesión define la parrilla de la sesión: {{ session.defineGridOf.map(ses => ses.humanName()).join(', ') }}
-                    </h3>
-
+                    </PrognoAlert>
+                    <PrognoAlert v-else variant="danger">
+                        Esta sesión no define la parrilla de ninguna sesión
+                    </PrognoAlert>
                     <hr/>
 
 
                     <!-- Si no es quali, hay resultados y grid-->
                     <div v-if="session.hasGrid" class="columns">
                         <section class="column">
-                            <EditGrid :grandPrix="grandPrix" :session="session" :grid="startGrid"/>
+                            <EditGrid :grandPrix="grandPrix" :session="session" :grid="startGrid" :hasSavedGrid="hasSavedGrid"/>
                         </section>
                         <section class="column">
-                            <EditResults :grandPrix="grandPrix" :session="session" :resultsInSession="resultsInSession"/>
+                            <EditResults :grandPrix="grandPrix" :session="session" :resultsInSession="resultsInSession" :hasSavedResults="hasSavedResults"/>
                         </section>
                     </div>
 
@@ -93,10 +95,12 @@ import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
 import EditResults from "@/components/admin/gps/EditResults.vue";
 import Calendar from "@/components/lib/Calendar.vue";
 import EditGrid from "@/components/admin/gps/EditGrid.vue";
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 
 export default defineComponent({
     name: "EditSessionGrandPrix",
     components: {
+        PrognoAlert,
         EditGrid,
         EditResults,
         PTitle,
@@ -125,7 +129,9 @@ export default defineComponent({
             notOverrideGrid: false,
             fastLap: {} as Driver,
             resultsInSession: new Array<Driver>(),
+            hasSavedResults: false,
             startGrid: new Array<StartGridPosition>(),
+            hasSavedGrid: false,
 
             grandPrix: {} as GrandPrix,
             dataLoaded: false,
@@ -158,57 +164,67 @@ export default defineComponent({
             });
         }
     },
-    mounted() {
-        grandPrixService.getGrandPrixInSeason(this.season, this.id)
-            .then(gp => {
-                this.grandPrix = gp;
-                this.competition = gp.competition;
-                this.season = gp.season;
+    async mounted() {
+        try {
+            const gp = await grandPrixService.getGrandPrixInSeason(this.season, this.id);
+            this.grandPrix = gp;
+            this.competition = gp.competition;
+            this.season = gp.season;
 
-                Promise.all([
-                    sessionService.getOneSessionInGrandPrix(this.grandPrix, this.session.id),
-                    driversService.getDriversInGrandPrix(gp),
-                    grandPrixService.getGrandPrixGrid(this.grandPrix, this.session),
-                    grandPrixService.getResults(this.grandPrix, this.session)
-                ]).then(result => {
-                    const ses = result[0];
-                    const driversInGP = result[1];
-                    const startGridRes = result[2];
-                    const rawResultsInSession = result[3];
+            const result = await Promise.all([
+                sessionService.getOneSessionInGrandPrix(this.grandPrix, this.session.id),
+                driversService.getDriversInGrandPrix(gp),
+                grandPrixService.getGrandPrixGrid(this.grandPrix, this.session),
+                grandPrixService.getResults(this.grandPrix, this.session)
+            ])
+            const ses = result[0];
+            const driversInGP = result[1];
+            const startGridRes = result[2];
+            const rawResultsInSession = result[3];
 
-                    this.session = ses;
+            this.session = ses;
 
-                    this.startGrid = [];
-                    this.startGrid.push(...startGridRes);
+            this.startGrid = [];
+            this.startGrid.push(...startGridRes);
+            this.hasSavedGrid = this.startGrid.length != 0;
 
-                    // Si hay resultados, agregarlos a la lista de resultados
-                    this.resultsInSession = [];
-                    if (rawResultsInSession && rawResultsInSession.length) {
-                        rawResultsInSession.forEach((rs) => {
-                            this.resultsInSession.push(rs.driver);
-                        });
-                    } else {
-
-                        // Si hay una grid para esa sesión, ordeno los pilotos en base a eso
-                        // Facilita posteriormente ordenar los resultados de la sesión
-                        if (this.startGrid && this.startGrid.length) {
-                            this.startGrid.forEach((gridPos) => {
-                                this.resultsInSession.push(gridPos.driver);
-                            });
-                        } else {
-                            this.resultsInSession.push(...driversInGP);
-                        }
-                    }
-
-                    this.dataLoaded = true;
+            // Si hay resultados, agregarlos a la lista de resultados
+            this.resultsInSession = [];
+            if (rawResultsInSession && rawResultsInSession.length) {
+                this.hasSavedResults = true;
+                rawResultsInSession.forEach((rs) => {
+                    this.resultsInSession.push(rs.driver);
                 });
-            }).catch((error) => {
-                notificationService.showNotification("No se ha encontrado el gran premio", "error");
-                console.log(error);
-            }).finally(() => {
-                this.isLoadingData = false;
+            } else {
+                // Si hay una grid para esa sesión, ordeno los pilotos en base a eso
+                // Facilita posteriormente ordenar los resultados de la sesión
+                if (this.startGrid && this.startGrid.length) {
+                    this.startGrid.forEach((gridPos) => {
+                        this.resultsInSession.push(gridPos.driver);
+                    });
+                } else {
+                    this.resultsInSession.push(...driversInGP);
+
+                    // Si no hay grid, relleno esta por defecto con la lista de pilotos para poder ordenarla después
+                    driversInGP.forEach((driver, index) => {
+                        this.startGrid.push({
+                            gp: gp,
+                            driver: driver,
+                            position: index + 1,
+                            isFromPit: false,
+                            note: ''
+                        });
+                    });
+                }
             }
-        );
+
+            this.dataLoaded = true;
+        } catch (error: any) {
+            notificationService.showNotification("No se ha encontrado el gran premio", "error");
+            console.log(error);
+        } finally {
+            this.isLoadingData = false;
+        }
     }
 });
 </script>

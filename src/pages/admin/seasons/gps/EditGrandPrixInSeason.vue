@@ -17,11 +17,19 @@
             </div>
 
             <div class="block">
-                <o-button variant="success" :to="{ name: 'gpdetails', params: {gp: grandPrix.id, season: grandPrix.season.name, competition: grandPrix.competition.code} }"
-                          tag="router-link" class="mr-2">
+                <p-button tag="router-link" color="success" icon="fa fa-eye"
+                          :to="{ name: 'gpdetails', params: {gp: grandPrix.id, season: grandPrix.season.name, competition: grandPrix.competition.code} }">
                     Ir al Gran Premio
-                </o-button>
-                <o-button variant="link" to="/admin/gps" tag="router-link">Lista de grandes premios</o-button>
+                </p-button>
+                <p-button tag="router-link" color="blue" icon="fa fa-list"
+                          :to="{ name: 'adminGps' }">
+                    Lista de grandes premios
+                </p-button>
+                <p-button tag="router-link" color="purple" icon="fa fa-cogs"
+                          :to="{ name: 'adminSeasonEdit', params: {season: grandPrix.season.name} }">
+                    Admin de temporada
+                </p-button>
+
             </div>
 
                 <div class="columns">
@@ -147,10 +155,12 @@ import DriversInGrandPrix from "@/components/admin/gps/DriversInGrandPrix.vue";
 import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
 import UploadFileModal from "@/components/lib/UploadFileModal.vue";
 import {CircuitVariant} from "@/types/CircuitVariant";
+import PButton from "@/components/lib/forms/PButton.vue";
 
 export default defineComponent({
     name: "EditGrandPrixInSeason",
     components: {
+        PButton,
         DriversInGrandPrix,
         AlertNoPermission,
         PTitle,

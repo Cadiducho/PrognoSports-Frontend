@@ -2,6 +2,8 @@
     <h3 class="subtitle">Parrilla de salida para {{ session.humanName() }}</h3>
 
     <label class="label">Parrilla</label>
+    <PrognoAlert v-if="!hasSavedGrid" variant="warning" message="No hay parrilla guardada aún" />
+
     <draggable
         :id="`grid-${session.id}`"
         class="w-full select-none space-y-2"
@@ -27,10 +29,12 @@ import DraggableDriverCard from "@/components/gps/DraggableDriverCard.vue";
 import draggable from "vuedraggable";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import {grandPrixService, notificationService} from "@/_services";
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 
 export default defineComponent({
     name: "EditGrid",
     components: {
+        PrognoAlert,
         draggable,
         DraggableDriverCard,
     },
@@ -47,6 +51,10 @@ export default defineComponent({
             type: Object as PropType<Array<StartGridPosition>>,
             required: true,
         },
+        hasSavedGrid: {
+            type: Boolean,
+            default: false,
+        }
     },
     setup() {
         const authStore = useAuthStore();
@@ -64,8 +72,7 @@ export default defineComponent({
         }
     },
     methods: {
-        saveGrid() {
-            console.log("saveGrid");
+        async saveGrid() {
             const payload = {
                 grid: this.sessionGrid.map((gridPosition: StartGridPosition, index: number, array: StartGridPosition[]) => {
                     return {
@@ -78,9 +85,8 @@ export default defineComponent({
             };
             console.log(payload)
 
-            grandPrixService.saveGrid(this.grandPrix, this.session, payload).then(() => {
-                notificationService.showNotification( "¡Has guardado la parrilla!");
-            });
+            await grandPrixService.saveGrid(this.grandPrix, this.session, payload)
+            notificationService.showNotification( "¡Has guardado la parrilla!");
         }
     }
 });

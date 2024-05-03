@@ -9,7 +9,9 @@
                 <h3 class="select-none dark:text-gray-300">Pilotos disponibles</h3>
 
                 <div class="busqueda-ordenada">
-                    <o-button label="Ordenar" variant="primary" aria-controls="opcionesOrdenado" @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen"/>
+                    <p-button color="teal" aria-controls="opcionesOrdenado" @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen">
+                        Ordenar
+                    </p-button>
 
                     <o-field class="is-fullwidth">
                         <o-input v-model="filtroPiloto" placeholder="Buscar..." type="search" icon-pack="fas" icon="search"></o-input>
@@ -121,10 +123,14 @@ import {useStyles} from "@/composables/useStyles";
 import draggable from 'vuedraggable'
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import DraggableDriverCard from "@/components/gps/DraggableDriverCard.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
+import PInput from "@/components/lib/forms/PInput.vue";
 
 export default defineComponent({
     name: "SelectTipps",
     components: {
+        PInput,
+        PButton,
         DraggableDriverCard,
         PrognoAlert,
         draggable
