@@ -1,7 +1,7 @@
 
 <template>
     <div id="circuitlist" class="box">
-        <progno-page-title class="mb-5" name="Lista de Comunidades" />
+        <PTitle class="mb-5" name="Lista de Comunidades" />
         <div v-if="isLoading"><loading /></div>
         <div v-else>
             <div v-if="!thereIsCurrentCommunity" class="notification has-background-danger">

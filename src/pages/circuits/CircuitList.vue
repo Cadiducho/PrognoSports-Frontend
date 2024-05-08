@@ -1,7 +1,7 @@
 
 <template>
     <div id="circuitlist" class="box">
-        <progno-page-title class="mb-5" name="Lista de Circuitos" />
+        <PTitle class="mb-5" name="Lista de Circuitos" />
         <div v-if="isLoading"><loading /></div>
         <div v-else>
             <o-field>

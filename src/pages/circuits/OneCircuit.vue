@@ -4,7 +4,7 @@
 
         <p v-if="!thereIsCircuit">El circuito buscado con nombre <i>{{ this.circuit.id }}</i> no ha sido encontrado</p>
         <template v-else>
-            <progno-page-title class="mb-5" :name="circuit.name" />
+            <PTitle class="mb-5" :name="circuit.name" />
 
             <div class="flex flex-wrap">
                 <div class="w-full xl:w-2/3 p-4">

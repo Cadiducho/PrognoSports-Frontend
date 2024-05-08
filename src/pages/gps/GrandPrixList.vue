@@ -1,7 +1,7 @@
 <template>
     <div id="gplist" class="box">
 
-        <progno-page-title name="Grandes Premios" />
+        <PTitle name="Grandes Premios" />
 
         <div class="columns is-variable is-5">
             <div class="column is-8">
