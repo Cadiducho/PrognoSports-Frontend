@@ -14,15 +14,10 @@ import {RuleSetService} from "@/_services/ruleset.service";
 import {SessionService} from "@/_services/session.service";
 
 function authHeader() {
-    let token = localStorage.getItem('token');
-
-    if (token) {
-        return token;
-    } else {
-        return '';
-    }
+    return localStorage.getItem('token') || '';
 }
 
+//const DEVELOP_BASE_URL = 'http://localhost:8001/v2'
 const DEVELOP_BASE_URL = 'https://api.prognosports.com/v2'
 const PRODUCTION_BASE_URL = 'https://api.prognosports.com/v2'
 export const BASE_URL = import.meta.env.NODE_ENV === 'production' ? PRODUCTION_BASE_URL : DEVELOP_BASE_URL;
