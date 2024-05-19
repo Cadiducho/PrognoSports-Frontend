@@ -2,9 +2,9 @@
     <label class="label">Sesiones</label>
     <section class="columns is-multiline is-flex-direction-column is-3">
         <div v-if="!sessions.length" class="column">
-            <o-notification variant="warning" class="mt-2">
+            <PrognoAlert variant="warning" class="mt-2">
                 No hay sesiones configuradas
-            </o-notification>
+            </PrognoAlert>
         </div>
 
         <div v-for="ses in sessions" class="column">
@@ -45,6 +45,11 @@
                         <option v-for="ses in availableSessionList" :value="ses">{{ ses.humanName() }}</option>
                     </o-select>
                 </o-field>
+                <o-field label="Define parrilla de">
+                    <o-select placeholder="Selecciona una sesión existente" v-model="newSession.defineGridOf" expanded>
+                        <option v-for="ses in sessions" :value="ses">{{ ses.humanName() }} del {{ humanDate(ses.date) }}</option>
+                    </o-select>
+                </o-field>
                 <o-field label="Fecha">
                     <Calendar :value="newSession.date" :options="calendarOptions" v-on:input="newSession.date = $event;" />
                 </o-field>
@@ -61,10 +66,11 @@ import {useDayjs} from "@/composables/useDayjs";
 import {RaceSession} from "@/types/RaceSession";
 import {notificationService, sessionService} from "@/_services";
 import Calendar from "@/components/lib/Calendar.vue";
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 
 export default defineComponent({
     name: "SessionsInGrandPrix",
-    components: { Calendar },
+    components: {PrognoAlert, Calendar },
     props: {
         grandPrix: {
             type: Object as PropType<GrandPrix>,
@@ -83,7 +89,8 @@ export default defineComponent({
         const dayjs = useDayjs();
 
         const humanDateTime = dayjs.humanDateTime;
-        return { humanDateTime };
+        const humanDate = dayjs.humanDate;
+        return { humanDateTime, humanDate };
     },
     data() {
         return {
@@ -91,6 +98,7 @@ export default defineComponent({
             availableSessionList: new Array<RaceSession>(),
             newSession: {
                 session: {} as RaceSession,
+                defineGridOf: {} as RaceSession,
                 date: new Date(),
             },
             calendarOptions: {
@@ -112,13 +120,17 @@ export default defineComponent({
     },
     methods: {
         addSessionToGP() {
-            if (Object.keys(this.newSession.session).length != 0) {
-                const data = { session: this.newSession.session.id, date: this.newSession.date };
+            if (this.newSession.session.id) {
+                const data = {
+                    session: this.newSession.session.id,
+                    date: this.newSession.date,
+                    defining: this.newSession.defineGridOf?.id ?? 0
+                };
                 sessionService.addSessionInGrandPrix(this.grandPrix, data).then((session) => {
                     this.isCreatingSession = false;
                     this.sessions.push(session);
                     notificationService.showNotification('Sesión agregada correctamente');
-                }).catch((err) => {
+                }).catch(() => {
                     notificationService.showNotification('Error al agregar la sesión', 'error');
                 });
             }
