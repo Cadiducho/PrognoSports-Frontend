@@ -313,7 +313,7 @@ interface TableEntry {
                             opacity: 1
                         },
                         zoom: {
-                            type: 'x',
+                            type: 'xy',
                             enabled: true,
                             autoScaleYaxis: true
                         },
