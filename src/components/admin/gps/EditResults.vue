@@ -1,5 +1,5 @@
 <template>
-    <h3 class="subtitle">Resultados en {{ session.humanName() }}</h3>
+    <PTitle tag="h3" type="subtitle">Resultados en {{ session.humanName() }}</PTitle>
 
     <section v-if="session.hasFastLap" class="mb-4">
         <o-field label="Vuelta rápida">
@@ -45,7 +45,7 @@
         </o-checkbox>
     </section>
 
-    <button class="button is-primary" @click="saveResults()">Guardar resultados</button>
+    <PButton color="primary" @click="saveResults()">Guardar resultados</PButton>
 </template>
 
 <script lang="ts">
@@ -58,10 +58,14 @@ import {GrandPrix} from "@/types/GrandPrix";
 import DraggableDriverCard from "@/components/gps/DraggableDriverCard.vue";
 import draggable from "vuedraggable";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
+import PTitle from "@/components/lib/PTitle.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
 
 export default defineComponent({
     name: "EditResults",
     components: {
+        PButton,
+        PTitle,
         PrognoAlert,
         draggable,
         DraggableDriverCard,

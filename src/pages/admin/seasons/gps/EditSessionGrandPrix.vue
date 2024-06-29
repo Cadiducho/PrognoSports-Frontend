@@ -34,7 +34,7 @@
                 </div>
 
                 <div class="column">
-                    <h2 class="title">{{ session.humanName() }} en {{ grandPrix.name }} </h2>
+                    <PTitle tag="h2">{{ session.humanName() }} en {{ grandPrix.name }}</PTitle>
 
                     <o-field label="Fecha de la sesión">
                         <Calendar :value="session.date" :options="calendarOptions"
@@ -96,10 +96,12 @@ import EditResults from "@/components/admin/gps/EditResults.vue";
 import Calendar from "@/components/lib/Calendar.vue";
 import EditGrid from "@/components/admin/gps/EditGrid.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
+import PCheckbox from "@/components/lib/forms/PCheckbox.vue";
 
 export default defineComponent({
     name: "EditSessionGrandPrix",
     components: {
+        PCheckbox,
         PrognoAlert,
         EditGrid,
         EditResults,
