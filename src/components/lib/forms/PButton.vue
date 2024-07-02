@@ -130,7 +130,7 @@ export default defineComponent({
         @apply bg-teal-400 hover:bg-teal-500 dark:focus:ring-offset-gray-800 text-white;
     }
     &.primary {
-        @apply bg-primary hover:bg-purple-600 dark:focus:ring-offset-gray-800 text-white;
+        @apply bg-primary hover:bg-primary-hover dark:focus:ring-offset-gray-800 text-white;
     }
     &.red, &.danger {
         @apply bg-red-500 hover:bg-red-600 dark:focus:ring-offset-gray-800 text-white;
