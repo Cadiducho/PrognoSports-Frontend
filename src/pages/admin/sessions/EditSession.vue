@@ -4,11 +4,13 @@
 
         <PInput label="Nombre de la sesión" name="name" v-model="editedSession.name" />
         <PInput label="Código corto de la sesión" name="code" v-model="editedSession.code" />
-        <PSwitch class="mt-4" label="¿Tiene parrilla de salida?" name="hasGrid" v-model="editedSession.hasGrid" />
-        <PSwitch class="mt-4" label="¿Admite vueltas rápidas?" name="hasFastLap" v-model="editedSession.hasFastLap" />
+        <PSwitch class="mt-4" name="hasGrid" v-model="editedSession.hasGrid">¿Tiene parrilla de salida?</PSwitch>
+        <PSwitch class="mt-4" name="hasFastLap" v-model="editedSession.hasFastLap">¿Admite vueltas rápidas?</PSwitch>
 
-        <PButton class="mt-4" :disabled="!isDataOk()" @click="editSession" type="solid" label="Editar sesión" />
-
+        <div class="flex mt-4">
+            <PButton color="danger" type="soft" class="me-4" @click="router.push({name: 'adminSessions'})">Cancelar</PButton>
+            <PButton :disabled="!isDataOk()" @click="editSession">Editar sesión</PButton>
+        </div>
     </div>
 </template>
 

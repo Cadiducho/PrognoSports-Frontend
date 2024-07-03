@@ -56,7 +56,7 @@ export default defineComponent({
         },
         color: {
             type: String as PropType<'primary' | 'success' | 'danger' | 'warning' | 'info' | 'red' | 'yellow' | 'green' | 'teal' | 'blue' | 'purple' | 'pink'>,
-            default: "purple"
+            default: "primary"
         },
         icon: {
             type: String,
@@ -129,7 +129,7 @@ export default defineComponent({
     &.teal {
         @apply bg-teal-400 hover:bg-teal-500 dark:focus:ring-offset-gray-800 text-white;
     }
-    &.primary {
+    &.primary, &.purple {
         @apply bg-primary hover:bg-primary-hover dark:focus:ring-offset-gray-800 text-white;
     }
     &.red, &.danger {
@@ -176,10 +176,10 @@ export default defineComponent({
 .soft {
     @apply border border-transparent shadow-sm font-semibold;
 
-    &.teal, &.primary {
+    &.teal {
         @apply bg-teal-100 hover:bg-teal-200 dark:focus:ring-offset-gray-800 text-teal-500;
     }
-    &.purple {
+    &.purple, &.primary {
         @apply bg-purple-100 hover:bg-purple-200 dark:focus:ring-offset-gray-800 text-purple-500;
     }
     &.red, &.danger {
@@ -201,10 +201,10 @@ export default defineComponent({
 .ghost {
     @apply border border-transparent shadow-sm font-semibold;
 
-    &.teal, &.primary {
+    &.teal {
         @apply bg-transparent hover:bg-teal-100 dark:focus:ring-offset-gray-800 text-teal-500;
     }
-    &.purple {
+    &.purple, &.primary {
         @apply bg-transparent hover:bg-purple-100 dark:focus:ring-offset-gray-800 text-purple-500;
     }
     &.red, &.danger {
