@@ -66,26 +66,26 @@
 
                     <label class="label">Nombres de los equipos</label>
                     <div class="field">
-                        <o-radio v-model="editedUser.preferences['use-long-team-names']" native-value="false">
+                        <PRadio v-model="editedUser.preferences['use-long-team-names']" :value="false">
                             Mostrar nombres cortos
-                        </o-radio>
+                        </PRadio>
                     </div>
                     <div class="field">
-                        <o-radio v-model="editedUser.preferences['use-long-team-names']" native-value="true">
+                        <PRadio v-model="editedUser.preferences['use-long-team-names']" :value="true">
                             Mostrar nombres largos y con empresas patrocinadoras
-                        </o-radio>
+                        </PRadio>
                     </div>
 
                     <label class="label">Privacidad</label>
                     <div class="field">
-                        <o-radio v-model="editedUser.preferences['hide-tipps-until-start']" native-value="false">
+                        <PRadio v-model="editedUser.preferences['hide-tipps-until-start']" :value="false">
                             No ocultar mis pronósticos
-                        </o-radio>
+                        </PRadio>
                     </div>
                     <div class="field">
-                        <o-radio v-model="editedUser.preferences['hide-tipps-until-start']" native-value="true">
+                        <PRadio v-model="editedUser.preferences['hide-tipps-until-start']" :value="true">
                             Ocultar mis pronósticos hasta la hora de cierre
-                        </o-radio>
+                        </PRadio>
                     </div>
                 </div>
 
@@ -97,9 +97,9 @@
                 :variant="noPassword ? 'danger' : ''">
                 <o-input v-model="editedUser.password" name="password" type="password" expanded lazy></o-input>
             </o-field>
-            <button class="button is-primary" type="submit">
+            <PButton nativeType="submit" :disabled="submiting">
                 Guardar cambios
-            </button>
+            </PButton>
         </form>
     </section>
 
@@ -216,10 +216,14 @@ import AuthTokenList from "@/components/user/settings/AuthTokenList.vue";
 import Calendar from "@/components/lib/Calendar.vue";
 import {Dictionary} from "@/types/Dictionary";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
+import PRadio from "@/components/lib/forms/PRadio.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
 
 export default defineComponent({
     name: "UserSettings",
     components: {
+        PButton,
+        PRadio,
         PrognoAlert,
         AuthTokenList,
         PrognoModal,
@@ -260,6 +264,7 @@ export default defineComponent({
             notificationTypes: {} as Dictionary<string, string>,
             isLoading: true,
             noPassword: false,
+            submiting: false,
 
             changePasswordModal: {
                 show: false,
@@ -293,22 +298,27 @@ export default defineComponent({
         this.renderTelegramLoginAndScripts();
     },
     methods: {
-        save() {
+        async save() {
             if (!this.editedUser.password) {
                 notificationService.showNotification("Debes introducir tu contraseña actual para confirmar cambios en tus ajustes", "error");
                 this.noPassword = true;
                 return;
             }
+            this.submiting = true;
 
             this.noPassword = false;
-            userService.updateUser(this.editedUser).then(() => {
+            try {
+                await userService.updateUser(this.editedUser);
                 notificationService.showNotification("Ajustes cambiados correctamente");
-            }).catch((reason) => {
+
+            } catch (reason: any) {
                 if (reason.code === 600) {
                     notificationService.showNotification("Contraseña incorrecta", "error");
                     this.noPassword = true;
                 }
-            });
+            } finally {
+                this.submiting = false;
+            }
         },
         showChangePassword() {
             this.changePasswordModal.show = true;

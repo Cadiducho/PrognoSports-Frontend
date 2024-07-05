@@ -11,7 +11,7 @@
         after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full
         after:w-5 after:h-5 after:transition-all dark:border-gray-600"></div>
 
-        <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300 mr-4">
+        <span class="ms-3 text-gray-900 dark:text-gray-300 mr-4">
             <slot></slot>
         </span>
     </label>

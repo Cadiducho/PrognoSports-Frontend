@@ -25,29 +25,33 @@
                     <div class="box mt-1">
                         <label class="label">Orderar lista de pilotos</label>
                         <div class="field mb-0">
-                            <o-radio v-model='orderType' :native-value='0'>
+                            <PRadio v-model='orderType' :value='0'>
                                 Por nombre
-                            </o-radio>
+                            </PRadio>
                         </div>
                         <div class="field mb-0">
-                            <o-radio v-model='orderType' :native-value='1'>
+                            <PRadio v-model='orderType' :value='1'>
                                 Por equipos
-                            </o-radio>
+                            </PRadio>
                         </div>
                         <div class="field mb-0">
-                            <o-radio v-model='orderType' :native-value='2'>
+                            <PRadio v-model='orderType' :value='2'>
                                 Por dorsal
-                            </o-radio>
+                            </PRadio>
                         </div>
                         <div class="field mb-1">
-                            <o-radio v-model='orderType' :native-value='3' v-if="indexedGrid.size > 0">
+                            <PRadio v-model='orderType' :value='3' v-if="indexedGrid.size > 0">
                                 Por parrilla
-                            </o-radio>
+                            </PRadio>
                         </div>
+                        <label class="label mt-2">Dirección del orden</label>
                         <div class="field">
-                            <o-switch v-model="orderAscendent">
-                                Invertir
-                            </o-switch>
+                            <PRadio v-model='orderAscendent' :value='true'>
+                                Orden ascendente
+                            </PRadio>
+                            <PRadio v-model='orderAscendent' :value='false'>
+                                Orden descendente
+                            </PRadio>
                         </div>
                     </div>
                 </o-collapse>
@@ -125,10 +129,12 @@ import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import DraggableDriverCard from "@/components/gps/DraggableDriverCard.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
+import PRadio from "@/components/lib/forms/PRadio.vue";
 
 export default defineComponent({
     name: "SelectTipps",
     components: {
+        PRadio,
         PInput,
         PButton,
         DraggableDriverCard,

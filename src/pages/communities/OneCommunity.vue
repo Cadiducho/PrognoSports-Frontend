@@ -94,29 +94,33 @@
                             <div class="box mt-1">
                                 <label class="label">Orderar lista de pilotos</label>
                                 <div class="field mb-0">
-                                    <o-radio v-model='orderType' :native-value='0'>
+                                    <PRadio v-model='orderType' :value='0'>
                                         Por nombre de usuario
-                                    </o-radio>
+                                    </PRadio>
                                 </div>
                                 <div class="field mb-0">
-                                    <o-radio v-model='orderType' :native-value='1'>
+                                    <PRadio v-model='orderType' :value='1'>
                                         Por rango
-                                    </o-radio>
+                                    </PRadio>
                                 </div>
                                 <div class="field mb-0">
-                                    <o-radio v-model='orderType' :native-value='2'>
+                                    <PRadio v-model='orderType' :value='2'>
                                         Por conexión reciente
-                                    </o-radio>
+                                    </PRadio>
                                 </div>
                                 <div class="field mb-1">
-                                    <o-radio v-model='orderType' :native-value='3'>
+                                    <PRadio v-model='orderType' :value='3'>
                                         Por fecha de registro
-                                    </o-radio>
+                                    </PRadio>
                                 </div>
+                                <label class="label mt-2">Dirección del orden</label>
                                 <div class="field">
-                                    <o-switch v-model="orderAscendent">
-                                        Orden {{ orderAscendent ? "ascendente" : "descendente" }}
-                                    </o-switch>
+                                    <PRadio v-model='orderAscendent' :value='true'>
+                                        Orden ascendente
+                                    </PRadio>
+                                    <PRadio v-model='orderAscendent' :value='false'>
+                                        Orden descendente
+                                    </PRadio>
                                 </div>
                             </div>
 
@@ -150,10 +154,13 @@ import {useClipboard} from "@/composables/clipboard";
 import Loading from "@/components/lib/Loading.vue";
 import UserInCommunityCard from "@/components/communities/UserInCommunityCard.vue";
 import RulesAndPointsTable from "@/components/communities/RulesAndPointsTable.vue";
+import PRadio from "@/components/lib/forms/PRadio.vue";
+import PSwitch from "@/components/lib/forms/PSwitch.vue";
 
 export default defineComponent({
     name: "OneCommunity",
     components: {
+        PRadio,
         RulesAndPointsTable,
         UserInCommunityCard,
         Loading,
