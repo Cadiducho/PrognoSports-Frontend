@@ -33,7 +33,6 @@
 
 <script lang="ts">
     import {Circuit} from "@/types/Circuit";
-    import {hasVariant} from "@/utils";
 
     import {defineComponent, PropType} from "vue";
     import {useAuthStore} from "@/store/authStore";
