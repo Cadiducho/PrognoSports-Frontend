@@ -7,49 +7,31 @@
             class="appearance-none block w-full text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-blue-600"
             :maxlength="maxLenght" :id="name" :name="name"
             :type="type" :placeholder="placeholder"
-            :value="modelValue"
             v-bind="$attrs"
-            @input="$emit('update:modelValue', $event.target.value)"
+            v-model="model"
         />
     </div>
 </template>
 
-<script lang="ts">
-import {defineComponent} from 'vue'
+<script setup lang="ts">
+const model = defineModel();
 
-export default defineComponent({
-    name: "PInput",
-    emits: ['update:modelValue'],
-    props: {
-        modelValue: {
-            default: ''
-        },
-        label: {
-            type: String,
-            required: false,
-        },
-        name: {
-            type: String,
-            required: false,
-        },
-        maxLenght: {
-            type: Number,
-            required: false,
-            default: 128,
-        },
-        type: {
-            type: String,
-            default: 'text'
-        },
-        placeholder: {
-            type: String,
-            required: false,
-            default: '',
-        },
-        icon: {
-            type: String,
-            default: ""
-        },
-    },
-})
+export interface Props {
+    label?: string;
+    name?: string;
+    maxLenght?: number;
+    type?: string;
+    placeholder?: string;
+    icon?: string;
+}
+const props = withDefaults(defineProps<Props>(), {
+    label: '',
+    name: '',
+    maxLenght: 128,
+    type: 'text',
+    placeholder: '',
+    icon: '',
+});
+
+
 </script>
