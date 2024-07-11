@@ -133,7 +133,6 @@ import {useAuthStore} from "@/store/authStore";
 export default defineComponent({
     name: "CreateGrandPrix",
     components: {
-        AlertNoPermission,
         AlertInvalidData,
         PTitle,
     },

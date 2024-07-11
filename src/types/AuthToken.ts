@@ -1,5 +1,3 @@
-import {INotification} from "@/types/Notification";
-
 export interface IAuthToken {
     current: boolean;
     ipAddress: string;

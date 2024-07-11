@@ -143,7 +143,7 @@
 <script lang="ts">
 import PTitle from "@/components/lib/PTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-import {circuitService, grandPrixService, notificationService, seasonService, userService} from "@/_services";
+import {circuitService, grandPrixService, notificationService, seasonService} from "@/_services";
 import {Season} from "@/types/Season";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Circuit} from "@/types/Circuit";

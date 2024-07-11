@@ -1,6 +1,5 @@
 import {CircuitVariant, ICircuitVariant} from "@/types/CircuitVariant";
 import {BASE_URL} from "@/_services";
-import {RaceSession} from "@/types/RaceSession";
 
 export interface ICircuit {
     id: string;
