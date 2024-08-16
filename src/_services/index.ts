@@ -14,7 +14,7 @@ import {RuleSetService} from "@/_services/ruleset.service";
 import {SessionService} from "@/_services/session.service";
 
 function authHeader() {
-    return localStorage.getItem('token') || '';
+  return localStorage.getItem('token') || '';
 }
 
 //const DEVELOP_BASE_URL = 'http://localhost:8001/v2'
@@ -24,26 +24,32 @@ export const BASE_URL = import.meta.env.NODE_ENV === 'production' ? PRODUCTION_B
 axios.defaults.baseURL = BASE_URL;
 
 axios.interceptors.request.use(function (config) {
-    const token = authHeader();
-    config.headers!.Authorization = token;
+  config.headers!.Authorization = authHeader();
 
-    return config;
+  return config;
 });
 
-axios.interceptors.response.use(function (response) {
-    if (response.data) {
-        let data = response.data;
-        if (data.success) {
-            return data.result;
-        } else {
-            let error = {
-                code: data.code,
-                message: data.message
-            }
-            return Promise.reject(error);
-        }
+axios.interceptors.response.use((response) => {
+  if (response.data) {
+    const data = response.data;
+    if (data.success) {
+      return data.result;
+    } else {
+      const error = {
+        code: data.code,
+        message: data.message
+      }
+      return Promise.reject(error);
     }
-    return response;
+  }
+  return response;
+}, error => {
+  const payload = {
+    status: 500,
+    code: error.response?.data?.code,
+    message: error.response?.data?.message
+  }
+  return Promise.reject(payload);
 });
 
 // API Services

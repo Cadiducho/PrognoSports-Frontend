@@ -1,13 +1,20 @@
 <template>
-    <div v-show="show" class="is-fab p-4" >
-        <o-tooltip label="Volver arriba" position="left" @click="scrollToTop">
-            <button class="button is-primary is-rounded">
-                <span class="icon">
-                    <i class="fas fa-angle-up"></i>
-                </span>
-            </button>
-        </o-tooltip>
-    </div>
+  <div
+    v-show="show"
+    class="is-fab p-4"
+  >
+    <o-tooltip
+      label="Volver arriba"
+      position="left"
+      @click="scrollToTop"
+    >
+      <button class="button is-primary is-rounded">
+        <span class="icon">
+          <i class="fas fa-angle-up" />
+        </span>
+      </button>
+    </o-tooltip>
+  </div>
 </template>
 
 <script lang="ts">
@@ -26,6 +33,11 @@ export default defineComponent({
             show: false
         }
     },
+    mounted() {
+        window.addEventListener("scroll", (e) => {
+            this.show = window.scrollY > this.scrollY;
+        });
+    },
     methods: {
         scrollToTop() {
             window.scrollTo({
@@ -33,11 +45,6 @@ export default defineComponent({
                 behavior: "smooth"
             });
         }
-    },
-    mounted() {
-        window.addEventListener("scroll", (e) => {
-            this.show = window.scrollY > this.scrollY;
-        });
     }
 })
 </script>

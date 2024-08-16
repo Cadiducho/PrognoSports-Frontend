@@ -1,14 +1,20 @@
 <template>
-  <div id="app" class="transition-all dark:bg-gray-800">
-      <Toaster richColors :position="toastStore.getPosition"  />
+  <div
+    id="app"
+    class="transition-all dark:bg-gray-800"
+  >
+    <Toaster
+      rich-colors
+      :position="toastStore.getPosition"
+    />
 
-      <!-- La app siempre cargará router-view -->
-      <!-- Las nested routes se encargarán de hacer aparecer unos u otros componentes, -->
-      <!-- según si está iniciado sesión o la url solicitada -->
+    <!-- La app siempre cargará router-view -->
+    <!-- Las nested routes se encargarán de hacer aparecer unos u otros componentes, -->
+    <!-- según si está iniciado sesión o la url solicitada -->
 
-      <router-view :key="$route.fullPath"/>
+    <router-view :key="$route.fullPath" />
 
-      <ToTop :scroll-y="200"/>
+    <ToTop :scroll-y="200" />
   </div>
 </template>
 
