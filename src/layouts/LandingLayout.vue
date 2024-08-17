@@ -1,11 +1,11 @@
 <template>
-    <div>
-        <Navbar />
+  <div>
+    <Navbar />
 
-        <router-view/>
+    <router-view />
 
-        <LandingFooter/>
-    </div>
+    <LandingFooter />
+  </div>
 </template>
 
 <script lang="ts">

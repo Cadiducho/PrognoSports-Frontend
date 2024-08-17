@@ -572,8 +572,6 @@ interface TableEntry {
 
                 this.chartOptions = {
                     ...this.chartOptions,
-
-                    // @ts-ignore
                     xaxis
                 }
                 this.chartStandingsOptions = {

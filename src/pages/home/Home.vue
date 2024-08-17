@@ -1,22 +1,22 @@
 <template>
-    <div id="homeComponent">
+  <div id="homeComponent">
+    <PTitle name="Dashboard" />
 
-        <PTitle name="Dashboard" />
-
-        <div class="flex flex-wrap -mx-4">
-            <div class="w-full md:w-1/3 p-4">
-                <NextGrandPrix />
-            </div>
-            <div class="w-full md:w-2/3 p-4">
-                <PCard>
-                    <PTitle tag="h3">Resumen</PTitle>
-                    <UserLevelResume :user="currentUser" />
-                    <PointsAccumulated :user="currentUser" />
-                </PCard>
-            </div>
-        </div>
-
+    <div class="flex flex-wrap -mx-4">
+      <div class="w-full md:w-1/3 p-4">
+        <NextGrandPrix />
+      </div>
+      <div class="w-full md:w-2/3 p-4">
+        <PCard>
+          <PTitle tag="h3">
+            Resumen
+          </PTitle>
+          <UserLevelResume :user="currentUser" />
+          <PointsAccumulated :user="currentUser" />
+        </PCard>
+      </div>
     </div>
+  </div>
 </template>
 
 <script lang="ts">
