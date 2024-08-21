@@ -1,59 +1,110 @@
 <template>
-    <div id="navbarComponent">
-        <nav class="navbar is-light" role="navigation" aria-label="main navigation">
-            <div class="navbar-brand">
-                <router-link class="navbar-item" to="/" @click="clickEasterEgg()">
-                    <img src="@/assets/logo_navbar.png" class="mr-3 ml-2" alt="PrognoSports.com">
+  <div id="navbarComponent">
+    <nav
+      class="navbar is-light"
+      role="navigation"
+      aria-label="main navigation"
+    >
+      <div class="navbar-brand">
+        <router-link
+          class="navbar-item"
+          to="/"
+          @click="clickEasterEgg()"
+        >
+          <img
+            src="@/assets/logo_navbar.png"
+            class="mr-3 ml-2"
+            alt="PrognoSports.com"
+          >
 
-                    PrognoSports
-                </router-link>
+          PrognoSports
+        </router-link>
 
-                <a role="button" class="navbar-burger" :class="{ 'is-active': isOpen }" @click="isOpen = !isOpen"
-                   aria-label="menu" aria-expanded="false" data-target="prognoNavbar">
-                    <span aria-hidden="true"></span>
-                    <span aria-hidden="true"></span>
-                    <span aria-hidden="true"></span>
-                </a>
+        <a
+          role="button"
+          class="navbar-burger"
+          :class="{ 'is-active': isOpen }"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="prognoNavbar"
+          @click="isOpen = !isOpen"
+        >
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
+        </a>
+      </div>
+
+      <div
+        id="prognoNavbar"
+        class="navbar-menu"
+        :class="{ 'is-active': isOpen }"
+      >
+        <div
+          v-if="isLoggedIn"
+          class="navbar-start"
+        >
+          <router-link
+            class="navbar-item"
+            to="/gps"
+          >
+            Grandes Premios
+          </router-link>
+          <router-link
+            class="navbar-item"
+            to="/circuits"
+          >
+            Circuitos
+          </router-link>
+          <router-link
+            class="navbar-item"
+            to="/ranking"
+          >
+            Ranking
+          </router-link>
+          <router-link
+            v-if="currentUser.isAdmin()"
+            class="navbar-item"
+            to="/admin"
+          >
+            Admin
+          </router-link>
+        </div>
+
+        <div
+          v-if="!isLoggedIn"
+          class="navbar-end"
+        >
+          <div class="navbar-item">
+            <div class="buttons">
+              <router-link
+                class="button is-primary"
+                to="/register"
+              >
+                <strong>Registrarse</strong>
+              </router-link>
+              <router-link
+                class="button is-primary is-outlined"
+                to="/login"
+              >
+                Iniciar sesión
+              </router-link>
             </div>
+          </div>
+        </div>
 
-            <div id="prognoNavbar" class="navbar-menu" :class="{ 'is-active': isOpen }">
-                <div v-if="isLoggedIn" class="navbar-start">
-                    <router-link class="navbar-item" to="/gps">
-                        Grandes Premios
-                    </router-link>
-                    <router-link class="navbar-item" to="/circuits">
-                        Circuitos
-                    </router-link>
-                    <router-link class="navbar-item" to="/ranking">
-                        Ranking
-                    </router-link>
-                    <router-link v-if="currentUser.isAdmin()" class="navbar-item" to="/admin">
-                        Admin
-                    </router-link>
-                </div>
-
-                <div v-if="!isLoggedIn" class="navbar-end">
-                    <div class="navbar-item">
-                        <div class="buttons">
-                            <router-link class="button is-primary" to="/register">
-                                <strong>Registrarse</strong>
-                            </router-link>
-                            <router-link class="button is-primary is-outlined" to="/login">
-                                Iniciar sesión
-                            </router-link>
-                        </div>
-                    </div>
-                </div>
-
-                <div v-if="isLoggedIn" class="navbar-end" >
-                    <CommunitiesDropdown v-if="thereIsCurrentCommunity"/>
-                    <AddElementsDropdown />
-                    <AvatarComponent/>
-                    <SwitchTheme v-if="darkModeActivable"/>
-                </div>
-            </div>
-        </nav>
-    </div>
+        <div
+          v-if="isLoggedIn"
+          class="navbar-end"
+        >
+          <CommunitiesDropdown v-if="thereIsCurrentCommunity" />
+          <AddElementsDropdown />
+          <AvatarComponent />
+          <SwitchTheme v-if="darkModeActivable" />
+        </div>
+      </div>
+    </nav>
+  </div>
 </template>
 
 <script lang="ts">

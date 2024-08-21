@@ -1,17 +1,27 @@
 <template>
-    <div id="addElementsDropdown" class="navbar-item has-dropdown is-hoverable">
-        <a class="navbar-item nav-tag" slot="trigger" role="button">
-            <span class="icon">
-                <i class="material-icons display-inline-block align-middle">add</i>
-            </span>
-        </a>
+  <div
+    id="addElementsDropdown"
+    class="navbar-item has-dropdown is-hoverable"
+  >
+    <a
+      slot="trigger"
+      class="navbar-item nav-tag"
+      role="button"
+    >
+      <span class="icon">
+        <i class="material-icons display-inline-block align-middle">add</i>
+      </span>
+    </a>
 
-        <div class="navbar-dropdown is-right">
-            <router-link class="navbar-item" :to="{name: 'communitiesCreate'}">
-                Crear Comunidad
-            </router-link>
-        </div>
+    <div class="navbar-dropdown is-right">
+      <router-link
+        class="navbar-item"
+        :to="{name: 'communitiesCreate'}"
+      >
+        Crear Comunidad
+      </router-link>
     </div>
+  </div>
 </template>
 
 <script lang="ts">

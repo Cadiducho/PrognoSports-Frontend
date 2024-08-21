@@ -1,5 +1,5 @@
 <template>
-    <div id="logoutComponent"></div>
+  <div id="logoutComponent" />
 </template>
 
 <script setup lang="ts">

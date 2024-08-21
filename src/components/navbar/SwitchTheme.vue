@@ -1,20 +1,32 @@
 <template>
-    <div class="flex items-center select-none">
-        <input
-            type="checkbox"
-            v-model="darkMode"
-            class="switch"
-            id="switch"
-            :checked="darkMode"
-            @change="switchTheme"
-        />
-        <label for="switch" class="label bg-gray-600 dark:bg-gray-200 cursor-pointer">
-            <span class="">🌑</span>
-            <span class="">☀️</span>
-            <div class="ball dark:bg-gray-600 bg-gray-200"></div>
-        </label>
-    </div>
+  <div class="flex items-center select-none">
+    <input
+      id="switch"
+      v-model="darkMode"
+      type="checkbox"
+      class="switch"
+      :checked="darkMode"
+      @change="switchTheme"
+    >
+    <label
+      for="switch"
+      class="label bg-gray-600 dark:bg-gray-200 cursor-pointer"
+    >
+      <span class="">🌑</span>
+      <span class="">☀️</span>
+      <div class="ball dark:bg-gray-600 bg-gray-200" />
+    </label>
+  </div>
 </template>
+
+<script setup lang="ts">
+// Autor: @Eschiclers https://github.com/Eschiclers/eschiclers.github.io
+import {useThemeStore} from "@/store/themeStore";
+
+const styleStore = useThemeStore();
+const darkMode = styleStore.darkMode;
+const switchTheme = styleStore.toggleDarkMode;
+</script>
 
 <style lang="css" scoped>
 .switch {
@@ -52,12 +64,3 @@
     transition: transform 0.2s linear;
 }
 </style>
-
-<script setup lang="ts">
-// Autor: @Eschiclers https://github.com/Eschiclers/eschiclers.github.io
-import {useThemeStore} from "@/store/themeStore";
-
-const styleStore = useThemeStore();
-const darkMode = styleStore.darkMode;
-const switchTheme = styleStore.toggleDarkMode;
-</script>
