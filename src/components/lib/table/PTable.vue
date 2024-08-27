@@ -1,54 +1,111 @@
 <template>
+  <form
+    v-if="withFilter !== undefined"
+    class="mb-2"
+  >
+    <input
+      id="search"
+      v-model="searchInput"
+      type="search"
+      class="flex-1 w-full p-3 pl-10 text-sm text-gray-900 dark:placeholder-gray-400 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600"
+      placeholder="Buscar"
+    >
+  </form>
 
-    <form v-if="withFilter" class="mb-2">
+  <table class="table-auto w-full border-collapse">
+    <thead class="border-b-2">
+      <tr>
+        <th
+          v-for="col in columns"
+          :key="col.field"
+          class="border-b dark:border-slate-600 font-medium p-2 pl-8 pt-0 pb-3 text-slate-500 dark:text-slate-200 text-left"
+        >
+          {{ col.label }}
+        </th>
+        <td
+          v-if="hasActions"
+          class="empty"
+        />
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        v-for="(row, index) in visibleData"
+        :key="index"
+        :class="getRowStyle(index)"
+      >
+        <td
+          v-for="col in columns"
+          :key="col.field"
+          :class="getTdStyle()"
+        >
+          <template v-if="col.type === 'boolean'">
+            <span
+              v-if="getRowData(row, col.field)"
+              class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-green-500"
+            >Sí</span>
+            <span
+              v-else
+              class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-red-500"
+            >No</span>
+          </template>
+          <template v-else-if="col.type === 'date'">
+            {{ humanDate(getRowData(row, col.field) as unknown as Date) }}
+          </template>
+          <template v-else-if="col.type === 'datetime'">
+            {{ humanDateTime(getRowData(row, col.field) as unknown as Date) }}
+          </template>
+          <template v-else-if="col.type === 'datediff'">
+            {{ dateDiff(getRowData(row, col.field) as unknown as Date) }}
+          </template>
+          <template v-else>
+            {{ getRowData(row, col.field) }}
+          </template>
+        </td>
+        <td
+          v-if="hasActions"
+          :class="getTdStyle()"
+          class="!text-right"
+        >
+          <slot
+            name="actions"
+            :row="row"
+            :index="index"
+          >
+            <button
+              v-if="hasViewButton"
+              class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-blue-500 mr-2"
+              @click="$emit('view', row)"
+            >
+              Ver
+            </button>
+            <button
+              v-if="hasEditButton"
+              class="px-3 py-1 text-sm text-black font-semibold rounded-full bg-amber-300 mr-2"
+              @click="$emit('edit', row)"
+            >
+              Editar
+            </button>
+            <button
+              v-if="hasDeleteButton"
+              class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-red-500"
+              @click="$emit('delete', row)"
+            >
+              Eliminar
+            </button>
+          </slot>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
-        <input type="search" id="search" v-model="searchInput"
-               class="flex-1 w-full p-3 pl-10 text-sm text-gray-900 dark:placeholder-gray-400 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600"
-               placeholder="Buscar">
-
-    </form>
-
-    <table class="table-auto w-full border-collapse">
-        <thead class="border-b-2">
-        <tr>
-            <th v-for="col in columns" class="border-b dark:border-slate-600 font-medium p-2 pl-8 pt-0 pb-3 text-slate-500 dark:text-slate-200 text-left">
-                {{ col.label }}
-            </th>
-            <td v-if="hasActions" class="empty"></td>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="(row, index) in visibleData" :class="getRowStyle(index)">
-            <td v-for="col in columns" :class="getTdStyle()">
-                <template v-if="col.type === 'boolean'">
-                    <span v-if="row[col.field] === true" class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-green-500">Sí</span>
-                    <span v-else class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-red-500">No</span>
-                </template>
-                <template v-else-if="col.type === 'date'">
-                    {{ humanDate(row[col.field]) }}
-                </template>
-                <template v-else-if="col.type === 'datetime'">
-                    {{ humanDateTime(row[col.field]) }}
-                </template>
-                <template v-else-if="col.type === 'datediff'">
-                    {{ dateDiff(row[col.field]) }}
-                </template>
-                <template v-else>
-                    {{ row[col.field] }}
-                </template>
-            </td>
-            <td v-if="hasActions" :class="getTdStyle()" class="!text-right">
-                <slot name="actions" :row="row" :index="index">
-                    <button v-if="hasViewButton" class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-blue-500 mr-2" @click="$emit('view', row)">Ver</button>
-                    <button v-if="hasEditButton" class="px-3 py-1 text-sm text-black font-semibold rounded-full bg-amber-300 mr-2" @click="$emit('edit', row)">Editar</button>
-                    <button v-if="hasDeleteButton" class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-red-500" @click="$emit('delete', row)">Eliminar</button>
-                </slot>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-
-    <Pagination v-if="paginated" :initial-current="currentPage" :per-page="perPage" :total="filteredRows.length" @update:current-page="currentPage = $event"/>
+  <Pagination
+    v-if="paginated"
+    :initial-current="currentPage"
+    :per-page="perPage"
+    :total="filteredRows.length"
+    @update:current-page="currentPage = $event"
+  />
 </template>
 
 
@@ -57,12 +114,7 @@ import {computed, ref} from "vue";
 import Pagination from "@/components/lib/Pagination.vue";
 import {useDayjs} from "@/composables/useDayjs";
 
-const dayjs = useDayjs();
-const dateDiff = dayjs.dateDiff;
-const humanDateTime = dayjs.humanDateTime;
-const humanDate = dayjs.humanDate;
-
-export interface Props<T> {
+interface Props<T> {
     columns: Array<Column>;
     rows: Array<T>;
     withFilter?: (original: Array<T>, filter: string) => Array<T>;
@@ -73,7 +125,8 @@ export interface Props<T> {
     perPage?: number;
     striped?: boolean;
 }
-const props = withDefaults(defineProps<Props<any>>(), {
+const props = withDefaults(defineProps<Props<T>>(), {
+    withFilter: (original: Array<T>) => original,
     hasViewButton: false,
     hasEditButton: false,
     hasDeleteButton: false,
@@ -81,12 +134,15 @@ const props = withDefaults(defineProps<Props<any>>(), {
     perPage: 10,
     striped: true
 });
-
 defineEmits<{
     view: [element: T],
     edit: [element: T],
     delete: [element: T]
 }>();
+const dayjs = useDayjs();
+const dateDiff = dayjs.dateDiff;
+const humanDateTime = dayjs.humanDateTime;
+const humanDate = dayjs.humanDate;
 
 const currentPage = ref(1);
 const searchInput = ref("");
@@ -110,6 +166,14 @@ const getTdStyle = () => {
 const getRowStyle = (index: number) => {
     if (props.striped && (index % 2 !== 0)) return "border-b bg-gray-50 dark:bg-gray-800 dark:border-gray-700 hover:bg-slate-50";
     return "bg-white dark:bg-gray-900 hover:bg-slate-50";
+}
+
+const getRowData = (row: T, rowName: string): string => {
+    if (rowName.includes(".")) {
+        const [first, ...rest] = rowName.split(".");
+        return getRowData(row[first as keyof T] as T, rest.join(".")) as string;
+    }
+    return row[rowName as keyof T] as unknown as string;
 }
 
 const visibleData = computed(() => {

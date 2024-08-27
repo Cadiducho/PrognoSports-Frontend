@@ -1,32 +1,59 @@
 <template>
-    <div id="seasonList" class="box">
-        <PTitle class="mb-5" name="Administración de temporadas"/>
+  <div
+    id="seasonList"
+    class="box"
+  >
+    <PTitle
+      class="mb-5"
+      name="Administración de temporadas"
+    />
 
-        <p-button class="mb-4" label="Nueva temporada" color="info" to="/admin/seasons/create" />
+    <p-button
+      class="mb-4"
+      label="Nueva temporada"
+      color="info"
+      to="/admin/seasons/create"
+    />
 
-        <p-table :columns="columns" :rows="seasons"
-                 hasViewButton hasEditButton hasDeleteButton paginated
-                 :with-filter="filteredSeasons"
-                 @view="goToView($event as Season)"
-                 @edit="goToEdit($event as Season)"
-                 @delete="confirmDeleteSeason($event as Season)"
+    <p-table
+      :columns="columns"
+      :rows="seasons"
+      has-view-button
+      has-edit-button
+      has-delete-button
+      paginated
+      :with-filter="filteredSeasons"
+      @view="goToView($event as Season)"
+      @edit="goToEdit($event as Season)"
+      @delete="confirmDeleteSeason($event as Season)"
+    />
+
+    <PrognoModal
+      v-show="showConfirmDeleteModal"
+      @close="showConfirmDeleteModal = false"
+    >
+      <template #title>
+        Confirmar eliminación
+      </template>
+      <template #content>
+        ¿Está seguro que desea eliminar la temporada <strong>{{ seasonToDelete?.name }}</strong>? Esta acción no se puede deshacer.
+      </template>
+      <template #footer>
+        <button
+          class="button is-danger"
+          @click="deleteSeason(seasonToDelete)"
         >
-
-        </p-table>
-
-        <PrognoModal v-show="showConfirmDeleteModal" @close="showConfirmDeleteModal = false">
-            <template v-slot:title>
-                Confirmar eliminación
-            </template>
-            <template v-slot:content>
-                ¿Está seguro que desea eliminar la temporada <strong>{{seasonToDelete?.name}}</strong>? Esta acción no se puede deshacer.
-            </template>
-            <template v-slot:footer>
-                <button class="button is-danger" @click="deleteSeason(seasonToDelete)">Eliminar</button>
-                <button class="button" @click="showConfirmDeleteModal = false">Cancelar</button>
-            </template>
-        </PrognoModal>
-    </div>
+          Eliminar
+        </button>
+        <button
+          class="button"
+          @click="showConfirmDeleteModal = false"
+        >
+          Cancelar
+        </button>
+      </template>
+    </PrognoModal>
+  </div>
 </template>
 
 <script setup lang="ts">
