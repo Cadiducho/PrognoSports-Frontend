@@ -7,7 +7,7 @@
       id="search"
       v-model="searchInput"
       type="search"
-      class="flex-1 w-full p-3 pl-10 text-sm text-gray-900 dark:placeholder-gray-400 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600"
+      class="flex-1 w-full p-3 pl-10 text-sm text-gray-900 dark:text-gray-200 dark:placeholder-gray-400 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600"
       placeholder="Buscar"
     >
   </form>
@@ -77,27 +77,21 @@
             :row="row"
             :index="index"
           >
-            <button
+            <i
               v-if="hasViewButton"
-              class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-blue-500 mr-2"
+              class="fa fa-eye cursor-pointer text-blue-400 p-1"
               @click="$emit('view', row)"
-            >
-              Ver
-            </button>
-            <button
+            />
+            <i
               v-if="hasEditButton"
-              class="px-3 py-1 text-sm text-black font-semibold rounded-full bg-amber-300 mr-2"
+              class="fa fa-pencil cursor-pointer text-amber-500 p-1"
               @click="$emit('edit', row)"
-            >
-              Editar
-            </button>
-            <button
+            />
+            <i
               v-if="hasDeleteButton"
-              class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-red-500"
+              class="fa fa-trash cursor-pointer text-red-600 p-1"
               @click="$emit('delete', row)"
-            >
-              Eliminar
-            </button>
+            />
           </slot>
         </td>
       </tr>

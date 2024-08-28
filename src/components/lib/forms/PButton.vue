@@ -101,7 +101,7 @@ export default defineComponent({
             'large': props.size === 'large',
             'w-full': props.expanded,
             'rounded-full': props.pilled,
-            'rounded-md': props.rounded,
+            'rounded-md': props.rounded && !props.pilled,
 
             'solid': props.type === 'solid',
             'outline': props.type === 'outline',
