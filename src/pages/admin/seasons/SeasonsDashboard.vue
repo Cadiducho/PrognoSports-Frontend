@@ -68,11 +68,11 @@ import {Season} from "@/types/Season";
 
 const router = useRouter();
 
-const columns = ref( [
-    {label: 'ID', field: 'id'},
-    {label: 'Nombre', field: 'name'},
-    {label: 'Competición', field: 'competition.name'},
-    {label: 'Código', field: 'competition.code'},
+const columns = ref([
+  { label: 'ID', field: 'id' },
+  { label: 'Nombre', field: 'name' },
+  { label: 'Competición', field: 'competition.name' },
+  { label: 'Código', field: 'competition.code' },
 ]);
 const seasons = ref(new Array<Season>())
 const showConfirmDeleteModal = ref(false);

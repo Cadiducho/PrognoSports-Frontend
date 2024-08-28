@@ -1,16 +1,20 @@
 <template>
-    <component
-        :is="computedTag"
-        :type="computedNativeType"
-        :disabled="computedDisabled"
-        :to="to"
-        @click="pushToLink"
-        :class="buttonClasses">
-        <i v-if="icon" :class="`${icon} pr-1`"></i>
-        <slot>
-            {{ label }}
-        </slot>
-    </component>
+  <component
+    :is="computedTag"
+    :type="computedNativeType"
+    :disabled="computedDisabled"
+    :to="to"
+    :class="buttonClasses"
+    @click="pushToLink"
+  >
+    <i
+      v-if="icon"
+      :class="`${icon} pr-1`"
+    />
+    <slot>
+      {{ label }}
+    </slot>
+  </component>
 </template>
 
 <script lang="ts">

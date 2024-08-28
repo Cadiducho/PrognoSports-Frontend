@@ -4,4 +4,5 @@ interface Column {
     label: string;
     field: string;
     type?: ColumType;
+    formatter?: (value: any) => string;
 }

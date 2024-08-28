@@ -59,7 +59,12 @@
             {{ dateDiff(getRowData(row, col.field) as unknown as Date) }}
           </template>
           <template v-else>
-            {{ getRowData(row, col.field) }}
+            <template v-if="col.formatter !== undefined">
+              {{ col.formatter(getRowData(row, col.field)) }}
+            </template>
+            <template v-else>
+              {{ getRowData(row, col.field) }}
+            </template>
           </template>
         </td>
         <td
@@ -126,7 +131,7 @@ interface Props<T> {
     striped?: boolean;
 }
 const props = withDefaults(defineProps<Props<T>>(), {
-    withFilter: (original: Array<T>) => original,
+    withFilter: undefined,
     hasViewButton: false,
     hasEditButton: false,
     hasDeleteButton: false,
