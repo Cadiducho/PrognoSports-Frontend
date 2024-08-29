@@ -1,138 +1,185 @@
 <template>
-    <div id="adminDrivers" class="box">
-        <PTitle class="mb-5" name="Administración de pilotos"/>
+  <PCard>
+    <PTitle
+      class="mb-5"
+      name="Administración de pilotos"
+    />
 
-        <div class="block">
-            <o-button variant="link" :to="{name: 'driverCreate'}" tag="router-link">Nuevo piloto</o-button>
-        </div>
+    <nav class="flex justify-between mb-4">
+      <section class="flex flex-wrap">
+        <p-button
+          color="info"
+          icon="fa fa-chevron-left"
+          :to="{name: 'admin'}"
+          tag="router-link"
+          class="mr-2"
+        >
+          Volver a Administración
+        </p-button>
+        <p-button
+          color="primary"
+          icon="fa fa-plus"
+          :to="{name: 'driverCreate'}"
+          tag="router-link"
+        >
+          Nuevo Piloto
+        </p-button>
+      </section>
+      <section class="flex flex-wrap">
+        <p-button
+          v-if="chosenSeason.id"
+          color="info"
+          icon="fa fa-cogs"
+          :to="{name: 'adminGpsInSeason', params: {season: chosenSeason.id}}"
+          tag="router-link"
+          class="mr-2"
+        >
+          Ir a la temporda actual
+        </p-button>
+        <p-select
+          v-if="seasonList"
+          v-model="chosenSeason"
+          placeholder="Selecciona la temporada"
+          @change="goToSeason()"
+        >
+          <option
+            v-for="ses in seasonList"
+            :key="ses.id"
+            :value="ses"
+          >
+            {{ ses.name }} (#{{ ses.id }}) - {{ ses.competition.name }}
+          </option>
+        </p-select>
+      </section>
+    </nav>
 
-        <o-field>
-            <o-input
-                v-model="filtroPiloto"
-                placeholder="Buscar piloto"
-                type="search"
-                icon-pack="fas"
-                icon="search"
-            ></o-input>
-        </o-field>
-
-        <div class="block">
-            <o-switch v-model="isPaginated">Paginated</o-switch>
-        </div>
-
-        <o-table :data="filteredDrivers"
-                 hoverable striped
-                 :paginated="isPaginated"
-                 per-page="15">
-
-            <o-table-column field="id" label="ID" width="40" sortable v-slot="props">
-                {{ props.row.id }}
-            </o-table-column>
-
-            <o-table-column field="first_name" label="First Name" sortable v-slot="props">
-                {{ props.row.firstname }}
-            </o-table-column>
-
-            <o-table-column field="last_name" label="Last Name" sortable v-slot="props">
-                {{ props.row.lastname }}
-            </o-table-column>
-
-            <o-table-column field="code" label="Code" sortable v-slot="props" width="60">
-                    <span class="tag is-primary is-rounded">
-                        {{ props.row.code }}
-                    </span>
-            </o-table-column>
-
-            <o-table-column field="nationality" label="Nationality" sortable v-slot="props">
-                {{ props.row.nationality }}
-            </o-table-column>
-
-            <o-table-column field="birth" label="Birth" centered sortable v-slot="props">
-                    <span class="tag is-success" v-if="props.row.birth">
-                        {{ humanDate(props.row.birth) }}
-                    </span>
-                <span class="tag is-warning" v-else>
-                        Sin fecha
-                    </span>
-            </o-table-column>
-
-            <o-table-column label="Actions" v-slot="props">
-                    <span class="tags">
-                        <span class="tag is-link">Ver</span>
-                        <span class="tag is-warning">Editar</span>
-                        <span class="tag is-danger">Eliminar</span>
-                    </span>
-            </o-table-column>
-
-        </o-table>
-    </div>
+    <p-table
+      :columns="columns"
+      :rows="drivers"
+      paginated
+      has-view-button
+      has-edit-button
+      has-delete-button
+      :with-filter="filteredDrivers"
+      @view="goToView($event as Driver)"
+      @edit="goToEdit($event as Driver)"
+      @delete="confirmDeleteDriver($event as Driver)"
+    />
+    <PrognoModal
+      v-show="isDeleteDriverModalActive"
+      @close="isDeleteDriverModalActive = false"
+      @handle="deleteDriver(driverToDelete!)"
+    >
+      <template #title>
+        ¿Borrar Piloto?
+      </template>
+      <template #content>
+        Estás seguro de que deseas borrar el Piloto <span class="has-text-weight-semibold">{{ driverToDelete.firstname }} {{ driverToDelete.lastname }} (ID {{ driverToDelete.id }})</span>?
+      </template>
+      <template #saveText>
+        Borrar Piloto
+      </template>
+    </PrognoModal>
+  </PCard>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import PTitle from "@/components/lib/PTitle.vue";
-import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
+import PCard from "@/components/lib/PCard.vue";
+import PTable from "@/components/lib/table/PTable.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
+import PSelect from "@/components/lib/forms/PSelect.vue";
+import PrognoModal from "@/components/lib/PrognoModal.vue";
 import {Driver} from "@/types/Driver";
-import {driversService} from "@/_services";
+import {Season} from "@/types/Season";
+import {Column} from "@/components/lib/table";
+import {driversService, seasonService, notificationService} from "@/_services";
 
-import {defineComponent} from "vue";
-import {useAuthStore} from "@/store/authStore";
-import {useDayjs} from "@/composables/useDayjs";
+import {onMounted, ref} from "vue";
+import {useRouter} from "vue-router";
 
-export default defineComponent({
-    name: "DriversDashboard",
-    components: {
-        AlertNoPermission,
-        PTitle,
-    },
-    setup() {
-        const dayjs = useDayjs();
-        const authStore = useAuthStore();
+const router = useRouter();
 
-        const humanDate = dayjs.humanDate;
-        const currentUser = authStore.loggedUser;
-        return { currentUser, humanDate };
-    },
-    data() {
-        return {
-            isPaginated: true,
-            filtroPiloto: '',
-            drivers: new Array<Driver>(),
-        }
-    },
-    mounted() {
-        driversService.getAllDrivers().then((drivers) => {
-            this.drivers = [];
-            this.drivers.push(...drivers);
-        })
-    },
-    computed: {
-        filteredDrivers(): Array<Driver> {
-            if (!this.filtroPiloto.trim()) {
-                return this.drivers;
-            }
+const drivers = ref(new Array<Driver>());
+const seasonList = ref(new Array<Season>());
+const chosenSeason = ref<Season>({} as Season);
+const driverToDelete = ref<Driver>({} as Driver);
+const isDeleteDriverModalActive = ref(false);
 
-            const filtroLowerCase: string = this.filtroPiloto.toLowerCase().trim();
+const columns = ref<Column[]>([
+  {label: 'ID', field: 'id'},
+  {label: 'First Name', field: 'firstname'},
+  {label: 'Last Name', field: 'lastname'},
+  {label: 'Code', field: 'code'},
+  {label: 'Nationality', field: 'nationality'},
+  {label: 'Birth', field: 'birth', type: 'date'},
+]);
 
-            return this.drivers.filter((driver) => {
-                return (
-                    driver.id
-                        .toLowerCase()
-                        .includes(filtroLowerCase) ||
-                    driver.lastname
-                        .toLowerCase()
-                        .includes(filtroLowerCase) ||
-                    driver.firstname
-                        .toLowerCase()
-                        .includes(filtroLowerCase) ||
-                    driver.code
-                        .toLowerCase()
-                        .includes(filtroLowerCase) ||
-                    driver.nationality
-                        .toLowerCase()
-                        .includes(filtroLowerCase)
-                );
-            });
-        }
+const filteredDrivers = ((original: Driver[], filter: string): Driver[] => {
+  console.log(original);
+
+  return original.filter((driver) => {
+    return (
+      driver.id
+        .toString()
+        .includes(filter) ||
+      driver.lastname
+        .toLowerCase()
+        .includes(filter) ||
+      driver.firstname
+        .toLowerCase()
+        .includes(filter) ||
+      driver.code
+        .toLowerCase()
+        .includes(filter) ||
+      driver.nationality
+        .toLowerCase()
+        .includes(filter)
+    );
+  });
+});
+
+const goToView = (driver: Driver) => {
+  router.push({name: 'driverDetails', params: {driver: driver.id}});
+}
+
+const goToEdit = (driver: Driver) => {
+  router.push({name: 'driverEdit', params: {driver: driver.id}});
+}
+
+const goToSeason = () => {
+  router.push({
+    name: 'adminDriversInSeason',
+    params: {
+      season: chosenSeason.value.id,
     }
+  });
+}
+
+const confirmDeleteDriver = (driver: Driver) => {
+  driverToDelete.value = driver;
+  isDeleteDriverModalActive.value = true;
+}
+const deleteDriver = (driver: Driver) => {
+  isDeleteDriverModalActive.value = false;
+
+  driversService.deleteDriver(driver).then(() => {
+    notificationService.showNotification(`Se ha eliminado correctamente el piloto ${driver.firstname} ${driver.lastname}`, "success");
+    drivers.value.splice(drivers.value.findIndex(d => d.id === driver.id), 1);
+  }).catch(() => {
+    notificationService.showNotification(`No se ha podido eliminar el piloto ${driver.firstname} ${driver.lastname}`, "error");
+  });
+}
+
+onMounted(() => {
+  driversService.getAllDrivers().then((response) => {
+    drivers.value = [];
+    drivers.value.push(...response);
+  })
+  seasonService.getSeasonList().then((response) => {
+    seasonList.value = [];
+    seasonList.value.push(...response);
+    chosenSeason.value = seasonList.value[seasonList.value.length - 1];
+  });
 });
 </script>

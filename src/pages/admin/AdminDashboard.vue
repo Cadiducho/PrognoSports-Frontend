@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="adminPage"
-    class="box"
-  >
+  <PCard>
     <PTitle
       class="mb-5"
       name="Administración de PrognoSports"
@@ -108,9 +105,10 @@
         </router-link>
       </article>
     </div>
-  </div>
+  </PCard>
 </template>
 
 <script setup lang="ts">
 import PTitle from "@/components/lib/PTitle.vue";
+import PCard from "@/components/lib/PCard.vue";
 </script>

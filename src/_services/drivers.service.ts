@@ -25,4 +25,16 @@ export class DriversService {
     public async createDriver(rawDriver: { firstname: string; code: string; nationality: string; id: string; lastname: string, birth: Date }): Promise<Driver> {
         return await axios.post(`/drivers`, rawDriver);
     }
+
+    public async updateDriver(driver: Driver): Promise<Driver> {
+        return await axios.put(`/drivers/${driver.id}`, driver);
+    }
+
+    public async deleteDriver(driver: Driver) {
+        return await axios.delete(`/drivers/${driver.id}`);
+    }
+
+    public async getDriver(id: string): Promise<Driver> {
+        return await axios.get(`/drivers/${id}`);
+    }
 }

@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="seasonList"
-    class="box"
-  >
+  <PCard>
     <PTitle
       class="mb-5"
       name="Administración de temporadas"
@@ -53,7 +50,7 @@
         </button>
       </template>
     </PrognoModal>
-  </div>
+  </PCard>
 </template>
 
 <script setup lang="ts">
@@ -61,6 +58,7 @@ import PTitle from "@/components/lib/PTitle.vue";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import PTable from "@/components/lib/table/PTable.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
+import PCard from "@/components/lib/PCard.vue";
 import {useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
 import {notificationService, seasonService} from "@/_services";
