@@ -98,7 +98,7 @@
     </tbody>
   </table>
 
-  <Pagination
+  <p-pagination
     v-if="paginated"
     :initial-current="currentPage"
     :per-page="perPage"
@@ -110,7 +110,7 @@
 
 <script setup lang="ts" generic="T">
 import {computed, ref} from "vue";
-import Pagination from "@/components/lib/Pagination.vue";
+import PPagination from "@/components/lib/PPagination.vue";
 import {useDayjs} from "@/composables/useDayjs";
 
 interface Props<T> {
