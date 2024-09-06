@@ -1,15 +1,13 @@
 <template>
-  <div
-    id="adminGps"
-    class="box"
-  >
+  <PCard>
     <PTitle
+      v-if="chosenSeason.name"
       class="mb-5"
       :name="'Administración de Grandes Premios en la temporada ' + chosenSeason.name"
     />
 
-    <nav class="block is-flex is-justify-content-space-between">
-      <p class="control">
+    <nav class="flex justify-between mb-4">
+      <section class="flex flex-wrap">
         <p-button
           color="info"
           icon="fa fa-chevron-left"
@@ -27,21 +25,32 @@
         >
           Añadir Gran Premio a la temporada
         </p-button>
-      </p>
-      <p-select
-        v-if="seasonList"
-        v-model="chosenSeason"
-        placeholder="Selecciona la temporada"
-        @change="onChangeSeason()"
-      >
-        <option
-          v-for="ses in seasonList"
-          :key="ses.id"
-          :value="ses"
+      </section>
+      <section class="flex flex-wrap">
+        <p-button
+          color="info"
+          icon="fa fa-cogs"
+          :to="{name: 'adminSeasonEdit', params: {season: chosenSeason.id}}"
+          tag="router-link"
+          class="mr-2"
         >
-          {{ ses.name }} (#{{ ses.id }}) - {{ ses.competition.name }}
-        </option>
-      </p-select>
+          Administración de Temporada
+        </p-button>
+        <p-select
+          v-if="seasonList"
+          v-model="chosenSeason"
+          placeholder="Selecciona la temporada"
+          @change="onChangeSeason()"
+        >
+          <option
+            v-for="ses in seasonList"
+            :key="ses.id"
+            :value="ses"
+          >
+            {{ ses.name }} (#{{ ses.id }}) - {{ ses.competition.name }}
+          </option>
+        </p-select>
+      </section>
     </nav>
 
     <p-table
@@ -71,7 +80,7 @@
         Eliminar Grand Prix
       </template>
     </PrognoModal>
-  </div>
+  </PCard>
 </template>
 
 <script setup lang="ts">
@@ -79,6 +88,7 @@ import PTitle from "@/components/lib/PTitle.vue";
 import PTable from "@/components/lib/table/PTable.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
+import PCard from "@/components/lib/PCard.vue";
 import { grandPrixService, seasonService } from "@/_services";
 import { GrandPrix } from "@/types/GrandPrix";
 import { Season } from "@/types/Season";
