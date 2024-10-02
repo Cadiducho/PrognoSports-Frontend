@@ -1,109 +1,154 @@
 <template>
-    <div id="adminGps" class="box">
-        <PTitle class="mb-5" name="Administración de Grandes Premios" />
+  <PCard>
+    <PTitle
+      class="mb-5"
+      name="Administración de Grandes Premios"
+    />
 
-        <nav class="block is-flex is-justify-content-space-between">
-            <p class="control">
-                <o-button variant="link" :to="{name: 'gpCreate'}" tag="router-link">Nuevo Gran Premio</o-button>
-            </p>
+    <nav class="flex justify-between mb-4">
+      <section class="flex flex-wrap">
+        <p-button
+          color="info"
+          icon="fa fa-chevron-left"
+          :to="{name: 'admin'}"
+          tag="router-link"
+          class="mr-2"
+        >
+          Volver a Administración
+        </p-button>
+        <p-button
+          color="primary"
+          icon="fa fa-plus"
+          :to="{name: 'gpCreate'}"
+          tag="router-link"
+        >
+          Nuevo Gran Premio
+        </p-button>
+      </section>
+      <section class="flex flex-wrap">
+        <p-button
+          v-if="chosenSeason.id"
+          color="info"
+          icon="fa fa-cogs"
+          :to="{name: 'adminGpsInSeason', params: {season: chosenSeason.id}}"
+          tag="router-link"
+          class="mr-2"
+        >
+          Ir a la temporda actual
+        </p-button>
+        <p-select
+          v-if="seasonList"
+          v-model="chosenSeason"
+          placeholder="Selecciona la temporada"
+          @change="goToSeason()"
+        >
+          <option
+            v-for="ses in seasonList"
+            :key="ses.id"
+            :value="ses"
+          >
+            {{ ses.name }} (#{{ ses.id }}) - {{ ses.competition.name }}
+          </option>
+        </p-select>
+      </section>
+    </nav>
 
-            <section class="is-flex">
-                <o-button v-if="chosenSeason.id" variant="success"
-                          :to="{name: 'adminGpsInSeason', params: {season: chosenSeason.id}}"
-                          tag="router-link" class="mr-2">
-                    Ir a temporada actual
-                </o-button>
-                <o-select v-if="seasonList" v-model="chosenSeason" placeholder="Selecciona la temporada" @change="goToSeason()">
-                    <option
-                        v-for="season in seasonList"
-                        :value="season"
-                        :key="season.id">
-                        {{ season.name }} (#{{ season.id }}) - {{ season.competition.name }}
-                    </option>
-                </o-select>
-            </section>
-        </nav>
-
-
-        <o-field class="block">
-            <o-input
-                v-model="filtroGrandprix"
-                placeholder="Buscar gran premio"
-                type="search"
-                icon-pack="fas"
-                icon="search"
-            ></o-input>
-        </o-field>
-
-        <o-table :data="filteredGps" paginated :per-page="10"
-                 hoverable striped>
-
-            <o-table-column field="id" label="ID" sortable v-slot="props">
-                {{ props.row.id }}
-            </o-table-column>
-
-            <o-table-column field="name" label="Name" sortable v-slot="props">
-                {{ props.row.name }}
-            </o-table-column>
-
-            <o-table-column field="code" label="Code" sortable v-slot="props">
-                {{ props.row.code }}
-            </o-table-column>
-
-            <o-table-column label="Actions" v-slot="props">
-                    <span class="tags">
-                        <router-link class="tag is-warning" :to="{name: 'adminGpEdit', params: {gp: props.row.id}}">Editar</router-link>
-                        <span class="tag is-danger" @click="confirmDeleteGrandPrix(props.row)">Eliminar</span>
-                    </span>
-            </o-table-column>
-
-        </o-table>
-    </div>
-    <PrognoModal v-show="isDeleteGrandPrixModalActive" @close="isDeleteGrandPrixModalActive = false" @handle="deleteGrandPrix(grandPrixToDelete)">
-        <template v-slot:title>¿Borrar Gran Premio?</template>
-        <template v-slot:content>
-            Estás seguro de que deseas borrar el Gran Premio <span class="has-text-weight-semibold">{{ grandPrixToDelete.name }}</span>?
-        </template>
-        <template v-slot:saveText>Borrar Gran Premio</template>
-    </PrognoModal>
+    <p-table
+      :columns="columns"
+      :rows="gps"
+      paginated
+      has-edit-button
+      has-delete-button
+      :with-filter="filteredGps"
+      @edit="goToEdit($event as GrandPrix)"
+      @delete="confirmDeleteGrandPrix($event as GrandPrix)"
+    />
+  </PCard>
+  <PrognoModal
+    v-show="isDeleteGrandPrixModalActive"
+    @close="isDeleteGrandPrixModalActive = false"
+    @handle="deleteGrandPrix(grandPrixToDelete)"
+  >
+    <template #title>
+      ¿Borrar Gran Premio?
+    </template>
+    <template #content>
+      Estás seguro de que deseas borrar el Gran Premio <span class="has-text-weight-semibold">{{ grandPrixToDelete.name }}</span>?
+    </template>
+    <template #saveText>
+      Borrar Gran Premio
+    </template>
+  </PrognoModal>
 </template>
 
 <script lang="ts">
 import PTitle from "@/components/lib/PTitle.vue";
-import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
+import PCard from "@/components/lib/PCard.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
+import PSelect from "@/components/lib/forms/PSelect.vue";
+import PTable from "@/components/lib/table/PTable.vue";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import {grandPrixService, notificationService, seasonService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
 
 import {defineComponent} from "vue";
-import {useAuthStore} from "@/store/authStore";
-import {useCommunityStore} from "@/store/communityStore";
+import {useRouter} from "vue-router";
+
 import {Season} from "@/types/Season";
 
 export default defineComponent({
     name: "GrandPrixDashboard",
     components: {
         PrognoModal,
-        AlertNoPermission,
         PTitle,
+        PCard,
+        PButton,
+        PSelect,
+        PTable
     },
     setup() {
-        const authStore = useAuthStore();
-        const communityStore = useCommunityStore();
+      const router = useRouter();
 
-        const currentUser = authStore.loggedUser;
-        const currentCommunity = communityStore.currentCommunity;
-        return {currentUser, currentCommunity};
-    },
+      const goToView = (gp: GrandPrix) => {
+        router.push({name: 'gpdetails', params: {season: gp.season.id, competition: gp.competition.id, gp: gp.id}});
+      }
+
+      const goToEdit = (gp: GrandPrix) => {
+          router.push({name: 'adminGpEditInSeason', params: {gp: gp.id}});
+      }
+
+    const filteredGps = ((original: GrandPrix[], filter: string): GrandPrix[] => {
+      return original.filter((gp) => {
+        return (
+          gp.id
+            .toString()
+            .includes(filter) ||
+          gp.name
+            .toLowerCase()
+            .includes(filter) ||
+          gp.code
+            .toLowerCase()
+            .includes(filter)
+        );
+      });
+    });
+
+    return { goToView, goToEdit, filteredGps };
+  },
     data() {
         return {
-            filtroGrandprix: '',
             gps: new Array<GrandPrix>(),
             seasonList: new Array<Season>(),
             chosenSeason: {} as Season,
 
             isDeleteGrandPrixModalActive: false,
-            grandPrixToDelete: {} as GrandPrix
+            grandPrixToDelete: {} as GrandPrix,
+
+            columns: [
+                {label: 'ID', field: 'id'},
+                {label: 'Nombre', field: 'name'},
+                {label: 'Código', field: 'code'},
+            ],
         }
     },
     mounted() {
@@ -138,29 +183,6 @@ export default defineComponent({
                 this.gps.splice(this.gps.findIndex(s => s.id === gp.id), 1);
             }).catch(() => {
                 notificationService.showNotification(`No se ha podido eliminar el gran premio ${gp.name}`, "error");
-            });
-        }
-    },
-    computed: {
-        filteredGps(): Array<GrandPrix> {
-            if (!this.filtroGrandprix.trim()) {
-                return this.gps;
-            }
-
-            const filtroLowerCase: string = this.filtroGrandprix.toLowerCase().trim();
-
-            return this.gps.filter((gp) => {
-                return (
-                    gp.id
-                        .toString()
-                        .includes(filtroLowerCase) ||
-                    gp.name
-                        .toLowerCase()
-                        .includes(filtroLowerCase) ||
-                    gp.code
-                        .toLowerCase()
-                        .includes(filtroLowerCase)
-                );
             });
         }
     }
