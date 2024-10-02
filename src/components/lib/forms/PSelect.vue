@@ -37,7 +37,7 @@
       </select>
       <div class="pointer-events-none absolute inset-y-0 right-0 px-3 flex items-center">
         <i
-          class="fa fa-chevron-down text-gray-900"
+          class="fa fa-chevron-down text-gray-900 dark:text-white"
         />
       </div>
     </section>

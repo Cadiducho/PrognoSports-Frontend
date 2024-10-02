@@ -1,110 +1,95 @@
 <template>
-  <div
-    id="seasonEdit"
-    class="box"
-  >
-    <PTitle
-      class="mb-5"
-      name="Administración de temporadas"
-    />
+  <PCard id="seasonEdit">
+    <PTitle name="Administración de temporadas" />
 
     <loading v-if="isLoading" />
     <template v-else>
-      <div class="block">
-        <o-button
-          variant="link"
-          to="/admin/seasons"
-          tag="router-link"
-        >
-          Lista de temporadas
-        </o-button>
-      </div>
+      <nav class="flex justify-between mb-4">
+        <section class="flex flex-wrap">
+          <p-button
+            color="info"
+            icon="fa fa-chevron-left"
+            :to="{name: 'adminSeasons'}"
+            tag="router-link"
+            class="mr-2"
+          >
+            Volver listado de Temporadas
+          </p-button>
+        </section>
+      </nav>
 
       <p v-if="!season">
         La temporada {{ seasonId }} no ha sido encontrada
       </p>
       <template v-else>
-        <h2 class="title">
-          Temporada {{ season.name }}
-        </h2>
-        <div class="columns">
-          <div class="column is-one-quarter">
-            <h3 class="subtitle">
-              Datos de la temporada
-            </h3>
+        <PTitle type="subtitle" tag="h2" class="mb-2">
+          Edición de Temporada {{ season.name }}
+        </PTitle>
 
-            <o-field label="Nombre de la temporada">
-              <o-input
-                v-model="season.name"
-                name="name"
-                expanded
-                lazy
-              />
-            </o-field>
-
-            <o-field label="Número de eventos">
-              <o-input
-                v-model="season.totalEvents"
-                name="longitude"
-                expanded
-                lazy
-                type="number"
-                step="any"
-              />
-            </o-field>
-
-            <o-field label="Competición">
-              <o-select
-                v-model="season.competition.id"
-                placeholder="Selecciona una competición"
-                expanded
-              >
-                <option
-                  v-for="comp in competitions"
-                  :key="comp.id"
-                  :value="comp.id"
-                >
-                  {{ comp.name }} ({{ comp.code }}) - {{ comp.fullname }}
-                </option>
-              </o-select>
-            </o-field>
-
-            <o-field>
-              <p class="control">
-                <o-button
-                  :disabled="!isDataOk()"
-                  label="Editar temporada"
-                  variant="primary"
-                  @click="editSeason()"
-                />
-              </p>
-            </o-field>
-          </div>
-
-          <div class="column">
-            <router-link
-              class="box notification is-link has-text-centered has-text-weight-bold"
-              :to="{ name: 'adminGpsInSeason' }"
+        <div class="flex flex-wrap justify-between gap-2">
+          <section class="w-full xl:w-2/3 px-2 flex flex-col -mx-4 gap-4">
+            <p-button
+              color="info"
+              icon="fa fa-list"
+              size="large"
+              :to="{name: 'adminGpsInSeason'}"
+              tag="router-link"
+              class="mr-2"
             >
               Grandes Premios en la temporada {{ season.name }}
-            </router-link>
-            <router-link
-              class="box notification is-link has-text-centered has-text-weight-bold"
+            </p-button>
+            <p-button
+              color="info"
+              icon="fa fa-screwdriver"
+              size="large"
               to="/admin/competitions"
+              tag="router-link"
+              class="mr-2"
             >
               Equipos en la temporada {{ season.name }}
-            </router-link>
-            <router-link
-              class="box notification is-link has-text-centered has-text-weight-bold"
+            </p-button>
+            <p-button
+              color="info"
+              icon="fa fa-user-group"
+              size="large"
               to="/admin/competitions"
+              tag="router-link"
+              class="mr-2"
             >
               Pilotos en la temporada {{ season.name }}
-            </router-link>
-          </div>
+            </p-button>
+          </section>
+          <section class="w-full xl:w-1/3 px-2">
+            <p-input label="Nombre de la temporada" name="name" v-model="season.name" />
+            <p-input label="Número de eventos" name="totalEvents" type="number" v-model="season.totalEvents" />
+
+            <p-select
+              v-if="competitions"
+              v-model="season.competition.id"
+              placeholder="Selecciona una competición"
+            >
+              <option
+                v-for="comp in competitions"
+                :key="comp.id"
+                :value="comp.id"
+              >
+                {{ comp.name }} ({{ comp.code }}) - {{ comp.fullname }}
+              </option>
+            </p-select>
+
+            <PButton
+              expanded
+              variant="primary"
+              label="Editar temporada"
+              class="mt-4"
+              :disabled="!isDataOk()"
+              @click="editSeason()"
+            />
+          </section>
         </div>
       </template>
     </template>
-  </div>
+  </PCard>
 </template>
 
 <script setup lang="ts">
@@ -113,6 +98,11 @@ import { useRoute, useRouter } from "vue-router";
 import { competitionService, notificationService, seasonService } from "@/_services";
 import { Season } from "@/types/Season";
 import { Competition } from "@/types/Competition";
+import PCard from "@/components/lib/PCard.vue";
+import PTitle from "@/components/lib/PTitle.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
+import PSelect from "@/components/lib/forms/PSelect.vue";
+import PInput from "@/components/lib/forms/PInput.vue";
 
 const route = useRoute();
 const router = useRouter();

@@ -162,7 +162,6 @@ export default defineComponent({
     components: {
         PButton,
         DriversInGrandPrix,
-        AlertNoPermission,
         PTitle,
         SessionsInGrandPrix,
         GrandPrixPagination,

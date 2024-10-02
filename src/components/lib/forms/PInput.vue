@@ -1,6 +1,6 @@
 <template>
     <div class="w-full mb-3">
-        <label v-if="label" class="block tracking-wide text-gray-700 font-bold mb-2" :for="name">
+        <label v-if="label" class="block tracking-wide text-gray-700 dark:text-gray-300 font-bold mb-2" :for="name">
             {{ label }}
         </label>
         <input
@@ -32,6 +32,4 @@ const props = withDefaults(defineProps<Props>(), {
     placeholder: '',
     icon: '',
 });
-
-
 </script>
