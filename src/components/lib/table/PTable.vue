@@ -163,8 +163,8 @@ const getTdStyle = () => {
 }
 
 const getRowStyle = (index: number) => {
-    if (props.striped && (index % 2 !== 0)) return "border-b bg-gray-50 dark:bg-gray-800 dark:border-gray-700 hover:bg-slate-50";
-    return "bg-white dark:bg-gray-900 hover:bg-slate-50";
+    if (props.striped && (index % 2 !== 0)) return "border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-slate-200";
+    return " bg-gray-100 dark:bg-gray-900 hover:bg-slate-200";
 }
 
 const getRowData = (row: T, rowName: string): string => {

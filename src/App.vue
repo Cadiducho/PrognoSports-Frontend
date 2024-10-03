@@ -1,7 +1,7 @@
 <template>
   <div
     id="app"
-    class="transition-all dark:bg-gray-800"
+    class="transition-all dark:bg-gray-800 bg-neutral-100"
   >
     <Toaster
       rich-colors

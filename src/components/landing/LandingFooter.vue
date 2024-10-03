@@ -1,5 +1,5 @@
 <template>
-  <div class="flex min-h-[60vh] bg-neutral-100 dark:bg-gray-900">
+  <div class="flex min-h-[60vh] bg-gray-200 dark:bg-gray-900">
     <footer class="m-0 p-20 pt-14 flex-1 text-center">
       <div class="flex mb-4 lg:flex-row flex-col">
         <div class="flex-1 p-4 basis-0 md:mr-80">
@@ -12,7 +12,7 @@
           </router-link>
         </div>
         <div class="flex-1 p-4 basis-0">
-          <div class="mb-3 text-left font-bold text-stone-500 dark:text-gray-200">
+          <div class="mb-3 text-left font-bold text-zinc-500 dark:text-gray-200">
             PrognoSports
           </div>
           <ul class="flex flex-col items-start list-none">
@@ -39,7 +39,7 @@
           </ul>
         </div>
         <div class="flex-1 p-4 basis-0">
-          <div class="mb-3 text-left font-bold text-stone-500 dark:text-gray-200">
+          <div class="mb-3 text-left font-bold text-zinc-500 dark:text-gray-200">
             Conecta
           </div>
           <ul class="flex flex-col items-start list-none">
@@ -86,7 +86,7 @@
           </ul>
         </div>
         <div class="flex-1 p-4 basis-0">
-          <div class="mb-3 text-left font-bold text-stone-500 dark:text-gray-200">
+          <div class="mb-3 text-left font-bold text-zinc-500 dark:text-gray-200">
             Legal
           </div>
           <ul class="flex flex-col items-start list-none">
@@ -145,6 +145,6 @@ const humanDateTime = dayjs.humanDateTime;
 
 <style scoped>
 .list-item {
-    @apply text-stone-500 dark:text-gray-200 hover:text-stone-600 dark:hover:text-gray-300 text-left font-normal leading-6 no-underline
+    @apply text-zinc-500 dark:text-gray-200 hover:text-zinc-600 dark:hover:text-gray-300 text-left font-normal leading-6 no-underline
 }
 </style>

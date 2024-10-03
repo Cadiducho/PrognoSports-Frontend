@@ -2,13 +2,14 @@
   <fieldset>
     <label
       v-if="label"
-      class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+      class="block tracking-wide text-gray-700 dark:text-gray-300 font-bold mb-2"
     >
       {{ label }}
     </label>
     <section class="relative">
       <select
         v-model="modelValue"
+        :name="props.name"
         :multiple="props.multiple"
         :disabled="props.disabled"
         :class="selectClasses"
@@ -48,6 +49,7 @@
 import {computed} from "vue";
 
 export interface Props {
+  name?: string;
   size?: 'small' | 'medium' | 'large';
   color?: 'primary' | 'secondary' | 'gray' | 'warning' | 'danger';
   label?: string;
@@ -59,6 +61,7 @@ export interface Props {
 const modelValue = defineModel<T>({required: true});
 
 const props = withDefaults(defineProps<Props>(), {
+  name: undefined,
   size: 'medium',
   color: 'primary',
   label: undefined,
@@ -82,6 +85,6 @@ const selectClasses = computed(() => ({
 
 <style scoped lang="scss">
 .select {
-  @apply appearance-none block bg-none bg-gray-200 border border-transparent rounded-md py-2 pl-3 pr-10 text-base text-contrast-dark focus:outline-none focus:ring-white focus:border-white
+  @apply appearance-none cursor-pointer block w-full p-2 py-2 pl-3 pr-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 bg-none
 }
 </style>

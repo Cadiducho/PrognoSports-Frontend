@@ -1,7 +1,7 @@
 <template>
   <div id="navbarComponent">
     <nav
-      class="navbar is-light"
+      class="navbar is-light shadow"
       role="navigation"
       aria-label="main navigation"
     >

@@ -30,7 +30,6 @@ export default defineComponent({
     name: "PrognoLayout",
     components: {
         Navbar,
-        Breadcrumb,
         LandingFooter,
     },
     setup() {

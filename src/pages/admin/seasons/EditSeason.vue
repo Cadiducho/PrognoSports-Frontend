@@ -65,6 +65,7 @@
 
             <p-select
               v-if="competitions"
+              label="Competición de la temporada"
               v-model="season.competition.id"
               placeholder="Selecciona una competición"
             >
