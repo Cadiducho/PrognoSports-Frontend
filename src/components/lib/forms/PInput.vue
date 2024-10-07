@@ -1,30 +1,29 @@
 <template>
-    <div class="w-full mb-3">
-        <label v-if="label" class="block tracking-wide text-gray-700 dark:text-gray-300 font-bold mb-2" :for="name">
-            {{ label }}
-        </label>
-        <input
-            class="appearance-none block w-full text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-blue-600"
-            :maxlength="maxLenght" :id="name" :name="name"
-            :type="type" :placeholder="placeholder"
-            v-bind="$attrs"
-            v-model="model"
-        />
-    </div>
+  <fieldset class="w-full mb-3">
+    <label v-if="label" class="block tracking-wide text-gray-700 dark:text-gray-300 font-bold mb-2" :for="name">
+      {{ label }}
+    </label>
+    <input
+      class="appearance-none block w-full text-gray-700 dark:text-gray-200 border border-gray-200 rounded py-3 px-4 dark:bg-gray-700 dark:border-gray-600 leading-tight focus:ring-blue-500 focus:outline-none focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      :maxlength="maxLenght" :id="name" :name="name"
+      :type="type" :placeholder="placeholder"
+      v-bind="$attrs"
+      v-model="model"
+    />
+  </fieldset>
 </template>
 
-<script setup lang="ts">
-const model = defineModel();
+<script setup lang="ts" generic="T">
+const model = defineModel<T>();
 
-export interface Props {
-    label?: string;
-    name?: string;
-    maxLenght?: number;
-    type?: string;
-    placeholder?: string;
-    icon?: string;
-}
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<{
+  label?: string;
+  name?: string;
+  maxLenght?: number;
+  type?: string;
+  placeholder?: string;
+  icon?: string;
+}>(), {
     label: '',
     name: '',
     maxLenght: 128,

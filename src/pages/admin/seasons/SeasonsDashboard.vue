@@ -5,12 +5,25 @@
       name="Administración de temporadas"
     />
 
-    <p-button
-      class="mb-4"
-      label="Nueva temporada"
-      color="info"
-      to="/admin/seasons/create"
-    />
+    <nav class="flex mb-4">
+      <p-button
+        color="info"
+        icon="fa fa-chevron-left"
+        :to="{name: 'admin'}"
+        tag="router-link"
+        class="mr-2"
+      >
+        Volver a Administración
+      </p-button>
+      <p-button
+        color="primary"
+        icon="fa fa-plus"
+        :to="{name: 'adminSeasonCreate'}"
+        tag="router-link"
+      >
+        Nueva Temporada
+      </p-button>
+    </nav>
 
     <p-table
       :columns="columns"
@@ -70,7 +83,7 @@ const columns = ref([
   { label: 'ID', field: 'id' },
   { label: 'Nombre', field: 'name' },
   { label: 'Competición', field: 'competition.name' },
-  { label: 'Código', field: 'competition.code' },
+  { label: 'Eventos Totales', field: 'totalEvents' },
 ]);
 const seasons = ref(new Array<Season>())
 const showConfirmDeleteModal = ref(false);
