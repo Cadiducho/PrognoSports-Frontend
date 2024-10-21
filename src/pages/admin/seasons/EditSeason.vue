@@ -1,9 +1,10 @@
 <template>
   <PCard id="seasonEdit">
-    <PTitle name="Administración de temporadas" />
-
     <loading v-if="isLoading" />
     <template v-else>
+
+      <PTitle v-if="season" :name="`Administración de temporada ${season.name}`" />
+
       <nav class="flex justify-between mb-4">
         <section class="flex flex-wrap">
           <p-button
@@ -42,17 +43,17 @@
               color="info"
               icon="fa fa-screwdriver"
               size="large"
-              to="/admin/competitions"
+              :to="{name: 'adminConstructorsInSeason'}"
               tag="router-link"
               class="mr-2"
             >
-              Equipos en la temporada {{ season.name }}
+              Constructores en la temporada {{ season.name }}
             </p-button>
             <p-button
               color="info"
               icon="fa fa-user-group"
               size="large"
-              to="/admin/competitions"
+              :to="{name: 'adminDriversInSeason'}"
               tag="router-link"
               class="mr-2"
             >

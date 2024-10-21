@@ -20,7 +20,7 @@
         <p-button
           color="primary"
           icon="fa fa-plus"
-          :to="{name: 'gpCreate'}"
+          :to="{name: 'adminSeasonAddGrandPrix'}"
           tag="router-link"
         >
           Añadir Gran Premio a la temporada

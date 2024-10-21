@@ -11,7 +11,6 @@ import {Dictionary} from "@/types/Dictionary";
 import {PrognoService} from "@/_services/progno.service";
 import {Circuit} from "@/types/Circuit";
 import {CircuitVariant} from "@/types/CircuitVariant";
-import {Driver} from "@/types/Driver";
 
 export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
 
@@ -51,6 +50,10 @@ export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
         let seas = season.id ?? season.name;
 
         return this.getObjectFromAPI(`/gps/${comp}/${seas}/${id}`);
+    }
+
+    public async linkGrandPrixToSeason(seasonId: string, data: {gp: number, circuit: number, variant: number, laps: number, round: number}) {
+      return await axios.post(`/seasons/${seasonId}/gps`, data);
     }
 
     public async createGrandPrix(data: { name: string, code: string }): Promise<GrandPrix> {

@@ -1,232 +1,174 @@
 <template>
-    <div id="createGrandPrix" class="box">
-        <PTitle class="mb-5" name="Crear gran premio"/>
+  <loading v-if="isLoading" />
+  <PCard v-else>
+    <PTitle
+      class="mb-5"
+      :name="`Agregar Gran Premio a la temporada ${season.name}`"
+    />
+    <nav class="flex justify-between mb-4">
+      <section class="flex flex-wrap">
+        <p-button
+          color="info"
+          icon="fa fa-chevron-left"
+          :to="{name: 'adminGpsInSeason'}"
+          tag="router-link"
+          class="mr-2"
+        >
+          Volver listado de GPs en la temporada
+        </p-button>
+      </section>
+    </nav>
 
-        <o-steps v-model="activeStep">
-            <o-step-item step="1" label="Datos del gran premio">
-                <h2 class="title">Datos del gran premio</h2>
+    <form>
+      <p-select
+        v-model="addedGP.id"
+        label="Gran Premio"
+        placeholder="Selecciona un gran premio"
+        class="mb-3"
+      >
+        <option
+          v-for="gp in gpsList"
+          :key="gp.id"
+          :value="gp.id"
+        >
+          {{ gp.name }}
+        </option>
+      </p-select>
+      <p-select
+        v-model="addedGP.circuit"
+        label="Circuito"
+        placeholder="Selecciona un circuito"
+        class="mb-3"
+      >
+        <option
+          v-for="circuit in circuitList"
+          :key="circuit.id"
+          :value="circuit"
+        >
+          {{ circuit.name }}
+        </option>
+      </p-select>
+      <p-select
+        v-if="addedGP.circuit && addedGP.circuit.variants && addedGP.circuit.variants.length > 1"
+        v-model="addedGP.variant.id"
+        label="Variante del Circuito"
+        placeholder="Selecciona una variante"
+        class="mb-3"
+      >
+        <option
+          v-for="variant in addedGP.circuit.variants"
+          :key="variant.id"
+          :value="variant.id"
+        >
+          {{ variant.name }}
+        </option>
+      </p-select>
+      <PInput
+        v-model="addedGP.laps"
+        label="Vueltas"
+        placeholder="Vueltas"
+        name="laps"
+      />
+      <PInput
+        v-model="addedGP.round"
+        label="Ronda"
+        placeholder="Ronda"
+        name="round"
+      />
 
-                <div class="columns">
-                    <div class="column">
-                        <o-field label="ID del Gran Premio">
-                            <o-input v-model="createdGrandPrix.id" name="id" expanded lazy></o-input>
-                        </o-field>
-                    </div>
-                    <div class="column">
-                        <div class="field">
-                            <label class="label">Clonar datos de un GP anterior con misma ID</label>
-                            <o-select v-model="cloneFromSeason" expanded placeholder="De la temporada..." @change="cloneData()">
-                                <option
-                                    v-for="season in seasons"
-                                    :value="season"
-                                    :key="season.id">
-                                    {{ season.name }} (#{{ season.id }}) - {{ season.competition.name }}
-                                </option>
-                            </o-select>
-                        </div>
-                    </div>
-                </div>
-
-                <o-field label="Nombre del Gran Premio">
-                    <o-input v-model="createdGrandPrix.name" name="name" expanded lazy></o-input>
-                </o-field>
-
-                <o-field label="Código del Gran Premio">
-                    <o-input v-model="createdGrandPrix.code" name="code" expanded lazy></o-input>
-                </o-field>
-
-                <o-field label="Circuito del Gran Premio">
-                    <o-select v-model="createdGrandPrix.circuit" placeholder="Selecciona un circuito" expanded>
-                        <option
-                            v-for="circuit in circuits"
-                            :value="circuit"
-                            :key="circuit.id">
-                            {{ circuit.nameWithVariant() }}
-                        </option>
-                    </o-select>
-                </o-field>
-
-                <div class="columns">
-                    <div class="column">
-                        <o-field label="Ronda del Gran Premio">
-                            <o-input v-model="createdGrandPrix.round" name="round" expanded lazy :min=0 type="number"></o-input>
-                        </o-field>
-                    </div>
-                    <div class="column">
-                        <o-field label="Vueltas del Gran Premio">
-                            <o-input v-model="createdGrandPrix.laps" name="laps" expanded lazy :min=0 type="number"></o-input>
-                        </o-field>
-                    </div>
-                </div>
-
-                <o-field label="Imagen promocional del Gran Premio">
-                    <o-input v-model="createdGrandPrix.promo_image_url" name="promo_image_url" expanded lazy></o-input>
-                </o-field>
-
-                <o-field label="Temporada del Gran Premio">
-                    <o-select v-model="createdGrandPrix.season" placeholder="Selecciona una temporada" expanded>
-                        <option
-                            v-for="season in seasons"
-                            :value="season"
-                            :key="season.id">
-                            {{ season.name }} (#{{ season.id }}) - {{ season.competition.name }}
-                        </option>
-                    </o-select>
-                </o-field>
-
-                <hr/>
-
-            </o-step-item>
-
-            <o-step-item step="2" label="Finalizar">
-                <h2 class="title">Finalizar</h2>
-
-                <AlertInvalidData :object="createdGrandPrix.id" message="No has introducido ID para este gran premio"/>
-                <AlertInvalidData :object="createdGrandPrix.name" message="No has introducido nombre para este gran premio"/>
-                <AlertInvalidData :object="createdGrandPrix.code" message="No has introducido código para este gran premio"/>
-                <AlertInvalidData :object="createdGrandPrix.round" message="No has introducido ronda para este gran premio"/>
-                <AlertInvalidData :object="createdGrandPrix.laps" message="No has introducido laps para este gran premio"/>
-                <AlertInvalidData :object="createdGrandPrix.promo_image_url" message="No has introducido imagen para este gran premio"/>
-                <AlertInvalidData :object="createdGrandPrix.season" message="No has introducido temporada para este gran premio"/>
-
-                <div class="notification has-background-primary">
-                    Revisa los datos, se va a crear la siguiente competición
-                </div>
-
-                <div class="content">
-                    <p class="card-text"><b>ID del Gran Premio: </b>{{ createdGrandPrix.id }}</p>
-                    <p class="card-text"><b>Nombre del Gran Premio: </b>{{ createdGrandPrix.name }}</p>
-                    <p class="card-text"><b>Código del Gran Premio: </b>{{ createdGrandPrix.code }}</p>
-                    <p class="card-text"><b>Circuito del Gran Premio: </b>{{ createdGrandPrix.circuit?.name }} - {{ createdGrandPrix.circuit?.variant.name }}
-                    </p>
-                    <p class="card-text"><b>Ronda del Gran Premio: </b>{{ createdGrandPrix.round }}</p>
-                    <p class="card-text"><b>Vueltas al Gran Premio: </b>{{ createdGrandPrix.laps }}</p>
-                    <p class="card-text"><b>Imagen del Gran Premio: </b>{{ createdGrandPrix.code }}</p>
-                    <p class="card-text"><b>Temporada del Gran Premio: </b>{{ createdGrandPrix.season?.name }} de {{
-                            createdGrandPrix.season?.competition.name
-                        }}</p>
-                </div>
-
-                <hr/>
-                <o-field>
-                    <p class="control">
-                        <o-button :disabled="!isDataOk()" label="Crear Gran Premio" @click="registerGrandPrix()" variant="primary"/>
-                    </p>
-                </o-field>
-            </o-step-item>
-        </o-steps>
-    </div>
+      <PButton
+        class="mt-4"
+        :disabled="!isDataOk()"
+        type="solid"
+        label="Crear temporada"
+        @click="addGrandPrixToSeason()"
+      />
+    </form>
+  </PCard>
 </template>
 
-<script lang="ts">
-import PTitle from "@/components/lib/PTitle.vue"
+<script setup lang="ts">
+import PTitle from "@/components/lib/PTitle.vue";
 import {circuitService, grandPrixService, notificationService, seasonService} from "@/_services";
-import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
-import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
-import {GrandPrix} from "@/types/GrandPrix";
+
+import {onMounted, ref} from "vue";
+import PButton from "@/components/lib/forms/PButton.vue";
+import PInput from "@/components/lib/forms/PInput.vue";
+import {useRoute, useRouter} from "vue-router";
+import PCard from "@/components/lib/PCard.vue";
+import PSelect from "@/components/lib/forms/PSelect.vue";
 import {Season} from "@/types/Season";
+import Loading from "@/components/lib/Loading.vue";
+import {GrandPrix} from "@/types/GrandPrix";
 import {Circuit} from "@/types/Circuit";
+import {CircuitVariant} from "@/types/CircuitVariant";
 
-import {defineComponent} from "vue";
-import {useAuthStore} from "@/store/authStore";
+const router = useRouter();
+const route = useRoute();
 
-export default defineComponent({
-    name: "CreateGrandPrix",
-    components: {
-        AlertInvalidData,
-        PTitle,
-    },
-    setup() {
-        const authStore = useAuthStore();
+const isLoading = ref(true);
+const season = ref({} as Season);
+const gpsList = ref([] as Array<GrandPrix>);
+const circuitList = ref([] as Array<Circuit>);
+const addedGP = ref({
+  id: 0,
+  circuit: {} as Circuit,
+  variant: {} as CircuitVariant,
+  laps: 0,
+  round: 0
+})
 
-        const currentUser = authStore.loggedUser;
-        return { currentUser };
-    },
-    data() {
-        return {
-            activeStep: 0,
-            circuits: new Array<Circuit>(),
-            seasons: new Array<Season>(),
-            cloneFromSeason: {} as Season,
+onMounted(async () => {
+  try {
+    const [seasonResponse, gpsListResponse, circuitListResponse] = await Promise.all([
+      seasonService.getSeason(route.params.season as string),
+      grandPrixService.getAllGrandPrixes(),
+      circuitService.getCircuitList()
+    ])
 
-            createdGrandPrix: {
-                id: undefined!,
-                code: undefined!,
-                name: undefined!,
-                circuit: undefined!,
-                competition: undefined!,
-                laps: undefined!,
-                promo_image_url: undefined!,
-                round: undefined!,
-                season: undefined!,
-                suspended: false,
-                sessions: [],
-            } as GrandPrix
-        }
-    },
-    mounted() {
-        circuitService.getCircuitList().then((list) => {
-            this.circuits = [];
-            this.circuits.push(...list);
-        });
-        seasonService.getSeasonList().then((list) => {
-            this.seasons = [];
-            this.seasons.push(...list);
+    season.value = seasonResponse;
+    gpsList.value = gpsListResponse;
+    circuitList.value = circuitListResponse;
 
-            this.createdGrandPrix.season = this.seasons[this.seasons.length - 1]; // Por defecto pongo la ultima temporada
-        });
-    },
-    methods: {
-        isDataOk(): boolean {
-            return !(this.createdGrandPrix.id == undefined
-                && this.createdGrandPrix.code == undefined
-                && this.createdGrandPrix.name == undefined
-                && this.createdGrandPrix.circuit == undefined
-                && this.createdGrandPrix.laps == undefined
-                && this.createdGrandPrix.promo_image_url == undefined
-                && this.createdGrandPrix.round == undefined
-                && this.createdGrandPrix.season == undefined
-            )
-        },
-        cloneData(): void {
-            if (this.createdGrandPrix.id && this.cloneFromSeason?.id) {
-                console.log("clonando de " + this.createdGrandPrix.id + " y " + this.cloneFromSeason.name);
-                grandPrixService.getGrandPrixInSeason(this.cloneFromSeason, this.createdGrandPrix.id).then((oldGp) => {
-                    console.log(oldGp);
-                    this.createdGrandPrix.name = oldGp.name;
-                    this.createdGrandPrix.code = oldGp.code;
-                    this.createdGrandPrix.circuit = oldGp.circuit;
-                    this.createdGrandPrix.laps = oldGp.laps;
-                    this.createdGrandPrix.promo_image_url = oldGp.promo_image_url;
-                }).catch((error) => {
-                    notificationService.showNotification("No existe GP con esos datos", "error");
-                });
-            }
-        },
-        registerGrandPrix(): void {
-            let data = {
-                id: this.createdGrandPrix.id,
-                season: this.createdGrandPrix.season.id,
-                competition: this.createdGrandPrix.season.competition.id,
-                round: this.createdGrandPrix.round,
-                name: this.createdGrandPrix.name,
-                code: this.createdGrandPrix.code,
-                circuit: this.createdGrandPrix.circuit.id,
-                variant: this.createdGrandPrix.circuit.variant.name,
-                promo_image_url: this.createdGrandPrix.promo_image_url,
-                laps: this.createdGrandPrix.laps
-            }
+    console.log('season', season)
+    console.log('list', gpsList)
+    console.log('circuits', circuitList)
+    isLoading.value = false;
+  } catch (e) {
 
-            grandPrixService.createGrandPrix(data).then((result) => {
-                notificationService.showNotification("Se ha registrado correctamente el Gran Premio `" + result.id + "`", "success");
-
-                this.$router.push({
-                    name: 'adminGps'
-                })
-            }).catch((error) => {
-                notificationService.showNotification(error.message, "error");
-            });
-        }
-    }
+  }
 });
+
+const needVariant = addedGP.value.circuit?.variants?.length > 1;
+const isDataOk = (): boolean => {
+  const baseConditions = addedGP.value.id && addedGP.value.circuit?.id && addedGP.value.laps > 0 && addedGP.value.round > 0;
+
+  return !!(needVariant ? baseConditions && addedGP.value.variant?.id : baseConditions);
+};
+
+const addGrandPrixToSeason = async () => {
+  const seasonId = route.params.season.toString()
+  console.log('addedGP', addedGP.value)
+  console.log('season', season)
+
+  const rawData = {
+    gp: addedGP.value.id,
+    circuit: addedGP.value.circuit?.id,
+    variant: needVariant ? addedGP.value.variant?.id : addedGP.value.circuit?.variants[0]?.id,
+    laps: addedGP.value.laps,
+    round: addedGP.value.round
+  }
+
+  try {
+    const result = await grandPrixService.linkGrandPrixToSeason(seasonId, rawData)
+    notificationService.showNotification("Se ha añadido correctamente el gran premio `" + result.name + "`");
+
+    router.push({
+      name: 'adminGpEditInSeason',
+      params: { gp: result.id }
+    })
+  } catch (error: any) {
+    notificationService.showNotification(error.message, "error");
+  }
+}
 </script>

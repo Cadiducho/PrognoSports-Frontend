@@ -1,8 +1,9 @@
 import {CircuitVariant, ICircuitVariant} from "@/types/CircuitVariant";
 import {BASE_URL} from "@/_services";
+import {RouteLocationRaw} from "vue-router";
 
 export interface ICircuit {
-    id: string;
+    id: number;
     name: string;
     country: string;
     locality: string;
@@ -13,7 +14,7 @@ export interface ICircuit {
 }
 
 export class Circuit implements ICircuit {
-    id: string;
+    id: number;
     name: string;
     country: string;
     locality: string;
@@ -37,7 +38,7 @@ export class Circuit implements ICircuit {
         })
     }
 
-    public circuitLink(): Object {
+    public circuitLink(): RouteLocationRaw {
         return {
             name: 'circuitDetails',
             params: {circuit: this.id}

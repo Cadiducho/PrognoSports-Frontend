@@ -265,6 +265,12 @@ export const routes = [
                                         component: () => import('@/pages/admin/seasons/gps/GrandPrixListInSeason.vue'),
                                     },
                                     {
+                                      path: 'add',
+                                      name: 'adminSeasonAddGrandPrix',
+                                      component: () => import('@/pages/admin/seasons/gps/AddGrandPrixToSeason.vue'),
+                                      meta: { title: "Agregar Gran Premio" }
+                                    },
+                                    {
                                         path: ':gp',
                                         component: EmptyRoutedLayout,
                                         children: [
