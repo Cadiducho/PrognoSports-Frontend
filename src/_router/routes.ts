@@ -256,6 +256,40 @@ export const routes = [
                                 component: () => import('@/pages/admin/seasons/EditSeason.vue'),
                             },
                             {
+                              path: 'constructors',
+                              component: EmptyRoutedLayout,
+                              children: [
+                                {
+                                  path: '',
+                                  name: 'adminConstructorsInSeason',
+                                  component: () => import('@/pages/admin/seasons/constructors/ConstructorsListInSeason.vue'),
+                                },
+                                {
+                                  path: 'add',
+                                  name: 'adminSeasonAddConstructor',
+                                  component: () => import('@/pages/admin/seasons/constructors/AddConstructorSeason.vue'),
+                                  meta: { title: "Agregar Constructor" }
+                                },
+                                /*{
+                                  path: ':constructor',
+                                  name: 'adminSeasonEditConstructor',
+                                  component: () => import('@/pages/admin/seasons/constructors/EditConstructorSeason.vue'),
+                                  meta: { title: "Editar Constructor" }
+                                },*/
+                              ]
+                            },
+                          /*{
+                              path: 'drivers',
+                              component: EmptyRoutedLayout,
+                              children: [
+                                {
+                                  path: '',
+                                  name: 'adminDriversInSeason',
+                                  component: () => import('@/pages/admin/seasons/drivers/DriversListInSeason.vue'),
+                                }
+                              ]
+                            },*/
+                            {
                                 path: 'gps',
                                 component: EmptyRoutedLayout,
                                 children: [
