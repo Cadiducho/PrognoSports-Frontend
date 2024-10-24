@@ -1,7 +1,7 @@
 <template>
-  <div class="m-0 relative w-auto grow mt-6 mb-6">
+  <div class="m-0 w-auto grow mt-2 mb-2 lg:mt-6 lg:mb-6">
     <div class="flex justify-center">
-      <div class="flex w-2/5">
+      <div class="flex w-full lg:w-2/5">
         <div class="card w-full">
           <div class="card-header">
             <div class="card-header-title">
