@@ -6,7 +6,7 @@
 
     <draggable
         :id="`grid-${session.id}`"
-        class="w-full select-none space-y-2"
+        class="w-full select-none space-y-3 px-2 md:px-0"
         :list="sessionGrid"
         group="grid"
         itemKey="id"

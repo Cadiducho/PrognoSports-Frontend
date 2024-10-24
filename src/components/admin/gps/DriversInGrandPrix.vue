@@ -14,7 +14,7 @@
 
             <draggable
                 id="driversInSeason"
-                class="w-full h-full select-none space-y-2 flex flex-col text-white"
+                class="w-full h-full select-none space-y-2 flex flex-col text-white px-2 md:px-0"
                 :list="driversInSeason"
                 group="drivers"
                 itemKey="id"
@@ -42,7 +42,7 @@
                         <div class="card-content">
                             <draggable
                                 :id="`driversByConstructor-${constructor.id}`"
-                                class="w-full h-full select-none space-y-2"
+                                class="w-full h-full select-none space-y-2 px-2 md:px-0"
                                 :list="driversByConstructor[constructor.id]"
                                 group="drivers"
                                 itemKey="id"

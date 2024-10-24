@@ -20,7 +20,7 @@
     <PrognoAlert v-if="!hasSavedResults" variant="warning" message="No hay resultados guardada aún" />
     <draggable
         :id="`results-${session.id}`"
-        class="w-full select-none space-y-2"
+        class="w-full select-none space-y-3 px-2 md:px-0"
         :list="sessionResults"
         group="results"
         itemKey="id"

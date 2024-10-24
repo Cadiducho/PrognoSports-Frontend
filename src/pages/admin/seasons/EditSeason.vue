@@ -49,7 +49,7 @@
             >
               Constructores en la temporada {{ season.name }}
             </p-button>
-            <p-button
+            <!--<p-button
               color="info"
               icon="fa fa-user-group"
               size="large"
@@ -58,7 +58,7 @@
               class="mr-2"
             >
               Pilotos en la temporada {{ season.name }}
-            </p-button>
+            </p-button>-->
           </section>
           <section class="w-full xl:w-1/3 px-2">
             <p-input label="Nombre de la temporada" name="name" v-model="season.name" />
