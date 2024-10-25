@@ -143,7 +143,7 @@ export default defineComponent({
         @apply bg-yellow-500 hover:bg-yellow-600 dark:focus:ring-offset-gray-800 text-white;
     }
     &.green, &.success {
-        @apply bg-green-400 hover:bg-green-600 dark:focus:ring-offset-gray-800 text-white;
+        @apply bg-green-500 hover:bg-green-600 dark:focus:ring-offset-gray-800 text-white;
     }
     &.blue, &.info {
         @apply bg-blue-500 hover:bg-blue-600 dark:focus:ring-offset-gray-800 text-white;
