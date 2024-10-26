@@ -60,8 +60,11 @@ export class SessionService extends PrognoService<IRaceSession, RaceSession> {
         return this.postObjectToAPI(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions`, data);
     }
 
-    public async updateSessionInGrandPrix(gp: GrandPrix, session: RaceSession): Promise<Array<RaceSession>> {
-        return await axios.put(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.id}`, session);
+    public async updateSessionInGrandPrix(gp: GrandPrix, session: RaceSession, data: {
+      date: Date;
+      defineGridOf: number[]
+    }): Promise<Array<RaceSession>> {
+        return await axios.put(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.id}`, data);
     }
 
     public async removeSessionFromGrandPrix(gp: GrandPrix, session: RaceSession): Promise<Array<RaceSession>> {
