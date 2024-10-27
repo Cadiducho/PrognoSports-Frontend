@@ -8,9 +8,10 @@
       <p>El Gran Premio {{ id }} no ha sido encontrado</p>
     </template>
     <template v-else>
-      <AdminGrandPrixPageHeader
+      <GrandPrixPageHeader
         :grand-prix="grandPrix"
-        :competition="competition"
+        :competition="grandPrix.competition"
+        :is-admin="true"
       />
 
       <nav class="flex my-4">
@@ -223,12 +224,12 @@ import DriversInGrandPrix from "@/components/admin/gps/DriversInGrandPrix.vue";
 import UploadFileModal from "@/components/lib/UploadFileModal.vue";
 import {CircuitVariant} from "@/types/CircuitVariant";
 import PButton from "@/components/lib/forms/PButton.vue";
-import AdminGrandPrixPageHeader from "@/components/gps/AdminGrandPrixPageHeader.vue";
+import GrandPrixPageHeader from "@/components/gps/GrandPrixPageHeader.vue";
 
 export default defineComponent({
   name: "EditGrandPrixInSeason",
   components: {
-    AdminGrandPrixPageHeader,
+    GrandPrixPageHeader,
     PButton,
     DriversInGrandPrix,
     SessionsInGrandPrix,

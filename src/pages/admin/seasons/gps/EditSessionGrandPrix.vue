@@ -4,9 +4,10 @@
     <p>El Gran Premio {{ id }} de {{ season.name }} en {{ session.name }} no ha sido encontrado</p>
   </template>
   <template v-else>
-    <AdminGrandPrixPageHeader
+    <GrandPrixPageHeader
       :grand-prix="grandPrix"
       :competition="competition"
+      :is-admin="true"
     />
 
     <nav class="flex my-4">
@@ -48,57 +49,57 @@
             {{ session.humanName() }} en {{ grandPrix.name }}
           </PTitle>
 
-          <PrognoAlert
-            v-if="session.defineGridOf?.length"
-            variant="info"
-          >
-            Esta sesión define la parrilla de la sesión: {{
-              session.defineGridOf.map(ses => ses.humanName()).join(', ')
-            }}
-          </PrognoAlert>
-          <PrognoAlert
-            v-else
-            variant="danger"
-          >
-            Esta sesión no define la parrilla de ninguna sesión
-          </PrognoAlert>
+          <PCard>
+            <PrognoAlert
+              v-if="session.defineGridOf?.length"
+              variant="info"
+            >
+              Esta sesión define la parrilla de la sesión: {{
+                session.defineGridOf.map(ses => ses.humanName()).join(', ')
+              }}
+            </PrognoAlert>
+            <PrognoAlert
+              v-else
+              variant="danger"
+            >
+              Esta sesión no define la parrilla de ninguna sesión
+            </PrognoAlert>
 
-          <form class="mb-4">
-            <PLabel label="Fecha de la sesión" />
-            <Calendar
-              :value="session.date"
-              :options="calendarOptions"
-              @input="session.date = $event;"
-            />
-
-            <div class="flex flex-wrap mt-2">
-              <PLabel
-                class="w-full"
-                label="Define la parrilla de salida de las siguientes sesiones:"
+            <form class="mb-4">
+              <PLabel label="Fecha de la sesión" />
+              <Calendar
+                :value="session.date"
+                :options="calendarOptions"
+                @input="session.date = $event;"
               />
-              <p-checkbox
-                v-for="ses in grandPrix.sessions.filter(gps => gps.id !== session.id)"
-                :id="ses.id"
-                :key="ses.id"
-                :checked="session.defineGridOf.map(dfg => dfg.id).includes(ses.id)"
-                @change="toggleDefiningGridSelection(ses, $event.target.checked)"
-              >
-                {{ ses.humanName() }}
-              </p-checkbox>
-            </div>
 
-            <p-button
-              label="Actualizar datos de la sesión"
-              @click="changeSessionData"
-            />
-          </form>
+              <div class="flex flex-wrap mt-2">
+                <PLabel
+                  class="w-full"
+                  label="Define la parrilla de salida de las siguientes sesiones:"
+                />
+                <p-checkbox
+                  v-for="ses in grandPrix.sessions.filter(gps => gps.id !== session.id)"
+                  :id="ses.id"
+                  :key="ses.id"
+                  :checked="session.defineGridOf.map(dfg => dfg.id).includes(ses.id)"
+                  @change="toggleDefiningGridSelection(ses, $event.target.checked)"
+                >
+                  {{ ses.humanName() }}
+                </p-checkbox>
+              </div>
 
-          <hr>
+              <p-button
+                label="Actualizar datos de la sesión"
+                @click="changeSessionData"
+              />
+            </form>
+          </PCard>
 
           <!-- Si es sesión con grid, mostrar resultados y grid-->
           <div
             v-if="session.hasGrid"
-            class="grid grid-cols-1 md:grid-cols-2 gap-4"
+            class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4"
           >
             <section class="md:col-span-1">
               <EditGrid
@@ -156,12 +157,14 @@ import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PCheckbox from "@/components/lib/forms/PCheckbox.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PLabel from "@/components/lib/forms/PLabel.vue";
-import AdminGrandPrixPageHeader from "@/components/gps/AdminGrandPrixPageHeader.vue";
+import GrandPrixPageHeader from "@/components/gps/GrandPrixPageHeader.vue";
+import PCard from "@/components/lib/PCard.vue";
 
 export default defineComponent({
   name: "EditSessionGrandPrix",
   components: {
-    AdminGrandPrixPageHeader,
+    PCard,
+    GrandPrixPageHeader,
     PLabel,
     PButton,
     PCheckbox,

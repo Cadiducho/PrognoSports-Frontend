@@ -1,51 +1,82 @@
 <template>
-    <PTitle tag="h3" type="subtitle">Resultados en {{ session.humanName() }}</PTitle>
+  <PCard>
+    <PTitle
+      tag="h3"
+      type="subtitle"
+    >
+      Resultados en {{ session.humanName() }}
+    </PTitle>
 
-    <section v-if="session.hasFastLap" class="mb-4">
-        <o-field label="Vuelta rápida">
-            <o-select v-model="fastLap" placeholder="Selecciona un piloto" expanded>
-                <option
-                    v-for="driver in sessionResults"
-                    :value="driver"
-                    :key="driver.id">
-                    {{ driver.lastname}}, {{driver.firstname}} - {{ driver.team.name }} ({{ driver.team.carname }})
-                </option>
-            </o-select>
-        </o-field>
+    <section
+      v-if="session.hasFastLap"
+      class="mb-4"
+    >
+      <!-- ToDo: remove -->
+      <o-field label="Vuelta rápida">
+        <o-select
+          v-model="fastLap"
+          placeholder="Selecciona un piloto"
+          expanded
+        >
+          <option
+            v-for="driver in sessionResults"
+            :key="driver.id"
+            :value="driver"
+          >
+            {{ driver.lastname }}, {{ driver.firstname }} - {{ driver.team.name }} ({{ driver.team.carname }})
+          </option>
+        </o-select>
+      </o-field>
 
-        <hr/>
+      <hr>
     </section>
 
     <label class="label">Resultados</label>
-    <PrognoAlert v-if="!hasSavedResults" variant="warning" message="No hay resultados guardada aún" />
+    <PrognoAlert
+      v-if="!hasSavedResults"
+      variant="warning"
+      message="No hay resultados guardados aún"
+    />
     <draggable
-        :id="`results-${session.id}`"
-        class="w-full select-none space-y-3 px-2 md:px-0"
-        :list="sessionResults"
-        group="results"
-        itemKey="id"
+      :id="`results-${session.id}`"
+      class="w-full select-none space-y-2"
+      :list="sessionResults"
+      group="results"
+      item-key="id"
     >
-        <template #item="{ element, index }">
-            <DraggableDriverCard :driver="element" :index="index" showPosition />
-        </template>
+      <template #item="{ element, index }">
+        <DraggableDriverCard
+          :driver="element"
+          :index="index"
+          show-position
+        />
+      </template>
     </draggable>
 
     <section class="block mt-4">
-        <o-checkbox
-            v-model="notSendNotification"
-            variant="danger"
-            passive-variant="primary">
-            NO enviar notificación
-        </o-checkbox>
-        <o-checkbox
-            v-model="notOverrideGrid"
-            variant="danger"
-            passive-variant="primary">
-            NO sobreescribir parrilla
-        </o-checkbox>
+      <p-checkbox
+        id="notSendNotification"
+        v-model="notSendNotification"
+        color="danger"
+      >
+        NO enviar notificación
+      </p-checkbox>
+      <p-checkbox
+        id="notOverrideGrid"
+        v-model="notOverrideGrid"
+        color="danger"
+      >
+        NO sobreescribir parrilla
+      </p-checkbox>
     </section>
 
-    <PButton color="primary" @click="saveResults()">Guardar resultados</PButton>
+    <PButton
+      color="primary"
+      @click="saveResults()"
+    >
+      Guardar resultados
+    </PButton>
+  </PCard>
 </template>
 
 <script lang="ts">
@@ -60,10 +91,14 @@ import draggable from "vuedraggable";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PTitle from "@/components/lib/PTitle.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
+import PCard from "@/components/lib/PCard.vue";
+import PCheckbox from "@/components/lib/forms/PCheckbox.vue";
 
 export default defineComponent({
     name: "EditResults",
     components: {
+      PCheckbox,
+      PCard,
         PButton,
         PTitle,
         PrognoAlert,

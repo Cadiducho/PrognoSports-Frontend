@@ -58,7 +58,7 @@
 
                 <draggable
                     :id="`pronosticados-${session.id}`"
-                    class="w-full h-full select-none space-y-2 px-2 md:px-0"
+                    class="w-full h-full select-none space-y-2"
                     :list="pilotosDisponiblesFiltrados"
                     group="people"
                     itemKey="name"
@@ -75,7 +75,7 @@
                 <h3 class="select-none dark:text-gray-300">Tu pronóstico</h3>
                 <draggable
                     :id="`pronosticados-${session.id}`"
-                    class="w-full h-full select-none space-y-2 px-2 md:px-0"
+                    class="w-full h-full select-none space-y-2"
                     :list="pilotosPronosticados"
                     group="people"
                     itemKey="name"

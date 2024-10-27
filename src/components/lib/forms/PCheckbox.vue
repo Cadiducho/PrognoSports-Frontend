@@ -23,7 +23,7 @@ const modelValue = defineModel<boolean>({required: false});
 
 const props = withDefaults(defineProps<{
   color?: 'primary' | 'secondary' | 'gray' | 'warning' | 'danger';
-  id?: number;
+  id?: number | string;
   checked?: boolean
 }>(), {
   color: 'primary',
