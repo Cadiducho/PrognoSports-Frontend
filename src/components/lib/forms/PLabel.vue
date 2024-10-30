@@ -3,7 +3,7 @@
     class="block tracking-wide text-gray-700 dark:text-gray-300 font-bold mb-2"
     :for="props.name"
   >
-    {{ props.label }}
+    <slot>{{ props.label }}</slot>
   </label>
 </template>
 

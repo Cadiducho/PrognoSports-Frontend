@@ -4,7 +4,7 @@
       v-if="label"
       :for="name"
     >
-      {{ name }}
+      {{ props.label }}
     </p-label>
     <input
       :id="name"
