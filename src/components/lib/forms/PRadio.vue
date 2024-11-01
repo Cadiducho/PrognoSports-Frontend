@@ -1,27 +1,29 @@
 <template>
-    <div class="flex items-center mb-2 me-4">
-        <input type="radio"
-               v-model="modelValue"
-               :class="radioClasses"
-               :value="value"
-        >
-        <label class="block ms-2 pl-1 text-gray-800 dark:text-gray-300" :class="labelClasses">
-            <slot></slot>
-        </label>
-    </div>
+  <div class="flex items-center mb-2 me-4">
+    <input
+      v-model="modelValue"
+      type="radio"
+      :class="radioClasses"
+      :value="value"
+    >
+    <label
+      class="block ms-2 pl-1 text-gray-800 dark:text-gray-300"
+      :class="labelClasses"
+    >
+      <slot />
+    </label>
+  </div>
 </template>
 
 <script setup lang="ts" generic="T extends string | number | boolean | object">
-import {computed, defineModel} from 'vue';
+import {computed} from 'vue';
 
 const modelValue = defineModel<T>({ required: true });
-
-interface Props {
-    color?: 'primary' | 'secondary' | 'gray' | 'warning' | 'danger';
-    size?: 'small' | 'medium' | 'large';
-    value: T
-}
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<{
+  color?: 'primary' | 'secondary' | 'gray' | 'warning' | 'danger';
+  size?: 'small' | 'medium' | 'large';
+  value: T
+}>(), {
     color: 'primary',
     size: 'medium',
     value: undefined

@@ -20,8 +20,9 @@
         No hay sesiones configuradas en este Gran Premio
       </PrognoAlert>
 
-      <div class="columns">
-        <div :class="startGrid.size ? 'column is-6' : 'column is-9'">
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <!-- Si hay parrilla de salida, recorto tamaño de los pronósticos -->
+        <div :class="startGrid.size ? 'md:col-span-2' : 'md:col-span-2 lg:col-span-3'">
           <PCard>
             <o-tabs v-model="activeTab">
               <o-tab-item
@@ -47,11 +48,15 @@
         </div>
         <div
           v-if="startGrid.size"
-          class="content column"
+          class="md:col-span-1"
         >
           <StartGrid :grid="startGrid" />
         </div>
-        <div class="column is-3">
+        <!-- Si hay parrilla de salida saldrá desplazado y expandido debajo del resto de cajas de la grid -->
+        <div
+          :class="startGrid.size ? 'md:col-span-3' : 'md:col-span-1'"
+          class="lg:col-span-1"
+        >
           <CircuitCard
             v-if="grandPrix.circuit && grandPrix.variant"
             :circuit="grandPrix.circuit!"
@@ -65,7 +70,7 @@
 
           <section
             v-if="currentUser.isAdmin()"
-            class="mt-2"
+            class="my-2"
           >
             <p-button
               color="info"

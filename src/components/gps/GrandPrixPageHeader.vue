@@ -1,9 +1,9 @@
 <template>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
     <div class="md:col-span-2">
       <PTitle :name="`${isAdminText}${props.grandPrix.name} de ${grandPrix.season.name}`" />
     </div>
-    <div class="md:col-span-1">
+    <div class="md:col-span-1 md:col-end-5">
       <GrandPrixPagination
         :is-admin-pag="isAdmin"
         :competition="props.competition"
