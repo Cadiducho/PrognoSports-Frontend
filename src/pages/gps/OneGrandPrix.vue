@@ -224,13 +224,16 @@ export default defineComponent({
         this.isLoadingGrandPrix = false;
       });
 
-      // Colocar la tab correcta según si es día de clasificación o carrera
-      this.grandPrix.sessions.forEach((ses, index) => {
-        if (dayjs(ses.date).isToday()) {
-          this.activeTab = index;
-          return;
+      // Ordeno las sesiones por fecha
+      this.grandPrix.sessions.sort((a: RaceSession, b: RaceSession) => a.date - b.date)
+      // Colocar la tab correcta según cuál es la siguiente sesión que va a tener lugar
+      for (let index = 0; index < this.grandPrix.sessions.length; index++) {
+        const ses = this.grandPrix.sessions[index]; // vamos actualizando en orden hasta que lleguemos a la próxima y ahí salimos del bucle
+        this.activeTab = index;
+        if (dayjs().isBefore(ses.date)) {
+          break;
         }
-      })
+      }
 
     }).catch((error) => {
       this.thereIsGrandPrix = false;
