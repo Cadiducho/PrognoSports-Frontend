@@ -230,7 +230,7 @@ export default defineComponent({
       for (let index = 0; index < this.grandPrix.sessions.length; index++) {
         const ses = this.grandPrix.sessions[index]; // vamos actualizando en orden hasta que lleguemos a la próxima y ahí salimos del bucle
         this.activeTab = index;
-        if (dayjs().isBefore(ses.date)) {
+        if (dayjs().isBefore(dayjs(ses.date).add(2, 'h'))) {
           break;
         }
       }
