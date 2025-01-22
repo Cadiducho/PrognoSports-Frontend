@@ -35,18 +35,12 @@ axios.interceptors.response.use((response) => {
     if (data.success) {
       return data.result;
     } else {
-      const error = {
-        code: data.code,
-        message: data.message
-      }
-      return Promise.reject(error);
+      return Promise.reject(data);
     }
   }
   return response;
 }, error => {
   const payload = {
-    status: 500,
-    code: error.response?.data?.code,
     message: error.response?.data?.message
   }
   return Promise.reject(payload);

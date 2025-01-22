@@ -23,13 +23,7 @@ export function useAuth() {
                 router.push({name: "home"});
             }
         } catch (error: any) {
-            let message: string;
-            if (error.code === 600) {
-                message = "Fallo al iniciar sesión: Credenciales inválidas";
-            } else {
-                message = "Fallo al iniciar sesión: " + error.message;
-            }
-            notificationService.showNotification(message, 'error');
+            notificationService.showNotification("Fallo al iniciar sesión: " + error.message, 'error');
             throw error;
         }
     }
