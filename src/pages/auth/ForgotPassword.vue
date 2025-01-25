@@ -168,7 +168,7 @@ const handleSendCode = async () => {
       return
     }
     await userService.sendForgotPassword(form.email);
-    notificationService.showNotification("Se ha enviado un código de verificación a tu correo electrónico");
+    notificationService.showNotification("Si los datos son correctos, recibirás un código de verificación a tu correo electrónico");
     form.showChangePasswordForm = true;
   } catch (error: any) {
     notificationService.showNotification(error.message, "error");
@@ -187,7 +187,7 @@ const handleSubmitChangePassword = async () => {
   }
   try {
     await userService.changePassword(payload);
-    notificationService.showNotification("Tu contraseña ha sido restablecida");
+    notificationService.showNotification("Si los datos son correctos, tu contraseña habrá sido restablecida");
     router.push({
       path: '/login',
       query: {redirect: redirectTo}
