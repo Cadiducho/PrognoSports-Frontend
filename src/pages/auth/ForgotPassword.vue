@@ -68,20 +68,22 @@
               </div>
               <div class="field is-grouped">
                 <div class="control">
-                  <button
-                    type="submit"
+                  <p-button
+                    native-type="submit"
                     class="button is-link"
+                    :disabled="loading.changePassword || !form.email || !form.inputToken || !form.inputPassword"
                   >
                     Cambiar contraseña
-                  </button>
+                  </p-button>
                 </div>
                 <div class="control">
-                  <button
-                    class="button is-info"
+                  <p-button
+                    type="soft"
+                    color="teal"
                     @click="form.showChangePasswordForm = false"
                   >
                     Enviar nuevo código
-                  </button>
+                  </p-button>
                 </div>
               </div>
             </form>
@@ -106,20 +108,22 @@
               </div>
               <div class="field is-grouped">
                 <div class="control">
-                  <button
-                    type="submit"
+                  <p-button
+                    native-type="submit"
                     class="button is-link"
+                    :disabled="loading.sendCode || !form.email"
                   >
                     Solicitar código
-                  </button>
+                  </p-button>
                 </div>
                 <div class="control">
-                  <button
-                    class="button is-info"
+                  <p-button
+                    type="soft"
+                    color="teal"
                     @click="form.showChangePasswordForm = true"
                   >
                     Ya tengo un código
-                  </button>
+                  </p-button>
                 </div>
               </div>
             </form>
@@ -146,6 +150,7 @@
 import {LocationQueryValue, useRoute, useRouter} from "vue-router";
 import {reactive} from "vue";
 import {notificationService, userService} from "@/_services";
+import PButton from "@/components/lib/forms/PButton.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -157,11 +162,17 @@ const form = reactive({
   inputPassword: "",
   showChangePasswordForm: false
 })
+const loading = reactive({
+  sendCode: false,
+  changePassword: false
+})
 
 const handleSendCode = async () => {
   if (!form.email) {
     return;
   }
+  loading.sendCode = true;
+
   try {
     if (!form.email.trim()) {
       notificationService.showNotification("Debes introducir tu dirección de email", "error");
@@ -172,6 +183,8 @@ const handleSendCode = async () => {
     form.showChangePasswordForm = true;
   } catch (error: any) {
     notificationService.showNotification(error.message, "error");
+  } finally {
+    loading.sendCode = false;
   }
 }
 
@@ -179,6 +192,7 @@ const handleSubmitChangePassword = async () => {
   if (!form.email) {
     return;
   }
+  loading.changePassword = true;
 
   const payload = {
     email: form.email,
@@ -195,6 +209,8 @@ const handleSubmitChangePassword = async () => {
   } catch (error: any) {
     notificationService.showNotification(error.message, "error");
     console.error(error);
+  } finally {
+    loading.changePassword = false;
   }
 };
 
