@@ -60,7 +60,7 @@
                 </div>
               </div>
               <div class="field">
-                <label class="checkbox">
+                <label class="checkbox select-none">
                   <input
                     v-model="form.tos"
                     type="checkbox"
@@ -78,6 +78,7 @@
               <div class="field is-grouped">
                 <div class="control">
                   <p-button
+                    native-type="submit"
                     :disabled="!form.tos || form.isRegistering"
                   >
                     Regístrate

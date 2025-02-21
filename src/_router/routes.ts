@@ -80,6 +80,16 @@ export const routes = [
             component: () => import('@/pages/auth/ForgotPassword.vue'),
         }]
     },
+    {
+      path: '/verify',
+      meta: { requiresAuth: true },
+      component: PrognoLayout,
+      children: [{
+        name: 'verify',
+        path: '',
+        component: () => import('@/pages/auth/VerifyEmail.vue'),
+      }]
+    },
 
     // Páginas de dentro de la aplicación iniciadas sesión
     {
