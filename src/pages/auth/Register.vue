@@ -77,12 +77,11 @@
               </div>
               <div class="field is-grouped">
                 <div class="control">
-                  <button
+                  <p-button
                     :disabled="!form.tos || form.isRegistering"
-                    class="button is-link"
                   >
                     Regístrate
-                  </button>
+                  </p-button>
                 </div>
               </div>
             </form>
@@ -110,6 +109,7 @@ import {useAuthStore} from "@/store/authStore";
 import {notificationService} from "@/_services";
 import {reactive} from "vue";
 import {LocationQueryValue, useRoute, useRouter} from "vue-router";
+import PButton from "@/components/lib/forms/PButton.vue";
 
 const authStore = useAuthStore();
 const router = useRouter();

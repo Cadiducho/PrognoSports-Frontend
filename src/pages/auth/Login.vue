@@ -13,43 +13,57 @@
               <div class="field">
                 <label class="label">Email</label>
                 <div class="control has-icons-left has-icons-right">
-
                   <span class="icon is-small">
-                    <i class="fas fa-user"></i>
+                    <i class="fas fa-user" />
                   </span>
 
-                  <input v-model="form.username" type="email" autofocus required
-                         class="input" :class="{ 'is-danger': form.submitted && !form.username }"/>
-
+                  <input
+                    v-model="form.username"
+                    type="email"
+                    autofocus
+                    required
+                    class="input"
+                    :class="{ 'is-danger': form.submitted && !form.username }"
+                  >
                 </div>
               </div>
               <div class="field">
                 <label class="label">Contraseña</label>
                 <div class="control has-icons-left has-icons-right">
                   <span class="icon is-small">
-                    <i class="fas fa-lock"></i>
+                    <i class="fas fa-lock" />
                   </span>
 
-                  <input v-model="form.password" type="password" required
-                         class="input" :class="{ 'is-danger': form.submitted && !form.password }"/>
-
+                  <input
+                    v-model="form.password"
+                    type="password"
+                    required
+                    class="input"
+                    :class="{ 'is-danger': form.submitted && !form.password }"
+                  >
                 </div>
               </div>
               <div class="field is-grouped">
                 <div class="control">
-                  <button type="submit" class="button is-link" :disabled="form.isLoggingIn">
+                  <p-button
+                    native-type="submit"
+                    :disabled="form.isLoggingIn"
+                  >
                     Acceder
-                  </button>
+                  </p-button>
                 </div>
               </div>
             </form>
           </div>
           <div class="card-footer">
             <div class="card-footer-item">
-              <router-link :to="{ name: 'register', query: { redirect: redirectTo }}">Registrarse</router-link>
+              <router-link :to="{ name: 'register', query: { redirect: redirectTo }}">
+                Registrarse
+              </router-link>
             </div>
             <div class="card-footer-item">
-              <router-link :to="{ name: 'forgotpassword', query: { redirect: redirectTo }}">He olvidado mi contraseña
+              <router-link :to="{ name: 'forgotpassword', query: { redirect: redirectTo }}">
+                He olvidado mi contraseña
               </router-link>
             </div>
           </div>
@@ -64,6 +78,7 @@ import {useAuthStore} from "@/store/authStore";
 import {LocationQueryValue, useRoute} from "vue-router";
 import {onMounted, reactive} from "vue";
 import {useAuth} from "@/composables/useAuth";
+import PButton from "@/components/lib/forms/PButton.vue";
 
 const authStore = useAuthStore();
 const route = useRoute();
