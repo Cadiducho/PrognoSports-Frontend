@@ -91,7 +91,6 @@ export class User implements IUser {
   }
 
   public isVerified(): boolean {
-    console.log('is verified??', this.verified_at);
     return !!this.verified_at && this.verified_at.getTime() < new Date().getTime();
   }
 }

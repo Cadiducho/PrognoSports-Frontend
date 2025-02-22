@@ -466,7 +466,7 @@ export const routes = [
     {
         path: '/gps',
         name: 'gplist',
-        meta: { requiresAuth: true, title: "Grandes Premios" },
+        meta: { requiresAuth: true, requiresCommunity: true, title: "Grandes Premios" },
         component: PrognoLayout,
         children: [
             {

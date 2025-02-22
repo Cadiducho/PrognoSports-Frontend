@@ -1,9 +1,12 @@
 <template>
-    <component :is="tag" :class="computedClass">
-        <slot>
-            {{ name }}
-        </slot>
-    </component>
+  <component
+    :is="tag"
+    :class="computedClass"
+  >
+    <slot>
+      {{ name }}
+    </slot>
+  </component>
 </template>
 
 <script setup lang="ts">

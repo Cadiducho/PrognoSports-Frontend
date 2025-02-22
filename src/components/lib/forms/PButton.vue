@@ -190,13 +190,13 @@ export default defineComponent({
         @apply bg-red-100 hover:bg-red-200 dark:focus:ring-offset-gray-800 text-red-500;
     }
     &.yellow, &.warning {
-        @apply bg-yellow-100 hover:bg-yellow-200 dark:focus:ring-offset-gray-800 text-yellow-500;
+        @apply bg-yellow-100 hover:bg-yellow-200 dark:focus:ring-offset-gray-800 text-yellow-500 dark:text-yellow-900;
     }
     &.green, &.success {
         @apply bg-green-100 hover:bg-green-200 dark:focus:ring-offset-gray-800 text-green-500;
     }
     &.blue, &.info {
-        @apply bg-blue-100 hover:bg-blue-200 dark:bg-blue-400 dark:focus:ring-offset-gray-800 text-blue-500 dark:text-white;
+        @apply bg-blue-100 hover:bg-blue-200 dark:bg-blue-300 dark:focus:ring-offset-gray-800 text-blue-500 dark:text-blue-900;
     }
     &.pink {
         @apply bg-pink-100 hover:bg-pink-200 dark:focus:ring-offset-gray-800 text-pink-500;

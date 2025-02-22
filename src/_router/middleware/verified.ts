@@ -5,7 +5,6 @@ import {useAuthStore} from "@/store/authStore";
 export default function checkUserIsVerified(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
   const authStore = useAuthStore();
 
-  console.log(to)
   if (to.matched.some(record => record.meta.requiresAuth) && !authStore.loggedUser.isVerified() && to.name !== 'verify') {
     next({ name: 'verify' });
   } else {
