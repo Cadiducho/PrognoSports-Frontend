@@ -131,6 +131,21 @@
               Ocultar mis pronósticos hasta la hora de cierre
             </PRadio>
           </div>
+
+          <p-select
+            v-model="editedUser.preferences['time-zone-id']"
+            label="Zona horaria para las notificaciones"
+            placeholder="Selecciona una zona horaria para tus notificaciones"
+            class="mb-3"
+          >
+            <option
+              v-for="(value, tz) in timezones"
+              :key="tz"
+              :value="tz"
+            >
+              {{ tz }} (UTC {{ value }})
+            </option>
+          </p-select>
         </div>
       </div>
 
@@ -345,10 +360,12 @@ import {Dictionary} from "@/types/Dictionary";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PRadio from "@/components/lib/forms/PRadio.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
+import PSelect from "@/components/lib/forms/PSelect.vue";
 
 export default defineComponent({
   name: "UserSettings",
   components: {
+    PSelect,
     PButton,
     PRadio,
     PrognoAlert,
@@ -389,6 +406,7 @@ export default defineComponent({
       },
       notificationMethods: {} as Dictionary<string, string>,
       notificationTypes: {} as Dictionary<string, string>,
+      timezones: {} as Dictionary<string, string>,
       isLoading: true,
       noPassword: false,
       submiting: false,
@@ -412,9 +430,11 @@ export default defineComponent({
     Promise.all([
       notificationService.getNotificationMethods(),
       notificationService.getNotificationTypes(),
-    ]).then(([notificationMethods, notificationTypes]) => {
+      notificationService.getTimeZonesList()
+    ]).then(([notificationMethods, notificationTypes, timeZonesList]) => {
       this.notificationMethods = notificationMethods;
       this.notificationTypes = notificationTypes;
+      this.timezones = timeZonesList;
       this.isLoading = false;
     }).catch((reason) => {
       notificationService.showNotification("Error al cargar los ajustes", "error");

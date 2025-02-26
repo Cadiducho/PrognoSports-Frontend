@@ -1,31 +1,50 @@
 <template>
+  <PTitle
+    type="subtitle"
+    tag="h2"
+  >
+    Tokens de inicio de sesión recientes
+  </PTitle>
 
-    <h2 class="subtitle">Tokens de inicio de sesión recientes</h2>
+  <ul class="is-unselectable is-outlined pl-0 space-y-3">
+    <li
+      v-for="token in authTokens.slice(0, 5)"
+      :key="token.token"
+      class="has-text-weight-semibold flex justify-between p-2 bg-slate-50"
+    >
+      <section class="flex flex-col">
+        <span>
+          <b>Token: </b>{{ token.token }}
 
-    <ul class="is-unselectable is-outlined pl-0 space-y-3">
-        <li
-            v-for="token in authTokens.slice(0, 5)"
-            class="has-text-weight-semibold flex justify-between p-2 bg-slate-50">
-            <section class="flex flex-col">
-                <span>
-                    <b>Token: </b>{{ token.token }}
+          <span
+            v-if="token.current"
+            class="tag is-link ml-1 is-italic"
+          >
+            Usado en la sesión actual
+          </span>
+        </span>
 
-                    <span class="tag is-link ml-1 is-italic" v-if="token.current">
-                        Usado en la sesión actual
-                    </span>
-                </span>
+        <span><b>Creado: </b>{{ humanDateTime(token.createdAt) }} ({{ dateDiff(token.createdAt) }})</span>
+        <span><b>Última actividad: </b>{{ humanDateTime(token.lastActivityAt) }} ({{ dateDiff(token.lastActivityAt) }})</span>
+      </section>
+      <section class="flex flex-col justify-around">
+        <button
+          class="button is-small is-danger"
+          :disabled="token.current"
+          @click="deleteOneAuthToken(token)"
+        >
+          Cerrar sesión
+        </button>
+      </section>
+    </li>
+  </ul>
 
-                <span><b>Creado: </b>{{ humanDateTime(token.createdAt) }}</span>
-                <span><b>Última actividad: </b>{{ humanDateTime(token.lastActivityAt) }} ({{ dateDiff(token.lastActivityAt) }})</span>
-            </section>
-            <section class="flex flex-col justify-around">
-                <button class="button is-small is-danger" :disabled="token.current" @click="deleteOneAuthToken(token)">Cerrar sesión</button>
-            </section>
-        </li>
-    </ul>
-
-    <button class="button is-danger mt-2" @click="deleteAuthTokens()">Terminar todas las demás sesiones</button>
-
+  <button
+    class="button is-danger mt-2"
+    @click="deleteAuthTokens()"
+  >
+    Terminar todas las demás sesiones
+  </button>
 </template>
 
 <script lang="ts">
@@ -36,9 +55,11 @@ import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {AuthToken} from "@/types/AuthToken";
 import {useDayjs} from "@/composables/useDayjs";
+import PTitle from "@/components/lib/PTitle.vue";
 
 export default defineComponent({
     name: "AuthTokenList",
+  components: {PTitle},
     setup() {
         const dayjs = useDayjs();
         const authStore = useAuthStore();
