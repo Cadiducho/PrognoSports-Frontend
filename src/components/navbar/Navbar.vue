@@ -98,52 +98,38 @@
           class="navbar-end"
         >
           <CommunitiesDropdown v-if="thereIsCurrentCommunity" />
-          <AddElementsDropdown />
-          <AvatarComponent />
           <SwitchTheme v-if="darkModeActivable" />
+          <AvatarComponent />
         </div>
       </div>
     </nav>
   </div>
 </template>
 
-<script lang="ts">
-    import AvatarComponent from "@/components/navbar/AvatarComponent.vue";
-    import CommunitiesDropdown from "@/components/navbar/CommunitiesDropdown.vue";
-    import AddElementsDropdown from "@/components/navbar/AddElementsDropdown.vue";
-    import {defineComponent} from "vue";
-    import {useAuthStore} from "@/store/authStore";
-    import {useCommunityStore} from "@/store/communityStore";
-    import SwitchTheme from "@/components/navbar/SwitchTheme.vue";
+<script setup lang="ts">
+import AvatarComponent from "@/components/navbar/AvatarComponent.vue";
+import CommunitiesDropdown from "@/components/navbar/CommunitiesDropdown.vue";
+import {ref} from "vue";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
+import SwitchTheme from "@/components/navbar/SwitchTheme.vue";
 
-    export default defineComponent({
-        name: "Navbar",
-        components: {SwitchTheme, CommunitiesDropdown, AvatarComponent, AddElementsDropdown},
-        setup() {
-            const authStore = useAuthStore();
-            const communityStore = useCommunityStore();
+const authStore = useAuthStore();
+const communityStore = useCommunityStore();
 
-            const isLoggedIn = authStore.isLoggedIn;
-            const currentUser = authStore.loggedUser;
-            const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
-            const currentCommunity = communityStore.currentCommunity;
-            return {isLoggedIn, currentUser, currentCommunity, thereIsCurrentCommunity};
-        },
-        data() {
-            return {
-                isOpen: false,
-                counter: 0,
-                darkModeActivable: localStorage.getItem('dark-mode') ?? false,
-            }
-        },
-        methods: {
-            clickEasterEgg() {
-                this.counter++;
-                if (this.counter >= 33) {
-                    this.darkModeActivable = true;
-                    localStorage.setItem('dark-mode', true)
-                }
-            }
-        }
-    });
+const isLoggedIn = authStore.isLoggedIn;
+const currentUser = authStore.loggedUser;
+const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;;
+
+const isOpen = ref(false);
+const counter = ref(0);
+const darkModeActivable = ref(localStorage.getItem('dark-mode') ?? false);
+
+const clickEasterEgg = () => {
+  counter.value++;
+  if (counter.value >= 33) {
+    darkModeActivable.value = true;
+    localStorage.setItem('dark-mode', true)
+  }
+}
 </script>
