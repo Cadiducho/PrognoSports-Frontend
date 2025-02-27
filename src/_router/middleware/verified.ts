@@ -6,7 +6,10 @@ export default function checkUserIsVerified(to: RouteLocationNormalized, from: R
   const authStore = useAuthStore();
 
   if (to.matched.some(record => record.meta.requiresAuth) && !authStore.loggedUser.isVerified() && to.name !== 'verify') {
-    next({ name: 'verify' });
+    next({
+      name: 'verify',
+      query: { redirect: to.fullPath }
+    });
   } else {
     next();
   }

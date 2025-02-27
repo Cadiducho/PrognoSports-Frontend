@@ -60,12 +60,14 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import {authService, notificationService} from "@/_services";
 import {ref} from "vue";
 import PInput from "@/components/lib/forms/PInput.vue";
-import {useRouter} from "vue-router";
+import {LocationQueryValue, useRoute, useRouter} from "vue-router";
 import {useAuthStore} from "@/store/authStore";
 
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 
+const redirectTo = route.query.redirect as LocationQueryValue;
 const showSendVerificationEmail = ref(false);
 const sended = ref(false);
 const sendVerificationEmail = async () => {
@@ -88,10 +90,14 @@ const verifyAccount = async () => {
       notificationService.showNotification("El código de verificación debe tener 6 caracteres", "error");
       return;
     }
+    
     isVerifiying.value = true;
     await authService.verifyEmail(verificationCode.value);
-    //await authStore.verifyUser();
-    await router.push({name: "home"});
+    if (redirectTo) {
+      await router.push(redirectTo as string);
+    } else {
+      await router.push({name: "home"});
+    }
     notificationService.showNotification("Tu cuenta ha sido verificada correctamente");
   } catch (e) {
     console.error(e);
