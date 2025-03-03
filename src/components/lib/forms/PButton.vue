@@ -140,7 +140,7 @@ export default defineComponent({
         @apply bg-red-500 hover:bg-red-600 dark:focus:ring-offset-gray-800 text-white;
     }
     &.yellow, &.warning {
-        @apply bg-yellow-500 hover:bg-yellow-600 dark:focus:ring-offset-gray-800 text-white;
+        @apply bg-yellow-600 hover:bg-yellow-600 dark:focus:ring-offset-gray-800 text-white;
     }
     &.green, &.success {
         @apply bg-green-500 hover:bg-green-600 dark:focus:ring-offset-gray-800 text-white;
@@ -165,7 +165,7 @@ export default defineComponent({
         @apply text-red-500 border-red-500 hover:bg-red-500 hover:text-white;
     }
     &.yellow, &.warning {
-        @apply text-yellow-500 border-yellow-500 hover:bg-yellow-500 hover:text-white;
+        @apply text-yellow-600 border-yellow-600 hover:bg-yellow-600 hover:text-white;
     }
     &.green, &.success {
         @apply text-green-500 border-green-500 hover:bg-green-500 hover:text-white;

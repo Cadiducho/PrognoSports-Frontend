@@ -2,7 +2,7 @@
   <div
     v-if="currentUser"
     id="avatarComponent"
-    class="navbar-item has-dropdown is-hoverable"
+    class="navbar-item has-dropdown is-hoverable ml-2"
   >
     <a class="navbar-link nav-tag">
       <figure class="image is-32x32 avatar-figure">
