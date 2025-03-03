@@ -1,62 +1,34 @@
 <template>
-    <div>
-        <Navbar />
+  <div>
+    <Navbar />
 
-        <section class="section">
-            <section class="container prognocontainer">
+    <section class="p-4">
+      <section class="w-full lg:px-6 lg:py-4">
+        <PrognoAlert
+          v-if="isBeta && !betaAceptada"
+          variant="warning"
+          @after-close="acceptBeta()"
+        >
+          Estás utilizando PrognoSports Beta, la experiencia puede verse afectada
+        </PrognoAlert>
 
-                <!-- <Breadcrumb /> -->
+        <router-view :key="$route.fullPath" />
+      </section>
+    </section>
 
-                <o-notification v-if="isBeta && !betaAceptada" closable variant="warning" aria-close-label="Close notification" @close="acceptBeta()">
-                    Estás utilizando PrognoSports Beta, la experiencia puede verse afectada
-                </o-notification>
-
-                <router-view :key="$route.fullPath"/>
-            </section>
-        </section>
-
-        <LandingFooter/>
-    </div>
+    <LandingFooter />
+  </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import Navbar from "@/components/navbar/Navbar.vue";
-import Breadcrumb from "@/components/lib/Breadcrumb.vue";
 import LandingFooter from "@/components/landing/LandingFooter.vue";
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
+import {ref} from "vue";
 
-import {defineComponent} from "vue";
-
-export default defineComponent({
-    name: "PrognoLayout",
-    components: {
-        Navbar,
-        LandingFooter,
-    },
-    setup() {
-        const isBeta = import.meta.env.MODE == 'beta';
-        const betaAceptada: boolean = localStorage.getItem("beta-accepted") === "true";
-        const acceptBeta = () => {
-            localStorage.setItem("beta-accepted", "true");
-        };
-
-        return { isBeta, betaAceptada, acceptBeta }
-    }
-});
+const isBeta = ref(import.meta.env.MODE == 'beta');
+const betaAceptada = ref(localStorage.getItem("beta-accepted") === "true");
+const acceptBeta = () => {
+  localStorage.setItem("beta-accepted", "true");
+}
 </script>
-
-<style scoped>
-.section {
-    padding: 1rem;
-}
-.container.prognocontainer {
-    max-width: none !important;
-    width: 100%;
-}
-
-@media screen and (min-width: 1024px) {
-    .container.prognocontainer {
-        padding-left: 32px;
-        padding-right: 32px;
-    }
-}
-</style>
