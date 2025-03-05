@@ -1,29 +1,29 @@
 import { defineStore } from "pinia";
+import {ref} from "vue";
 
-export const useThemeStore = defineStore('theme', {
-    state: () => ({
-        darkMode: localStorage.getItem('dark') === 'true',
-    }),
-    getters: {
-        isDarkMode(): boolean {
-            return this.darkMode;
-        }
-    },
-    actions: {
-        toggleDarkMode(): void {
-            this.setDarkMode(!this.darkMode);
-        },
-        setDarkMode(dark: boolean): void {
-            console.log('setDarkMode', dark);
-            this.darkMode = dark;
-            localStorage.setItem('dark', dark.toString());
-            if (dark) {
-                document.documentElement.classList.add('dark');
-                console.log('dark mode added')
-            } else {
-                document.documentElement.classList.remove('dark');
-                console.log('dark mode removed')
-            }
-        }
+export const useThemeStore = defineStore("theme", () => {
+  const darkMode = ref(localStorage.getItem("dark") === "true");
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode.value);
+  }
+
+  const setDarkMode = (dark: boolean) => {
+    console.log('setDarkMode', dark);
+    darkMode.value = dark;
+    localStorage.setItem('dark', dark.toString());
+    if (dark) {
+      document.documentElement.classList.add('dark');
+      console.log('dark mode added')
+    } else {
+      document.documentElement.classList.remove('dark');
+      console.log('dark mode removed')
     }
-});
+  }
+
+  return {
+    darkMode,
+    toggleDarkMode,
+    setDarkMode
+  }
+})

@@ -5,7 +5,7 @@
   >
     <Toaster
       rich-colors
-      :position="toastStore.getPosition"
+      :position="toastStore.position"
     />
 
     <!-- La app siempre cargará router-view -->
@@ -18,31 +18,23 @@
   </div>
 </template>
 
-<script lang="ts">
-import {defineComponent} from "vue";
+<script setup lang="ts">
+
 import ToTop from "@/components/lib/ToTop.vue";
 import { Toaster } from 'vue-sonner'
 import {useToastStore} from "@/store/toastStore";
 import { useTitle } from '@vueuse/core'
 import {useThemeStore} from "@/store/themeStore";
 
-export default defineComponent({
-    components: {
-        ToTop, Toaster
-    },
-    setup() {
-        const toastStore = useToastStore();
-        const styleStore = useThemeStore();
+const toastStore = useToastStore();
+const styleStore = useThemeStore();
 
-        const isBeta = import.meta.env.MODE == 'beta';
-        console.log("isBeta", isBeta);
-        const title = useTitle();
-        title.value = isBeta ? 'PrognoSports (Beta)' : ' PrognoSports';
+const isBeta = import.meta.env.MODE == 'beta';
+console.log("isBeta", isBeta);
+const title = useTitle();
+title.value = isBeta ? 'PrognoSports (Beta)' : ' PrognoSports';
 
-        const darkMode = styleStore.darkMode;
-        styleStore.setDarkMode(darkMode);
+const darkMode = styleStore.darkMode;
+styleStore.setDarkMode(darkMode);
 
-        return {toastStore};
-    }
-});
 </script>
