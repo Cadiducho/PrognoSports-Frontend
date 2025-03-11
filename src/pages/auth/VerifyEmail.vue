@@ -35,12 +35,14 @@
       <div v-if="showSendVerificationEmail">
         <hr>
 
-        <p class="mb-2 mt-6 text-gray-700 dark:text-gray-300">
-          Si este email no ha llegado a tu bandeja de entrada, por favor, revisa la carpeta de spam. Si necesitas que te enviemos un nuevo correo de verificación, haz click en el siguiente botón.
+        <p class="mt-6 text-gray-700 dark:text-gray-300 font-bold text-lg">
+          Si este email no ha llegado a tu bandeja de entrada, por favor, revisa la carpeta de spam.
+        </p>
+        <p class="mb-2text-gray-700 dark:text-gray-300 font-bold text-lg">
+          Si necesitas que te enviemos un nuevo correo de verificación, haz click en el siguiente botón.
         </p>
         <PButton
-          color="info"
-          type="soft"
+          color="danger"
           class="mt-2"
           :disabled="sended"
           @click="sendVerificationEmail"
@@ -90,7 +92,7 @@ const verifyAccount = async () => {
       notificationService.showNotification("El código de verificación debe tener 6 caracteres", "error");
       return;
     }
-    
+
     isVerifiying.value = true;
     await authService.verifyEmail(verificationCode.value);
     if (redirectTo) {
