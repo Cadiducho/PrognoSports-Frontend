@@ -1,7 +1,7 @@
 <template>
     <div id="startGridComponent" class="box" v-if="grid !== undefined">
         <nav class="is-flex is-justify-content-space-between">
-            <h3>Parrilla de Salida</h3>
+            <PTitle type="subtitle">Parrilla de Salida</PTitle>
 
             <o-field v-if="Object.keys(chosenSession).length && availableSessions.length > 1"
                      label="Sesión" :label-position="'on-border'">
@@ -42,10 +42,11 @@ import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import useEmitter from "@/composables/useEmitter";
 import dayjs from "dayjs";
+import PTitle from "@/components/lib/PTitle.vue";
 
 export default defineComponent({
     name: "StartGridList",
-    components: {StartGridCard},
+    components: {PTitle, StartGridCard},
     props: {
         grid: {
             type: Map as PropType<Map<RaceSession, Array<StartGridPosition>>>,

@@ -84,7 +84,7 @@
         </div>
       </div>
 
-      <PCard>
+      <PCard class="mt-3">
         <o-tabs v-model="activeTab">
           <o-tab-item
             v-for="(session, index) in grandPrix.sessions"
