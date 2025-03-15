@@ -20,7 +20,9 @@
       />
     </svg>
 
-    <p><slot>{{ message }}</slot></p>
+    <p class="mb-auto">
+      <slot>{{ message }}</slot>
+    </p>
 
     <button
       v-if="closable"
