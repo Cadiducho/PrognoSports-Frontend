@@ -20,7 +20,7 @@
       />
     </svg>
 
-    <p class="mb-auto">
+    <p class="mb-0">
       <slot>{{ message }}</slot>
     </p>
 
@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import {defineEmits, computed, ref} from "vue";
+import {computed, ref} from "vue";
 
 const props = withDefaults(defineProps<{
   message?: string,
@@ -59,7 +59,7 @@ const props = withDefaults(defineProps<{
   message: "",
   variant: "info",
   icon: true,
-  closable: true
+  closable: false
 });
 const emit = defineEmits<{
   afterClose: [value: boolean]
