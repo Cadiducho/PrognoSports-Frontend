@@ -11,6 +11,7 @@
         <section class="busqueda-ordenada mb-2">
           <p-button
             color="teal"
+            aria-controls="opcionesOrdenado"
             @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen"
           >
             Ordenar
@@ -100,7 +101,10 @@
 
       <div class="flex-1">
         <h3 class="select-none dark:text-gray-300">
-          Tu pronóstico
+          Tu pronóstico <label
+            v-if="changed"
+            class="tag is-warning"
+          >Modificado</label>
         </h3>
 
         <draggable
@@ -132,13 +136,13 @@
         Enviar pronóstico
       </p-button>
 
-      <div
+      <PrognoAlert
         v-else
-        class="notification is-warning is-light"
+        variant="warning"
       >
         El pronóstico debe tener {{ ruleSet.cantidadPilotosPronosticados(session) }} pilotos escogidos y ordenados (Has
         escogido {{ pilotosPronosticados.length }}).
-      </div>
+      </PrognoAlert>
     </template>
 
     <p-button
@@ -164,7 +168,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import {RaceSession} from "@/types/RaceSession";
 import {grandPrixService, notificationService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
@@ -173,10 +177,9 @@ import {RaceResult} from "@/types/RaceResult";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import {RuleSet} from "@/types/RuleSet";
 
-import {defineComponent, PropType, reactive, ref, watch} from "vue";
+import {computed, onMounted, reactive, ref} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
-import {useStyles} from "@/composables/useStyles";
 
 import draggable from 'vuedraggable'
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
@@ -186,128 +189,142 @@ import PRadio from "@/components/lib/forms/PRadio.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PCollapse from "@/components/lib/PCollapse.vue";
 
-export default defineComponent({
-  name: "SelectTipps",
-  components: {
-    PCollapse,
-    PInput,
-    PRadio,
-    PButton,
-    DraggableDriverCard,
-    PrognoAlert,
-    draggable
-  },
-  props: {
-    session: {
-      type: Object as PropType<RaceSession>,
-      required: true,
-    },
-    grandPrix: {
-      type: Object as PropType<GrandPrix>,
-      required: true,
-    },
-    ruleSet: {
-      type: Object as PropType<RuleSet>,
-      required: true,
-    },
-    drivers: {
-      type: Array as PropType<Array<Driver>>,
-      required: true,
-    },
-    startGrids: {
-      type: Map as PropType<Map<RaceSession, Array<StartGridPosition>>>,
-      required: true,
-    },
-  },
-  setup() {
-    const authStore = useAuthStore();
-    const communityStore = useCommunityStore();
-    const styles = useStyles();
+const props = defineProps<{
+  session: RaceSession,
+  grandPrix: GrandPrix,
+  ruleSet: RuleSet,
+  drivers: Array<Driver>,
+  startGrids: Map<RaceSession, Array<StartGridPosition>>
+}>();
 
-    const currentUser = authStore.loggedUser;
-    const currentCommunity = communityStore.currentCommunity;
-    const styleDriverCard = styles.styleDriverCard;
-    const styleDorsal = styles.styleDorsal;
+const authStore = useAuthStore();
+const communityStore = useCommunityStore();
 
-    return {currentUser, currentCommunity, styleDriverCard, styleDorsal};
-  },
-  data() {
-    return {
-      drag: false,
-      filtroPiloto: '',
-      opcionesOrdenadoOpen: false,
-      orderType: 1,
-      orderAscendent: false,
-      sendingPronostico: false,
+const currentUser = authStore.loggedUser;
+const currentCommunity = communityStore.currentCommunity;
 
-      pilotosPronosticados: new Array<Driver>(),
-      pilotosDisponibles: new Array<Driver>(),
-      originalPilotos: new Array<Driver>(),
-      indexedGrid: new Map<number, number>(), // Dorsal del piloto -> Posicion en la grid
+const pilotosPronosticados = reactive(new Array<Driver>());
+const pilotosGuardados = ref(new Array<Driver>());
+const pilotosDisponibles = ref(new Array<Driver>());
+const originalPilotos = new Array<Driver>();
+const indexedGrid = reactive(new Map<number, number>());
+
+const filtroPiloto = ref('');
+const opcionesOrdenadoOpen = ref(false);
+const orderType = ref(1);
+const orderAscendent = ref(true);
+const sendingPronostico = ref(false);
+
+const pilotosDisponiblesFiltrados = computed({
+  get() {
+    const sortAlfabetico = (d1: Driver, d2: Driver) => (d1.lastname < d2.lastname ? -1 : 1);
+    const sortEquipos = (d1: Driver, d2: Driver) => (d1.team.name < d2.team.name ? -1 : 1);
+    const sortDorsal = (d1: Driver, d2: Driver) => (d1.number < d2.number ? -1 : 1);
+    const sortParrilla = (d1: Driver, d2: Driver) => (indexedGrid.get(d1.number)! < indexedGrid.get(d2.number)! ? -1 : 1);
+
+    let pickedSort: (d1: Driver, d2: Driver) => (number);
+    switch (orderType.value) {
+      case 1:
+        pickedSort = sortEquipos;
+        break;
+      case 2:
+        pickedSort = sortDorsal;
+        break;
+      case 3:
+        pickedSort = sortParrilla;
+        break;
+      default:
+        pickedSort = sortAlfabetico;
     }
-  },
-  mounted() {
-    this.originalPilotos.push(...this.drivers);
-    this.pilotosDisponibles.push(...this.drivers);
+    let listaOrdenada = pilotosDisponibles.value.sort(pickedSort);
 
-    for (let [session, grid] of this.startGrids) {
-      if (session.id === this.session.id) {
-        grid.forEach(gpos => {
-          this.indexedGrid.set(gpos.driver.number, gpos.position);
-        })
-      }
+    if (!orderAscendent.value) {
+      listaOrdenada = listaOrdenada.reverse();
     }
 
-    grandPrixService.getUserTipps(this.grandPrix, this.session, this.currentCommunity, this.currentUser).then((userTipps) => {
-      for (let key in userTipps) {
-        let value: RaceResult = userTipps[key]!;
-
-        // Básicamente, si hay pronóstico. De otro modo, driver es undefined (value es {})
-        if (value.driver != undefined) {
-          // Elimino al piloto pronosticado de la lsita de disponibles
-          this.pilotosDisponibles = this.pilotosDisponibles.filter(d => d.code != value.driver.code);
-
-          // Añado el piloto pronosticado a la lista de pronósticos
-          this.pilotosPronosticados.push(value.driver);
-        }
-      }
-    });
+    return listaOrdenada
   },
-  methods: {
-    reiniciarPronostico() {
-      this.pilotosPronosticados = [];
-      this.pilotosDisponibles = [];
-      this.pilotosDisponibles.push(...this.originalPilotos);
-    },
-    async enviarPronostico() {
-      this.sendingPronostico = true;
-      let tipps: Array<RaceResult> = [];
+  set(newValue) {}
+});
 
-      this.pilotosPronosticados.forEach((driver: Driver, index: number, array: Driver[]) => {
-        tipps.push({position: index + 1, driver: {id: driver.id} as Driver} as RaceResult);
-      });
+const changed = computed(() => {
+  return pilotosGuardados.value.length !== pilotosPronosticados.length
+    || pilotosGuardados.value.some((d, index) => d.code !== pilotosPronosticados[index].code);
+})
 
-      try {
-        await grandPrixService.postUserTipps(this.grandPrix, this.session, this.currentCommunity, tipps);
-        notificationService.showNotification("¡Has guardado tus pronósticos!");
-      } catch (error: any) {
-        let message = "Error guardando tus pronósticos: " + error.message;
+const aplicaFiltrito = (driver: Driver) => {
+  let filtroLowerCase = filtroPiloto.value.toLowerCase();
+  return driver.lastname.toLowerCase().includes(filtroLowerCase)
+    || driver.firstname.toLowerCase().includes(filtroLowerCase)
+    || driver.team.name.toLowerCase().includes(filtroLowerCase)
+    || driver.team.longname.toLowerCase().includes(filtroLowerCase)
+    || driver.team.carname.toLowerCase().includes(filtroLowerCase);
+}
 
-        notificationService.showNotification(message, "error");
-      } finally {
-        setTimeout(() => {
-          this.sendingPronostico = false;
-        }, 1000);
-      }
-    },
-    aplicaFiltrito(driver: Driver) {
-      let filtroLowerCase = this.filtroPiloto.toLowerCase();
-      return driver.lastname.toLowerCase().includes(filtroLowerCase)
-        || driver.firstname.toLowerCase().includes(filtroLowerCase)
-        || driver.team.name.toLowerCase().includes(filtroLowerCase)
-        || driver.team.longname.toLowerCase().includes(filtroLowerCase)
-        || driver.team.carname.toLowerCase().includes(filtroLowerCase);
+const reiniciarPronostico = () => {
+  pilotosPronosticados.splice(0, pilotosPronosticados.length);
+  pilotosDisponibles.value.splice(0, pilotosDisponibles.value.length);
+  pilotosDisponibles.value.push(...originalPilotos);
+}
+
+const enviarPronostico = async () => {
+  sendingPronostico.value = true;
+  let tipps: Array<RaceResult> = [];
+
+  pilotosPronosticados.forEach((driver: Driver, index: number, array: Driver[]) => {
+    tipps.push({position: index + 1, driver: {id: driver.id} as Driver} as RaceResult);
+  });
+
+  try {
+    await grandPrixService.postUserTipps(props.grandPrix, props.session, currentCommunity, tipps);
+    notificationService.showNotification("¡Has guardado tus pronósticos!");
+
+    // Establecemos en la copia guardada los nuevos pronósticos, de esta forma ya no avisará al usuario de que ha cambiado
+    pilotosGuardados.value = [];
+    pilotosGuardados.value.push(...pilotosPronosticados);
+  } catch (error: any) {
+    let message = "Error guardando tus pronósticos: " + error.message;
+
+    notificationService.showNotification(message, "error");
+  } finally {
+    setTimeout(() => {
+      sendingPronostico.value = false;
+    }, 1000);
+  }
+}
+
+onMounted(async() => {
+  originalPilotos.push(...props.drivers);
+  pilotosDisponibles.value.push(...props.drivers);
+
+  for (let [session, grid] of props.startGrids) {
+    if (session.id === props.session.id) {
+      grid.forEach(gpos => {
+        indexedGrid.set(gpos.driver.number, gpos.position);
+      })
     }
   }
-});
+
+  try {
+    const userTipps = await grandPrixService.getUserTipps(props.grandPrix, props.session, currentCommunity, currentUser)
+    for (let key in userTipps) {
+      let value: RaceResult = userTipps[key]!;
+
+      // Básicamente, si hay pronóstico. De otro modo, driver es undefined (value es {})
+      if (value.driver != undefined) {
+        // Elimino al piloto pronosticado de la lsita de disponibles
+        pilotosDisponibles.value = pilotosDisponibles.value.filter(d => d.code != value.driver.code);
+
+        // Añado el piloto pronosticado a la lista de pronósticos
+        pilotosPronosticados.push(value.driver);
+      }
+    }
+  } catch (error) {
+    console.error("Error obteniendo los pronósticos del usuario", error);
+  } finally {
+    // Guardamos una copia de lo que tenía originalmente para comparar si ha cambiado
+    pilotosGuardados.value.push(...pilotosPronosticados);
+  }
+})
+
 </script>
