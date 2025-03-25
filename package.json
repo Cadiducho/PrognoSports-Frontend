@@ -15,7 +15,7 @@
     "@vue-leaflet/vue-leaflet": "0.10.1",
     "@vueuse/core": "12.7.0",
     "apexcharts": "4.5.0",
-    "axios": "1.7.9",
+    "axios": "1.8.2",
     "bulma-calendar": "6.1.19",
     "dayjs": "1.11.13",
     "leaflet": "1.9.4",
