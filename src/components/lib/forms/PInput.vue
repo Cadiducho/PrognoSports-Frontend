@@ -1,5 +1,8 @@
 <template>
-  <fieldset class="w-full mb-3">
+  <fieldset
+    class="w-full"
+    :class="{'mb-3': !noMargin}"
+  >
     <p-label
       v-if="label"
       :for="name"
@@ -31,12 +34,14 @@ const props = withDefaults(defineProps<{
   type?: string;
   placeholder?: string;
   icon?: string;
+  noMargin?: boolean;
 }>(), {
-    label: '',
-    name: '',
-    maxLenght: 128,
-    type: 'text',
-    placeholder: '',
-    icon: '',
+  label: '',
+  name: '',
+  maxLenght: 128,
+  type: 'text',
+  placeholder: '',
+  icon: '',
+  noMargin: false
 });
 </script>

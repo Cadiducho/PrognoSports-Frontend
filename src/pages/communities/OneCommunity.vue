@@ -138,33 +138,27 @@
               Usuarios participando
             </p>
 
-            <div class="busqueda-ordenada">
-              <o-button
-                label="Ordenar"
-                variant="primary"
-                aria-controls="opcionesOrdenado"
+            <section class="busqueda-ordenada">
+              <p-button
+                color="teal"
                 @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen"
+              >
+                Ordenar
+              </p-button>
+
+              <PInput
+                v-model="searchInput"
+                placeholder="Buscar miembro..."
+                no-margin
               />
+            </section>
 
-              <o-field class="is-fullwidth">
-                <o-input
-                  v-model="searchInput"
-                  placeholder="Buscar miembro..."
-                  type="search"
-                  icon-pack="fas"
-                  icon="search"
-                />
-              </o-field>
-            </div>
-
-            <o-collapse
+            <PCollapse
               :open="opcionesOrdenadoOpen"
               class="box-ordenado"
             >
-              <template #trigger />
-
               <div class="box mt-1">
-                <label class="label">Orderar lista de pilotos</label>
+                <label class="label">Orderar lista de usuarios</label>
                 <div class="field mb-0">
                   <PRadio
                     v-model="orderType"
@@ -213,7 +207,7 @@
                   </PRadio>
                 </div>
               </div>
-            </o-collapse>
+            </PCollapse>
 
             <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-rows-1 sm:grid-rows-2 lg:grid-rows-3 xl:grid-rows-4 gap-2">
               <UserInCommunityCard
@@ -249,10 +243,15 @@ import RulesAndPointsTable from "@/components/communities/RulesAndPointsTable.vu
 import PRadio from "@/components/lib/forms/PRadio.vue";
 import PSwitch from "@/components/lib/forms/PSwitch.vue";
 import PCard from "@/components/lib/PCard.vue";
+import PCollapse from "@/components/lib/PCollapse.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
+import PInput from "@/components/lib/forms/PInput.vue";
 
 export default defineComponent({
     name: "OneCommunity",
     components: {
+      PInput, PButton,
+      PCollapse,
       PCard,
         PRadio,
         RulesAndPointsTable,
