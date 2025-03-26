@@ -11,7 +11,6 @@
         <section class="busqueda-ordenada mb-2">
           <p-button
             color="teal"
-            aria-controls="opcionesOrdenado"
             @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen"
           >
             Ordenar
@@ -176,7 +175,6 @@ import {Driver} from "@/types/Driver";
 import {RaceResult} from "@/types/RaceResult";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import {RuleSet} from "@/types/RuleSet";
-
 import {computed, onMounted, reactive, ref} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
@@ -188,6 +186,7 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import PRadio from "@/components/lib/forms/PRadio.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PCollapse from "@/components/lib/PCollapse.vue";
+import useEmitter from "@/composables/useEmitter";
 
 const props = defineProps<{
   session: RaceSession,
@@ -199,6 +198,7 @@ const props = defineProps<{
 
 const authStore = useAuthStore();
 const communityStore = useCommunityStore();
+const emitter = useEmitter();
 
 const currentUser = authStore.loggedUser;
 const currentCommunity = communityStore.currentCommunity;
@@ -278,6 +278,9 @@ const enviarPronostico = async () => {
   try {
     await grandPrixService.postUserTipps(props.grandPrix, props.session, currentCommunity, tipps);
     notificationService.showNotification("¡Has guardado tus pronósticos!");
+
+    // Emitimos el evento para que la tabla de resultados sepa que se han actualizado los pronósticos
+    emitter.emit('updatedTipps', { session: props.session, tipps: pilotosPronosticados });
 
     // Establecemos en la copia guardada los nuevos pronósticos, de esta forma ya no avisará al usuario de que ha cambiado
     pilotosGuardados.value = [];

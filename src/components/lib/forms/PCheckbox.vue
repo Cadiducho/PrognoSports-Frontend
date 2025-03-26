@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center mb-4 me-4">
+  <div class="flex items-center me-4">
     <input
       :id="`checkbox-${id}`"
       type="checkbox"
