@@ -53,7 +53,7 @@
       </template>
     </draggable>
 
-    <section class="block mt-4">
+    <section class="flex flex-col my-4 gap-2">
       <p-checkbox
         id="notSendNotification"
         v-model="notSendNotification"

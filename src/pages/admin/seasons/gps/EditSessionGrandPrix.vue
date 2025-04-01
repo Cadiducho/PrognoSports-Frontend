@@ -49,7 +49,7 @@
             {{ session.humanName() }} en {{ grandPrix.name }}
           </PTitle>
 
-          <PCard>
+          <PCard class="mb-2">
             <PrognoAlert
               v-if="session.defineGridOf?.length"
               variant="info"
@@ -73,7 +73,7 @@
                 @input="session.date = $event;"
               />
 
-              <div class="flex flex-wrap mt-2">
+              <div class="flex flex-wrap my-2">
                 <PLabel
                   class="w-full"
                   label="Define la parrilla de salida de las siguientes sesiones:"
