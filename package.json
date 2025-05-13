@@ -11,7 +11,7 @@
   "dependencies": {
     "@oruga-ui/oruga-next": "0.6.0",
     "@oruga-ui/theme-bulma": "0.2.11",
-    "@vitejs/plugin-vue": "5.2.3",
+    "@vitejs/plugin-vue": "5.2.4",
     "@vue-leaflet/vue-leaflet": "0.10.1",
     "@vueuse/core": "13.1.0",
     "apexcharts": "4.7.0",
@@ -40,7 +40,7 @@
     "postcss": "8.5.3",
     "sass": "1.77.0",
     "typescript": "5.8.3",
-    "typescript-eslint": "8.31.1",
+    "typescript-eslint": "8.32.1",
     "vite": "6.3.5"
   }
 }
