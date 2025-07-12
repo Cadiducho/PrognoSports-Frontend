@@ -70,7 +70,7 @@ const labelClasses = computed(() => ({
         @apply text-warning-600 accent-warning-500 focus:ring-warning-500 dark:focus:ring-warning-600;
     }
     &.danger {
-        @apply text-errpr-600 accent-error-500 focus:ring-error-500 dark:focus:ring-error-600;
+        @apply text-error-600 accent-error-500 focus:ring-error-500 dark:focus:ring-error-600;
     }
 }
 </style>
