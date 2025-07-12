@@ -15,6 +15,18 @@
       >
         No perteneces aún a ninguna comunidad. Para poder competir, debes unirte a alguna comunidad.
       </PrognoAlert>
+
+      <p-button
+        class="mb-4"
+        color="primary"
+        icon="fa fa-plus"
+        :to="{name: 'communitiesCreate'}"
+        tag="router-link"
+        disabled
+      >
+        Nueva comunidad
+      </p-button>
+
       <o-tabs
         v-model="activeTab"
         variant="boxed"
@@ -114,6 +126,7 @@ import PCard from "@/components/lib/PCard.vue";
 import CommunityListItem from "@/components/communities/CommunityListItem.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
 
 const emitter = useEmitter();
 const authStore = useAuthStore();

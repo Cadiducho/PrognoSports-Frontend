@@ -74,8 +74,8 @@ const alertClasses = computed(() => {
   const baseClasses = "flex items-center text-sm font-bold px-4 py-3 mb-4";
   const variantClasses = {
     info: "bg-blue-100 dark:bg-blue-400 text-blue-700 dark:text-white border-blue-500",
-    danger: "bg-red-100 text-red-500 border border-red-200",
-    warning: "bg-yellow-100 border border-yellow-200 text-yellow-600",
+    danger: "bg-error-100 text-error-500 border border-error-200",
+    warning: "bg-warning-100 border border-warning-200 text-warning-600",
     success: "bg-green-100 border border-green-200 text-green-500"
   };
   return `${baseClasses} ${variantClasses[props.variant || 'info']}`;

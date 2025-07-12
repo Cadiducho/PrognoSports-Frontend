@@ -47,7 +47,7 @@ const checkboxClasses = computed(() => ({
   @apply cursor-pointer w-5 h-5 rounded focus:ring-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800;
 
   &.primary {
-    @apply text-purple-600 accent-purple-500 focus:ring-purple-500 dark:focus:ring-purple-600;
+    @apply text-brand-600 accent-brand-500 focus:ring-brand-500 dark:focus:ring-brand-600;
   }
 
   &.secondary {
@@ -59,11 +59,11 @@ const checkboxClasses = computed(() => ({
   }
 
   &.warning {
-    @apply text-yellow-600 accent-yellow-500 focus:ring-yellow-500 dark:focus:ring-yellow-600;
+    @apply text-warning-600 accent-warning-500 focus:ring-warning-500 dark:focus:ring-warning-600;
   }
 
   &.danger {
-    @apply text-red-600 accent-red-500 focus:ring-red-500 dark:focus:ring-red-600;
+    @apply text-error-600 accent-error-500 focus:ring-error-500 dark:focus:ring-error-600;
   }
 }
 </style>

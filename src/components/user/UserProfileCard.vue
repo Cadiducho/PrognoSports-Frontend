@@ -1,84 +1,116 @@
 <template>
+  <div class="section">
+    <div class="container">
+      <div class="columns is-mobile">
+        <div class="column is-1" />
+        <div class="column">
+          <figure class="image">
+            <img
+              :class="{ photoOpacity : !showSettingsButton}"
+              :src="profile.profileImage()"
+              alt="Profile image"
+            >
 
-    <div class="section">
-        <div class="container">
-            <div class="columns is-mobile">
-                <div class="column is-1"></div>
-                <div class="column">
-                    <figure class="image">
-                        <img :class="{ photoOpacity : !showSettingsButton}" :src="profile.profileImage()" alt="Profile image"/>
-
-                        <label v-if="!showSettingsButton" class="icon edit-icon">
-                            <i class="fa fa-camera"></i>
-                            <input @change="onFileChange" accept="image/*" tabindex="-1" type="file" hidden>
-                        </label>
-                    </figure>
-                </div>
-                <div class="column is-1"></div>
-                <div class="column is-two-thirds content">
-                    <p class="is-flex is-mobile is-justify-content-space-between">
-                        <span class="title is-bold">
-                            {{ profile.username }}
-
-                            <span class="tag" :style="profile.styleRankTag()">{{ profile.rank.name }}</span>
-                        </span>
-
-                        <o-button v-if="showSettingsButton && profile.id === currentUser.id"
-                                  variant="primary" icon-left="cog" tag="router-link" to="/settings">
-                            Ajustes
-                        </o-button>
-                    </p>
-                    <p v-if="profile.bio">
-                        <span class="subtitle">
-                            <small>{{ profile.bio }}</small>
-                        </span>
-                    </p>
-
-                    <div class="block mb-1">
-                        <span class="icon-text">
-                            <span class="icon mr-2">
-                                <i class="fas fa-clock"></i>
-                            </span>
-                            Última conexión: {{ dateDiff(profile.last_activity) }}
-                        </span>
-                    </div>
-                    <div class="block mb-1">
-                        <span class="icon-text">
-                            <span class="icon mr-2">
-                                <i class="fas fa-calendar"></i>
-                            </span>
-                            Registrado el {{ humanDateTime(profile.created) }}
-                        </span>
-                    </div>
-                    <div v-if="profile.location" class="block mb-1">
-                        <span class="icon-text">
-                            <span class="icon mr-2">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </span>
-                            {{ profile.location }}
-                        </span>
-                    </div>
-                    <div v-if="profile.birthdate" class="block mb-1">
-                        <span class="icon-text">
-                            <span class="icon mr-2">
-                                <i class="fas fa-birthday-cake"></i>
-                            </span>
-                            {{ humanDate(profile.birthdate) }}
-                        </span>
-                    </div>
-                </div>
-            </div>
+            <label
+              v-if="!showSettingsButton"
+              class="icon edit-icon"
+            >
+              <i class="fa fa-camera" />
+              <input
+                accept="image/*"
+                tabindex="-1"
+                type="file"
+                hidden
+                @change="onFileChange"
+              >
+            </label>
+          </figure>
         </div>
+        <div class="column is-1" />
+        <div class="column is-two-thirds content">
+          <p class="is-flex is-mobile is-justify-content-space-between">
+            <span class="title is-bold">
+              {{ profile.username }}
+
+              <span
+                class="tag"
+                :style="profile.styleRankTag()"
+              >{{ profile.rank.name }}</span>
+            </span>
+
+            <PButton
+              v-if="showSettingsButton && profile.id === currentUser.id"
+              color="primary"
+              icon="fas fa-cog"
+              tag="router-link"
+              to="/settings"
+            >
+              Ajustes
+            </PButton>
+          </p>
+          <p v-if="profile.bio">
+            <span class="subtitle">
+              <small>{{ profile.bio }}</small>
+            </span>
+          </p>
+
+          <div class="block mb-1">
+            <span class="icon-text">
+              <span class="icon mr-2">
+                <i class="fas fa-clock" />
+              </span>
+              Última conexión: {{ dateDiff(profile.last_activity) }}
+            </span>
+          </div>
+          <div class="block mb-1">
+            <span class="icon-text">
+              <span class="icon mr-2">
+                <i class="fas fa-calendar" />
+              </span>
+              Registrado el {{ humanDateTime(profile.created) }}
+            </span>
+          </div>
+          <div
+            v-if="profile.location"
+            class="block mb-1"
+          >
+            <span class="icon-text">
+              <span class="icon mr-2">
+                <i class="fas fa-map-marker-alt" />
+              </span>
+              {{ profile.location }}
+            </span>
+          </div>
+          <div
+            v-if="profile.birthdate"
+            class="block mb-1"
+          >
+            <span class="icon-text">
+              <span class="icon mr-2">
+                <i class="fas fa-birthday-cake" />
+              </span>
+              {{ humanDate(profile.birthdate) }}
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <UploadFileModal v-show="showEditImageModal" @close="showEditImageModal = false"
-                     :file="selectedFile" stencil-component="circle"
-                     @submit-file="uploadProfileImage">
-        <template v-slot:title>Cambiar imagen de perfil</template>
-        <template v-slot:label>¿Quieres cambiar tu imagen de perfil?</template>
-    </UploadFileModal>
-
-
+  <UploadFileModal
+    v-show="showEditImageModal"
+    :file="selectedFile"
+    stencil-component="circle"
+    @close="showEditImageModal = false"
+    @submit-file="uploadProfileImage"
+  >
+    <template #title>
+      Cambiar imagen de perfil
+    </template>
+    <template #label>
+      ¿Quieres cambiar tu imagen de perfil?
+    </template>
+  </UploadFileModal>
 </template>
 
 <script lang="ts">
@@ -90,10 +122,12 @@ import {User} from "@/types/User";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import UploadFileModal from "@/components/lib/UploadFileModal.vue";
 import {notificationService, userService} from "@/_services";
+import PButton from "@/components/lib/forms/PButton.vue";
 
 export default defineComponent({
     name: "UserProfileCard",
     components: {
+      PButton,
         UploadFileModal,
         PrognoModal
     },

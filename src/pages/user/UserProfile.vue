@@ -1,36 +1,26 @@
 <template>
-    <loading v-if="isLoading" />
-    <div v-else>
-        <section class="section" v-if="profile.id === 0">
-            <div class="container">
-                <div class="columns is-vcentered">
-                    <div class="column has-text-centered">
-                        <h1 class="title">Perfil no encontrado</h1>
-                        <p class="subtitle">Este perfil no existe o no ha sido encontrado. Vuelve a inicio o inténtalo de nuevo.</p>
+  <loading v-if="isLoading" />
 
-                        <o-button @click="$router.go(-1)" class="mr-2" variant="danger" outlined>Atrás</o-button>
-                        <o-button tag="router-link" class="mr-2" variant="primary" to="/">Inicio</o-button>
-                        <o-button tag="router-link" variant="info" :to="'/u/'+currentUser.id">Mi perfil</o-button>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <div v-else>
-            <article class="box">
+  <template v-else>
+    <UserNotFound v-if="profile.id === 0" />
 
-                <UserProfileCard :profile="profile" :showSettingsButton="true" />
+    <template v-else>
+      <PCard>
+        <UserProfileCard
+          :profile="profile"
+          :show-settings-button="true"
+        />
 
-                <hr/>
+        <hr>
 
-                <UserLevelResume :user="profile" />
+        <UserLevelResume :user="profile" />
+      </PCard>
 
-            </article>
-
-            <div class="box">
-                <!-- ToDo: Gráficas -->
-            </div>
-        </div>
-    </div>
+      <PCard class="mt-2">
+        <!-- ToDo: Gráficas -->
+      </PCard>
+    </template>
+  </template>
 </template>
 
 <script lang="ts">
@@ -44,10 +34,14 @@ import {useCommunityStore} from "@/store/communityStore";
 import useEmitter from "@/composables/useEmitter";
 import {useDayjs} from "@/composables/useDayjs";
 import UserProfileCard from "@/components/user/UserProfileCard.vue";
+import UserNotFound from "@/pages/user/UserNotFound.vue";
+import PCard from "@/components/lib/PCard.vue";
 
 export default defineComponent({
     name: "UserProfile",
     components: {
+      PCard,
+      UserNotFound,
         UserProfileCard,
         UserLevelResume
     },

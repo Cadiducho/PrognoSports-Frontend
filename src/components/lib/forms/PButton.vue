@@ -95,7 +95,7 @@ export default defineComponent({
         }
 
         const buttonClasses = computed(() => ({
-            'inline-flex justify-center items-center gap-2': true, // Estilos base
+            'h-max inline-flex justify-center items-center gap-2': true, // Estilos base
             'small': props.size === 'small',
             'medium': props.size === 'medium',
             'large': props.size === 'large',
@@ -119,115 +119,115 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .small {
-    @apply py-2 px-3 text-sm;
+  @apply py-1 px-3 text-sm;
 }
 .medium {
-    @apply py-2 px-4 text-base;
+  @apply py-2 px-4 text-base;
 }
 .large {
-    @apply py-3 px-5 text-lg;
+  @apply py-3 px-5 text-lg;
 }
 .solid {
-    @apply border border-transparent shadow-sm font-semibold;
+  @apply border border-transparent shadow-sm font-semibold;
 
-    &.teal {
-        @apply bg-teal-400 hover:bg-teal-500 dark:focus:ring-offset-gray-800 text-white;
-    }
-    &.primary, &.purple {
-        @apply bg-primary hover:bg-primary-hover dark:focus:ring-offset-gray-800 text-white;
-    }
-    &.red, &.danger {
-        @apply bg-red-500 hover:bg-red-600 dark:focus:ring-offset-gray-800 text-white;
-    }
-    &.yellow, &.warning {
-        @apply bg-yellow-600 hover:bg-yellow-600 dark:focus:ring-offset-gray-800 text-white;
-    }
-    &.green, &.success {
-        @apply bg-green-500 hover:bg-green-600 dark:focus:ring-offset-gray-800 text-white;
-    }
-    &.blue, &.info {
-        @apply bg-blue-500 hover:bg-blue-600 dark:focus:ring-offset-gray-800 text-white;
-    }
-    &.pink {
-        @apply bg-pink-500 hover:bg-pink-600 dark:focus:ring-offset-gray-800 text-white;
-    }
+  &.teal {
+    @apply bg-tertiary-500 hover:bg-tertiary-600 dark:focus:ring-offset-gray-dark-900 text-gray-light-50 dark:text-gray-dark-900;
+  }
+  &.primary, &.purple {
+    @apply bg-brand-accent-500 hover:bg-brand-accent-600 text-gray-light-50 dark:text-gray-light-50;
+  }
+  &.red, &.danger {
+    @apply bg-error-500 hover:bg-error-600 dark:focus:ring-offset-gray-dark-900 text-gray-light-50;
+  }
+  &.yellow, &.warning {
+    @apply bg-warning-500 hover:bg-warning-600 dark:focus:ring-offset-gray-dark-900 text-gray-dark-900 dark:text-gray-light-50;
+  }
+  &.green, &.success {
+    @apply bg-success-500 hover:bg-success-600 dark:focus:ring-offset-gray-dark-900 text-gray-light-50;
+  }
+  &.blue, &.info {
+    @apply bg-azure-500 hover:bg-azure-600 dark:focus:ring-offset-gray-dark-900 text-gray-light-50;
+  }
+  &.pink {
+    @apply bg-pink-500 hover:bg-pink-600 dark:focus:ring-offset-gray-dark-900 text-gray-light-50;
+  }
 }
 .outline {
-    @apply border-0 shadow-sm font-semibold;
+  @apply border border-current shadow-sm font-semibold bg-transparent;
 
-    &.teal, &.primary {
-        @apply text-teal-500 border-teal-500 hover:bg-teal-500 hover:text-white;
-    }
-    &.purple {
-        @apply text-purple-500 border-purple-500 hover:bg-purple-500 hover:text-white;
-    }
-    &.red, &.danger {
-        @apply text-red-500 border-red-500 hover:bg-red-500 hover:text-white;
-    }
-    &.yellow, &.warning {
-        @apply text-yellow-600 border-yellow-600 hover:bg-yellow-600 hover:text-white;
-    }
-    &.green, &.success {
-        @apply text-green-500 border-green-500 hover:bg-green-500 hover:text-white;
-    }
-    &.blue, &.info {
-        @apply text-blue-500 border-blue-500 hover:bg-blue-500 hover:text-white;
-    }
-    &.pink {
-        @apply text-pink-500 border-pink-500 hover:bg-pink-500 hover:text-white;
-    }
+  &.teal {
+    @apply text-tertiary-500 hover:bg-tertiary-500 hover:text-gray-light-50 dark:hover:text-gray-dark-900;
+  }
+  &.primary, &.purple {
+    @apply text-brand-accent-500 hover:bg-brand-accent-500 hover:text-gray-light-50 dark:hover:text-gray-dark-900;
+  }
+  &.red, &.danger {
+    @apply text-error-500 hover:bg-error-500 hover:text-gray-light-50;
+  }
+  &.yellow, &.warning {
+    @apply text-warning-500 hover:bg-warning-500 hover:text-gray-dark-900 dark:hover:text-gray-light-50;
+  }
+  &.green, &.success {
+    @apply text-success-500 hover:bg-success-500 hover:text-gray-light-50;
+  }
+  &.blue, &.info {
+    @apply text-azure-500 hover:bg-azure-500 hover:text-gray-light-50;
+  }
+  &.pink {
+    @apply text-pink-500 hover:bg-pink-500 hover:text-gray-light-50;
+  }
 }
 .soft {
-    @apply border border-transparent shadow-sm font-semibold;
+  @apply border border-transparent shadow-sm font-semibold;
 
-    &.teal {
-        @apply bg-teal-100 hover:bg-teal-200 dark:focus:ring-offset-gray-800 text-teal-500;
-    }
-    &.purple, &.primary {
-        @apply bg-purple-100 hover:bg-purple-200 dark:focus:ring-offset-gray-800 text-purple-500;
-    }
-    &.red, &.danger {
-        @apply bg-red-100 hover:bg-red-200 dark:focus:ring-offset-gray-800 text-red-500;
-    }
-    &.yellow, &.warning {
-        @apply bg-yellow-100 hover:bg-yellow-200 dark:focus:ring-offset-gray-800 text-yellow-500 dark:text-yellow-900;
-    }
-    &.green, &.success {
-        @apply bg-green-100 hover:bg-green-200 dark:focus:ring-offset-gray-800 text-green-500;
-    }
-    &.blue, &.info {
-        @apply bg-blue-100 hover:bg-blue-200 dark:bg-blue-300 dark:focus:ring-offset-gray-800 text-blue-500 dark:text-blue-900;
-    }
-    &.pink {
-        @apply bg-pink-100 hover:bg-pink-200 dark:focus:ring-offset-gray-800 text-pink-500;
-    }
+  &.teal {
+    @apply bg-tertiary-100 hover:bg-tertiary-200 dark:bg-tertiary-900/30 dark:hover:bg-tertiary-800/50 text-tertiary-600 dark:text-tertiary-300;
+  }
+  &.primary, &.purple {
+    @apply bg-brand-100 hover:bg-brand-200 dark:bg-brand-900/30 dark:hover:bg-brand-800/50 text-brand-600 dark:text-brand-300;
+  }
+  &.red, &.danger {
+    @apply bg-error-100 hover:bg-error-200 dark:bg-error-900/30 dark:hover:bg-error-800/50 text-error-600 dark:text-error-300;
+  }
+  &.yellow, &.warning {
+    @apply bg-warning-100 hover:bg-warning-200 dark:bg-warning-900/30 dark:hover:bg-warning-800/50 text-warning-600 dark:text-warning-300;
+  }
+  &.green, &.success {
+    @apply bg-success-100 hover:bg-success-200 dark:bg-success-900/30 dark:hover:bg-success-800/50 text-success-600 dark:text-success-300;
+  }
+  &.blue, &.info {
+    @apply bg-azure-100 hover:bg-azure-200 dark:bg-azure-900/30 dark:hover:bg-azure-800/50 text-azure-600 dark:text-azure-300;
+  }
+  &.pink {
+    @apply bg-pink-100 hover:bg-pink-200 dark:bg-pink-900/30 dark:hover:bg-pink-800/50 text-pink-600 dark:text-pink-300;
+  }
 }
 .ghost {
-    @apply border border-transparent shadow-sm font-semibold;
+  @apply border border-transparent shadow-sm font-semibold bg-transparent;
 
-    &.teal {
-        @apply bg-transparent hover:bg-teal-100 dark:focus:ring-offset-gray-800 text-teal-500;
-    }
-    &.purple, &.primary {
-        @apply bg-transparent hover:bg-purple-100 dark:focus:ring-offset-gray-800 text-purple-500;
-    }
-    &.red, &.danger {
-        @apply bg-transparent hover:bg-red-100 dark:focus:ring-offset-gray-800 text-red-500;
-    }
-    &.yellow, &.warning {
-        @apply bg-transparent hover:bg-yellow-100 dark:focus:ring-offset-gray-800 text-yellow-500;
-    }
-    &.green, &.success {
-        @apply bg-transparent hover:bg-green-100 dark:focus:ring-offset-gray-800 text-green-500;
-    }
-    &.blue, &.info {
-        @apply bg-transparent hover:bg-blue-100 dark:focus:ring-offset-gray-800 text-blue-500;
-    }
-    &.pink {
-        @apply bg-transparent hover:bg-pink-100 dark:focus:ring-offset-gray-800 text-pink-500;
-    }
+  &.teal {
+    @apply hover:bg-tertiary-100 dark:hover:bg-tertiary-900/30 text-tertiary-600 dark:text-tertiary-300;
+  }
+  &.primary, &.purple {
+    @apply hover:bg-brand-100 dark:hover:bg-brand-900/30 text-brand-600 dark:text-brand-300;
+  }
+  &.red, &.danger {
+    @apply hover:bg-error-100 dark:hover:bg-error-900/30 text-error-600 dark:text-error-300;
+  }
+  &.yellow, &.warning {
+    @apply hover:bg-warning-100 dark:hover:bg-warning-900/30 text-warning-600 dark:text-warning-300;
+  }
+  &.green, &.success {
+    @apply hover:bg-success-100 dark:hover:bg-success-900/30 text-success-600 dark:text-success-300;
+  }
+  &.blue, &.info {
+    @apply hover:bg-azure-100 dark:hover:bg-azure-900/30 text-azure-600 dark:text-azure-300;
+  }
+  &.pink {
+    @apply hover:bg-pink-100 dark:hover:bg-pink-900/30 text-pink-600 dark:text-pink-300;
+  }
 }
 .disabled {
-    @apply opacity-50 cursor-not-allowed;
+  @apply opacity-50 cursor-not-allowed;
 }
 </style>

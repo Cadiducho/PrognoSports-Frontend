@@ -69,14 +69,13 @@
                   type="text"
                   :value="community.invitation"
                 >
-                <p class="control">
-                  <o-button
-                    class="button is-primary is-small is-rounded"
-                    @click="clickInvitation"
-                  >
-                    Copiar
-                  </o-button>
-                </p>
+                <PButton
+                  class="button is-primary is-small is-rounded"
+                  size="small"
+                  @click="clickInvitation"
+                >
+                  Copiar
+                </PButton>
               </o-field>
 
               <p class="card-text">

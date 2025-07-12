@@ -1,64 +1,102 @@
 <template>
-    <div id="adminDrivers" class="box">
-        <PTitle class="mb-5" name="Administración de competiciones"/>
+  <div
+    id="adminDrivers"
+    class="box"
+  >
+    <PTitle
+      class="mb-5"
+      name="Administración de competiciones"
+    />
 
-        <loading v-if="isLoading"/>
-        <template v-else>
+    <loading v-if="isLoading" />
+    <template v-else>
+      <div class="block">
+        <PButton
+          color="info"
+          to="/admin/competitions"
+          tag="router-link"
+          icon="fa fa-chevron-left"
+        >
+          Lista de competiciones
+        </PButton>
+      </div>
 
-            <div class="block">
-                <o-button variant="link" to="/admin/competitions" tag="router-link">Lista de competiciones</o-button>
-            </div>
+      <p v-if="!thereIsCompetition">
+        La competición {{ competitionId }} no ha sido encontrada
+      </p>
+      <template v-else>
+        <h2 class="title">
+          Datos de la competición
+        </h2>
 
-            <p v-if="!thereIsCompetition">La competición {{ competitionId }} no ha sido encontrada</p>
-            <template v-else>
+        <o-field label="Nombre de la competición">
+          <o-input
+            v-model="competition.name"
+            name="name"
+            expanded
+            lazy
+          />
+        </o-field>
 
-                <h2 class="title">Datos de la competición</h2>
+        <o-field label="Nombre completo y con patrocinadores">
+          <o-input
+            v-model="competition.fullname"
+            name="fullname"
+            expanded
+            lazy
+          />
+        </o-field>
 
-                <o-field label="Nombre de la competición">
-                    <o-input v-model="competition.name" name="name" expanded lazy></o-input>
-                </o-field>
-
-                <o-field label="Nombre completo y con patrocinadores">
-                    <o-input v-model="competition.fullname" name="fullname" expanded lazy></o-input>
-                </o-field>
-
-                <o-field label="Código de la competición">
-                    <o-input v-model="competition.code" name="code" expanded lazy></o-input>
-                </o-field>
+        <o-field label="Código de la competición">
+          <o-input
+            v-model="competition.code"
+            name="code"
+            expanded
+            lazy
+          />
+        </o-field>
 
 
-                <o-field label="Temporada actual">
-                    <o-select v-model="competition.currentSeason.id" placeholder="Selecciona la temporada actual" expanded>
-                        <option
-                            v-for="season in compSeasons"
-                            :value="season.id"
-                            :key="season.id">
-                            {{ season.name }} (#{{ season.id }})
-                        </option>
-                    </o-select>
-                </o-field>
+        <o-field label="Temporada actual">
+          <o-select
+            v-model="competition.currentSeason.id"
+            placeholder="Selecciona la temporada actual"
+            expanded
+          >
+            <option
+              v-for="season in compSeasons"
+              :key="season.id"
+              :value="season.id"
+            >
+              {{ season.name }} (#{{ season.id }})
+            </option>
+          </o-select>
+        </o-field>
 
-                <div class="columns">
-                    <div class="column">
-                        <o-field label="Reglas">
-                            <o-input v-model="competition.rules" type="textarea"></o-input>
-                        </o-field>
-                    </div>
-                    <div class="column content">
-                        <div v-html="previewRules"></div>
-                    </div>
-                </div>
+        <div class="columns">
+          <div class="column">
+            <o-field label="Reglas">
+              <o-input
+                v-model="competition.rules"
+                type="textarea"
+              />
+            </o-field>
+          </div>
+          <div class="column content">
+            <div v-html="previewRules" />
+          </div>
+        </div>
 
-                <hr/>
-                <o-field>
-                    <p class="control">
-                        <o-button :disabled="!isDataOk()" label="Editar competición" @click="editCompetition()" variant="primary"/>
-                    </p>
-                </o-field>
-            </template>
-        </template>
-
-    </div>
+        <hr>
+        <PButton
+          :disabled="!isDataOk()"
+          label="Editar competición"
+          color="primary"
+          @click="editCompetition()"
+        />
+      </template>
+    </template>
+  </div>
 </template>
 
 <script lang="ts">
@@ -71,10 +109,12 @@ import {marked} from "marked";
 
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
+import PButton from "@/components/lib/forms/PButton.vue";
 
 export default defineComponent({
     name: "EditCompetition",
     components: {
+      PButton,
         AlertNoPermission,
         PTitle,
     },
@@ -91,6 +131,11 @@ export default defineComponent({
             competition: {} as Competition,
             competitionId: this.$route.params.competition,
             compSeasons: new Array<Season>(),
+        }
+    },
+    computed: {
+        previewRules() {
+            return marked(this.competition?.rules ?? "");
         }
     },
     mounted() {
@@ -137,11 +182,6 @@ export default defineComponent({
             }).catch((error) => {
                 notificationService.showNotification(error.message, "error");
             });
-        }
-    },
-    computed: {
-        previewRules() {
-            return marked(this.competition?.rules ?? "");
         }
     }
 });

@@ -17,7 +17,7 @@
       <article class="w-full md:w-1/2 p-4">
         <router-link
           to="/admin/communities"
-          class="py-4 flex items-center justify-center bg-yellow-200 rounded-lg shadow-lg text-black font-bold"
+          class="py-4 flex items-center justify-center bg-warning-200 rounded-lg shadow-lg text-black font-bold"
         >
           Administración de Comunidades
         </router-link>
@@ -26,7 +26,7 @@
       <article class="w-full md:w-1/2 p-4">
         <router-link
           to="/admin/competitions"
-          class="py-4 flex items-center justify-center bg-red-500 rounded-lg shadow-lg text-black font-bold"
+          class="py-4 flex items-center justify-center bg-error-600 rounded-lg shadow-lg text-black font-bold"
         >
           Administración de Competiciones
         </router-link>

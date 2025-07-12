@@ -1,42 +1,66 @@
 <template>
-    <div id="adminDrivers" class="box">
+  <div
+    id="adminDrivers"
+    class="box"
+  >
+    <loading v-if="isLoadingGrandPrix" />
+    <template v-else>
+      <PTitle :name="'Administración de ' + grandPrix.name" />
 
-        <loading v-if="isLoadingGrandPrix"/>
-        <template v-else>
-
-            <PTitle :name="'Administración de ' + grandPrix.name"/>
-
-            <div class="block">
-                <o-button variant="link" to="/admin/gps" tag="router-link">Lista de grandes premios</o-button>
-            </div>
-
-            <p v-if="!thereIsGrandPrix">El Gran Premio {{ id }} no ha sido encontrado</p>
-            <template v-else>
-
-                <div class="columns">
-                    <div class="column">
-                        <h2 class="title">Datos del {{ grandPrix.name }}</h2>
-
-                        <o-field label="Nombre">
-                            <o-input v-model="grandPrix.name" name="name" expanded lazy></o-input>
-                        </o-field>
+      <nav class="block">
+        <PButton
+          color="info"
+          :to="{name: 'adminGps'}"
+          tag="router-link"
+          icon="fa fa-chevron-left"
+        >
+          Volver a Grandes Premios
+        </PButton>
+      </nav>
 
 
-                        <o-field label="Código del Gran Premio">
-                            <o-input v-model="grandPrix.code" name="code" expanded lazy></o-input>
-                        </o-field>
+      <p v-if="!thereIsGrandPrix">
+        El Gran Premio {{ id }} no ha sido encontrado
+      </p>
+      <template v-else>
+        <div class="columns">
+          <div class="column">
+            <h2 class="title">
+              Datos del {{ grandPrix.name }}
+            </h2>
+
+            <o-field label="Nombre">
+              <o-input
+                v-model="grandPrix.name"
+                name="name"
+                expanded
+                lazy
+              />
+            </o-field>
 
 
-                        <p class="control">
-                            <o-button :disabled="!isDataOk()" label="Editar Gran Premio" @click="editGrandPrix()" variant="primary"/>
-                        </p>
-                    </div>
-                </div>
+            <o-field label="Código del Gran Premio">
+              <o-input
+                v-model="grandPrix.code"
+                name="code"
+                expanded
+                lazy
+              />
+            </o-field>
 
-            </template>
-        </template>
-    </div>
 
+            <hr>
+            <PButton
+              :disabled="!isDataOk()"
+              label="Editar Gran Premio"
+              color="primary"
+              @click="editGrandPrix()"
+            />
+          </div>
+        </div>
+      </template>
+    </template>
+  </div>
 </template>
 
 <script lang="ts">
@@ -46,12 +70,12 @@ import {GrandPrix} from "@/types/GrandPrix";
 
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
-import DriversInGrandPrix from "@/components/admin/gps/DriversInGrandPrix.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
 
 export default defineComponent({
     name: "EditGrandPrix",
     components: {
-        DriversInGrandPrix,
+      PButton,
         PTitle,
     },
     setup() {
@@ -67,6 +91,16 @@ export default defineComponent({
             thereIsGrandPrix: false,
             isLoadingGrandPrix: true,
         }
+    },
+    mounted() {
+        grandPrixService.getGrandPrix(this.id)
+            .then(gp => {
+                this.grandPrix = gp;
+                this.thereIsGrandPrix = true;
+            }).finally(() => {
+                this.isLoadingGrandPrix = false;
+            }
+        );
     },
     methods: {
         isDataOk(): boolean {
@@ -91,16 +125,6 @@ export default defineComponent({
                 notificationService.showNotification(error.message, "error");
             });
         },
-    },
-    mounted() {
-        grandPrixService.getGrandPrix(this.id)
-            .then(gp => {
-                this.grandPrix = gp;
-                this.thereIsGrandPrix = true;
-            }).finally(() => {
-                this.isLoadingGrandPrix = false;
-            }
-        );
     }
 });
 </script>

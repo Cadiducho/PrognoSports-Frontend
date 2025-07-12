@@ -2,15 +2,14 @@
   <section class="p-12 min-h-[40vh]">
     <div class="flex flex-col justify-center items-center h-full">
       <PTitle>
-        404 Página no encontrada
+        Perfil no encontrado
       </PTitle>
       <PTitle type="subtitle">
-        Esta página no ha sido encontrada. Vuelve a inicio o inténtalo de nuevo.
+        Este perfil no existe o no ha sido encontrado. Vuelve a inicio o inténtalo de nuevo.
       </PTitle>
 
-      <section>
+      <section class="flex flex-row justify-center items-center gap-2">
         <PButton
-          class="mr-2"
           color="danger"
           type="outline"
           @click="back()"
@@ -19,10 +18,16 @@
         </PButton>
         <PButton
           tag="router-link"
-          color="primary"
           to="/"
         >
           Inicio
+        </PButton>
+        <PButton
+          tag="router-link"
+          color="info"
+          :to="{name: 'user', params: { user: currentUser.id }}"
+        >
+          Mi perfil
         </PButton>
       </section>
     </div>
@@ -30,12 +35,20 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
 import PButton from "@/components/lib/forms/PButton.vue";
 import PTitle from "@/components/lib/PTitle.vue";
-const router = useRouter();
+import {useAuthStore} from "@/store/authStore";
+import {useRouter} from "vue-router";
 
+const authStore = useAuthStore();
+const currentUser = authStore.loggedUser
+
+const router = useRouter();
 const back = () => {
-    router.go(-1);
+  router.go(-1);
 };
 </script>
+
+<style scoped lang="scss">
+
+</style>

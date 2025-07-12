@@ -114,7 +114,7 @@ export default defineComponent({
       }
 
       const goToEdit = (gp: GrandPrix) => {
-          router.push({name: 'adminGpEditInSeason', params: {gp: gp.id}});
+          router.push({name: 'adminGpEdit', params: {gp: gp.id}});
       }
 
     const filteredGps = ((original: GrandPrix[], filter: string): GrandPrix[] => {

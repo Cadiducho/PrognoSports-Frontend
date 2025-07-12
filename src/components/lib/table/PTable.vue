@@ -42,11 +42,11 @@
           <template v-if="col.type === 'boolean'">
             <span
               v-if="getRowData(row, col.field)"
-              class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-green-500"
+              class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-success-500"
             >Sí</span>
             <span
               v-else
-              class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-red-500"
+              class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-error-500"
             >No</span>
           </template>
           <template v-else-if="col.type === 'date'">
@@ -79,17 +79,17 @@
           >
             <i
               v-if="hasViewButton"
-              class="fa fa-eye cursor-pointer text-blue-400 p-1"
+              class="fa fa-eye cursor-pointer p-1 text-brand-accent-500 hover:text-brand-accent-600 dark:text-brand-600 dark:hover:bg-brand-700"
               @click="$emit('view', row)"
             />
             <i
               v-if="hasEditButton"
-              class="fa fa-pencil cursor-pointer text-amber-500 p-1"
+              class="fa fa-pencil cursor-pointer text-warning-500 hover:text-warning-600 p-1"
               @click="$emit('edit', row)"
             />
             <i
               v-if="hasDeleteButton"
-              class="fa fa-trash cursor-pointer text-red-600 p-1"
+              class="fa fa-trash cursor-pointer text-error-600 hover:text-error-700 p-1"
               @click="$emit('delete', row)"
             />
           </slot>
@@ -112,6 +112,7 @@
 import {computed, ref} from "vue";
 import PPagination from "@/components/lib/PPagination.vue";
 import {useDayjs} from "@/composables/useDayjs";
+import {Column} from "@/components/lib/table/index";
 
 interface Props<T> {
     columns: Array<Column>;

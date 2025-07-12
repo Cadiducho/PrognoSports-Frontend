@@ -1,74 +1,151 @@
 <template>
-    <div id="createDriver" class="box">
-        <PTitle class="mb-5" name="Crear piloto" />
+  <div
+    id="createDriver"
+    class="box"
+  >
+    <PTitle
+      class="mb-5"
+      name="Crear piloto"
+    />
 
-            <o-steps v-model="activeStep">
-                <o-step-item step="1" label="Datos del piloto">
-                    <h2 class="title">Datos del piloto</h2>
+    <nav class="block">
+      <PButton
+        color="info"
+        to="/admin/drivers"
+        tag="router-link"
+        icon="fa fa-chevron-left"
+      >
+        Volver a Lista de pilotos
+      </PButton>
+    </nav>
 
-                    <o-field label="ID del piloto">
-                        <o-input v-model="createdDriver.id" name="id" expanded lazy></o-input>
-                    </o-field>
+    <o-steps v-model="activeStep">
+      <o-step-item
+        step="1"
+        label="Datos del piloto"
+      >
+        <h2 class="title">
+          Datos del piloto
+        </h2>
 
-                    <o-field label="Nombre del piloto">
-                        <o-input v-model="createdDriver.firstname" name="firstname" expanded lazy></o-input>
-                    </o-field>
+        <o-field label="ID del piloto">
+          <o-input
+            v-model="createdDriver.id"
+            name="id"
+            expanded
+            lazy
+          />
+        </o-field>
 
-                    <o-field label="Apellido del piloto">
-                        <o-input v-model="createdDriver.lastname" name="lastname" expanded lazy></o-input>
-                    </o-field>
+        <o-field label="Nombre del piloto">
+          <o-input
+            v-model="createdDriver.firstname"
+            name="firstname"
+            expanded
+            lazy
+          />
+        </o-field>
 
-                    <o-field label="Código del piloto">
-                        <o-input v-model="createdDriver.code" name="code" expanded lazy></o-input>
-                    </o-field>
+        <o-field label="Apellido del piloto">
+          <o-input
+            v-model="createdDriver.lastname"
+            name="lastname"
+            expanded
+            lazy
+          />
+        </o-field>
 
-                    <o-field label="Nacionalidad del piloto">
-                        <o-input v-model="createdDriver.nationality" name="nationality" expanded lazy></o-input>
-                    </o-field>
+        <o-field label="Código del piloto">
+          <o-input
+            v-model="createdDriver.code"
+            name="code"
+            expanded
+            lazy
+          />
+        </o-field>
 
-                    <o-field label="Fecha de nacimiento">
-                        <o-datepicker
-                            v-model="createdDriver.birth"
-                            placeholder="Click para escoger..."
-                            icon="calendar"
-                            trap-focus>
-                        </o-datepicker>
-                    </o-field>
+        <o-field label="Nacionalidad del piloto">
+          <o-input
+            v-model="createdDriver.nationality"
+            name="nationality"
+            expanded
+            lazy
+          />
+        </o-field>
 
-                    <hr/>
+        <o-field label="Fecha de nacimiento">
+          <o-datepicker
+            v-model="createdDriver.birth"
+            placeholder="Click para escoger..."
+            icon="calendar"
+            trap-focus
+          />
+        </o-field>
 
-                </o-step-item>
+        <hr>
+      </o-step-item>
 
-                <o-step-item step="2" label="Finalizar">
-                    <h2 class="title">Finalizar</h2>
+      <o-step-item
+        step="2"
+        label="Finalizar"
+      >
+        <h2 class="title">
+          Finalizar
+        </h2>
 
-                    <AlertInvalidData :object="createdDriver.id" message="No has introducido ID para este piloto" />
-                    <AlertInvalidData :object="createdDriver.firstname" message="No has introducido nombre para este piloto" />
-                    <AlertInvalidData :object="createdDriver.lastname" message="No has introducido apellido para este piloto" />
-                    <AlertInvalidData :object="createdDriver.code" message="No has introducido código para este piloto" />
-                    <AlertInvalidData :object="createdDriver.nationality" message="No has introducido nacionalidad para este piloto" />
+        <AlertInvalidData
+          :object="createdDriver.id"
+          message="No has introducido ID para este piloto"
+        />
+        <AlertInvalidData
+          :object="createdDriver.firstname"
+          message="No has introducido nombre para este piloto"
+        />
+        <AlertInvalidData
+          :object="createdDriver.lastname"
+          message="No has introducido apellido para este piloto"
+        />
+        <AlertInvalidData
+          :object="createdDriver.code"
+          message="No has introducido código para este piloto"
+        />
+        <AlertInvalidData
+          :object="createdDriver.nationality"
+          message="No has introducido nacionalidad para este piloto"
+        />
 
-                    <div class="notification has-background-primary">
-                        Revisa los datos, se va a crear el siguiente piloto
-                    </div>
+        <div class="notification has-background-primary">
+          Revisa los datos, se va a crear el siguiente piloto
+        </div>
 
-                    <div class="content">
-                        <p class="card-text"><b>ID del piloto: </b>{{ createdDriver.id }}</p>
-                        <p class="card-text"><b>Nombre del piloto: </b>{{ createdDriver.firstname }} {{ createdDriver.lastname }}</p>
-                        <p class="card-text"><b>Código del piloto: </b>{{ createdDriver.code }}</p>
-                        <p class="card-text"><b>Nacionalidad del piloto: </b>{{ createdDriver.nationality }}</p>
-                        <p class="card-text"><b>Fecha de nacimiento: </b>{{ humanDate(createdDriver.birth) }}</p>
-                    </div>
+        <div class="content">
+          <p class="card-text">
+            <b>ID del piloto: </b>{{ createdDriver.id }}
+          </p>
+          <p class="card-text">
+            <b>Nombre del piloto: </b>{{ createdDriver.firstname }} {{ createdDriver.lastname }}
+          </p>
+          <p class="card-text">
+            <b>Código del piloto: </b>{{ createdDriver.code }}
+          </p>
+          <p class="card-text">
+            <b>Nacionalidad del piloto: </b>{{ createdDriver.nationality }}
+          </p>
+          <p class="card-text">
+            <b>Fecha de nacimiento: </b>{{ humanDate(createdDriver.birth) }}
+          </p>
+        </div>
 
-                    <hr/>
-                    <o-field>
-                        <p class="control">
-                            <o-button :disabled="!isDataOk()" label="Crear piloto" @click="registerDriver()" variant="primary" />
-                        </p>
-                    </o-field>
-                </o-step-item>
-            </o-steps>
-    </div>
+        <hr>
+        <PButton
+          :disabled="!isDataOk()"
+          label="Crear piloto"
+          color="primary"
+          @click="registerDriver()"
+        />
+      </o-step-item>
+    </o-steps>
+  </div>
 </template>
 
 <script lang="ts">
@@ -82,10 +159,12 @@ import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {useDayjs} from "@/composables/useDayjs";
+import PButton from "@/components/lib/forms/PButton.vue";
 
 export default defineComponent({
     name: "CreateDriver",
     components: {
+      PButton,
         AlertNoPermission,
         AlertInvalidData,
         PTitle,

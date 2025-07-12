@@ -1,47 +1,95 @@
 <template>
-    <div id="createGrandPrix" class="box">
-        <PTitle class="mb-5" name="Crear gran premio"/>
+  <div
+    id="createGrandPrix"
+    class="box"
+  >
+    <PTitle
+      class="mb-5"
+      name="Crear gran premio"
+    />
 
-        <o-button variant="primary" :to="{name: 'adminGps'}" tag="router-link" class="mr-2">Volver a lista de Grandes Premios</o-button>
+    <nav class="block">
+      <PButton
+        color="info"
+        :to="{name: 'adminGps'}"
+        tag="router-link"
+        icon="fa fa-chevron-left"
+      >
+        Volver a Grandes Premios
+      </PButton>
+    </nav>
 
-        <o-steps v-model="activeStep">
-            <o-step-item step="1" label="Datos del gran premio">
-                <h2 class="title">Datos del gran premio</h2>
+    <o-steps v-model="activeStep">
+      <o-step-item
+        step="1"
+        label="Datos del gran premio"
+      >
+        <h2 class="title">
+          Datos del gran premio
+        </h2>
 
-                <o-field label="Nombre del Gran Premio">
-                    <o-input v-model="createdGrandPrix.name" name="name" expanded lazy></o-input>
-                </o-field>
+        <o-field label="Nombre del Gran Premio">
+          <o-input
+            v-model="createdGrandPrix.name"
+            name="name"
+            expanded
+            lazy
+          />
+        </o-field>
 
-                <o-field label="Código del Gran Premio">
-                    <o-input v-model="createdGrandPrix.code" name="code" expanded lazy></o-input>
-                </o-field>
+        <o-field label="Código del Gran Premio">
+          <o-input
+            v-model="createdGrandPrix.code"
+            name="code"
+            expanded
+            lazy
+          />
+        </o-field>
+      </o-step-item>
 
-            </o-step-item>
+      <o-step-item
+        step="2"
+        label="Finalizar"
+      >
+        <h2 class="title">
+          Finalizar
+        </h2>
 
-            <o-step-item step="2" label="Finalizar">
-                <h2 class="title">Finalizar</h2>
+        <AlertInvalidData
+          :object="createdGrandPrix.name"
+          message="No has introducido nombre para este gran premio"
+        />
+        <AlertInvalidData
+          :object="createdGrandPrix.code"
+          message="No has introducido código para este gran premio"
+        />
 
-                <AlertInvalidData :object="createdGrandPrix.name" message="No has introducido nombre para este gran premio"/>
-                <AlertInvalidData :object="createdGrandPrix.code" message="No has introducido código para este gran premio"/>
+        <div
+          v-if="isDataOk()"
+          class="notification has-background-primary"
+        >
+          Revisa los datos, se va a crear el Gran Premio
+        </div>
 
-                <div v-if="isDataOk()" class="notification has-background-primary">
-                    Revisa los datos, se va a crear el Gran Premio
-                </div>
+        <div class="content">
+          <p class="card-text">
+            <b>Nombre del Gran Premio: </b>{{ createdGrandPrix.name }}
+          </p>
+          <p class="card-text">
+            <b>Código del Gran Premio: </b>{{ createdGrandPrix.code }}
+          </p>
+        </div>
 
-                <div class="content">
-                    <p class="card-text"><b>Nombre del Gran Premio: </b>{{ createdGrandPrix.name }}</p>
-                    <p class="card-text"><b>Código del Gran Premio: </b>{{ createdGrandPrix.code }}</p>
-                </div>
-
-                <hr/>
-                <o-field>
-                    <p class="control">
-                        <o-button :disabled="!isDataOk()" label="Crear Gran Premio" @click="registerGrandPrix()" variant="primary"/>
-                    </p>
-                </o-field>
-            </o-step-item>
-        </o-steps>
-    </div>
+        <hr>
+        <PButton
+          :disabled="!isDataOk()"
+          label="Crear Gran Premio"
+          color="primary"
+          @click="registerGrandPrix()"
+        />
+      </o-step-item>
+    </o-steps>
+  </div>
 </template>
 
 <script lang="ts">
@@ -55,10 +103,12 @@ import {Circuit} from "@/types/Circuit";
 
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
+import PButton from "@/components/lib/forms/PButton.vue";
 
 export default defineComponent({
     name: "CreateGrandPrix",
     components: {
+      PButton,
         AlertNoPermission,
         AlertInvalidData,
         PTitle,

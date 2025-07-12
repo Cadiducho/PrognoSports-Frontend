@@ -58,7 +58,7 @@ const labelClasses = computed(() => ({
     }
 
     &.primary {
-        @apply text-purple-600 accent-purple-500 focus:ring-purple-500 dark:focus:ring-purple-600;
+        @apply text-brand-600 accent-brand-500 focus:ring-brand-500 dark:focus:ring-brand-600;
     }
     &.secondary {
         @apply text-blue-600 accent-blue-500 focus:ring-blue-500 dark:focus:ring-blue-600;
@@ -67,10 +67,10 @@ const labelClasses = computed(() => ({
         @apply text-gray-600 accent-gray-500 focus:ring-gray-500 dark:focus:ring-gray-600;
     }
     &.warning {
-        @apply text-yellow-600 accent-yellow-500 focus:ring-yellow-500 dark:focus:ring-yellow-600;
+        @apply text-warning-600 accent-warning-500 focus:ring-warning-500 dark:focus:ring-warning-600;
     }
     &.danger {
-        @apply text-red-600 accent-red-500 focus:ring-red-500 dark:focus:ring-red-600;
+        @apply text-errpr-600 accent-error-500 focus:ring-error-500 dark:focus:ring-error-600;
     }
 }
 </style>
