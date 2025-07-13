@@ -104,7 +104,7 @@ export default defineComponent({
             'rounded-md': props.rounded && !props.pilled,
 
             'solid': props.type === 'solid',
-            'outline': props.type === 'outline',
+            'outline-pbutton': props.type === 'outline',
             'soft': props.type === 'soft',
             'ghost': props.type === 'ghost',
             'disabled': props.disabled,
@@ -152,7 +152,7 @@ export default defineComponent({
     @apply bg-pink-500 hover:bg-pink-600 dark:focus:ring-offset-gray-dark-900 text-gray-light-50;
   }
 }
-.outline {
+.outline-pbutton {
   @apply border border-current shadow-sm font-semibold bg-transparent;
 
   &.teal {
