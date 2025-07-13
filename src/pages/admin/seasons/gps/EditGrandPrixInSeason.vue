@@ -112,8 +112,9 @@
               </button>
             </div>
             <div class="column">
-              <o-field label="Circuito del Gran Premio">
-                <o-select
+              <PField label="Circuito del Gran Premio">
+                {{ grandPrix.circuit }}
+                <PSelect
                   v-model="grandPrix.circuit"
                   placeholder="Selecciona un circuito"
                   expanded
@@ -125,11 +126,11 @@
                   >
                     {{ circuit.name }}
                   </option>
-                </o-select>
-              </o-field>
+                </PSelect>
+              </PField>
 
-              <o-field label="Variante del circuito">
-                <o-select
+              <PField label="Variante del circuito">
+                <PSelect
                   v-model="grandPrix.variant"
                   placeholder="Selecciona un circuito"
                   expanded
@@ -141,8 +142,8 @@
                   >
                     {{ variant.name }}
                   </option>
-                </o-select>
-              </o-field>
+                </PSelect>
+              </PField>
 
               <o-field label="Vueltas del Gran Premio">
                 <o-input
@@ -225,10 +226,14 @@ import UploadFileModal from "@/components/lib/UploadFileModal.vue";
 import {CircuitVariant} from "@/types/CircuitVariant";
 import PButton from "@/components/lib/forms/PButton.vue";
 import GrandPrixPageHeader from "@/components/gps/GrandPrixPageHeader.vue";
+import PField from "@/components/lib/forms/PField.vue";
+import PSelect from "@/components/lib/forms/PSelect.vue";
 
 export default defineComponent({
   name: "EditGrandPrixInSeason",
   components: {
+    PSelect,
+    PField,
     GrandPrixPageHeader,
     PButton,
     DriversInGrandPrix,

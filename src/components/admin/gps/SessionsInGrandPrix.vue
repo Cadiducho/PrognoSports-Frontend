@@ -1,62 +1,112 @@
 <template>
-    <label class="label">Sesiones</label>
-    <section class="columns is-multiline is-flex-direction-column is-3">
-        <div v-if="!sessions.length" class="column">
-            <PrognoAlert variant="warning" class="mt-2">
-                No hay sesiones configuradas
-            </PrognoAlert>
-        </div>
+  <label class="label">Sesiones</label>
+  <section class="flex flex-wrap flex-column">
+    <div
+      v-if="!sessions.length"
+      class="column"
+    >
+      <PrognoAlert
+        variant="warning"
+        class="mt-2"
+      >
+        No hay sesiones configuradas
+      </PrognoAlert>
+    </div>
 
-        <div v-for="ses in sessions" class="column">
-            <router-link :to="{ name: 'adminGpEditSession', params: { session: ses.id } }">
-                <article class="card" :class="{
-                    '!bg-cyan-200': currentSession?.id === ses.id,
-                    'hover:!bg-cyan-100': currentSession?.id !== ses.id
-                }">
-                    <div class="card-content">
-                        <p class="subtitle mb-2">
-                            {{ ses.humanName() }}
-                            <span v-if="currentSession?.id === ses.id"
-                                  class="inline-block px-2 py-1 leading-none bg-orange-200 text-orange-800 rounded-full font-semibold uppercase tracking-wide text-xs">
-                                Editando
-                            </span>
-                        </p>
+    <div
+      v-for="ses in sessions"
+      :key="ses.id"
+      class="py-2"
+    >
+      <router-link :to="{ name: 'adminGpEditSession', params: { session: ses.id } }">
+        <article
+          class="card"
+          :class="{
+            '!bg-cyan-200': currentSession?.id === ses.id,
+            'hover:!bg-cyan-100': currentSession?.id !== ses.id
+          }"
+        >
+          <div class="card-content">
+            <p class="subtitle mb-2">
+              {{ ses.humanName() }}
+              <span
+                v-if="currentSession?.id === ses.id"
+                class="inline-block px-2 py-1 leading-none bg-orange-200 text-orange-800 rounded-full font-semibold uppercase tracking-wide text-xs"
+              >
+                Editando
+              </span>
+            </p>
 
-                        <div class="content">
-                            <p class="card-text mb-0">
-                                <i class="fa-solid fa-pencil mr-2"></i>
-                                <b>Code: </b> {{ ses.name }}
-                            </p>
-                            <p class="card-text">
-                                <i class="fa-solid fa-calendar-days mr-2"></i>
-                                <b>Fecha: </b> {{ humanDateTime(ses.date) }}
-                            </p>
-                        </div>
-                    </div>
+            <div class="content">
+              <p class="card-text mb-0">
+                <i class="fa-solid fa-pencil mr-2" />
+                <b>Code: </b> {{ ses.name }}
+              </p>
+              <p class="card-text">
+                <i class="fa-solid fa-calendar-days mr-2" />
+                <b>Fecha: </b> {{ humanDateTime(ses.date) }}
+              </p>
+            </div>
+          </div>
+        </article>
+      </router-link>
+    </div>
+    <div class="py-2 flex-1">
+      <PButton
+        v-if="!isCreatingSession"
+        color="info"
+        expanded
+        @click="isCreatingSession = true"
+      >
+        Agregar sesión
+      </PButton>
 
-                </article>
-            </router-link>
-        </div>
-        <div class="column">
-            <button class="button is-primary is-fullwidth" v-if="!isCreatingSession" @click="isCreatingSession = true">Agregar sesión</button>
-            <section class="box" v-else>
-                <o-field label="Sesión">
-                    <o-select placeholder="Selecciona un tipo de sesión" v-model="newSession.session" expanded>
-                        <option v-for="ses in availableSessionList" :value="ses">{{ ses.humanName() }}</option>
-                    </o-select>
-                </o-field>
-                <o-field label="Define parrilla de">
-                    <o-select placeholder="Selecciona una sesión existente" v-model="newSession.defineGridOf" expanded>
-                        <option v-for="ses in sessions" :value="ses">{{ ses.humanName() }} del {{ humanDate(ses.date) }}</option>
-                    </o-select>
-                </o-field>
-                <o-field label="Fecha">
-                    <Calendar :value="newSession.date" :options="calendarOptions" v-on:input="newSession.date = $event;" />
-                </o-field>
-                <button class="button is-primary is-fullwidth" @click="addSessionToGP()">Añadir</button>
-            </section>
-        </div>
-    </section>
+      <PCard
+        v-else
+      >
+        <PSelect
+          v-model="newSession.session"
+          label="Sesión"
+          placeholder="Selecciona un tipo de sesión"
+        >
+          <option
+            v-for="ses in availableSessionList"
+            :key="ses.id"
+            :value="ses"
+          >
+            {{ ses.humanName() }}
+          </option>
+        </PSelect>
+        <PSelect
+          v-model="newSession.session.type"
+          label="Define parrilla de"
+          placeholder="Selecciona un tipo de sesión"
+        >
+          <option
+            v-for="ses in sessions"
+            :value="ses"
+          >
+            {{ ses.humanName() }} del {{ humanDate(ses.date) }}
+          </option>
+        </PSelect>
+
+        <PField label="Fecha">
+          <Calendar
+            :value="newSession.date"
+            :options="calendarOptions"
+            @input="newSession.date = $event;"
+          />
+        </PField>
+
+        <button
+          class="button is-primary is-fullwidth"
+          @click="addSessionToGP()"
+        >
+          Añadir
+        </button>
+      </PCard>
+    </div>
+  </section>
 </template>
 
 <script lang="ts">
@@ -67,10 +117,14 @@ import {RaceSession} from "@/types/RaceSession";
 import {notificationService, sessionService} from "@/_services";
 import Calendar from "@/components/lib/Calendar.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
+import PSelect from "@/components/lib/forms/PSelect.vue";
+import PField from "@/components/lib/forms/PField.vue";
+import PCard from "@/components/lib/PCard.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
 
 export default defineComponent({
     name: "SessionsInGrandPrix",
-    components: {PrognoAlert, Calendar },
+    components: {PButton, PCard, PField, PSelect, PrognoAlert, Calendar },
     props: {
         grandPrix: {
             type: Object as PropType<GrandPrix>,

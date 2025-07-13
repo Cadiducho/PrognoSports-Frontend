@@ -11,22 +11,19 @@
       v-if="session.hasFastLap"
       class="mb-4"
     >
-      <!-- ToDo: remove -->
-      <o-field label="Vuelta rápida">
-        <o-select
-          v-model="fastLap"
-          placeholder="Selecciona un piloto"
-          expanded
+      <PSelect
+        v-model="fastLap"
+        label="Vuelta rápida"
+        placeholder="Selecciona un piloto"
+      >
+        <option
+          v-for="driver in sessionResults"
+          :key="driver.id"
+          :value="driver"
         >
-          <option
-            v-for="driver in sessionResults"
-            :key="driver.id"
-            :value="driver"
-          >
-            {{ driver.lastname }}, {{ driver.firstname }} - {{ driver.team.name }} ({{ driver.team.carname }})
-          </option>
-        </o-select>
-      </o-field>
+          {{ driver.lastname }}, {{ driver.firstname }} - {{ driver.team.name }} ({{ driver.team.carname }})
+        </option>
+      </PSelect>
 
       <hr>
     </section>
@@ -93,10 +90,12 @@ import PTitle from "@/components/lib/PTitle.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PCard from "@/components/lib/PCard.vue";
 import PCheckbox from "@/components/lib/forms/PCheckbox.vue";
+import PSelect from "@/components/lib/forms/PSelect.vue";
 
 export default defineComponent({
     name: "EditResults",
     components: {
+      PSelect,
       PCheckbox,
       PCard,
         PButton,

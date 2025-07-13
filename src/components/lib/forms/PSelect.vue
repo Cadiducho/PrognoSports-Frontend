@@ -1,11 +1,10 @@
 <template>
   <fieldset>
-    <label
+    <PLabel
       v-if="label"
-      class="block tracking-wide text-gray-700 dark:text-gray-300 font-bold mb-2"
     >
       {{ label }}
-    </label>
+    </PLabel>
     <section class="relative">
       <select
         v-model="modelValue"
@@ -47,6 +46,7 @@
 
 <script setup lang="ts" generic="T extends string | number | boolean | object">
 import {computed} from "vue";
+import PLabel from "@/components/lib/forms/PLabel.vue";
 
 export interface Props {
   name?: string;

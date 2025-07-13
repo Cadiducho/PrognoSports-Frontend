@@ -1,65 +1,84 @@
 <template>
-    <h2 class="title">Pilotos y equipos del Gran Premio</h2>
+  <h2 class="title">
+    Pilotos y equipos del Gran Premio
+  </h2>
 
-    <o-field label="Clonar del Gran Premio...">
-        <o-select v-model="clonedGrandPrix" placeholder="Seleciona un Gran Premio" @change="cloneDriversFromGrandPrix()">
-            <option v-for="gp in otherGPList" :value="gp" :key="gp.id">{{ gp.name }}</option>
-        </o-select>
-    </o-field>
+  <div class="flex gap-6">
+    <div class="w-1/5">
+      <PSelect
+        v-model="clonedGrandPrix"
+        label="Clonar del Gran Premio..."
+        @change="cloneDriversFromGrandPrix()"
+      >
+        <option
+          v-for="gp in otherGPList"
+          :key="gp.id"
+          :value="gp"
+        >
+          {{ gp.name }}
+        </option>
+      </PSelect>
 
-    <div class="columns">
+      <label class="label">Pilotos de <router-link :to="{name: 'adminSeasonEdit', params: grandPrix.season.id}">{{ grandPrix.season.name }}</router-link></label>
 
-        <div class="column is-one-fifth">
-            <label class="label">Pilotos de <router-link :to="{name: 'adminSeasonEdit', params: grandPrix.season.id}">{{ grandPrix.season.name }}</router-link></label>
-
-            <draggable
-                id="driversInSeason"
-                class="w-full h-full select-none space-y-2 flex flex-col text-white"
-                :list="driversInSeason"
-                group="drivers"
-                itemKey="id"
-            >
-                <template #item="{ element, index }">
-                    <div class="p-1 cursor-move rounded-lg flex items-center justify-center bg-cyan-400 hover:bg-cyan-600 shadow-lg">
-                        {{ element.firstname }} {{ element.lastname }} #{{ element.number }}
-                    </div>
-                </template>
-            </draggable>
-
-        </div>
-        <div class="column">
-
-            <label class="label">Pilotos en el Gran Premio</label>
-            <div class="columns is-multiline">
-                <div class="column is-2" v-for="constructor in constructorList">
-                    <div class="card">
-                        <header class="card-header">
-                            <p class="card-header-title" :style="teamCarColor(constructor)">
-                                {{ constructor.name }}
-                            </p>
-                        </header>
-
-                        <div class="card-content">
-                            <draggable
-                                :id="`driversByConstructor-${constructor.id}`"
-                                class="w-full h-full select-none space-y-2"
-                                :list="driversByConstructor[constructor.id]"
-                                group="drivers"
-                                itemKey="id"
-                            >
-                                <template #item="{ element, index }">
-                                    <div class="cursor-move flex items-center justify-center">
-                                        {{ element.firstname }} {{ element.lastname }} #{{ element.number }}
-                                    </div>
-                                </template>
-                            </draggable>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <button class="button is-primary" @click="saveDrivers()">Guardar pilotos</button>
-        </div>
+      <draggable
+        id="driversInSeason"
+        class="w-full h-full select-none space-y-2 flex flex-col text-white"
+        :list="driversInSeason"
+        group="drivers"
+        item-key="id"
+      >
+        <template #item="{ element, index }">
+          <div class="p-1 cursor-move rounded-lg flex items-center justify-center bg-cyan-400 hover:bg-cyan-600 shadow-lg">
+            {{ element.firstname }} {{ element.lastname }} #{{ element.number }}
+          </div>
+        </template>
+      </draggable>
     </div>
+    <div class="w-4/5">
+      <label class="label">Pilotos en el Gran Premio</label>
+      <div class="flex flex-wrap">
+        <div
+          v-for="constructor in constructorList"
+          :key="constructor.id"
+          class="w-1/5 p-2"
+        >
+          <!-- ToDo: Adaptar PCard para soportar headers de colorines -->
+          <div class="card">
+            <header class="card-header">
+              <p
+                class="card-header-title"
+                :style="teamCarColor(constructor)"
+              >
+                {{ constructor.name }}
+              </p>
+            </header>
+
+            <div class="card-content">
+              <draggable
+                :id="`driversByConstructor-${constructor.id}`"
+                class="w-full h-full select-none space-y-2"
+                :list="driversByConstructor[constructor.id]"
+                group="drivers"
+                item-key="id"
+              >
+                <template #item="{ element, index }">
+                  <div class="cursor-move flex items-center justify-center">
+                    {{ element.firstname }} {{ element.lastname }} #{{ element.number }}
+                  </div>
+                </template>
+              </draggable>
+            </div>
+          </div>
+        </div>
+      </div>
+      <PButton
+        @click="saveDrivers()"
+      >
+        Guardar pilotos
+      </PButton>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -73,10 +92,16 @@ import {constructorService, driversService, grandPrixService, notificationServic
 import {useStyles} from "@/composables/useStyles";
 import DraggableDriverCard from "@/components/gps/DraggableDriverCard.vue";
 import draggable from "vuedraggable";
+import PSelect from "@/components/lib/forms/PSelect.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
+import PCard from "@/components/lib/PCard.vue";
 
 export default defineComponent({
     name: "DriversInGrandPrix",
     components: {
+      PCard,
+      PButton,
+      PSelect,
         draggable,
         DraggableDriverCard,
     },

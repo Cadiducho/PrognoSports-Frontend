@@ -57,8 +57,8 @@
         </o-field>
 
 
-        <o-field label="Temporada actual">
-          <o-select
+        <PField label="Temporada actual">
+          <PSelect
             v-model="competition.currentSeason.id"
             placeholder="Selecciona la temporada actual"
             expanded
@@ -70,8 +70,8 @@
             >
               {{ season.name }} (#{{ season.id }})
             </option>
-          </o-select>
-        </o-field>
+          </PSelect>
+        </PField>
 
         <div class="columns">
           <div class="column">
@@ -110,10 +110,14 @@ import {marked} from "marked";
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import PButton from "@/components/lib/forms/PButton.vue";
+import PField from "@/components/lib/forms/PField.vue";
+import PSelect from "@/components/lib/forms/PSelect.vue";
 
 export default defineComponent({
     name: "EditCompetition",
     components: {
+      PSelect,
+      PField,
       PButton,
         AlertNoPermission,
         PTitle,
