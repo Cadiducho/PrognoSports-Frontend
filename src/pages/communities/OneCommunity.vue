@@ -58,7 +58,7 @@
                 Comunidad cerrada/privada
               </p>
 
-              <o-field
+              <PField
                 v-if="!community.open && isUserInCommunity"
                 grouped
                 label="URL de Invitación:"
@@ -76,7 +76,7 @@
                 >
                   Copiar
                 </PButton>
-              </o-field>
+              </PField>
 
               <p class="card-text">
                 <b>Usuarios apuntados: </b> {{ community.members_amount }}
@@ -245,10 +245,12 @@ import PCard from "@/components/lib/PCard.vue";
 import PCollapse from "@/components/lib/PCollapse.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
+import PField from "@/components/lib/forms/PField.vue";
 
 export default defineComponent({
     name: "OneCommunity",
     components: {
+      PField,
       PInput, PButton,
       PCollapse,
       PCard,

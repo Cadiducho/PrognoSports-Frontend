@@ -29,36 +29,32 @@
             Descripción
           </h1>
 
-          <o-field
+          <PField
             label="Nombre"
             message="Nombre de la comunidad"
           >
-            <o-input
+            <PInput
               v-model="name"
               name="subject"
-              expanded
-              lazy
             />
-          </o-field>
+          </PField>
 
-          <o-field label="Descripción">
-            <o-input
+          <PField label="Descripción">
+            <PInput
               v-model="description"
               type="textarea"
-              lazy
             />
-          </o-field>
+          </PField>
 
-          <o-field
+          <PField
             label="Imagen"
             message="Imagen para la comunidad (URL)"
           >
-            <o-input
+            <PInput
               v-model="imageUrl"
               name="image"
-              expanded
             />
-          </o-field>
+          </PField>
 
           <hr>
 
@@ -66,7 +62,7 @@
             Con una comunidad cerrada sólo se podrán unir miembros que dispongan del enlace de invitación. <br>
             Cualquiera podrá acceder a una comunidad abierta.
           </p>
-          <o-field label="Privacidad de la comunidad">
+          <PField label="Privacidad de la comunidad">
             <o-switch
               v-model="privacy"
               passive-type="is-success"
@@ -74,7 +70,7 @@
             >
               {{ privacy ? "Cerrada" : "Abierta" }}
             </o-switch>
-          </o-field>
+          </PField>
         </o-step-item>
 
         <o-step-item
@@ -88,7 +84,7 @@
           <!-- FixMe: al creador de rulesets -->
           <div class="columns">
             <div class="column">
-              <o-field label="Posiciones pronosticadas en clasificación">
+              <PField label="Posiciones pronosticadas en clasificación">
                 <o-slider
                   v-model="numberQualify"
                   :min="3"
@@ -97,10 +93,10 @@
                   indicator
                   ticks
                 />
-              </o-field>
+              </PField>
             </div>
             <div class="column">
-              <o-field label="Posiciones pronosticadas en carrera">
+              <PField label="Posiciones pronosticadas en carrera">
                 <o-slider
                   v-model="numberRace"
                   :min="3"
@@ -109,7 +105,7 @@
                   indicator
                   ticks
                 />
-              </o-field>
+              </PField>
             </div>
           </div>
 
@@ -123,19 +119,18 @@
           <p class="content">
             Un conjunto de reglas podrá ser utilizado por otra comunidad, o podrás usar otros diferentes en cada carrera. Conviene poner un nombre y descripción
           </p>
-          <o-field label="Nombre del conjunto de reglas">
-            <o-input
+          <PField label="Nombre del conjunto de reglas">
+            <PInput
               v-model="rulesetName"
               name="subject"
-              expanded
             />
-          </o-field>
-          <o-field label="Descripción de las reglas">
-            <o-input
+          </PField>
+          <PField label="Descripción de las reglas">
+            <PInput
               v-model="rulesetDescription"
               type="textarea"
             />
-          </o-field>
+          </PField>
 
           <h2 class="subtitle mb-0">
             Puntos por acertar la posición
@@ -146,9 +141,9 @@
                 Posiciones de clasificación
               </p>
               <template v-for="pos in numberQualify">
-                <o-field :label="pos + 'º puesto de Clasificación'">
+                <PField :label="pos + 'º puesto de Clasificación'">
                   <o-numberinput v-model="pointsByEqualsPosition.QUALIFY[pos]" />
-                </o-field>
+                </PField>
               </template>
             </div>
 
@@ -157,9 +152,9 @@
                 Posiciones de carrera
               </p>
               <template v-for="pos in numberRace">
-                <o-field :label="pos + 'º puesto de Carrera'">
+                <PField :label="pos + 'º puesto de Carrera'">
                   <o-numberinput v-model="pointsByEqualsPosition.RACE[pos]" />
-                </o-field>
+                </PField>
               </template>
             </div>
           </div>
@@ -174,14 +169,14 @@
           </p>
           <div class="columns">
             <div class="column">
-              <o-field label="Clasificación">
+              <PField label="Clasificación">
                 <o-numberinput v-model="pointsByNextPosition.QUALIFY" />
-              </o-field>
+              </PField>
             </div>
             <div class="column">
-              <o-field label="Carrera">
+              <PField label="Carrera">
                 <o-numberinput v-model="pointsByNextPosition.RACE" />
-              </o-field>
+              </PField>
             </div>
           </div>
           <hr>
@@ -194,14 +189,14 @@
           </p>
           <div class="columns">
             <div class="column">
-              <o-field label="Clasificación">
+              <PField label="Clasificación">
                 <o-numberinput v-model="pointsByNextOfFollowingPosition.QUALIFY" />
-              </o-field>
+              </PField>
             </div>
             <div class="column">
-              <o-field label="Carrera">
+              <PField label="Carrera">
                 <o-numberinput v-model="pointsByNextOfFollowingPosition.RACE" />
-              </o-field>
+              </PField>
             </div>
           </div>
           <hr>
@@ -214,14 +209,14 @@
           </p>
           <div class="columns">
             <div class="column">
-              <o-field label="Clasificación">
+              <PField label="Clasificación">
                 <o-numberinput v-model="pointsByPreviousPosition.QUALIFY" />
-              </o-field>
+              </PField>
             </div>
             <div class="column">
-              <o-field label="Carrera">
+              <PField label="Carrera">
                 <o-numberinput v-model="pointsByPreviousPosition.RACE" />
-              </o-field>
+              </PField>
             </div>
           </div>
           <hr>
@@ -234,14 +229,14 @@
           </p>
           <div class="columns">
             <div class="column">
-              <o-field label="Clasificación">
+              <PField label="Clasificación">
                 <o-numberinput v-model="pointsByPreviousOfPreviousPosition.QUALIFY" />
-              </o-field>
+              </PField>
             </div>
             <div class="column">
-              <o-field label="Carrera">
+              <PField label="Carrera">
                 <o-numberinput v-model="pointsByPreviousOfPreviousPosition.RACE" />
-              </o-field>
+              </PField>
             </div>
           </div>
           <hr>
@@ -254,14 +249,14 @@
           </p>
           <div class="columns">
             <div class="column">
-              <o-field label="Clasificación">
+              <PField label="Clasificación">
                 <o-numberinput v-model="pointsIfIsNotInPodium.QUALIFY" />
-              </o-field>
+              </PField>
             </div>
             <div class="column">
-              <o-field label="Carrera">
+              <PField label="Carrera">
                 <o-numberinput v-model="pointsIfIsNotInPodium.RACE" />
-              </o-field>
+              </PField>
             </div>
           </div>
           <hr>
@@ -274,18 +269,18 @@
           </p>
           <div class="columns">
             <div class="column">
-              <o-field label="Clasificación">
+              <PField label="Clasificación">
                 <o-numberinput v-model="pointsIfIsNotInResults.QUALIFY" />
-              </o-field>
+              </PField>
             </div>
             <div class="column">
-              <o-field label="Carrera">
+              <PField label="Carrera">
                 <o-numberinput v-model="pointsIfIsNotInResults.RACE" />
-              </o-field>
+              </PField>
             </div>
           </div>
           <hr>
-          <o-field label="Privacidad del conjunto de reglas">
+          <PField label="Privacidad del conjunto de reglas">
             <o-switch
               v-model="rulesetPrivacy"
               passive-type="is-success"
@@ -293,7 +288,7 @@
             >
               {{ rulesetPrivacy ? "Privadas" : "Públicas" }}
             </o-switch>
-          </o-field>
+          </PField>
           <p class="block">
             Esta opción determinará si otras comunidades ajenas a ti podrán utilizar tus reglas o no.
           </p>
@@ -494,10 +489,14 @@ import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import useEmitter from "@/composables/useEmitter";
 import PButton from "@/components/lib/forms/PButton.vue";
+import PInput from "@/components/lib/forms/PInput.vue";
+import PField from "@/components/lib/forms/PField.vue";
 
 export default defineComponent({
     name: "CreateCommunity",
     components: {
+      PField,
+      PInput,
       PButton,
         PTitle
     },

@@ -1,17 +1,50 @@
 <template>
-    <div id="createCircuit" class="box">
-        <PTitle class="mb-5" name="Crear circuito" />
+  <div
+    id="createCircuit"
+    class="box"
+  >
+    <PTitle
+      class="mb-5"
+      name="Crear circuito"
+    />
 
-        <p-input label="Nombre del circuito" name="name" v-model="rawCircuit.name"/>
-        <p-input label="Localidad del circuito" name="locality" v-model="rawCircuit.locality"/>
-        <p-input label="País del circuito" name="country" v-model="rawCircuit.country"/>
-        <p-input label="Latitud del circuito" name="latitude" type="number" v-model="rawCircuit.latitude"/>
-        <p-input label="Longitud del circuito" name="longitude" type="number" v-model="rawCircuit.longitude"/>
+    <PInput
+      v-model="rawCircuit.name"
+      label="Nombre del circuito"
+      name="name"
+    />
+    <PInput
+      v-model="rawCircuit.locality"
+      label="Localidad del circuito"
+      name="locality"
+    />
+    <PInput
+      v-model="rawCircuit.country"
+      label="País del circuito"
+      name="country"
+    />
+    <PInput
+      v-model="rawCircuit.latitude"
+      label="Latitud del circuito"
+      name="latitude"
+      type="number"
+    />
+    <PInput
+      v-model="rawCircuit.longitude"
+      label="Longitud del circuito"
+      name="longitude"
+      type="number"
+    />
 
-        <PrognoAlert message="Deberás rellenar más datos en la edición del circuito." />
+    <PrognoAlert message="Deberás rellenar más datos en la edición del circuito." />
 
-        <PButton block label="Crear circuito" @click="createCircuit()" variant="primary" />
-    </div>
+    <PButton
+      block
+      label="Crear circuito"
+      variant="primary"
+      @click="createCircuit()"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">

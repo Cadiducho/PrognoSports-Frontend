@@ -55,40 +55,40 @@
             Datos
           </h2>
 
-          <o-field label="Nombre">
-            <o-input
+          <PField label="Nombre">
+            <PInput
               v-model="editedUser.username"
               name="name"
               expanded
               lazy
             />
-          </o-field>
+          </PField>
 
-          <o-field label="Biografía">
-            <o-input
+          <PField label="Biografía">
+            <PInput
               v-model="editedUser.bio"
               name="bio"
               expanded
               lazy
             />
-          </o-field>
+          </PField>
 
-          <o-field label="Localización">
-            <o-input
+          <PField label="Localización">
+            <PInput
               v-model="editedUser.location"
               name="location"
               expanded
               lazy
             />
-          </o-field>
+          </PField>
 
-          <o-field label="Cumpleaños">
+          <PField label="Cumpleaños">
             <Calendar
               :value="editedUser.birthdate"
               :options="calendarOptions"
               @input="editedUser.birthdate = $event;"
             />
-          </o-field>
+          </PField>
         </div>
 
         <div class="column">
@@ -151,19 +151,19 @@
 
       <hr>
 
-      <o-field
+      <PField
         label="Contraseña actual"
         message="Debes introducir tu contraseña actual para confirmar cambios en tus ajustes"
         :variant="noPassword ? 'danger' : ''"
       >
-        <o-input
+        <PInput
           v-model="editedUser.password"
           name="password"
           type="password"
           expanded
           lazy
         />
-      </o-field>
+      </PField>
       <PButton
         native-type="submit"
         :disabled="submiting"
@@ -251,27 +251,23 @@
       Cambiar contraseña
     </template>
     <template #content>
-      <o-field label="Nueva contraseña">
-        <o-input
+      <PField label="Nueva contraseña">
+        <PInput
           v-model="changePasswordModal.newPassword"
           name="newPassword"
           type="password"
-          expanded
-          lazy
         />
-      </o-field>
-      <o-field
+      </PField>
+      <PField
         label="Contraseña actual"
         message="Debes introducir tu contraseña actual para confirmar cambios en tus ajustes"
       >
-        <o-input
+        <PInput
           v-model="changePasswordModal.confirmPassword"
           name="confirmPassword"
           type="password"
-          expanded
-          lazy
         />
-      </o-field>
+      </PField>
     </template>
   </PrognoModal>
 
@@ -284,27 +280,23 @@
       Cambiar email
     </template>
     <template #content>
-      <o-field label="Nuevo email">
-        <o-input
+      <PField label="Nuevo email">
+        <PInput
           v-model="changeMailModal.newMail"
           name="mail"
           type="email"
-          expanded
-          lazy
         />
-      </o-field>
-      <o-field
+      </PField>
+      <PField
         label="Confirmar contraseña"
         message="Debes introducir tu contraseña actual para confirmar cambios en tus ajustes"
       >
-        <o-input
+        <PInput
           v-model="changeMailModal.confirmPassword"
           name="confirmPassword"
           type="password"
-          expanded
-          lazy
         />
-      </o-field>
+      </PField>
     </template>
   </PrognoModal>
 
@@ -361,10 +353,14 @@ import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PRadio from "@/components/lib/forms/PRadio.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
+import PField from "@/components/lib/forms/PField.vue";
+import PInput from "@/components/lib/forms/PInput.vue";
 
 export default defineComponent({
   name: "UserSettings",
   components: {
+    PInput,
+    PField,
     PSelect,
     PButton,
     PRadio,

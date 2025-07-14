@@ -29,24 +29,20 @@
               Datos del {{ grandPrix.name }}
             </h2>
 
-            <o-field label="Nombre">
-              <o-input
+            <PField label="Nombre">
+              <PInput
                 v-model="grandPrix.name"
                 name="name"
-                expanded
-                lazy
               />
-            </o-field>
+            </PField>
 
 
-            <o-field label="Código del Gran Premio">
-              <o-input
+            <PField label="Código del Gran Premio">
+              <PInput
                 v-model="grandPrix.code"
                 name="code"
-                expanded
-                lazy
               />
-            </o-field>
+            </PField>
 
 
             <hr>
@@ -71,10 +67,14 @@ import {GrandPrix} from "@/types/GrandPrix";
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import PButton from "@/components/lib/forms/PButton.vue";
+import PField from "@/components/lib/forms/PField.vue";
+import PInput from "@/components/lib/forms/PInput.vue";
 
 export default defineComponent({
     name: "EditGrandPrix",
     components: {
+      PInput,
+      PField,
       PButton,
         PTitle,
     },

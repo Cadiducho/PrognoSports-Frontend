@@ -1,55 +1,121 @@
 <template>
-    <div id="adminDrivers" class="box">
-        <PTitle class="mb-5" name="Administración de circuitos"/>
+  <div
+    id="adminDrivers"
+    class="box"
+  >
+    <PTitle
+      class="mb-5"
+      name="Administración de circuitos"
+    />
 
-        <loading v-if="isLoading"/>
-        <template v-else>
+    <loading v-if="isLoading" />
+    <template v-else>
+      <p-button
+        class="mb-4"
+        label="Volver a lista de circuitos"
+        color="info"
+        to="/admin/circuits"
+      />
 
-            <p-button class="mb-4" label="Volver a lista de circuitos" color="info" to="/admin/circuits" />
+      <p v-if="!thereIsCircuit">
+        El circuito {{ circuitId }} no ha sido encontrada
+      </p>
+      <template v-else>
+        <div class="flex">
+          <section class="w-1/2 mr-2">
+            <h2 class="title">
+              Datos del circuito
+            </h2>
 
-            <p v-if="!thereIsCircuit">El circuito {{ circuitId }} no ha sido encontrada</p>
-            <template v-else>
+            <PInput
+              v-model="circuit!.name"
+              label="Nombre del circuito"
+              name="name"
+            />
+            <PInput
+              v-model="circuit!.locality"
+              label="Localidad del circuito"
+              name="locality"
+            />
+            <PInput
+              v-model="circuit!.country"
+              label="País del circuito"
+              name="country"
+            />
+            <PInput
+              v-model="circuit!.latitude"
+              label="Latitud del circuito"
+              name="latitude"
+              type="number"
+            />
+            <PInput
+              v-model="circuit!.longitude"
+              label="Longitud del circuito"
+              name="longitude"
+              type="number"
+            />
 
-                <div class="flex">
-                    <section class="w-1/2 mr-2">
-                        <h2 class="title">Datos del circuito</h2>
-
-                        <p-input label="Nombre del circuito" name="name" v-model="circuit!.name"/>
-                        <p-input label="Localidad del circuito" name="locality" v-model="circuit!.locality"/>
-                        <p-input label="País del circuito" name="country" v-model="circuit!.country"/>
-                        <p-input label="Latitud del circuito" name="latitude" type="number" v-model="circuit!.latitude"/>
-                        <p-input label="Longitud del circuito" name="longitude" type="number" v-model="circuit!.longitude"/>
-
-                        <PButton type="ghost" size="small" :label="(circuit!.hasLogoImage ? 'Editar' : 'Agregar') + ' imagen de logo'" />
-                        <input type="file" @change="onFileChange" class="block w-full text-sm text-slate-500
+            <PButton
+              type="ghost"
+              size="small"
+              :label="(circuit!.hasLogoImage ? 'Editar' : 'Agregar') + ' imagen de logo'"
+            />
+            <input
+              type="file"
+              class="block w-full text-sm text-slate-500
                           file:mr-4 file:py-2 file:px-4
                           file:rounded-full file:border-0
                           file:text-sm file:font-semibold
                           file:bg-violet-50 file:text-violet-700
                           hover:file:bg-violet-100
-                        "/>
+                        "
+              @change="onFileChange"
+            >
 
-                        <img v-if="circuit?.hasLogoImage" :src="circuit?.logoImage()" class="h-48" alt="Variant layout">
-                    </section>
+            <img
+              v-if="circuit?.hasLogoImage"
+              :src="circuit?.logoImage()"
+              class="h-48"
+              alt="Variant layout"
+            >
+          </section>
 
-                    <section class="w-1/2 border-l-4">
-                        <h2 class="font-bold mb-2 ml-3 text-2xl">Variantes del circuito</h2>
-                        <div class="flex flex-wrap">
-                            <EditCircuitVariant v-for="variant in circuit?.variants" :variant="variant" @removeVariant="removeVariant($event)" class="last:border-b-0"/>
+          <section class="w-1/2 border-l-4">
+            <h2 class="font-bold mb-2 ml-3 text-2xl">
+              Variantes del circuito
+            </h2>
+            <div class="flex flex-wrap">
+              <EditCircuitVariant
+                v-for="variant in circuit?.variants"
+                :variant="variant"
+                class="last:border-b-0"
+                @remove-variant="removeVariant($event)"
+              />
 
-                            <PButton class="p-2" block label="Agregar una nueva variante" type="soft" color="green" @click="createNewVariant()" />
-                        </div>
-                    </section>
-                </div>
+              <PButton
+                class="p-2"
+                block
+                label="Agregar una nueva variante"
+                type="soft"
+                color="green"
+                @click="createNewVariant()"
+              />
+            </div>
+          </section>
+        </div>
 
 
 
-                <PButton block :disabled="!isDataOk()" label="Editar circuito" @click="editCircuit()" variant="primary" />
-
-            </template>
-        </template>
-
-    </div>
+        <PButton
+          block
+          :disabled="!isDataOk()"
+          label="Editar circuito"
+          variant="primary"
+          @click="editCircuit()"
+        />
+      </template>
+    </template>
+  </div>
 </template>
 
 <script setup lang="ts">

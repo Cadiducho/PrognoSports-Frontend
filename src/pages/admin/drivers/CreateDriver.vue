@@ -28,59 +28,49 @@
           Datos del piloto
         </h2>
 
-        <o-field label="ID del piloto">
-          <o-input
+        <PField label="ID del piloto">
+          <PInput
             v-model="createdDriver.id"
             name="id"
-            expanded
-            lazy
           />
-        </o-field>
+        </PField>
 
-        <o-field label="Nombre del piloto">
-          <o-input
+        <PField label="Nombre del piloto">
+          <PInput
             v-model="createdDriver.firstname"
             name="firstname"
-            expanded
-            lazy
           />
-        </o-field>
+        </PField>
 
-        <o-field label="Apellido del piloto">
-          <o-input
+        <PField label="Apellido del piloto">
+          <PInput
             v-model="createdDriver.lastname"
             name="lastname"
-            expanded
-            lazy
           />
-        </o-field>
+        </PField>
 
-        <o-field label="Código del piloto">
-          <o-input
+        <PField label="Código del piloto">
+          <PInput
             v-model="createdDriver.code"
             name="code"
-            expanded
-            lazy
           />
-        </o-field>
+        </PField>
 
-        <o-field label="Nacionalidad del piloto">
-          <o-input
+        <PField label="Nacionalidad del piloto">
+          <PInput
             v-model="createdDriver.nationality"
             name="nationality"
-            expanded
-            lazy
           />
-        </o-field>
+        </PField>
 
-        <o-field label="Fecha de nacimiento">
+        <PField label="Fecha de nacimiento">
           <o-datepicker
             v-model="createdDriver.birth"
             placeholder="Click para escoger..."
             icon="calendar"
             trap-focus
           />
-        </o-field>
+        </PField>
 
         <hr>
       </o-step-item>
@@ -160,10 +150,14 @@ import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {useDayjs} from "@/composables/useDayjs";
 import PButton from "@/components/lib/forms/PButton.vue";
+import PField from "@/components/lib/forms/PField.vue";
+import PInput from "@/components/lib/forms/PInput.vue";
 
 export default defineComponent({
     name: "CreateDriver",
     components: {
+      PInput,
+      PField,
       PButton,
         AlertNoPermission,
         AlertInvalidData,

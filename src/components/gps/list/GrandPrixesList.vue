@@ -1,24 +1,23 @@
 <template>
-    <o-field>
-        <o-input
-            v-model="filtroGps"
-            placeholder="Buscar Gran Premio"
-            type="search"
-            icon-pack="fas"
-            icon="search"
-        ></o-input>
-    </o-field>
-    <div class="flex flex-wrap -mx-4">
-        <div v-if="gps.length === 0">
-            No hay grandes premios aquí... de momento
-        </div>
-        <GrandPrixItem
-            v-for="(grandprix, index) in filteredGrandPrixes"
-            class=""
-            :gp="grandprix"
-            :key="grandprix.name + index"
-        />
+  <PField>
+    <PInput
+      v-model="filtroGps"
+      placeholder="Buscar Gran Premio"
+      type="search"
+      icon="fas fa-search"
+    />
+  </PField>
+  <div class="flex flex-wrap -mx-4">
+    <div v-if="gps.length === 0">
+      No hay grandes premios aquí... de momento
     </div>
+    <GrandPrixItem
+      v-for="(grandprix, index) in filteredGrandPrixes"
+      :key="grandprix.name + index"
+      class=""
+      :gp="grandprix"
+    />
+  </div>
 </template>
 
 <script lang="ts">
@@ -26,10 +25,12 @@
     import {GrandPrix} from "@/types/GrandPrix";
 
     import {defineComponent, PropType} from "vue";
+    import PField from "@/components/lib/forms/PField.vue";
+    import PInput from "@/components/lib/forms/PInput.vue";
 
     export default defineComponent({
         name: "GrandPrixesList",
-        components: {GrandPrixItem},
+        components: {PInput, PField, GrandPrixItem},
         props: {
             gps: {
                 type: Object as PropType<Array<GrandPrix>>,

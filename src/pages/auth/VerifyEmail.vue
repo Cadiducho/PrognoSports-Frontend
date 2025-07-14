@@ -8,27 +8,27 @@
       <p class="text-gray-700 dark:text-gray-300">
         Hemos enviado un email a tu dirección de correo electrónico. Por favor, introduce el código para verificar tu cuenta.
       </p>
-      <p-input
+      <PInput
         v-model="verificationCode"
         label="Introduce el código de verificación de 6 caracteres"
         class="verification-input"
         :max-lenght="6"
       />
-      <p-button
+      <PButton
         class="mr-2"
         :disabled="isVerifiying"
         @click="verifyAccount"
       >
         Verificar cuenta
-      </p-button>
-      <p-button
+      </PButton>
+      <PButton
         color="info"
         type="soft"
         :disabled="showSendVerificationEmail"
         @click="showSendVerificationEmail = true"
       >
         No he recibido mi email de verificación
-      </p-button>
+      </PButton>
 
 
 

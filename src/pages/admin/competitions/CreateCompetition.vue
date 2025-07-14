@@ -17,41 +17,41 @@
           Datos de la competición
         </h2>
 
-        <o-field label="Nombre de la competición">
-          <o-input
+        <PField label="Nombre de la competición">
+          <PInput
             v-model="createdCompetition.name"
             name="name"
             expanded
             lazy
           />
-        </o-field>
+        </PField>
 
-        <o-field label="Nombre completo y con patrocinadores">
-          <o-input
+        <PField label="Nombre completo y con patrocinadores">
+          <PInput
             v-model="createdCompetition.fullname"
             name="fullname"
             expanded
             lazy
           />
-        </o-field>
+        </PField>
 
-        <o-field label="Código de la competición">
-          <o-input
+        <PField label="Código de la competición">
+          <PInput
             v-model="createdCompetition.code"
             name="code"
             expanded
             lazy
           />
-        </o-field>
+        </PField>
 
-        <o-field label="Reglas">
-          <o-input
+        <PField label="Reglas">
+          <PInput
             v-model="createdCompetition.rules"
-            type="textarea"
+            is-textarea
             expanded
             lazy
           />
-        </o-field>
+        </PField>
 
         <hr>
       </o-step-item>
@@ -101,17 +101,15 @@
         </section>
 
         <hr>
-        <o-field>
-          <p class="control">
-            <PButton
-              :disabled="!isDataOk()"
-              color="primary"
-              @click="registerCompetition()"
-            >
-              Crear competición
-            </PButton>
-          </p>
-        </o-field>
+
+
+        <PButton
+          :disabled="!isDataOk()"
+          color="primary"
+          @click="registerCompetition()"
+        >
+          Crear competición
+        </PButton>
       </o-step-item>
     </o-steps>
   </div>
@@ -128,11 +126,15 @@ import {marked} from "marked";
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import PButton from "@/components/lib/forms/PButton.vue";
+import PField from "@/components/lib/forms/PField.vue";
+import PInput from "@/components/lib/forms/PInput.vue";
 
 export default defineComponent({
     name: "CreateCompetition",
 
     components: {
+      PInput,
+      PField,
       PButton,
         AlertNoPermission,
         AlertInvalidData,

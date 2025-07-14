@@ -2,8 +2,10 @@
   <PCard id="seasonEdit">
     <loading v-if="isLoading" />
     <template v-else>
-
-      <PTitle v-if="season" :name="`Administración de temporada ${season.name}`" />
+      <PTitle
+        v-if="season"
+        :name="`Administración de temporada ${season.name}`"
+      />
 
       <nav class="flex justify-between mb-4">
         <section class="flex flex-wrap">
@@ -23,7 +25,11 @@
         La temporada {{ seasonId }} no ha sido encontrada
       </p>
       <template v-else>
-        <PTitle type="subtitle" tag="h2" class="mb-2">
+        <PTitle
+          type="subtitle"
+          tag="h2"
+          class="mb-2"
+        >
           Edición de Temporada {{ season.name }}
         </PTitle>
 
@@ -61,13 +67,22 @@
             </p-button>-->
           </section>
           <section class="w-full xl:w-1/3 px-2">
-            <p-input label="Nombre de la temporada" name="name" v-model="season.name" />
-            <p-input label="Número de eventos" name="totalEvents" type="number" v-model="season.totalEvents" />
+            <PInput
+              v-model="season.name"
+              label="Nombre de la temporada"
+              name="name"
+            />
+            <PInput
+              v-model="season.totalEvents"
+              label="Número de eventos"
+              name="totalEvents"
+              type="number"
+            />
 
             <p-select
               v-if="competitions"
-              label="Competición de la temporada"
               v-model="season.competition.id"
+              label="Competición de la temporada"
               placeholder="Selecciona una competición"
             >
               <option

@@ -28,23 +28,23 @@
           Datos del gran premio
         </h2>
 
-        <o-field label="Nombre del Gran Premio">
-          <o-input
+        <PField label="Nombre del Gran Premio">
+          <PInput
             v-model="createdGrandPrix.name"
             name="name"
             expanded
             lazy
           />
-        </o-field>
+        </PField>
 
-        <o-field label="Código del Gran Premio">
-          <o-input
+        <PField label="Código del Gran Premio">
+          <PInput
             v-model="createdGrandPrix.code"
             name="code"
             expanded
             lazy
           />
-        </o-field>
+        </PField>
       </o-step-item>
 
       <o-step-item
@@ -104,10 +104,14 @@ import {Circuit} from "@/types/Circuit";
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import PButton from "@/components/lib/forms/PButton.vue";
+import PField from "@/components/lib/forms/PField.vue";
+import PInput from "@/components/lib/forms/PInput.vue";
 
 export default defineComponent({
     name: "CreateGrandPrix",
     components: {
+      PInput,
+      PField,
       PButton,
         AlertNoPermission,
         AlertInvalidData,

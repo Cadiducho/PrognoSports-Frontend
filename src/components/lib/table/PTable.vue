@@ -3,13 +3,14 @@
     v-if="withFilter !== undefined"
     class="mb-2"
   >
-    <input
-      id="search"
-      v-model="searchInput"
-      type="search"
-      class="flex-1 w-full p-3 pl-10 text-sm text-gray-900 dark:text-gray-200 dark:placeholder-gray-400 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600"
-      placeholder="Buscar"
-    >
+    <PField>
+      <PInput
+        v-model="searchInput"
+        placeholder="Buscar"
+        type="search"
+        icon="fas fa-search"
+      />
+    </PField>
   </form>
 
   <table class="table-auto w-full border-collapse">
@@ -113,6 +114,8 @@ import {computed, ref} from "vue";
 import PPagination from "@/components/lib/PPagination.vue";
 import {useDayjs} from "@/composables/useDayjs";
 import {Column} from "@/components/lib/table/index";
+import PField from "@/components/lib/forms/PField.vue";
+import PInput from "@/components/lib/forms/PInput.vue";
 
 interface Props<T> {
     columns: Array<Column>;

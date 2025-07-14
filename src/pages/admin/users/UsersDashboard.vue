@@ -8,15 +8,14 @@
       name="Administración de usuarios"
     />
 
-    <o-field>
-      <o-input
+    <PField>
+      <PInput
         v-model="filtroUsuario"
         placeholder="Buscar usuario"
         type="search"
-        icon-pack="fas"
-        icon="search"
+        icon="fas fa-search"
       />
-    </o-field>
+    </PField>
 
     <div class="block">
       <o-switch v-model="isPaginated">
@@ -157,10 +156,14 @@ import {userService} from "@/_services";
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useDayjs} from "@/composables/useDayjs";
+import PField from "@/components/lib/forms/PField.vue";
+import PInput from "@/components/lib/forms/PInput.vue";
 
 export default defineComponent({
   name: "DriversAdmin",
   components: {
+    PInput,
+    PField,
     AlertNoPermission,
     PTitle,
   },

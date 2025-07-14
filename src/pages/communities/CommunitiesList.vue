@@ -35,7 +35,7 @@
           label="Mis comunidades"
           :value="0"
         >
-          <p-input
+          <PInput
             v-model="filtroComunidad"
             placeholder="Buscar comunidad"
             type="search"
@@ -54,7 +54,7 @@
           label="Abiertas"
           :value="1"
         >
-          <p-input
+          <PInput
             v-model="filtroComunidad"
             placeholder="Buscar comunidad"
             type="search"
@@ -73,7 +73,7 @@
           label="Cerradas"
           :value="2"
         >
-          <p-input
+          <PInput
             v-model="filtroComunidad"
             placeholder="Buscar comunidad"
             type="search"
@@ -95,7 +95,7 @@
           label="Todas"
           :value="3"
         >
-          <p-input
+          <PInput
             v-model="filtroComunidad"
             placeholder="Buscar comunidad"
             type="search"

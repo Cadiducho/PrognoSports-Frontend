@@ -58,62 +58,57 @@
 
           <div class="columns">
             <div class="column is-four-fifths">
-              <o-field label="Nombre">
-                <o-input
+              <PField label="Nombre">
+                <PInput
                   v-model="grandPrix.name"
                   name="name"
                   expanded
                   lazy
                 />
-              </o-field>
+              </PField>
             </div>
             <div class="column">
-              <o-field label="Estado">
-                <o-switch
+              <PField label="Estado">
+                <PSwitch
                   v-model="grandPrix.suspended"
                   class="mt-2"
                   variant="danger"
                   passive-variant="primary"
                 >
                   {{ grandPrix.suspended ? "Suspendido" : "Activo" }}
-                </o-switch>
-              </o-field>
+                </PSwitch>
+              </PField>
             </div>
           </div>
 
           <div class="columns">
             <div class="column">
-              <o-field label="Código del Gran Premio">
-                <o-input
+              <PField label="Código del Gran Premio">
+                <PInput
                   v-model="grandPrix.code"
                   name="code"
-                  expanded
-                  lazy
                 />
-              </o-field>
+              </PField>
 
-              <o-field label="Ronda del Gran Premio">
-                <o-input
+              <PField label="Ronda del Gran Premio">
+                <PInput
                   v-model="grandPrix.round"
                   name="round"
-                  expanded
-                  lazy
                   :min="0"
                   type="number"
                 />
-              </o-field>
+              </PField>
 
-              <button
-                class="button is-primary mt-2"
+              <PButton
+                class="mt-2"
                 :disabled="!isDataOk()"
                 @click="editGrandPrix()"
               >
                 Editar datos del gran premio
-              </button>
+              </PButton>
             </div>
             <div class="column">
               <PField label="Circuito del Gran Premio">
-                {{ grandPrix.circuit }}
                 <PSelect
                   v-model="grandPrix.circuit"
                   placeholder="Selecciona un circuito"
@@ -145,16 +140,14 @@
                 </PSelect>
               </PField>
 
-              <o-field label="Vueltas del Gran Premio">
-                <o-input
+              <PField label="Vueltas del Gran Premio">
+                <PInput
                   v-model="grandPrix.laps"
                   name="laps"
-                  expanded
-                  lazy
                   :min="0"
                   type="number"
                 />
-              </o-field>
+              </PField>
             </div>
           </div>
 
@@ -228,10 +221,14 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import GrandPrixPageHeader from "@/components/gps/GrandPrixPageHeader.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
+import PInput from "@/components/lib/forms/PInput.vue";
+import PSwitch from "@/components/lib/forms/PSwitch.vue";
 
 export default defineComponent({
   name: "EditGrandPrixInSeason",
   components: {
+    PSwitch,
+    PInput,
     PSelect,
     PField,
     GrandPrixPageHeader,

@@ -29,32 +29,32 @@
           Datos de la competición
         </h2>
 
-        <o-field label="Nombre de la competición">
-          <o-input
+        <PField label="Nombre de la competición">
+          <PInput
             v-model="competition.name"
             name="name"
             expanded
             lazy
           />
-        </o-field>
+        </PField>
 
-        <o-field label="Nombre completo y con patrocinadores">
-          <o-input
+        <PField label="Nombre completo y con patrocinadores">
+          <PInput
             v-model="competition.fullname"
             name="fullname"
             expanded
             lazy
           />
-        </o-field>
+        </PField>
 
-        <o-field label="Código de la competición">
-          <o-input
+        <PField label="Código de la competición">
+          <PInput
             v-model="competition.code"
             name="code"
             expanded
             lazy
           />
-        </o-field>
+        </PField>
 
 
         <PField label="Temporada actual">
@@ -73,19 +73,20 @@
           </PSelect>
         </PField>
 
-        <div class="columns">
-          <div class="column">
-            <o-field label="Reglas">
-              <o-input
+        <PField label="Reglas">
+          <section class="flex gap-4">
+            <div class="w-1/2">
+              <PInput
                 v-model="competition.rules"
-                type="textarea"
+                is-textarea
+                :rows="60"
               />
-            </o-field>
-          </div>
-          <div class="column content">
-            <div v-html="previewRules" />
-          </div>
-        </div>
+            </div>
+            <div class="w-1/2 content">
+              <div v-html="previewRules" />
+            </div>
+          </section>
+        </PField>
 
         <hr>
         <PButton
@@ -112,10 +113,12 @@ import {useAuthStore} from "@/store/authStore";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
+import PInput from "@/components/lib/forms/PInput.vue";
 
 export default defineComponent({
     name: "EditCompetition",
     components: {
+      PInput,
       PSelect,
       PField,
       PButton,
