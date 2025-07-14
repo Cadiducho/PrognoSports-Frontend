@@ -51,11 +51,6 @@
           class="md:col-span-1"
         >
           <StartGrid :grid="startGrid" />
-
-          <PitLaneStartGrid
-            v-if="startGrid.size"
-            :grid="startGrid"
-          />
         </div>
         <!-- Si hay parrilla de salida saldrá desplazado y expandido debajo del resto de cajas de la grid -->
         <div
@@ -67,6 +62,11 @@
             :circuit="grandPrix.circuit!"
             :variant="grandPrix.variant!"
             :laps="grandPrix.laps"
+          />
+
+          <PitLaneStartGrid
+            v-if="startGrid.size"
+            :grid="startGrid"
           />
 
           <section
@@ -81,24 +81,6 @@
             >
               Administración
             </p-button>
-          </section>
-
-          <section
-            v-if="!isLoadingGrandPrix && drivers?.length > 0"
-            class="my-2"
-          >
-            <PButton
-              color="primary"
-              expanded
-              @click="showCheckResultsModal = true"
-            >
-              Comprobar resultados de {{ currentSelectedSession.humanName() }}
-            </PButton>
-            <CheckResultsModal
-              v-model:show-modal="showCheckResultsModal"
-              :drivers-list="drivers"
-              :session="currentSelectedSession"
-            />
           </section>
         </div>
       </div>
@@ -163,12 +145,10 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import ClouseDateMessage from "@/components/gps/ClouseDateMessage.vue";
 import PCard from "@/components/lib/PCard.vue";
-import CheckResultsModal from "@/components/gps/CheckResultsModal.vue";
 
 export default defineComponent({
   name: "OneGrandPrix",
   components: {
-    CheckResultsModal,
     PCard,
     ClouseDateMessage,
     PrognoAlert,
@@ -207,12 +187,6 @@ export default defineComponent({
       startGrid: new Map<RaceSession, Array<StartGridPosition>>(),
       userPoints: {} as Dictionary<number, UserPoints>,
       activeTab: 0,
-      showCheckResultsModal: false,
-    }
-  },
-  computed: {
-    currentSelectedSession() {
-      return this.grandPrix.sessions[this.activeTab];
     }
   },
   mounted() {
