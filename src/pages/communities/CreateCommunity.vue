@@ -301,25 +301,19 @@
           <h1 class="title has-text-centered">
             Finalizar
           </h1>
-          <o-notification
-            v-if="!name"
-            variant="danger"
-            aria-close-label="Close notification"
-            role="alert"
-          >
-            No has introducido nombre de la comunidad
-          </o-notification>
-          <o-notification
-            v-if="!description"
-            variant="danger"
-            aria-close-label="Close notification"
-            role="alert"
-          >
-            No has introducido descripción de la comunidad
-          </o-notification>
-          <div class="notification has-background-primary">
+
+          <AlertInvalidData
+            :object="name"
+            message="No has introducido nombre de la comunidad"
+          />
+          <AlertInvalidData
+            :object="description"
+            message="No has introducido descripción de la comunidad"
+          />
+
+          <PrognoAlert variant="warning">
             Revisa los datos, se va a registrar la siguiente comunidad
-          </div>
+          </PrognoAlert>
 
           <div class="columns">
             <div class="column is-3">
@@ -491,10 +485,14 @@ import useEmitter from "@/composables/useEmitter";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PField from "@/components/lib/forms/PField.vue";
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
+import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
 
 export default defineComponent({
     name: "CreateCommunity",
     components: {
+      AlertInvalidData,
+      PrognoAlert,
       PField,
       PInput,
       PButton,

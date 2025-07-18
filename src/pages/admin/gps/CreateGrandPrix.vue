@@ -64,12 +64,12 @@
           message="No has introducido código para este gran premio"
         />
 
-        <div
+        <PrognoAlert
           v-if="isDataOk()"
-          class="notification has-background-primary"
+          variant="warning"
         >
           Revisa los datos, se va a crear el Gran Premio
-        </div>
+        </PrognoAlert>
 
         <div class="content">
           <p class="card-text">
@@ -106,10 +106,12 @@ import {useAuthStore} from "@/store/authStore";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 
 export default defineComponent({
     name: "CreateGrandPrix",
     components: {
+      PrognoAlert,
       PInput,
       PField,
       PButton,

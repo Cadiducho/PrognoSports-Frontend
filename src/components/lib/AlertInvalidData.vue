@@ -1,28 +1,21 @@
 <template>
-  <o-notification
-    v-if="object == undefined || object.toString().trim() === ''"
+  <PrognoAlert
+    v-if="props.object == undefined || props.object.toString().trim() === ''"
     variant="danger"
     aria-close-label="Close notification"
     role="alert"
   >
-    {{ message }}
-  </o-notification>
+    {{ props.message }}
+  </PrognoAlert>
 </template>
 
-<script lang="ts">
-import {defineComponent} from "vue";
+<script setup lang="ts">
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 
-export default defineComponent({
-    name: "LandingNavbar",
-    props: {
-        object: {
-            type: Object,
-            required: false,
-        },
-        message: {
-            type: String,
-            required: true
-        }
-    }
+const props = withDefaults(defineProps<{
+  object?: object;
+  message: string;
+}>(), {
+  object: undefined,
 });
 </script>

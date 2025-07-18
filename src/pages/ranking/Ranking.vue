@@ -25,12 +25,12 @@
 
       <loading v-if="isLoading" />
       <template v-else>
-        <o-notification
+        <PrognoAlert
           v-if="!tableHasData"
-          variant="warning"
+          variant="danger"
         >
           No hay datos de esta temporada
-        </o-notification>
+        </PrognoAlert>
 
         <o-tabs
           v-else
@@ -344,6 +344,7 @@ import {storeToRefs} from "pinia";
 import PCard from "@/components/lib/PCard.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 
 interface TableEntry {
     user: User;
@@ -355,6 +356,7 @@ interface TableEntry {
     export default defineComponent({
         name: "LandingNavbar",
         components: {
+          PrognoAlert,
           PSelect,
           PField,
             PCard,

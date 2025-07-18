@@ -71,7 +71,7 @@ const closeAlert = () => {
 };
 
 const alertClasses = computed(() => {
-  const baseClasses = "flex items-center text-sm font-bold px-4 py-3 mb-4";
+  const baseClasses = "flex items-center text-sm font-bold px-4 py-3 mb-4 rounded";
   const variantClasses = {
     info: "bg-blue-100 dark:bg-blue-400 text-blue-700 dark:text-white border-blue-500",
     danger: "bg-error-100 text-error-500 border border-error-200",

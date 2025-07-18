@@ -10,7 +10,7 @@ const props = withDefaults(defineProps<Props>(), {
 <template>
   <component
     :is="props.tag"
-    class="bg-white dark:bg-contrast-dark shadow-md rounded-lg max-w-full dark:text-gray-300 dark:border dark:border-gray-800"
+    class="bg-white dark:bg-gray-900 shadow-md rounded-lg max-w-full dark:text-gray-300 dark:border dark:border-gray-800"
   >
     <div class="p-4">
       <slot name="header" />

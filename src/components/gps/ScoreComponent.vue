@@ -13,20 +13,22 @@
         />
       </p>
 
-      <o-notification
+      <PrognoAlert
         v-if="currentUser.preferences['hide-tipps-until-start'] === true"
-        variant="info is-light"
+        variant="info"
+        :icon="false"
         aria-close-label="Close notification"
       >
         Tus pronósticos están ocultos al resto de usuarios hasta {{ humanDateTime(session.closureDate()) }} ({{ dateDiff(session.closureDate()) }})
-      </o-notification>
-      <o-notification
+      </PrognoAlert>
+      <PrognoAlert
         v-if="!thereAreFinishResults"
-        variant="primary is-light"
+        variant="success"
+        :icon="false"
         aria-close-label="Close notification"
       >
         Aún no hay resultados confirmados para esta sesión
-      </o-notification>
+      </PrognoAlert>
 
       <o-table
         :data="tableData"
@@ -327,10 +329,11 @@ import {useDayjs} from "@/composables/useDayjs";
 import {useStyles} from "@/composables/useStyles";
 import useEmitter from "@/composables/useEmitter";
 import PCheckbox from "@/components/lib/forms/PCheckbox.vue";
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 
 export default defineComponent({
     name: "LandingNavbar",
-    components: {PCheckbox, UserMiniCard},
+    components: {PrognoAlert, PCheckbox, UserMiniCard},
     props: {
         gp: {
             type: Object as PropType<GrandPrix>,

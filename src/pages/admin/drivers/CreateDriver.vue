@@ -104,9 +104,9 @@
           message="No has introducido nacionalidad para este piloto"
         />
 
-        <div class="notification has-background-primary">
+        <PrognoAlert variant="warning">
           Revisa los datos, se va a crear el siguiente piloto
-        </div>
+        </PrognoAlert>
 
         <div class="content">
           <p class="card-text">
@@ -142,26 +142,25 @@
 import PTitle from "@/components/lib/PTitle.vue";
 import {driversService, notificationService} from "@/_services";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
-import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {Driver} from "@/types/Driver";
 
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
-import {useCommunityStore} from "@/store/communityStore";
 import {useDayjs} from "@/composables/useDayjs";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 
 export default defineComponent({
     name: "CreateDriver",
     components: {
+      PrognoAlert,
       PInput,
       PField,
       PButton,
-        AlertNoPermission,
-        AlertInvalidData,
-        PTitle,
+      AlertInvalidData,
+      PTitle,
     },
     setup() {
         const dayjs = useDayjs();

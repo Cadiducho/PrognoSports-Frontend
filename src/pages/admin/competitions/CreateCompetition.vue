@@ -81,9 +81,9 @@
           message="No has reglas para esta competición"
         />
 
-        <div class="notification has-background-primary">
+        <PrognoAlert variant="warning">
           Revisa los datos, se va a crear la siguiente competición
-        </div>
+        </PrognoAlert>
 
         <div class="content">
           <p class="card-text">
@@ -128,11 +128,13 @@ import {useAuthStore} from "@/store/authStore";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 
 export default defineComponent({
     name: "CreateCompetition",
 
     components: {
+      PrognoAlert,
       PInput,
       PField,
       PButton,

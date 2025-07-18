@@ -10,7 +10,7 @@
 
         <section class="busqueda-ordenada mb-2">
           <p-button
-            color="teal"
+            color="info"
             @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen"
           >
             Ordenar
@@ -27,7 +27,7 @@
           :open="opcionesOrdenadoOpen"
           class="box-ordenado"
         >
-          <div class="box mt-1">
+          <PCard class="mt-1">
             <label class="label">Orderar lista de pilotos</label>
             <div class="field mb-0">
               <PRadio
@@ -77,7 +77,7 @@
                 Orden descendente
               </PRadio>
             </div>
-          </div>
+          </PCard>
         </PCollapse>
 
         <draggable
@@ -187,6 +187,7 @@ import PRadio from "@/components/lib/forms/PRadio.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PCollapse from "@/components/lib/PCollapse.vue";
 import useEmitter from "@/composables/useEmitter";
+import PCard from "@/components/lib/PCard.vue";
 
 const props = defineProps<{
   session: RaceSession,
