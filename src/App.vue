@@ -19,8 +19,8 @@
 </template>
 
 <script setup lang="ts">
-
 import ToTop from "@/components/lib/ToTop.vue";
+import 'vue-sonner/style.css'
 import { Toaster } from 'vue-sonner'
 import {useToastStore} from "@/store/toastStore";
 import { useTitle } from '@vueuse/core'
