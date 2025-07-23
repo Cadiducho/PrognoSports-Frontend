@@ -1,13 +1,13 @@
 <template>
-  <PronoAlert
+  <PrognoAlert
     variant="danger"
     aria-close-label="Close notification"
     role="alert"
   >
     No tienes permiso para visualizar esta página
-  </PronoAlert>
+  </PrognoAlert>
 </template>
 
 <script setup>
-import PronoAlert from "@/components/lib/PronoAlert.vue";
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 </script>
