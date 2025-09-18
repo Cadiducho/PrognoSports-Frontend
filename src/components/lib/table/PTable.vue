@@ -6,6 +6,7 @@
     <PField>
       <PInput
         v-model="searchInput"
+        name="search"
         placeholder="Buscar"
         type="search"
         icon="fas fa-search"

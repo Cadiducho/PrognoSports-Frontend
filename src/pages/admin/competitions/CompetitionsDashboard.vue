@@ -2,7 +2,7 @@
   <PCard>
     <PTitle
       class="mb-5"
-      name="Administración de Grandes Premios"
+      name="Administración de Competiciones"
     />
 
     <nav class="flex mb-4">

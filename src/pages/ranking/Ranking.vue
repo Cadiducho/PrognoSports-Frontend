@@ -44,11 +44,7 @@
               Ranking por Gran Premio
             </PTitle>
             <p class="content">
-              Los ganadores de cada Gran Premio tendrán representado un <o-icon
-                pack="fas"
-                variant="info"
-                icon="trophy"
-              />
+              Los ganadores de cada Gran Premio tendrán representado un <i class="fas fa-trophy" />
             </p>
             <o-table
               :data="tableData"
@@ -114,11 +110,7 @@
                     :label="'Ganador de ' + gp.name"
                     variant="light"
                   >
-                    <o-icon
-                      pack="fas"
-                      variant="info"
-                      icon="trophy"
-                    />
+                    <span class="text-blue-500"><i class="fas fa-trophy" /></span>
                   </o-tooltip>
                 </template>
               </o-table-column>

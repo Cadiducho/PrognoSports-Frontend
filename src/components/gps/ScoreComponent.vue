@@ -7,10 +7,7 @@
       <p class="m-0 p-0 mb-6 dark:text-gray-300">
         Tus puntuaciones salen reflejadas con color <span class="tag is-primary">verde</span> <br>
         El ganador del Gran Premio es reflejado con color <span class="tag is-warning">dorado</span> <br>
-        Los ganadores de cada sesión tendrán representado un <o-icon
-          pack="fas"
-          icon="trophy"
-        />
+        Los ganadores de cada sesión tendrán representado un <i class="fas fa-trophy" />
       </p>
 
       <PrognoAlert
@@ -62,22 +59,14 @@
                     :label="'Asciende de ' + props.row.score.previousStandings + 'º a ' + props.row.score.standings + 'º'"
                     variant="success is-small"
                   >
-                    <o-icon
-                      pack="fas"
-                      variant="success"
-                      icon="arrow-up"
-                    />
+                    <span class="text-success-500"><i class="fas fa-arrow-up" /></span>
                   </o-tooltip>
                   <o-tooltip
                     v-if="props.row.score.previousStandings < props.row.score.standings"
                     :label="'Desciende de ' + props.row.score.previousStandings + 'º a ' + props.row.score.standings + 'º'"
                     variant="danger is-small"
                   >
-                    <o-icon
-                      pack="fas"
-                      variant="danger"
-                      icon="arrow-down"
-                    />
+                    <span class="text-error-500"><i class="fas fa-arrow-down" /></span>
                   </o-tooltip>
                 </template>
 
@@ -181,11 +170,7 @@
             :label="'Ganador de la sesión de ' + session.humanName()"
             variant="light"
           >
-            <o-icon
-              pack="fas"
-              variant="info"
-              icon="trophy"
-            />
+            <span class="text-blue-500"><i class="fas fa-trophy" /></span>
           </o-tooltip>
         </o-table-column>
 
@@ -202,11 +187,7 @@
             label="Ganador del Gran Premio"
             variant="light"
           >
-            <o-icon
-              pack="fas"
-              variant="purple"
-              icon="trophy"
-            />
+            <span class="text-brand-accent-600"><i class="fas fa-trophy" /></span>
           </o-tooltip>
         </o-table-column>
 
