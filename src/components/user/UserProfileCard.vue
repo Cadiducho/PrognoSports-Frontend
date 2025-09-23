@@ -32,10 +32,9 @@
             <span class="title is-bold">
               {{ profile.username }}
 
-              <span
-                class="tag"
+              <PTag
                 :style="profile.styleRankTag()"
-              >{{ profile.rank.name }}</span>
+              >{{ profile.rank.name }}</PTag>
             </span>
 
             <PButton
@@ -119,7 +118,7 @@ import {useDayjs} from "@/composables/useDayjs";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {User} from "@/types/User";
-import PrognoModal from "@/components/lib/PrognoModal.vue";
+import PTag from "@/components/lib/PTag.vue";
 import UploadFileModal from "@/components/lib/UploadFileModal.vue";
 import {notificationService, userService} from "@/_services";
 import PButton from "@/components/lib/forms/PButton.vue";
@@ -129,7 +128,7 @@ export default defineComponent({
     components: {
       PButton,
         UploadFileModal,
-        PrognoModal
+        PTag,
     },
     props: {
         profile: {

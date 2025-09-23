@@ -1,8 +1,6 @@
 <template>
-  <div
+  <PCard
     v-if="grid !== undefined"
-    id="startGridComponent"
-    class="box"
   >
     <nav class="flex flex-wrap">
       <PTitle type="subtitle">
@@ -45,7 +43,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </PCard>
 </template>
 
 <script lang="ts">
@@ -61,10 +59,11 @@ import dayjs from "dayjs";
 import PTitle from "@/components/lib/PTitle.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
+import PCard from "@/components/lib/PCard.vue";
 
 export default defineComponent({
     name: "StartGridList",
-    components: {PSelect, PField, PTitle, StartGridCard},
+    components: {PCard, PSelect, PField, PTitle, StartGridCard},
     props: {
         grid: {
             type: Map as PropType<Map<RaceSession, Array<StartGridPosition>>>,

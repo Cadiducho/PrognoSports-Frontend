@@ -95,7 +95,7 @@ export default defineComponent({
         }
 
         const buttonClasses = computed(() => ({
-            'h-max inline-flex justify-center items-center gap-2': true, // Estilos base
+            'h-max inline-flex justify-center items-center gap-2 active:scale-95': true, // Estilos base
             'small': props.size === 'small',
             'medium': props.size === 'medium',
             'large': props.size === 'large',
@@ -146,7 +146,7 @@ export default defineComponent({
     @apply bg-success-500 hover:bg-success-600 dark:focus:ring-offset-gray-dark-900 text-gray-light-50;
   }
   &.blue, &.info {
-    @apply bg-azure-500 hover:bg-azure-600 dark:focus:ring-offset-gray-dark-900 text-gray-light-50;
+    @apply bg-info-600 hover:bg-info-700 dark:focus:ring-offset-gray-dark-900 text-gray-light-50;
   }
   &.pink {
     @apply bg-pink-500 hover:bg-pink-600 dark:focus:ring-offset-gray-dark-900 text-gray-light-50;
@@ -171,7 +171,7 @@ export default defineComponent({
     @apply text-success-500 hover:bg-success-500 hover:text-gray-light-50;
   }
   &.blue, &.info {
-    @apply text-azure-500 hover:bg-azure-500 hover:text-gray-light-50;
+    @apply text-info-600 hover:bg-info-700 hover:text-gray-light-50;
   }
   &.pink {
     @apply text-pink-500 hover:bg-pink-500 hover:text-gray-light-50;
@@ -196,7 +196,7 @@ export default defineComponent({
     @apply bg-success-100 hover:bg-success-200 dark:bg-success-900/30 dark:hover:bg-success-800/50 text-success-600 dark:text-success-300;
   }
   &.blue, &.info {
-    @apply bg-azure-100 hover:bg-azure-200 dark:bg-azure-900/30 dark:hover:bg-azure-800/50 text-azure-600 dark:text-azure-300;
+    @apply bg-info-100 hover:bg-info-200 dark:bg-info-900/30 dark:hover:bg-info-800/50 text-info-600 dark:text-info-300;
   }
   &.pink {
     @apply bg-pink-100 hover:bg-pink-200 dark:bg-pink-900/30 dark:hover:bg-pink-800/50 text-pink-600 dark:text-pink-300;
@@ -221,7 +221,7 @@ export default defineComponent({
     @apply hover:bg-success-100 dark:hover:bg-success-900/30 text-success-600 dark:text-success-300;
   }
   &.blue, &.info {
-    @apply hover:bg-azure-100 dark:hover:bg-azure-900/30 text-azure-600 dark:text-azure-300;
+    @apply hover:bg-info-100 dark:hover:bg-info-900/30 text-info-600 dark:text-info-300;
   }
   &.pink {
     @apply hover:bg-pink-100 dark:hover:bg-pink-900/30 text-pink-600 dark:text-pink-300;

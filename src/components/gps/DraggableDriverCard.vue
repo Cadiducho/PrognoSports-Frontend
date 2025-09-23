@@ -1,52 +1,45 @@
 <template>
-    <div class="font-semibold driver-card justify-start p-3 rounded-md opacity-90 bg-contrast
+  <div
+    class="font-semibold driver-card justify-start p-3 rounded-md opacity-90 bg-contrast
         hover:bg-sky-50 dark:bg-contrast-dark dark:hover:bg-gray-700 shadow-sm"
-         :style="styleDriverCard(driver)">
-        <span class="dark:text-gray-100">
-            <b v-if="showPosition">{{ index + 1 }}º.</b> {{ driver.firstname }} {{ driver.lastname }}
-            <span class="tag is-rounded" v-bind:style="styleDorsal(driver)">#{{ driver.number }}</span>
+    :style="styleDriverCard(driver)"
+  >
+    <span class="dark:text-gray-100">
+      <b v-if="showPosition">{{ index + 1 }}º.</b> {{ driver.firstname }} {{ driver.lastname }}
+      <PTag
+        variant="rounded"
+        size="small"
+        :style="styleDorsal(driver)"
+      >
+        #{{ driver.number }}
+      </PTag>
 
-            <span class="margin-left-card font-normal">
-                <span v-if="currentUser.preferences['use-long-team-names']">{{ driver.team.longname }} ({{ driver.team.carname }})</span>
-                <span v-else>{{ driver.team.name }}</span>
-            </span>
-        </span>
-    </div>
+      <span class="margin-left-card font-normal">
+        <span v-if="currentUser.preferences['use-long-team-names']">{{ driver.team.longname }} ({{ driver.team.carname }})</span>
+        <span v-else>{{ driver.team.name }}</span>
+      </span>
+    </span>
+  </div>
 </template>
 
-<script lang="ts">
-import {defineComponent, PropType} from "vue";
-import {Driver} from "@/types/Driver";
-import {useAuthStore} from "@/store/authStore";
-import {useStyles} from "@/composables/useStyles";
+<script lang="ts" setup>
+import { Driver } from "@/types/Driver";
+import { useAuthStore } from "@/store/authStore";
+import { useStyles } from "@/composables/useStyles";
+import PTag from "@/components/lib/PTag.vue";
 
-export default defineComponent({
-    name: "DraggableDriverCard",
-    props: {
-        index: {
-            type: Number,
-            required: true,
-        },
-        showPosition: {
-            type: Boolean,
-            default: true
-        },
-        driver: {
-            type: Object as PropType<Driver>,
-            required: true
-        }
-    },
-    setup() {
-        const authStore = useAuthStore();
-        const styles = useStyles();
+defineProps<{
+  index: number;
+  showPosition?: boolean;
+  driver: Driver;
+}>();
 
-        const currentUser = authStore.loggedUser;
-        const styleDriverCard = styles.styleDriverCard;
-        const styleDorsal = styles.styleDorsal;
+const authStore = useAuthStore();
+const styles = useStyles();
 
-        return { currentUser, styleDriverCard, styleDorsal };
-    },
-});
+const currentUser = authStore.loggedUser;
+const styleDriverCard = styles.styleDriverCard;
+const styleDorsal = styles.styleDorsal;
 </script>
 
 <style scoped lang="scss">

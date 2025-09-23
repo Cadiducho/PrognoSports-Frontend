@@ -110,7 +110,7 @@
                     :label="'Ganador de ' + gp.name"
                     variant="light"
                   >
-                    <span class="text-blue-500"><i class="fas fa-trophy" /></span>
+                    <span class="text-info"><i class="fas fa-trophy" /></span>
                   </o-tooltip>
                 </template>
               </o-table-column>
@@ -145,7 +145,13 @@
               Ranking acumulado
             </PTitle>
             <p class="content">
-              La puntuación marcada en <span class="tag is-warning">dorado</span> es la máxima acumulada para ese Gran Premio<br>
+              La puntuación marcada en
+              <PTag
+                color="warning"
+                size="small"
+              >
+                dorado
+              </PTag> es la máxima acumulada para ese Gran Premio<br>
             </p>
             <o-table
               :data="tableDataAcumulada"
@@ -197,16 +203,17 @@
                 </template>
                 <template #default="props">
                   <template v-if="props.row.gps.has(gp.id)">
-                    <span
+                    <PTag
                       v-if="checkWinnerCell(gp.id, props.row.gps.get(gp.id).accumulatedPoints)"
-                      class="tag is-warning"
+                      color="warning"
+                      size="small"
                     >
                       <PointsTooltipComponent
                         :gp-name="gp.name"
                         :user-points="props.row.gps.get(gp.id)"
                         :display-points="props.row.gps.get(gp.id).accumulatedPoints"
                       />
-                    </span>
+                    </PTag>
                     <template v-else>
                       <PointsTooltipComponent
                         :gp-name="gp.name"
@@ -225,6 +232,15 @@
             <h1 class="title is-4 mt-4">
               Puntos acumulados
             </h1>
+            <p class="content">
+              La puntuación marcada en
+              <PTag
+                color="warning"
+                size="small"
+              >
+                dorado
+              </PTag> es la máxima acumulada para ese Gran Premio<br>
+            </p>
             <VueApexCharts
               ref="chartAcumuladasComp"
               height="400"
@@ -282,12 +298,13 @@
                 <template #default="props">
                   <!-- //ToDo: Tooltip desglosando puntos por sesiones-->
                   <template v-if="props.row.gps.has(gp.id)">
-                    <span
+                    <PTag
                       v-if="props.row.gps.get(gp.id).standings === 1"
-                      class="tag is-warning"
+                      color="warning"
+                      size="small"
                     >
                       {{ props.row.gps.get(gp.id).standings }}
-                    </span>
+                    </PTag>
                     <template v-else>
                       <template v-if="props.row.gps.get(gp.id).standings >= 1">
                         {{ props.row.gps.get(gp.id).standings }}
@@ -319,7 +336,7 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, ref} from "vue";
+import {defineComponent, ref} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import PTitle from "@/components/lib/PTitle.vue";
@@ -337,6 +354,7 @@ import PCard from "@/components/lib/PCard.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
+import PTag from "@/components/lib/PTag.vue";
 
 interface TableEntry {
     user: User;
@@ -352,7 +370,8 @@ interface TableEntry {
           PSelect,
           PField,
             PCard,
-            PTitle, UserMiniCard, PointsTooltipComponent, VueApexCharts
+            PTitle, UserMiniCard, PointsTooltipComponent, VueApexCharts,
+          PTag,
         },
         setup() {
             const authStore = useAuthStore();

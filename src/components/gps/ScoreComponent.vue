@@ -5,8 +5,22 @@
       <span class="title is-5 dark:text-gray-300">Puntuaciones de {{ session.humanName() }} </span> <br>
       <span class="title is-6 dark:text-gray-300">Leyenda</span>
       <p class="m-0 p-0 mb-6 dark:text-gray-300">
-        Tus puntuaciones salen reflejadas con color <span class="tag is-primary">verde</span> <br>
-        El ganador del Gran Premio es reflejado con color <span class="tag is-warning">dorado</span> <br>
+        Tus puntuaciones salen reflejadas con color
+        <PTag
+          color="success"
+          size="small"
+        >
+          verde
+        </PTag>
+        <br>
+        El ganador del Gran Premio es reflejado con color
+        <PTag
+          color="warning"
+          size="small"
+        >
+          dorado
+        </PTag>
+        <br>
         Los ganadores de cada sesión tendrán representado un <i class="fas fa-trophy" />
       </p>
 
@@ -311,10 +325,11 @@ import {useStyles} from "@/composables/useStyles";
 import useEmitter from "@/composables/useEmitter";
 import PCheckbox from "@/components/lib/forms/PCheckbox.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
+import PTag from "@/components/lib/PTag.vue";
 
 export default defineComponent({
     name: "LandingNavbar",
-    components: {PrognoAlert, PCheckbox, UserMiniCard},
+    components: {PrognoAlert, PCheckbox, UserMiniCard, PTag},
     props: {
         gp: {
             type: Object as PropType<GrandPrix>,

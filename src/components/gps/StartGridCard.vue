@@ -1,25 +1,56 @@
 <template>
-    <div class="block" v-if="gridPos !== undefined">
-        <div class="card has-text-centered" v-bind:style="gridCardStyle(gridPos.driver)">
-            <header class="card-header" v-bind:style="gridCardBackgroundStyle(gridPos.driver)" >
-                <div class="tags">
-                    <span class="tag is-dark">{{ gridPos.position }}º</span>
-                    <span class="tag is-success">#{{ gridPos.driver.number }}</span>
-                    <o-tooltip v-if="gridPos.note !== undefined"
-                               :label="gridPos.note" position="bottom">
-                        <span class="tag is-warning">!</span>
-                    </o-tooltip>
-                </div>
-            </header>
-            <div class="f1-card-main">
-                <div class="f1-card-main-description">
-                    <o-tooltip :label="fullname(gridPos.driver)" variant="primary" class="f1-card-driver">
-                        {{ gridPos.driver.code }}
-                    </o-tooltip>
-                </div>
-            </div>
+  <div
+    v-if="gridPos !== undefined"
+    class="block"
+  >
+    <div
+      class="card has-text-centered"
+      :style="gridCardStyle(gridPos.driver)"
+    >
+      <header
+        class="card-header"
+        :style="gridCardBackgroundStyle(gridPos.driver)"
+      >
+        <div class="flex items-center gap-2">
+          <PTag
+            size="small"
+            class="bg-gray-800 border-gray-800 dark:!bg-gray-800 dark:!border-gray-800 text-gray-light-50"
+          >
+            {{ gridPos.position }}º
+          </PTag>
+          <PTag
+            color="success"
+            size="small"
+          >
+            #{{ gridPos.driver.number }}
+          </PTag>
+          <o-tooltip
+            v-if="gridPos.note !== undefined"
+            :label="gridPos.note"
+            position="bottom"
+          >
+            <PTag
+              color="warning"
+              size="small"
+            >
+              !
+            </PTag>
+          </o-tooltip>
         </div>
+      </header>
+      <div class="f1-card-main">
+        <div class="f1-card-main-description">
+          <o-tooltip
+            :label="fullname(gridPos.driver)"
+            variant="primary"
+            class="f1-card-driver"
+          >
+            {{ gridPos.driver.code }}
+          </o-tooltip>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 
@@ -30,9 +61,11 @@ import {Driver} from "@/types/Driver";
 import {defineComponent, PropType} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
+import PTag from "@/components/lib/PTag.vue";
 
 export default defineComponent({
     name: "StartGridCard",
+  components: {PTag},
     props: {
         gridPos: {
             type: Object as PropType<StartGridPosition>,

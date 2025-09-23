@@ -99,11 +99,14 @@
       </div>
 
       <div class="flex-1">
-        <h3 class="select-none dark:text-gray-300">
-          Tu pronóstico <label
+        <h3 class="select-none dark:text-gray-300 inline-flex items-center gap-2">
+          Tu pronóstico
+          <PTag
             v-if="changed"
-            class="tag is-warning"
-          >Modificado</label>
+            color="warning"
+          >
+            Modificado
+          </PTag>
         </h3>
 
         <draggable
@@ -188,6 +191,7 @@ import PInput from "@/components/lib/forms/PInput.vue";
 import PCollapse from "@/components/lib/PCollapse.vue";
 import useEmitter from "@/composables/useEmitter";
 import PCard from "@/components/lib/PCard.vue";
+import PTag from "@/components/lib/PTag.vue";
 
 const props = defineProps<{
   session: RaceSession,

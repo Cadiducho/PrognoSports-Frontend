@@ -1,70 +1,104 @@
 <template>
-    <div id="gplist" class="box">
+  <div
+    id="gplist"
+    class="box"
+  >
+    <PTitle name="Grandes Premios" />
 
-        <PTitle name="Grandes Premios" />
+    <div class="columns is-variable is-5">
+      <div class="column is-8">
+        <o-tabs
+          v-if="seasonReady && competitionReady"
+          v-model="activeTab"
+        >
+          <o-tab-item
+            label="Todos"
+            :value="0"
+          >
+            <GrandPrixesList :gps="allGps" />
+          </o-tab-item>
 
-        <div class="columns is-variable is-5">
-            <div class="column is-8">
-                <o-tabs v-model="activeTab" v-if="seasonReady && competitionReady">
+          <o-tab-item
+            label="Próximos"
+            :value="1"
+          >
+            <GrandPrixesList :gps="nextEvents" />
+          </o-tab-item>
 
-                    <o-tab-item label="Todos" :value="0">
-                        <GrandPrixesList :gps="allGps"/>
-                    </o-tab-item>
-
-                    <o-tab-item label="Próximos" :value="1">
-                        <GrandPrixesList :gps="nextEvents"/>
-                    </o-tab-item>
-
-                    <o-tab-item label="Pasados" :value="2">
-                        <GrandPrixesList :gps="pastEvents"/>
-                    </o-tab-item>
-
-                </o-tabs>
-                <loading v-else />
+          <o-tab-item
+            label="Pasados"
+            :value="2"
+          >
+            <GrandPrixesList :gps="pastEvents" />
+          </o-tab-item>
+        </o-tabs>
+        <loading v-else />
+      </div>
+      <div class="column is-4">
+        <div
+          v-if="allGps && allGps.length"
+          class="timeline"
+        >
+          <header class="timeline-header">
+            <PTag color="info">
+              {{ firstEventYear }}
+            </PTag>
+          </header>
+          <div
+            v-for="gp in allGps"
+            class="timeline-item"
+            :class="{
+              'is-primary': isAfter(gp.lastDate()),
+              'is-danger': isThisWeek(gp.lastDate()),
+              'is-warning': isBefore(gp.firstDate()),
+            }"
+          >
+            <div
+              v-if="isThisWeek(gp.lastDate())"
+              class="timeline-marker is-danger is-icon"
+            >
+              <i class="fa fa-flag" />
             </div>
-            <div class="column is-4">
-                <div v-if="allGps && allGps.length" class="timeline">
-                    <header class="timeline-header">
-                        <span class="tag is-medium is-info">{{ firstEventYear }}</span>
-                    </header>
-                    <div class="timeline-item"
-                         v-for="gp in allGps"
-                         :class="{
-                             'is-primary': isAfter(gp.lastDate()),
-                             'is-danger': isThisWeek(gp.lastDate()),
-                             'is-warning': isBefore(gp.firstDate()),
-                         }" >
+            <div
+              v-else-if="isBefore(gp.lastDate()) || Number.isNaN(gp.lastDate().getTime())"
+              class="timeline-marker is-warning"
+            />
+            <div
+              v-else
+              class="timeline-marker is-primary"
+            />
 
-                        <div v-if="isThisWeek(gp.lastDate())"  class="timeline-marker is-danger is-icon">
-                            <i class="fa fa-flag"></i>
-                        </div>
-                        <div v-else-if="isBefore(gp.lastDate()) || Number.isNaN(gp.lastDate().getTime())" class="timeline-marker is-warning"></div>
-                        <div v-else class="timeline-marker is-primary"></div>
-
-                        <router-link :to="gp.gpLink()" >
-                            <div class="timeline-content">
-                                <p>
-                                    <span v-if="Number.isNaN(gp.firstDate().getDate())">Sin fecha</span>
-                                    <span v-else>{{ gp.firstDate().getDate() }} - {{ humanDayMonth(gp.lastDate()) }}</span>
-                                    <span v-if="isThisWeek(gp.lastDate())" class="tag is-light is-danger heading ml-1">
-                                        Próximo
-                                    </span>
-                                </p>
-                                <p>{{ gp.name }}</p>
-                            </div>
-                        </router-link>
-                    </div>
-                    <div class="timeline-header">
-                        <span class="tag is-medium is-info">{{ lastEventYear }}</span>
-                    </div>
-                </div>
-            </div>
+            <router-link :to="gp.gpLink()">
+              <div class="timeline-content">
+                <p>
+                  <span v-if="Number.isNaN(gp.firstDate().getDate())">Sin fecha</span>
+                  <span v-else>{{ gp.firstDate().getDate() }} - {{ humanDayMonth(gp.lastDate()) }}</span>
+                  <PTag
+                    v-if="isThisWeek(gp.lastDate())"
+                    color="primary"
+                    class="ml-2"
+                  >
+                    Próximo
+                  </PTag>
+                </p>
+                <p>{{ gp.name }}</p>
+              </div>
+            </router-link>
+          </div>
+          <div class="timeline-header">
+            <PTag color="info">
+              {{ lastEventYear }}
+            </PTag>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script lang="ts">
     import PTitle from "@/components/lib/PTitle.vue";
+    import PTag from "@/components/lib/PTag.vue";
     import NextGrandPrix from "@/components/gps/NextGrandPrix.vue";
     import GrandPrixesList from "@/components/gps/list/GrandPrixesList.vue";
     import {Competition} from "@/types/Competition";
@@ -82,7 +116,8 @@
         components: {
             GrandPrixesList,
             NextGrandPrix,
-            PTitle
+            PTitle,
+          PTag
         },
         setup() {
             const communityStore = useCommunityStore();
@@ -113,6 +148,37 @@
                 firstEventYear: "",
                 lastEventYear: "",
             }
+        },
+        computed: {
+            nextEvents() {
+                return this.allGps.filter(gp => this.isBefore(gp.firstDate()));
+            },
+            pastEvents() {
+                return this.allGps.filter(gp => this.isAfter(gp.lastDate()));
+            }
+        },
+        watch: {
+            currentCommunity(newCommunity, oldCommunity) {
+                this.searchDefaultCompetition();
+                this.searchDefaultSeason();
+            },
+            seasonReady(seasonReady, oldSeasonReady) {
+                if (seasonReady) {
+                    grandPrixService.getGrandPrixesList(this.season).then((list) => {
+                        let activeGps = list.filter(gp => !gp.suspended);
+                        let gpsWithDates = activeGps.filter(gp => !Number.isNaN(gp.lastDate().getTime()))
+                        this.allGps.push(...activeGps);
+
+                        const firstDate = gpsWithDates.at(0)!.firstDate();
+                        const lastDate = gpsWithDates.at(gpsWithDates.length - 1)!.lastDate()
+
+                        this.firstEventYear = this.humanMonth(firstDate).toUpperCase() + " " + lastDate.getFullYear();
+                        this.lastEventYear = this.humanMonth(lastDate).toUpperCase() + " " + lastDate.getFullYear();
+
+                        this.emitter.emit('breadcrumbLastname', "Lista de Grandes Premios de " + this.season.name);
+                    });
+                }
+            },
         },
         created() {
             this.competition = { code: this.$route.params.competition } as Competition;
@@ -156,40 +222,10 @@
                     this.seasonReady = true;
                 }
             }
-        },
-        watch: {
-            currentCommunity(newCommunity, oldCommunity) {
-                this.searchDefaultCompetition();
-                this.searchDefaultSeason();
-            },
-            seasonReady(seasonReady, oldSeasonReady) {
-                if (seasonReady) {
-                    grandPrixService.getGrandPrixesList(this.season).then((list) => {
-                        let activeGps = list.filter(gp => !gp.suspended);
-                        let gpsWithDates = activeGps.filter(gp => !Number.isNaN(gp.lastDate().getTime()))
-                        this.allGps.push(...activeGps);
-
-                        const firstDate = gpsWithDates.at(0)!.firstDate();
-                        const lastDate = gpsWithDates.at(gpsWithDates.length - 1)!.lastDate()
-
-                        this.firstEventYear = this.humanMonth(firstDate).toUpperCase() + " " + lastDate.getFullYear();
-                        this.lastEventYear = this.humanMonth(lastDate).toUpperCase() + " " + lastDate.getFullYear();
-
-                        this.emitter.emit('breadcrumbLastname', "Lista de Grandes Premios de " + this.season.name);
-                    });
-                }
-            },
-        },
-        computed: {
-            nextEvents() {
-                return this.allGps.filter(gp => this.isBefore(gp.firstDate()));
-            },
-            pastEvents() {
-                return this.allGps.filter(gp => this.isAfter(gp.lastDate()));
-            }
         }
     });
 </script>
+
 <style scoped lang="scss">
 @import "bulma/sass/utilities/_all.sass";
 

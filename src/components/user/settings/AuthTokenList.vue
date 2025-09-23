@@ -16,12 +16,14 @@
         <span>
           <b>Token: </b>{{ token.token }}
 
-          <span
+          <PTag
             v-if="token.current"
-            class="tag is-link ml-1 is-italic"
+            color="primary"
+            size="small"
+            class="italic"
           >
             Usado en la sesión actual
-          </span>
+          </PTag>
         </span>
 
         <span><b>Creado: </b>{{ humanDateTime(token.createdAt) }} ({{ dateDiff(token.createdAt) }})</span>
@@ -43,7 +45,7 @@
     class="button is-danger mt-2"
     @click="deleteAuthTokens()"
   >
-    Terminar todas las demás sesiones
+    Cerrar todas las demás sesiones
   </button>
 </template>
 
@@ -56,10 +58,11 @@ import {useCommunityStore} from "@/store/communityStore";
 import {AuthToken} from "@/types/AuthToken";
 import {useDayjs} from "@/composables/useDayjs";
 import PTitle from "@/components/lib/PTitle.vue";
+import PTag from "@/components/lib/PTag.vue";
 
 export default defineComponent({
     name: "AuthTokenList",
-  components: {PTitle},
+  components: {PTag, PTitle},
     setup() {
         const dayjs = useDayjs();
         const authStore = useAuthStore();
