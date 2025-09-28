@@ -271,15 +271,15 @@
           Mostrar resultados
         </PCheckbox>
         <PCheckbox
-          id="showColorUser"
-          v-model="showColorUser"
+          id="showUserColor"
+          v-model="showUserColor"
           color="secondary"
         >
           Mostrar color en tu usuario
         </PCheckbox>
         <PCheckbox
-          id="showColorWinner"
-          v-model="showColorWinner"
+          id="showWinnerColor"
+          v-model="showWinnerColor"
           color="secondary"
         >
           Mostrar color en el ganador
@@ -319,6 +319,7 @@ interface TableType {
 
 import {defineComponent, PropType} from "vue";
 import {useAuthStore} from "@/store/authStore";
+import {useAppStore} from "@/store/appStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {useDayjs} from "@/composables/useDayjs";
 import {useStyles} from "@/composables/useStyles";
@@ -326,6 +327,7 @@ import useEmitter from "@/composables/useEmitter";
 import PCheckbox from "@/components/lib/forms/PCheckbox.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PTag from "@/components/lib/PTag.vue";
+import {storeToRefs} from "pinia";
 
 export default defineComponent({
     name: "LandingNavbar",
@@ -365,7 +367,9 @@ export default defineComponent({
         const currentCommunity = communityStore.currentCommunity;
         const styleCodeInResults = styles.styleCodeInResults;
 
-        return { currentUser, currentCommunity, dateDiff, humanDateTime, styleCodeInResults, emitter };
+        const { showAdvancedStadistics, showResults, showUserColor, showWinnerColor } = storeToRefs(useAppStore())
+
+      return { currentUser, currentCommunity, dateDiff, humanDateTime, styleCodeInResults, emitter, showAdvancedStadistics, showResults, showUserColor, showWinnerColor };
     },
     data() {
         return {
@@ -377,11 +381,6 @@ export default defineComponent({
 
             winnersBySession: new Map<RaceSession, Array<string>>(),
             winnersOfGrandPrix: new Array<string>(),
-
-            showAdvancedStadistics: false,
-            showResults: true,
-            showColorUser: true,
-            showColorWinner: true,
         }
     },
     mounted() {
@@ -502,8 +501,8 @@ export default defineComponent({
             return winners;
         },
         checkRowClass(row: any) {
-            if (this.winnersOfGrandPrix.includes(row.user.username) && this.showColorWinner) return 'is-winner';
-            if (row.user.username === this.currentUser.username && this.showColorUser) return 'is-user';
+            if (this.winnersOfGrandPrix.includes(row.user.username) && this.showWinnerColor) return 'is-winner';
+            if (row.user.username === this.currentUser.username && this.showUserColor) return 'is-user';
             return '';
         },
         /**
