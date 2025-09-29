@@ -40,6 +40,7 @@
           v-for="col in columns"
           :key="col.field"
           :class="getTdStyle()"
+          @click="$emit('click', row, col, getRowData(row, col.field))"
         >
           <template v-if="col.type === 'boolean'">
             <span
@@ -62,7 +63,18 @@
           </template>
           <template v-else>
             <template v-if="col.formatter !== undefined">
-              {{ col.formatter(getRowData(row, col.field)) }}
+              <template v-if="typeof col.formatter !== 'function'">
+                <component
+                  :is="col.formatter"
+                  :row="row"
+                  :column="col"
+                  :value="getRowData(row, col.field)"
+                  v-bind="col.formatterProps"
+                />
+              </template>
+              <template v-else>
+                {{ col.formatter(getRowData(row, col.field)) }}
+              </template>
             </template>
             <template v-else>
               {{ getRowData(row, col.field) }}
@@ -81,7 +93,7 @@
           >
             <i
               v-if="hasViewButton"
-              class="fa fa-eye cursor-pointer p-1 text-brand-accent-500 hover:text-brand-accent-600 dark:text-brand-600 dark:hover:bg-brand-700"
+              class="fa fa-eye cursor-pointer p-1 text-brand-accent-500 hover:text-brand-accent-600 dark:text-brand-accent-500 dark:hover:text-brand-accent-600"
               @click="$emit('view', row)"
             />
             <i
@@ -117,6 +129,7 @@ import {useDayjs} from "@/composables/useDayjs";
 import {Column} from "@/components/lib/table/index";
 import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
+import PIcon from "@/components/lib/PIcon.vue";
 
 interface Props<T> {
     columns: Array<Column>;
@@ -142,6 +155,7 @@ defineEmits<{
     view: [element: T],
     edit: [element: T],
     delete: [element: T]
+    click: [element: T, column: Column, value: T]
 }>();
 const dayjs = useDayjs();
 const dateDiff = dayjs.dateDiff;
@@ -161,15 +175,15 @@ const filteredRows = computed((): Array<T> => {
 });
 
 const getHeaderStyle = () => {
-    return "border-b dark:border-slate-600 font-medium p-2 pl-8 pt-0 pb-3 text-slate-500 dark:text-slate-200 text-left";
+  return ["border-b", "dark:border-slate-600", "font-medium", "p-2", "pl-8", "pt-0", "pb-3", "text-slate-500", "dark:text-slate-200", "text-left"];
 }
 const getTdStyle = () => {
-    return "border-b dark:border-slate-600 p-2 text-slate-700 dark:text-slate-200";
+  return ["border-b", "dark:border-slate-600", "p-2", "text-slate-700", "dark:text-slate-200"];
 }
 
-const getRowStyle = (index: number) => {
-    if (props.striped && (index % 2 !== 0)) return "border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-slate-200";
-    return " bg-gray-100 dark:bg-gray-900 hover:bg-slate-200";
+const getRowStyle = (index: number): string[] => {
+    if (props.striped && (index % 2 !== 0)) return ["border-b", "dark:bg-gray-800", "dark:border-gray-700", "hover:bg-slate-200", "hover:dark:bg-slate-700"];
+    return ["bg-gray-100", "dark:bg-gray-900", "hover:bg-slate-200", "dark:hover:bg-slate-800"];
 }
 
 const getRowData = (row: T, rowName: string): string => {

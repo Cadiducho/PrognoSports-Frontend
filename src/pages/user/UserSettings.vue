@@ -1,5 +1,5 @@
 <template>
-  <article class="box">
+  <PCard>
     <UserProfileCard
       :profile="currentUser"
       :show-settings-button="false"
@@ -8,12 +8,12 @@
     <hr>
 
     <UserLevelResume :user="currentUser" />
-  </article>
+  </PCard>
 
-  <div class="box">
-    <h2 class="subtitle">
+  <PCard class="mt-1">
+    <PTitle type="subtitle">
       Cuenta
-    </h2>
+    </PTitle>
 
     <div class="buttons">
       <!-- ToDo: Modales con los ajustes de cuenta -->
@@ -45,15 +45,15 @@
         <span>Enlazar cuenta a Telegram</span>
       </button>
     </div>
-  </div>
+  </PCard>
 
-  <section class="box">
+  <PCard class="mt-1">
     <form @submit.prevent="save()">
       <div class="columns">
         <div class="column">
-          <h2 class="subtitle">
+          <PTitle type="subtitle">
             Datos
-          </h2>
+          </PTitle>
 
           <PField label="Nombre">
             <PInput
@@ -92,9 +92,9 @@
         </div>
 
         <div class="column">
-          <h2 class="subtitle">
+          <PTitle type="subtitle">
             Preferencias
-          </h2>
+          </PTitle>
 
           <label class="label">Nombres de los equipos</label>
           <div class="field">
@@ -171,76 +171,30 @@
         Guardar cambios
       </PButton>
     </form>
-  </section>
+  </PCard>
 
-  <div
+  <PCard
     v-if="!isLoading"
-    class="box"
+    class="mt-1"
   >
     <div class="columns">
       <div class="column">
-        <h2 class="subtitle">
+        <PTitle type="subtitle">
           Notificaciones
-        </h2>
+        </PTitle>
 
         <PrognoAlert
           variant="info"
           message="Pulsa sobre los iconos para ajustar tus preferencias de notificaciones."
         />
 
-        <table class="table is-fullwidth">
-          <thead>
-            <tr>
-              <td />
-              <th
-                v-for="(methodLabel, methodId) in notificationMethods"
-                :key="methodId"
-              >
-                {{ methodLabel }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="(typeLabel, typeId) in notificationTypes"
-              :key="typeId"
-            >
-              <td>{{ typeLabel }}</td>
-
-              <td
-                v-for="(methodLabel, methodId) in notificationMethods"
-                :key="methodId"
-              >
-                <!--
-                            Muestras el check verde cuando las preferencias están a true ó cuando no hay preferencias.
-                            El valor por defecto de las notificaciones es True
-                            -->
-                <template v-if="currentUser.preferences[`notify-${typeId}-${methodId}`] ?? true">
-                  <span
-                    class="icon has-text-success cursor-pointer"
-                    @click="toggleNotification(typeId, typeLabel!, methodId, methodLabel!)"
-                  >
-                    <i class="fas fa-check" />
-                  </span>
-                </template>
-                <template v-else>
-                  <span
-                    class="icon has-text-danger cursor-pointer"
-                    @click="toggleNotification(typeId, typeLabel!, methodId, methodLabel!)"
-                  >
-                    <i class="fas fa-times" />
-                  </span>
-                </template>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <NotificationSettingsTable />
       </div>
       <div class="column">
         <AuthTokenList />
       </div>
     </div>
-  </div>
+  </PCard>
 
   <PrognoModal
     v-show="changePasswordModal.show"
@@ -355,10 +309,16 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
+import PCard from "@/components/lib/PCard.vue";
+import PTitle from "@/components/lib/PTitle.vue";
+import NotificationSettingsTable from "@/components/user/settings/NotificationSettingsTable.vue";
 
 export default defineComponent({
   name: "UserSettings",
   components: {
+    NotificationSettingsTable,
+    PTitle,
+    PCard,
     PInput,
     PField,
     PSelect,
@@ -400,8 +360,6 @@ export default defineComponent({
         minuteSteps: 1,
         type: 'date',
       },
-      notificationMethods: {} as Dictionary<string, string>,
-      notificationTypes: {} as Dictionary<string, string>,
       timezones: {} as Dictionary<string, string>,
       isLoading: true,
       noPassword: false,
@@ -422,20 +380,15 @@ export default defineComponent({
       }
     }
   },
-  mounted() {
-    Promise.all([
-      notificationService.getNotificationMethods(),
-      notificationService.getNotificationTypes(),
-      notificationService.getTimeZonesList()
-    ]).then(([notificationMethods, notificationTypes, timeZonesList]) => {
-      this.notificationMethods = notificationMethods;
-      this.notificationTypes = notificationTypes;
+  async mounted() {
+    try {
+      const timeZonesList = await notificationService.getTimeZonesList();
       this.timezones = timeZonesList;
       this.isLoading = false;
-    }).catch((reason) => {
+    } catch (reason) {
       notificationService.showNotification("Error al cargar los ajustes", "error");
       console.error(reason);
-    });
+    }
 
     // Login Telegram
     this.renderTelegramLoginAndScripts();
@@ -549,14 +502,6 @@ export default defineComponent({
 
         this.closeLinkTelegram();
       });
-    },
-    toggleNotification(typeId: string, typeLabel: string, methodId: string, methodLabel: string) {
-      this.currentUser.preferences[`notify-${typeId}-${methodId}`] = !(this.currentUser.preferences[`notify-${typeId}-${methodId}`] ?? true);
-
-      notificationService.changeNotificationPreference(typeId, methodId, this.currentUser.preferences[`notify-${typeId}-${methodId}`]).then(() => {
-        notificationService.showNotification(`Notificaciones de ${typeLabel} por ${methodLabel} ${this.currentUser.preferences[`notify-${typeId}-${methodId}`] ? 'activadas' : 'desactivadas'}`);
-      });
-
     }
   }
 });

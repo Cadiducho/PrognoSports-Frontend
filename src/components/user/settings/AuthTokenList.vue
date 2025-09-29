@@ -2,15 +2,16 @@
   <PTitle
     type="subtitle"
     tag="h2"
+    class="dark:text-white"
   >
     Tokens de inicio de sesión recientes
   </PTitle>
 
-  <ul class="is-unselectable is-outlined pl-0 space-y-3">
+  <ul class="select-none outline-solid pl-0 space-y-3">
     <li
       v-for="token in authTokens.slice(0, 5)"
       :key="token.token"
-      class="has-text-weight-semibold flex justify-between p-2 bg-slate-50"
+      class="font-semibold flex justify-between p-2 bg-slate-50 dark:bg-slate-800 dark:text-white"
     >
       <section class="flex flex-col">
         <span>
@@ -30,24 +31,29 @@
         <span><b>Última actividad: </b>{{ humanDateTime(token.lastActivityAt) }} ({{ dateDiff(token.lastActivityAt) }})</span>
       </section>
       <section class="flex flex-col justify-around">
-        <button
-          class="button is-small is-danger"
+        <PButton
+          size="small"
+          type="soft"
+          color="danger"
           :disabled="token.current"
           @click="deleteOneAuthToken(token)"
         >
           Cerrar sesión
-        </button>
+        </PButton>
       </section>
     </li>
   </ul>
 
-  <button
-    class="button is-danger mt-2"
+  <PButton
+    class="mt-2"
+    type="solid"
+    color="danger"
     @click="deleteAuthTokens()"
   >
     Cerrar todas las demás sesiones
-  </button>
+  </PButton>
 </template>
+
 
 <script lang="ts">
 
@@ -59,10 +65,11 @@ import {AuthToken} from "@/types/AuthToken";
 import {useDayjs} from "@/composables/useDayjs";
 import PTitle from "@/components/lib/PTitle.vue";
 import PTag from "@/components/lib/PTag.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
 
 export default defineComponent({
     name: "AuthTokenList",
-  components: {PTag, PTitle},
+  components: {PButton, PTag, PTitle},
     setup() {
         const dayjs = useDayjs();
         const authStore = useAuthStore();
