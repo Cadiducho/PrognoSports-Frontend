@@ -4,17 +4,17 @@
     class="block"
   >
     <div
-      class="card has-text-centered"
+      class="card !text-center"
       :style="gridCardStyle(gridPos.driver)"
     >
       <header
-        class="card-header"
+        class="p-2"
         :style="gridCardBackgroundStyle(gridPos.driver)"
       >
-        <div class="flex items-center gap-2">
+        <div class="flex items-center justify-center gap-2">
           <PTag
             size="small"
-            class="bg-gray-800 border-gray-800 dark:!bg-gray-800 dark:!border-gray-800 text-gray-light-50"
+            class="!bg-gray-800 !border-gray-800 dark:!bg-gray-800 dark:!border-gray-800 text-gray-light-50"
           >
             {{ gridPos.position }}º
           </PTag>
