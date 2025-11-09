@@ -2,8 +2,8 @@
   <div class="content mt-5">
     <PrognoAlert message="Arrastra las tarjetas para completar tu pronóstico." />
 
-    <div class="flex space-x-4 mb-4">
-      <div class="flex-1">
+    <div class="grid grid-cols-2 space-x-4 mb-4">
+      <section>
         <h3 class="select-none dark:text-gray-300">
           Pilotos disponibles
         </h3>
@@ -11,6 +11,8 @@
         <section class="busqueda-ordenada mb-2">
           <p-button
             color="info"
+            expanded
+            class="lg:flex-1"
             @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen"
           >
             Ordenar
@@ -18,6 +20,7 @@
 
           <PInput
             v-model="filtroPiloto"
+            class="field lg:flex-2"
             placeholder="Buscar..."
             no-margin
           />
@@ -96,9 +99,9 @@
             />
           </template>
         </draggable>
-      </div>
+      </section>
 
-      <div class="flex-1">
+      <section>
         <h3 class="select-none dark:text-gray-300 inline-flex items-center gap-2">
           Tu pronóstico
           <PTag
@@ -124,7 +127,7 @@
             />
           </template>
         </draggable>
-      </div>
+      </section>
     </div>
 
     <template v-if="session.isBeforeClosureDate()">

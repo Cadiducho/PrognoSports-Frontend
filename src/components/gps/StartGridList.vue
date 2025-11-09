@@ -2,7 +2,7 @@
   <PCard
     v-if="grid !== undefined"
   >
-    <nav class="flex flex-wrap">
+    <nav class="flex flex-col">
       <PTitle type="subtitle">
         Parrilla de Salida
       </PTitle>
