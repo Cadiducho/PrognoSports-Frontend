@@ -102,7 +102,7 @@
       </section>
 
       <section>
-        <h3 class="select-none dark:text-gray-300 inline-flex items-center gap-2">
+        <h3 class="select-none dark:text-gray-300 inline-flex flex-wrap items-center  gap-2">
           Tu pronóstico
           <PTag
             v-if="changed"
