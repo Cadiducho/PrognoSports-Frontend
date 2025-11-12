@@ -68,20 +68,20 @@
 
                 <!-- Solo puedo añadir flechas si existe un previous -->
                 <template v-if="props.row.score.previousStandings > 0">
-                  <o-tooltip
+                  <PTooltip
                     v-if="props.row.score.previousStandings > props.row.score.standings"
                     :label="'Asciende de ' + props.row.score.previousStandings + 'º a ' + props.row.score.standings + 'º'"
-                    variant="success is-small"
+                    variant="success"
                   >
                     <span class="text-success-500"><i class="fas fa-arrow-up" /></span>
-                  </o-tooltip>
-                  <o-tooltip
+                  </PTooltip>
+                  <PTooltip
                     v-if="props.row.score.previousStandings < props.row.score.standings"
                     :label="'Desciende de ' + props.row.score.previousStandings + 'º a ' + props.row.score.standings + 'º'"
-                    variant="danger is-small"
+                    variant="danger"
                   >
                     <span class="text-error-500"><i class="fas fa-arrow-down" /></span>
-                  </o-tooltip>
+                  </PTooltip>
                 </template>
 
               </template>
@@ -179,13 +179,13 @@
             {{ props.row.score.bySession[session.id] || 0 }}
           </span>
 
-          <o-tooltip
+          <PTooltip
             v-if="checkAndInsertTrophy(props.row.user.username, session)"
             :label="'Ganador de la sesión de ' + session.humanName()"
             variant="light"
           >
             <span class="text-blue-500"><i class="fas fa-trophy" /></span>
-          </o-tooltip>
+          </PTooltip>
         </o-table-column>
 
         <o-table-column
@@ -196,13 +196,12 @@
           numeric
         >
           {{ props.row.score.gp }}
-          <o-tooltip
+          <PTooltip
             v-if="checkAndInsertTrophy(props.row.user.username, undefined)"
             label="Ganador del Gran Premio"
-            variant="light"
           >
             <span class="text-brand-accent-600"><i class="fas fa-trophy" /></span>
-          </o-tooltip>
+          </PTooltip>
         </o-table-column>
 
         <o-table-column
@@ -328,10 +327,11 @@ import PCheckbox from "@/components/lib/forms/PCheckbox.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PTag from "@/components/lib/PTag.vue";
 import {storeToRefs} from "pinia";
+import PTooltip from "@/components/lib/PTooltip.vue";
 
 export default defineComponent({
     name: "LandingNavbar",
-    components: {PrognoAlert, PCheckbox, UserMiniCard, PTag},
+    components: {PTooltip, PrognoAlert, PCheckbox, UserMiniCard, PTag},
     props: {
         gp: {
             type: Object as PropType<GrandPrix>,

@@ -1,155 +1,186 @@
 <template>
-    <nav class="flex" v-if="userResume.standings !== 0">
-        <div class="grow text-center">
-            <o-tooltip multilined variant="light">
-                <template v-slot:content>
-                    {{ userResume.standings }}º en el ranking de esta comunidad
-                </template>
+  <nav
+    v-if="userResume.standings !== 0"
+    class="flex"
+  >
+    <div class="grow text-center">
+      <PTooltip>
+        <p class="text-xs uppercase tracking-tight">
+          Puesto
+        </p>
+        <PTitle tag="p">
+          {{ userResume.standings || '0' }}º
+        </PTitle>
 
-                <p class="text-xs uppercase tracking-tight">Puesto</p>
-                <PTitle tag="p">
-                    {{ userResume.standings || '0'}}º
-                </PTitle>
-            </o-tooltip>
-        </div>
-        <div class="grow text-center">
-            <o-tooltip multilined>
-                <template v-slot:content>
-                    <ul>
-                        <li v-for="(points, session) in userResume.totalPointsBySession">
-                            <b>{{ session }}</b>: {{ points }}
-                        </li>
-                    </ul>
-                </template>
+        <template #tooltip>
+          {{ userResume.standings }}º en el ranking de esta comunidad
+        </template>
+      </PTooltip>
+    </div>
+    <div class="grow text-center">
+      <PTooltip>
+        <p class="text-xs uppercase tracking-tight">
+          Puntos
+        </p>
+        <PTitle tag="p">
+          {{ userResume.totalPoints || '0' }}
+        </PTitle>
 
-                <p class="text-xs uppercase tracking-tight">Puntos</p>
-                <PTitle tag="p">
-                    {{ userResume.totalPoints || '0' }}
-                </PTitle>
-            </o-tooltip>
-        </div>
-        <div class="grow text-center">
-            <o-tooltip multilined>
-                <template v-slot:content>
-                    <ul>
-                        <li v-for="(points, session) in userResume.averagePointsBySession">
-                            <b>{{ session }}</b>: {{ points }}
-                        </li>
-                    </ul>
-                </template>
+        <template #tooltip>
+          <ul>
+            <li
+              v-for="(points, session) in userResume.totalPointsBySession"
+              :key="session"
+            >
+              <b>{{ session }}</b>: {{ points }}
+            </li>
+          </ul>
+        </template>
+      </PTooltip>
+    </div>
+    <div class="grow text-center">
+      <PTooltip>
+        <p class="text-xs uppercase tracking-tight">
+          Media Puntos por sesión
+        </p>
+        <PTitle tag="p">
+          {{ userResume.average || '0' }}
+        </PTitle>
 
-                <p class="text-xs uppercase tracking-tight">Media Puntos por sesión</p>
-                <PTitle tag="p">
-                    {{ userResume.average || '0' }}
-                </PTitle>
-            </o-tooltip>
-        </div>
-        <div class="grow text-center">
-            <o-tooltip multilined>
-                <template v-slot:content>
-                    <ul>
-                        <li v-if="userResume.wonSessions?.size" v-for="([session, gps], rawKey) in userResume.wonSessions">
-                            <b>{{ session }}</b>: {{ gps.join(', ') }}
-                        </li>
-                        <li v-else>No has ganado Sesiones</li>
-                    </ul>
-                </template>
+        <template #tooltip>
+          <ul>
+            <li
+              v-for="(points, session) in userResume.averagePointsBySession"
+              :key="session"
+            >
+              <b>{{ session }}</b>: {{ points }}
+            </li>
+          </ul>
+        </template>
+      </PTooltip>
+    </div>
+    <div class="grow text-center">
+      <PTooltip>
+        <p class="text-xs uppercase tracking-tight">
+          Sesiones ganadas
+        </p>
+        <PTitle tag="p">
+          {{ countWonSessions }}
+        </PTitle>
 
-                <p class="text-xs uppercase tracking-tight">Sesiones ganadas</p>
-                <PTitle tag="p">
-                    {{ countWonSessions(userResume.wonSessions) || '0' }}
-                </PTitle>
-            </o-tooltip>
-        </div>
-        <div class="grow text-center">
-            <o-tooltip multilined>
-                <template v-slot:content>
-                    <ul>
-                        <li v-if="userResume.wonGrandPrixes?.length" v-for="(name) in userResume.wonGrandPrixes">
-                            {{ name }}
-                        </li>
-                        <li v-else>No has ganado Grandes Premios</li>
-                    </ul>
-                </template>
+        <template #tooltip>
+          <ul v-if="userResume.wonSessions?.size">
+            <li
+              v-for="([session, gps], rawKey) in userResume.wonSessions"
+              :key="rawKey"
+            >
+              <b>{{ session }}</b>: {{ gps.join(', ') }}
+            </li>
+          </ul>
+          <ul v-else>
+            <li>
+              No has ganado Sesiones
+            </li>
+          </ul>
+        </template>
+      </PTooltip>
+    </div>
+    <div class="grow text-center">
+      <PTooltip>
+        <p class="text-xs uppercase tracking-tight">
+          Grandes Premios ganados
+        </p>
+        <PTitle tag="p">
+          {{ countWonGPs }}
+        </PTitle>
 
-                <p class="text-xs uppercase tracking-tight">Grandes Premios ganados</p>
-                <PTitle tag="p">
-                    {{ countWonGPs(userResume.wonGrandPrixes) || '0' }}
-                </PTitle>
-            </o-tooltip>
-        </div>
-    </nav>
-
+        <template #tooltip>
+          <ul v-if="userResume.wonGrandPrixes?.length">
+            <li
+              v-for="(name) in userResume.wonGrandPrixes"
+              :key="name"
+            >
+              {{ name }}
+            </li>
+          </ul>
+          <ul v-else>
+            <li>
+              No has ganado Grandes Premios
+            </li>
+          </ul>
+        </template>
+      </PTooltip>
+    </div>
+  </nav>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import {User, UserResume} from "@/types/User";
 
-import {defineComponent, PropType} from "vue";
+import {computed, defineComponent, onMounted, PropType, ref} from "vue";
 import {userService} from "@/_services";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import PTitle from "@/components/lib/PTitle.vue";
+import PTooltip from "@/components/lib/PTooltip.vue";
 
-export default defineComponent({
-    name: "UserLevelResume",
-    components: {PTitle},
-    props: {
-        user: {
-            type: Object as PropType<User>,
-            required: true
-        },
-    },
-    setup() {
-        const authStore = useAuthStore();
-        const communityStore = useCommunityStore();
+const props = defineProps<{
+    user: User
+}>();
 
-        const currentUser = authStore.loggedUser;
-        const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
-        const currentCommunity = communityStore.currentCommunity;
-        return { currentUser, currentCommunity, thereIsCurrentCommunity };
-    },
-    data() {
-        return {
-            userResume: {standings: 0} as UserResume,
-        }
-    },
-    mounted() {
-        if (this.thereIsCurrentCommunity) {
-            const competition = this.currentCommunity.competition;
-            const season = competition.currentSeason;
-            const user = this.user ?? this.currentUser;
+const authStore = useAuthStore();
+const communityStore = useCommunityStore();
 
-            userService.getUserResume(user, this.currentCommunity, competition, season).then((response) => {
-                this.userResume = response;
-            }).catch((error) => {
-                // Mostrar el error por consola si no es un Unauthorized.
-                // Esto es porque el usuario puede no tener permisos para ver el ranking de la comunidad
-                if (!error.message.includes("Unauthorized")) {
-                    console.error(error);
-                }
-            });
-        }
-    },
-    methods: {
-        countWonSessions(wonSessions: Map<string, string[]>) {
-            let count = 0;
-            if (wonSessions) {
-                wonSessions.forEach((list, ses) => {
-                    count += list.length;
-                });
-            }
+const currentUser = authStore.loggedUser;
+const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
+const currentCommunity = communityStore.currentCommunity;
 
-            return count;
-        },
-        countWonGPs(wonGrandPrixes: string[]) {
-            let count = 0;
-            if (wonGrandPrixes) {
-                count += wonGrandPrixes.length;
-            }
+const userResume = ref({
+    standings: 0,
+    totalPoints: 0,
+    average: 0,
+    totalPointsBySession: new Map<string, number>(),
+    averagePointsBySession: new Map<string, number>(),
+    wonSessions: new Map<string, string[]>(),
+    wonGrandPrixes: new Array<string>(),
+} as UserResume);
 
-            return count;
+onMounted(async () => {
+    if (thereIsCurrentCommunity) {
+        const competition = currentCommunity.competition;
+        const season = competition.currentSeason;
+        const user = props.user ?? currentUser;
+
+        try {
+            const resumeResponse = await userService.getUserResume(user, currentCommunity, competition, season);
+            userResume.value = resumeResponse;
+        } catch (error: any) {
+          // Mostrar el error por consola si no es un Unauthorized.
+          // Esto es porque el usuario puede no tener permisos para ver el ranking de la comunidad
+          if (!error.message.includes("Unauthorized")) {
+            console.error(error);
+          }
         }
     }
-});
+})
+
+const countWonSessions = computed(() => {
+  let count = 0;
+  if (userResume.value.wonSessions) {
+    userResume.value.wonSessions.forEach((list, ses) => {
+      count += list.length;
+    });
+  }
+
+  return count;
+})
+
+const countWonGPs = computed(() => {
+  let count = 0;
+  if (userResume.value.wonGrandPrixes) {
+    count += userResume.value.wonGrandPrixes.length;
+  }
+
+  return count;
+})
 </script>

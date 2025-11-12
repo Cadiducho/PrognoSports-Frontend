@@ -44,7 +44,7 @@
               Ranking por Gran Premio
             </PTitle>
             <p class="content">
-              Los ganadores de cada Gran Premio tendrán representado un <i class="fas fa-trophy" />
+              Los ganadores de cada Gran Premio tendrán representado un <PIcon icon="fas fa-trophy" />
             </p>
             <o-table
               :data="tableData"
@@ -90,9 +90,9 @@
                 numeric
               >
                 <template #header="{ column }">
-                  <o-tooltip :label="gp.name">
+                  <PTooltip :label="gp.name">
                     {{ gp.code }}
-                  </o-tooltip>
+                  </PTooltip>
                 </template>
                 <template #default="props">
                   <PointsTooltipComponent
@@ -105,13 +105,14 @@
                     0 :(
                   </template>
 
-                  <o-tooltip
+                  <PTooltip
                     v-if="props.row.gps.get(gp.id)?.pointsInGP && checkAndInsertTrophy(gp.id, props.row.gps.get(gp.id).pointsInGP)"
                     :label="'Ganador de ' + gp.name"
-                    variant="light"
                   >
-                    <span class="text-info"><i class="fas fa-trophy" /></span>
-                  </o-tooltip>
+                    <span class="text-blue-500">
+                      <PIcon icon="fas fa-trophy" />
+                    </span>
+                  </PTooltip>
                 </template>
               </o-table-column>
 
@@ -197,9 +198,9 @@
                 numeric
               >
                 <template #header="{ column }">
-                  <o-tooltip :label="gp.name">
+                  <PTooltip :label="gp.name">
                     {{ gp.code }}
-                  </o-tooltip>
+                  </PTooltip>
                 </template>
                 <template #default="props">
                   <template v-if="props.row.gps.has(gp.id)">
@@ -291,9 +292,9 @@
                 numeric
               >
                 <template #header="{ column }">
-                  <o-tooltip :label="gp.name">
+                  <PTooltip :label="gp.name">
                     {{ gp.code }}
-                  </o-tooltip>
+                  </PTooltip>
                 </template>
                 <template #default="props">
                   <!-- //ToDo: Tooltip desglosando puntos por sesiones-->
@@ -355,6 +356,8 @@ import PField from "@/components/lib/forms/PField.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PTag from "@/components/lib/PTag.vue";
+import PTooltip from "@/components/lib/PTooltip.vue";
+import PIcon from "@/components/lib/PIcon.vue";
 
 interface TableEntry {
     user: User;
@@ -366,6 +369,8 @@ interface TableEntry {
     export default defineComponent({
         name: "LandingNavbar",
         components: {
+          PIcon,
+          PTooltip,
           PrognoAlert,
           PSelect,
           PField,

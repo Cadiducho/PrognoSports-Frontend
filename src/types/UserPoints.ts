@@ -5,8 +5,8 @@ import {Dictionary} from "@/types/Dictionary";
 export interface UserPoints {
     user: User;
     grandPrix: GrandPrix;
-    pointsBySession: Dictionary<string, number>;
-    hitPercentageBySession: Dictionary<string, number>;
+    pointsBySession: Dictionary<number, number>;
+    hitPercentageBySession: Dictionary<number, number>;
     pointsInGP: number;
     hitPercentageInGP: number;
     standings: number,

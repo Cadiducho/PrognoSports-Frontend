@@ -24,10 +24,9 @@
           >
             #{{ gridPos.driver.number }}
           </PTag>
-          <o-tooltip
+          <PTooltip
             v-if="gridPos.note !== undefined"
             :label="gridPos.note"
-            position="bottom"
           >
             <PTag
               color="warning"
@@ -35,18 +34,17 @@
             >
               !
             </PTag>
-          </o-tooltip>
+          </PTooltip>
         </div>
       </header>
       <div class="f1-card-main">
         <div class="f1-card-main-description">
-          <o-tooltip
+          <PTooltip
             :label="fullname(gridPos.driver)"
-            variant="primary"
             class="f1-card-driver"
           >
             {{ gridPos.driver.code }}
-          </o-tooltip>
+          </PTooltip>
         </div>
       </div>
     </div>
@@ -62,10 +60,11 @@ import {defineComponent, PropType} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import PTag from "@/components/lib/PTag.vue";
+import PTooltip from "@/components/lib/PTooltip.vue";
 
 export default defineComponent({
     name: "StartGridCard",
-  components: {PTag},
+  components: {PTooltip, PTag},
     props: {
         gridPos: {
             type: Object as PropType<StartGridPosition>,

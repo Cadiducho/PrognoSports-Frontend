@@ -1,62 +1,42 @@
 <template>
   <div
     v-show="show"
-    class="is-fab p-4"
+    class="is-fab fixed bottom-0 right-16 p-4"
   >
-    <o-tooltip
+    <PTooltip
       label="Volver arriba"
-      position="left"
+      placement="left"
       @click="scrollToTop"
     >
-      <button class="button is-primary is-rounded">
-        <span class="icon">
-          <i class="fas fa-angle-up" />
-        </span>
-      </button>
-    </o-tooltip>
+      <PButton pilled>
+        <PIcon icon="fas fa-angle-up" />
+      </PButton>
+    </PTooltip>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import {onMounted, ref} from 'vue';
+import PTooltip from "@/components/lib/PTooltip.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
+import PIcon from "@/components/lib/PIcon.vue";
 
-export default defineComponent({
-    name: "ToTop",
-    props: {
-        scrollY: {
-            type: Number,
-            required: true
-        }
-    },
-    data() {
-        return {
-            show: false
-        }
-    },
-    mounted() {
-        window.addEventListener("scroll", (e) => {
-            this.show = window.scrollY > this.scrollY;
-        });
-    },
-    methods: {
-        scrollToTop() {
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-        }
-    }
-})
+const props = defineProps<{
+    scrollY: number
+}>();
+
+const show = ref(false);
+
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+};
+
+onMounted(() => {
+    window.addEventListener("scroll", (e) => {
+        show.value = window.scrollY > props.scrollY;
+    });
+});
 </script>
-
-<style lang="scss" scoped>
-.is-fab {
-    position: fixed;
-    bottom: 0;
-    right: 16px;
-}
-
-.button {
-    height: 48px;
-}
-</style>

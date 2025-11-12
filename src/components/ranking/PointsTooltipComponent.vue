@@ -1,48 +1,40 @@
 <template>
-    <o-tooltip multilined>
-        <template v-slot:content>
-            <ul>
-                <li><b>{{ gpName }}</b></li>
+  <PTooltip>
+    {{ props.displayPoints }}
 
-                <li v-for="(points, session) in userPoints.pointsBySession">
-                    <b>{{ sessionHumanName(session) }}</b>: {{ points }}
-                </li>
-                <li>
-                    <b>Gran Premio</b>: {{ userPoints.pointsInGP }}
-                </li>
-                <li>
-                    <b>Acumulados</b>: {{ userPoints.accumulatedPoints }}
-                </li>
-            </ul>
-        </template>
+    <template #tooltip>
+      <ul>
+        <li><b>{{ props.gpName }}</b></li>
 
-        {{ displayPoints }}
-    </o-tooltip>
+        <li
+          v-for="(points, session) in props.userPoints.pointsBySession"
+          :key="session"
+        >
+          <b>{{ sessionHumanName(session) }}</b>: {{ points }}
+        </li>
+        <li>
+          <b>Gran Premio</b>: {{ props.userPoints.pointsInGP }}
+        </li>
+        <li>
+          <b>Acumulados</b>: {{ props.userPoints.accumulatedPoints }}
+        </li>
+      </ul>
+    </template>
+  </PTooltip>
 </template>
 
-<script lang="ts">
-import {defineComponent, PropType} from "vue";
+<script setup lang="ts">
 import {UserPoints} from "@/types/UserPoints";
 import {RaceSession} from "@/types/RaceSession";
+import PTooltip from "@/components/lib/PTooltip.vue";
 
-export default defineComponent({
-    name: "PointsTooltipComponent",
-    props: {
-        gpName: {
-            type: String
-        },
-        displayPoints: {
-            type: Number
-        },
-        userPoints: {
-            type: Object as PropType<UserPoints>,
-            required: true
-        }
-    },
-    methods: {
-        sessionHumanName(id: number) {
-            return RaceSession.findById(id)?.humanName() ?? "Desconocida";
-        }
-    }
-});
+const props = defineProps<{
+    gpName: string,
+    displayPoints: number,
+   userPoints: UserPoints,
+}>();
+
+function sessionHumanName(id: number) {
+    return RaceSession.findById(id)?.humanName() ?? "Desconocida";
+}
 </script>

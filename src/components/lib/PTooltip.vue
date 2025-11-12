@@ -1,9 +1,10 @@
 <template>
-  <div>
+  <div
+    class="inline-flex"
+  >
     <!-- Elemento al que se le va a insertar el tooltip -->
     <div
       ref="referenceRef"
-      class="inline-flex"
       @mouseenter="isOpen = true"
       @mouseleave="isOpen = false"
       @focus="isOpen = true"
@@ -27,14 +28,16 @@
         :style="floatingStyles"
         class="fixed z-50"
       >
-        <div class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm shadow-lg dark:bg-white dark:text-gray-900 dark:shadow-gray-800 relative">
-          <slot name="tooltip" />
+        <div :class="tooltipClasses">
+          <slot name="tooltip">
+            {{ props.label }}
+          </slot>
 
           <!-- Flecha del tooltip -->
           <div
             ref="arrowRef"
             :style="arrowStyles"
-            class="absolute w-2 h-2 transform rotate-45 bg-gray-900 dark:bg-white"
+            :class="arrowClasses"
           />
         </div>
       </div>
@@ -42,7 +45,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue'
 import {
   useFloating,
@@ -53,11 +56,14 @@ import {
   autoUpdate,
 } from '@floating-ui/vue'
 
-const props = defineProps({
-  placement: {
-    type: String,
-    default: 'top'
-  }
+const props = withDefaults(defineProps<{
+  label?: string;
+  placement?: Placement;
+  variant?: 'default' | 'danger' | 'success' | 'warning' | 'info';
+}>(), {
+  label: '',
+  placement: 'top',
+  variant: 'default'
 })
 
 const isOpen = ref(false)
@@ -93,5 +99,34 @@ const arrowStyles = computed(() => {
     top: y != null ? `${y}px` : '',
     [staticSide]: '-4px'
   }
+})
+
+
+const tooltipClasses = computed(() => {
+  const baseClasses = 'px-3 py-2 rounded-md text-sm shadow-lg relative'
+
+  const variants = {
+    default: 'bg-gray-900 text-white dark:bg-white dark:text-gray-900 dark:shadow-gray-800',
+    danger: 'bg-red-600 text-white shadow-red-800',
+    success: 'bg-green-500 text-white shadow-green-700',
+    warning: 'bg-yellow-500 text-gray-900 shadow-yellow-700',
+    info: 'bg-blue-600 text-white shadow-blue-800'
+  }
+
+  return `${baseClasses} ${variants[props.variant]}`
+})
+
+const arrowClasses = computed(() => {
+  const baseClasses = 'absolute w-2 h-2 transform rotate-45'
+
+  const variants = {
+    default: 'bg-gray-900 dark:bg-white',
+    danger: 'bg-red-600',
+    success: 'bg-green-500',
+    warning: 'bg-yellow-500',
+    info: 'bg-blue-600'
+  }
+
+  return `${baseClasses} ${variants[props.variant]}`
 })
 </script>
