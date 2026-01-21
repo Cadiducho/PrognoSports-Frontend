@@ -3,6 +3,7 @@
     <PLabel
       :name="name"
       :label="label"
+      :message="message"
     />
 
     <slot />
@@ -15,8 +16,10 @@ import PLabel from "@/components/lib/forms/PLabel.vue";
 const props = withDefaults(defineProps<{
   label?: string;
   name?: string;
+  message?: string;
 }>(), {
   label: '',
-  name: ''
+  name: '',
+  message: ''
 });
 </script>

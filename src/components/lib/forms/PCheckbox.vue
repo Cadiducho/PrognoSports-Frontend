@@ -1,14 +1,14 @@
 <template>
   <div class="flex items-center me-4">
     <input
-      :id="`checkbox-${id}`"
+      :id="id"
       type="checkbox"
       :checked="(modelValue) ? modelValue : checked"
       :class="checkboxClasses"
       @change="handleChange"
     >
     <label
-      :for="`checkbox-${id}`"
+      :for="id"
       class="ms-2 text-sm font-medium text-gray-700 dark:text-gray-300"
     >
       <slot />
@@ -17,19 +17,19 @@
 </template>
 
 <script setup lang="ts">
-import {computed} from 'vue';
+import {computed, useId} from 'vue';
 
 const modelValue = defineModel<boolean>({required: false});
 
 const props = withDefaults(defineProps<{
   color?: 'primary' | 'secondary' | 'gray' | 'warning' | 'danger';
-  id?: number | string;
   checked?: boolean
 }>(), {
   color: 'primary',
-  id: 0,
   checked: false
 });
+
+const id = useId();
 
 const handleChange = (event: Event) => {
   modelValue.value = (event.target as HTMLInputElement).checked;

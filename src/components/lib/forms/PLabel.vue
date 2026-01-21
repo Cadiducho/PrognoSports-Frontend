@@ -4,6 +4,12 @@
     :for="props.name"
   >
     <slot>{{ props.label }}</slot>
+    <span
+      v-if="props.message"
+      class="block text-xs font-normal text-gray-600 dark:text-gray-400 mt-1"
+    >
+      {{ props.message }}
+    </span>
   </label>
 </template>
 
@@ -11,12 +17,10 @@
 const props = withDefaults(defineProps<{
   label?: string;
   name?: string;
+  message?: string;
 }>(), {
   label: '',
-  name: ''
+  name: '',
+  message: ''
 })
 </script>
-
-<style scoped lang="scss">
-
-</style>
