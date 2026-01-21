@@ -45,6 +45,13 @@ export function useDayjs() {
     if (!date) return "Fecha no disponible";
     return dayjs(date).format("D [de] MMMM");
   };
+  const formatDate = (date: Date, format: string): string => {
+    if (!date) return "Fecha no disponible";
+    return dayjs(date).format(format);
+  }
+  const parseDate = (date: Date) : Dayjs => {
+    return dayjs(date);
+  }
 
   return {
     dateDiff,
@@ -56,5 +63,7 @@ export function useDayjs() {
     humanDateTime,
     humanMonth,
     humanDayMonth,
+    formatDate,
+    parseDate
   };
 }

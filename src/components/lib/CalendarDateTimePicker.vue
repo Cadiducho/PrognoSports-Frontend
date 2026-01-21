@@ -201,6 +201,7 @@
 import { computed, ref, onMounted } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 import PButton from "@/components/lib/forms/PButton.vue";
+import {useDayjs} from "@/composables/useDayjs.ts";
 
 const model = defineModel({
   type: Date,
@@ -230,6 +231,7 @@ const props = defineProps({
     default: 'date-input'
   }
 })
+const { parseDate } = useDayjs()
 
 const showCalendar = ref(false)
 const currentMonth = ref(props.startDate.getMonth())
@@ -336,12 +338,24 @@ const selectToday = () => {
 
 const confirmSelection = () => {
   if (tempSelectedDate.value) {
-    const finalDate = new Date(tempSelectedDate.value)
+    let finalDate
+
     if (props.showTime) {
-      finalDate.setHours(tempSelectedHour.value, tempSelectedMinute.value, 0, 0)
+      // Con hora: crear fecha con la hora seleccionada
+      finalDate = parseDate(tempSelectedDate.value)
+        .hour(tempSelectedHour.value)
+        .minute(tempSelectedMinute.value)
+        .second(0)
+        .millisecond(0)
+        .toDate()
     } else {
-      finalDate.setHours(0, 0, 0, 0)
+      // Sin hora: establecer medianoche en la zona horaria local
+      // para evitar problemas de interpretación
+      finalDate = parseDate(tempSelectedDate.value)
+        .startOf('day')
+        .toDate()
     }
+
     model.value = finalDate
   }
   showCalendar.value = false
@@ -377,21 +391,30 @@ const getDayClasses = (day) => {
 
 const initializeTempState = () => {
   if (model.value) {
-    // Si hay un valor en el modelo, usarlo para el estado temporal
-    currentMonth.value = model.value.getMonth()
-    currentYear.value = model.value.getFullYear()
-    tempSelectedHour.value = model.value.getHours()
-    tempSelectedMinute.value = Math.floor(model.value.getMinutes() / 5) * 5
-    tempSelectedDate.value = new Date(model.value)
+    const date = parseDate(model.value)
+    currentMonth.value = date.month()
+    currentYear.value = date.year()
+
+    if (props.showTime) {
+      tempSelectedHour.value = date.hour()
+      tempSelectedMinute.value = Math.floor(date.minute() / 5) * 5
+    }
+
+    tempSelectedDate.value = date.toDate()
   } else {
-    // Si no hay valor en el modelo, usar startDate
-    currentMonth.value = props.startDate.getMonth()
-    currentYear.value = props.startDate.getFullYear()
-    tempSelectedHour.value = props.startDate.getHours()
-    tempSelectedMinute.value = Math.floor(props.startDate.getMinutes() / 5) * 5
+    const date = parseDate(props.startDate)
+    currentMonth.value = date.month()
+    currentYear.value = date.year()
+
+    if (props.showTime) {
+      tempSelectedHour.value = date.hour()
+      tempSelectedMinute.value = Math.floor(date.minute() / 5) * 5
+    }
+
     tempSelectedDate.value = null
   }
 }
+
 
 // Cerrar el calendario al hacer clic fuera
 onClickOutside(calendarContainer, () => {
@@ -403,11 +426,13 @@ onClickOutside(calendarContainer, () => {
 onMounted(() => {
   // Inicializar con la fecha de inicio si no hay valor
   if (!model.value && props.startDate) {
-    const initialDate = new Date(props.startDate)
+    let initialDate = parseDate(props.startDate)
+
     if (!props.showTime) {
-      initialDate.setHours(0, 0, 0, 0)
+      initialDate = initialDate.startOf('day')
     }
-    model.value = initialDate
+
+    model.value = initialDate.toDate()
   }
 })
 </script>
