@@ -5,7 +5,9 @@
   >
     <p-label
       v-if="label"
-      :for="name"
+      :for="id"
+      :label="label"
+      :message="message"
     >
       {{ props.label }}
     </p-label>
@@ -16,30 +18,40 @@
       >
         <i :class="icon" />
       </span>
-      <component
-        :is="isTextarea ? 'textarea' : 'input'"
-        :id="name"
+      <textarea
+        v-if="isTextarea"
+        :id="id"
+        v-model="model"
         v-bind="$attrs"
-        v-model:value="model"
         :class="inputClasses"
         :maxlength="maxLenght"
         :name="name"
-        :type="isTextarea ? undefined : type"
         :placeholder="placeholder"
-        :rows="isTextarea ? rows : undefined"
+        :rows="rows"
       />
+      <input
+        v-else
+        :id="id"
+        v-model="model"
+        v-bind="$attrs"
+        :class="inputClasses"
+        :maxlength="maxLenght"
+        :name="name"
+        :type="type"
+        :placeholder="placeholder"
+      >
     </div>
   </fieldset>
 </template>
 
 <script setup lang="ts" generic="T">
-import { computed } from "vue";
+import { computed, useId } from "vue";
 import PLabel from "@/components/lib/forms/PLabel.vue";
 
 const model = defineModel<T>();
-
 const props = withDefaults(defineProps<{
   label?: string;
+  message?: string;
   name?: string;
   maxLenght?: number;
   type?: string;
@@ -50,6 +62,7 @@ const props = withDefaults(defineProps<{
   rows?: number;
 }>(), {
   label: '',
+  message: '',
   name: '',
   maxLenght: 128,
   type: 'text',
@@ -59,6 +72,8 @@ const props = withDefaults(defineProps<{
   isTextarea: false,
   rows: 3
 });
+
+const id = useId();
 
 const inputClasses = computed(() => [
   "appearance-none block w-full text-gray-700 dark:text-gray-200 border border-gray-200 rounded py-3 pr-4 dark:bg-gray-700 dark:border-gray-600 leading-tight focus:ring-blue-500 focus:outline-none focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500",
