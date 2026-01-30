@@ -13,7 +13,7 @@
         <div class="tile is-parent">
           <article class="tile is-child features-icons-item">
             <div class="features-icons-icon">
-              <i class="material-icons has-text-link">people</i>
+              <i class="material-icons text-brand-500">people</i>
             </div>
             <p class="title">
               Comunitario
@@ -27,7 +27,7 @@
         <div class="tile is-parent">
           <article class="tile is-child features-icons-item">
             <div class="features-icons-icon">
-              <i class="material-icons has-text-link">favorite_border</i>
+              <i class="material-icons text-brand-500">favorite_border</i>
             </div>
             <p class="title">
               Intuitivo
@@ -41,7 +41,7 @@
         <div class="tile is-parent">
           <article class="tile is-child features-icons-item">
             <div class="features-icons-icon">
-              <i class="material-icons has-text-link">important_devices</i>
+              <i class="material-icons text-brand-500">important_devices</i>
             </div>
             <p class="title">
               Versátil

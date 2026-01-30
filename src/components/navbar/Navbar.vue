@@ -75,20 +75,22 @@
           v-if="!isLoggedIn"
           class="navbar-end"
         >
-          <div class="navbar-item">
-            <div class="buttons">
-              <router-link
-                class="button is-primary"
+          <div class="flex items-center">
+            <div class="flex flex-wrap justify-center gap-2">
+              <PButton
+                type="solid"
+                color="primary"
                 to="/register"
               >
-                <strong>Registrarse</strong>
-              </router-link>
-              <router-link
-                class="button is-primary is-outlined"
+                Registrarse
+              </PButton>
+              <PButton
+                type="outline"
+                color="primary"
                 to="/login"
               >
                 Iniciar sesión
-              </router-link>
+              </PButton>
             </div>
           </div>
         </div>
@@ -113,6 +115,7 @@ import {ref} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import SwitchTheme from "@/components/navbar/SwitchTheme.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
 
 const authStore = useAuthStore();
 const communityStore = useCommunityStore();
