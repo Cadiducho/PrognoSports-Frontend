@@ -66,12 +66,13 @@
             </PrognoAlert>
 
             <form class="mb-4">
-              <PLabel label="Fecha de la sesión" />
-              <Calendar
-                :value="session.date"
-                :options="calendarOptions"
-                @input="session.date = $event;"
-              />
+              <PField label="Fecha de la sesión">
+                <CalendarDateTimePicker
+                  v-model="session.date"
+                  placeholder="Click para escoger..."
+                  :show-time="true"
+                />
+              </PField>
 
               <div class="flex flex-wrap my-2">
                 <PLabel
@@ -151,7 +152,6 @@ import {Driver} from "@/types/Driver";
 import {useStyles} from "@/composables/useStyles";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import EditResults from "@/components/admin/gps/EditResults.vue";
-import Calendar from "@/components/lib/Calendar.vue";
 import EditGrid from "@/components/admin/gps/EditGrid.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PCheckbox from "@/components/lib/forms/PCheckbox.vue";
@@ -159,10 +159,13 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import PLabel from "@/components/lib/forms/PLabel.vue";
 import GrandPrixPageHeader from "@/components/gps/GrandPrixPageHeader.vue";
 import PCard from "@/components/lib/PCard.vue";
+import PField from "@/components/lib/forms/PField.vue";
+import CalendarDateTimePicker from "@/components/lib/CalendarDateTimePicker.vue";
 
 export default defineComponent({
   name: "EditSessionGrandPrix",
   components: {
+    CalendarDateTimePicker, PField,
     PCard,
     GrandPrixPageHeader,
     PLabel,

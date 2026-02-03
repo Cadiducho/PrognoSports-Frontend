@@ -34,40 +34,47 @@
         class="absolute z-50 top-full left-0 mt-2 w-full max-w-[320px] bg-white dark:bg-gray-800 rounded-xl shadow-xl p-4 border border-gray-200 dark:border-gray-700 max-sm:fixed max-sm:top-1/2 max-sm:left-1/2 max-sm:-translate-x-1/2 max-sm:-translate-y-1/2 max-sm:w-[90%] max-sm:max-w-[400px] max-sm:mt-0"
       >
         <!-- Encabezado del calendario -->
-        <div class="flex items-center justify-between mb-4">
-          <button
-            type="button"
-            class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors"
-            @click="navigateYear(-1)"
-          >
-            <i class="fas fa-angle-double-left" />
-          </button>
-          <button
-            type="button"
-            class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors"
-            @click="navigateMonth(-1)"
-          >
-            <i class="fas fa-angle-left" />
-          </button>
+        <div class="flex flex-col sm:flex-row items-center justify-between mb-4 gap-2">
+          <!-- Botones de navegación año anterior y mes anterior -->
+          <div class="flex gap-1">
+            <button
+              type="button"
+              class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors"
+              @click="navigateYear(-1)"
+            >
+              <i class="fas fa-angle-double-left text-xs sm:text-base" />
+            </button>
+            <button
+              type="button"
+              class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors"
+              @click="navigateMonth(-1)"
+            >
+              <i class="fas fa-angle-left text-xs sm:text-base" />
+            </button>
+          </div>
 
-          <h2 class="text-lg font-semibold text-gray-800 dark:text-white mx-2 text-center min-w-[140px]">
+          <!-- Título del mes y año -->
+          <h2 class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white text-center min-w-[120px] sm:min-w-[140px]">
             {{ monthNames[currentMonth] }} {{ currentYear }}
           </h2>
 
-          <button
-            type="button"
-            class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors"
-            @click="navigateMonth(1)"
-          >
-            <i class="fas fa-angle-right" />
-          </button>
-          <button
-            type="button"
-            class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors"
-            @click="navigateYear(1)"
-          >
-            <i class="fas fa-angle-double-right" />
-          </button>
+          <!-- Botones de navegación mes siguiente y año siguiente -->
+          <div class="flex gap-1">
+            <button
+              type="button"
+              class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors"
+              @click="navigateMonth(1)"
+            >
+              <i class="fas fa-angle-right text-xs sm:text-base" />
+            </button>
+            <button
+              type="button"
+              class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors"
+              @click="navigateYear(1)"
+            >
+              <i class="fas fa-angle-double-right text-xs sm:text-base" />
+            </button>
+          </div>
         </div>
 
         <!-- Días de la semana (Lunes primero) -->
@@ -75,7 +82,7 @@
           <div
             v-for="day in weekDays"
             :key="day"
-            class="text-center text-sm font-medium text-gray-500 dark:text-gray-400 py-2"
+            class="text-center text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 py-1 sm:py-2"
           >
             {{ day }}
           </div>
@@ -86,14 +93,12 @@
           <div
             v-for="emptyDay in emptyDays"
             :key="`empty-${emptyDay}`"
-            class="h-10 flex items-center justify-center text-gray-400 dark:text-gray-600"
-          />
-
-          <button
+            class="h-8 sm:h-10 flex items-center justify-center text-gray-400 dark:text-gray-600"
+          /><button
             v-for="day in daysInMonth"
             :key="day"
             type="button"
-            class="h-10 w-10 flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200"
+            class="h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-lg text-xs sm:text-sm font-medium transition-all duration-200"
             :class="getDayClasses(day)"
             @click="selectDay(day)"
           >
@@ -106,19 +111,19 @@
           v-if="showTime"
           class="border-t border-gray-200 dark:border-gray-700 pt-4 mb-4"
         >
-          <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+          <h3 class="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
             Seleccionar hora (24h)
           </h3>
-          <div class="flex items-center justify-center space-x-4">
+          <div class="flex items-center justify-center space-x-2 sm:space-x-4">
             <!-- Horas (24h) -->
-            <div class="w-24">
+            <div class="w-20 sm:w-24">
               <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1 text-center">
                 Horas
               </label>
               <div class="relative">
                 <select
                   v-model="tempSelectedHour"
-                  class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 appearance-none cursor-pointer text-center"
+                  class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-xs sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 sm:p-2.5 appearance-none cursor-pointer text-center"
                 >
                   <option
                     v-for="hour in hours"
@@ -136,18 +141,18 @@
 
             <!-- Separador visual -->
             <div class="flex items-end justify-center pb-2">
-              <span class="text-xl font-bold text-gray-500 dark:text-gray-400">:</span>
+              <span class="text-lg sm:text-xl font-bold text-gray-500 dark:text-gray-400">:</span>
             </div>
 
             <!-- Minutos -->
-            <div class="w-24">
+            <div class="w-20 sm:w-24">
               <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1 text-center">
                 Minutos
               </label>
               <div class="relative">
                 <select
                   v-model="tempSelectedMinute"
-                  class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 appearance-none cursor-pointer text-center"
+                  class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-xs sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 sm:p-2.5 appearance-none cursor-pointer text-center"
                 >
                   <option
                     v-for="minute in minutes"
@@ -166,26 +171,29 @@
         </div>
 
         <!-- Pie del calendario -->
-        <div class="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
           <PButton
             size="small"
             type="soft"
             color="info"
+            class="w-full sm:w-auto"
             @click="selectToday"
           >
             Hoy
           </PButton>
-          <div class="flex gap-1">
+          <div class="flex flex-col sm:flex-row gap-2 sm:gap-1">
             <PButton
               size="small"
               type="outline"
               color="danger"
+              class="w-full sm:w-auto"
               @click="cancelSelection"
             >
               Cancelar
             </PButton>
             <PButton
               size="small"
+              class="w-full sm:w-auto"
               @click="confirmSelection"
             >
               Seleccionar

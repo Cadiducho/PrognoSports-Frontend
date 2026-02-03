@@ -28,13 +28,6 @@
           Datos del piloto
         </h2>
 
-        <PField label="ID del piloto">
-          <PInput
-            v-model="createdDriver.id"
-            name="id"
-          />
-        </PField>
-
         <PField label="Nombre del piloto">
           <PInput
             v-model="createdDriver.firstname"
@@ -64,11 +57,10 @@
         </PField>
 
         <PField label="Fecha de nacimiento">
-          <o-datepicker
+          <CalendarDateTimePicker
             v-model="createdDriver.birth"
             placeholder="Click para escoger..."
-            icon="calendar"
-            trap-focus
+            :show-time="false"
           />
         </PField>
 
@@ -151,10 +143,12 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
+import CalendarDateTimePicker from "@/components/lib/CalendarDateTimePicker.vue";
 
 export default defineComponent({
     name: "CreateDriver",
     components: {
+      CalendarDateTimePicker,
       PrognoAlert,
       PInput,
       PField,
