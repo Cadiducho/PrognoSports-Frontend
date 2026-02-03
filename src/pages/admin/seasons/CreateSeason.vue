@@ -35,7 +35,7 @@
 
     <p-select
       v-model="createdSeason.competitionId"
-      placeholder="Selecciona una competición"
+      label="Selecciona una competición"
     >
       <option
         v-for="comp in competitions"

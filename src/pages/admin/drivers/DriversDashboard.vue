@@ -116,8 +116,6 @@ const columns = ref<Column[]>([
 ]);
 
 const filteredDrivers = ((original: Driver[], filter: string): Driver[] => {
-  console.log(original);
-
   return original.filter((driver) => {
     return (
       driver.id

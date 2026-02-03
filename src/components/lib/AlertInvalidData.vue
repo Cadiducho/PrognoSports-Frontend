@@ -13,7 +13,7 @@
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 
 const props = withDefaults(defineProps<{
-  object?: object;
+  object?: any;
   message: string;
 }>(), {
   object: undefined,

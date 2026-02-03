@@ -11,7 +11,7 @@
         <p-button
           color="info"
           icon="fa fa-chevron-left"
-          :to="{name: 'adminGps'}"
+          :to="{name: 'adminConstructors'}"
           tag="router-link"
           class="mr-2"
         >

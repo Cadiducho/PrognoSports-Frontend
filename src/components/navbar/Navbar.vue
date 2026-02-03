@@ -76,7 +76,7 @@
           class="navbar-end"
         >
           <div class="flex items-center">
-            <div class="flex flex-wrap justify-center gap-2">
+            <div class="flex flex-wrap justify-center gap-2 pr-4">
               <PButton
                 type="solid"
                 color="primary"

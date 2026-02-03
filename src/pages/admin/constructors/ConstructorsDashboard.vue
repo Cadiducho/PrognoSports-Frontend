@@ -1,33 +1,59 @@
 <template>
-    <div id="adminConstructor" class="box">
-        <PTitle class="mb-5" name="Administración de Constructores"/>
+  <div
+    id="adminConstructor"
+    class="box"
+  >
+    <PTitle
+      class="mb-5"
+      name="Administración de Constructores"
+    />
 
 
-        <p-button class="mb-4" label="Nuevo constructor" color="info" to="/admin/constructors/create" />
+    <p-button
+      class="mb-4"
+      label="Nuevo constructor"
+      to="/admin/constructors/create"
+    />
 
-        <p-table :columns="columns" :rows="constructors"
-                 hasViewButton hasEditButton hasDeleteButton paginated
-                 :with-filter="filteredConstructors"
-                 @view="goToView($event as Constructor)"
-                 @edit="goToEdit($event as Constructor)"
-                 @delete="confirmDeleteConstructor($event as Constructor)"
+    <p-table
+      :columns="columns"
+      :rows="constructors"
+      has-view-button
+      has-edit-button
+      has-delete-button
+      paginated
+      :with-filter="filteredConstructors"
+      @view="goToView($event as Constructor)"
+      @edit="goToEdit($event as Constructor)"
+      @delete="confirmDeleteConstructor($event as Constructor)"
+    />
+
+    <PrognoModal
+      v-show="showConfirmDeleteModal"
+      @close="showConfirmDeleteModal = false"
+    >
+      <template #title>
+        Confirmar eliminación
+      </template>
+      <template #content>
+        ¿Está seguro que desea eliminar el constructor <strong>{{ constructorToDelete?.name }}</strong>? Esta acción no se puede deshacer.
+      </template>
+      <template #footer>
+        <button
+          class="button is-danger"
+          @click="deleteConstructor(constructorToDelete)"
         >
-
-        </p-table>
-
-        <PrognoModal v-show="showConfirmDeleteModal" @close="showConfirmDeleteModal = false">
-            <template v-slot:title>
-                Confirmar eliminación
-            </template>
-            <template v-slot:content>
-                ¿Está seguro que desea eliminar el constructor <strong>{{constructorToDelete?.name}}</strong>? Esta acción no se puede deshacer.
-            </template>
-            <template v-slot:footer>
-                <button class="button is-danger" @click="deleteConstructor(constructorToDelete)">Eliminar</button>
-                <button class="button" @click="showConfirmDeleteModal = false">Cancelar</button>
-            </template>
-        </PrognoModal>
-    </div>
+          Eliminar
+        </button>
+        <button
+          class="button"
+          @click="showConfirmDeleteModal = false"
+        >
+          Cancelar
+        </button>
+      </template>
+    </PrognoModal>
+  </div>
 </template>
 
 <script setup lang="ts">
