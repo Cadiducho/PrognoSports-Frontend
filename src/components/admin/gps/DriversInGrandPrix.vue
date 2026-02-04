@@ -3,8 +3,8 @@
     Pilotos y equipos del Gran Premio
   </h2>
 
-  <div class="flex gap-6">
-    <div class="w-1/5">
+  <div class="flex flex-col md:flex-row gap-6">
+    <div class="basis-1/5">
       <PSelect
         v-model="clonedGrandPrix"
         label="Clonar del Gran Premio..."
@@ -35,7 +35,7 @@
         </template>
       </draggable>
     </div>
-    <div class="w-4/5">
+    <div class="basis-4/5">
       <label class="label">Pilotos en el Gran Premio</label>
       <div class="flex flex-wrap">
         <div

@@ -83,10 +83,11 @@
           </PField>
 
           <PField label="Cumpleaños">
-            <Calendar
-              :value="editedUser.birthdate"
-              :options="calendarOptions"
-              @input="editedUser.birthdate = $event;"
+            <CalendarDateTimePicker
+              v-model="editedUser.birthdate"
+              label="Fecha de nacimiento"
+              placeholder="Selecciona tu fecha de nacimiento"
+              :show-time="false"
             />
           </PField>
         </div>
@@ -151,19 +152,14 @@
 
       <hr>
 
-      <PField
+      <PInput
+        v-model="editedUser.password"
         label="Contraseña actual"
         message="Debes introducir tu contraseña actual para confirmar cambios en tus ajustes"
-        :variant="noPassword ? 'danger' : ''"
-      >
-        <PInput
-          v-model="editedUser.password"
-          name="password"
-          type="password"
-          expanded
-          lazy
-        />
-      </PField>
+        name="password"
+        type="password"
+        expanded
+      />
       <PButton
         native-type="submit"
         :disabled="submiting"
@@ -292,7 +288,7 @@
 import UserLevelResume from "@/components/user/UserLevelResume.vue";
 import UserProfileCard from "@/components/user/UserProfileCard.vue";
 
-import {defineComponent} from "vue";
+import {defineComponent, reactive, ref} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import useEmitter from "@/composables/useEmitter";
@@ -301,7 +297,6 @@ import {User} from "@/types/User";
 import {notificationService, userService} from "@/_services";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import AuthTokenList from "@/components/user/settings/AuthTokenList.vue";
-import Calendar from "@/components/lib/Calendar.vue";
 import {Dictionary} from "@/types/Dictionary";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PRadio from "@/components/lib/forms/PRadio.vue";
@@ -312,10 +307,12 @@ import PInput from "@/components/lib/forms/PInput.vue";
 import PCard from "@/components/lib/PCard.vue";
 import PTitle from "@/components/lib/PTitle.vue";
 import NotificationSettingsTable from "@/components/user/settings/NotificationSettingsTable.vue";
+import CalendarDateTimePicker from "@/components/lib/CalendarDateTimePicker.vue";
 
 export default defineComponent({
   name: "UserSettings",
   components: {
+    CalendarDateTimePicker,
     NotificationSettingsTable,
     PTitle,
     PCard,
@@ -329,7 +326,6 @@ export default defineComponent({
     PrognoModal,
     UserLevelResume,
     UserProfileCard,
-    Calendar
   },
   setup() {
     const dayjs = useDayjs();
@@ -340,26 +336,17 @@ export default defineComponent({
     const dateDiff = dayjs.dateDiff;
     const humanDateTime = dayjs.humanDateTime;
     const humanDate = dayjs.humanDate;
+    const formatDate = dayjs.formatDate;
     const currentUser = authStore.loggedUser;
     const currentCommunity = communityStore.currentCommunity;
 
-    const editedUser = currentUser as Partial<User>;
+    const editedUser = reactive(currentUser as Partial<User>);
     delete editedUser.currentCommunity;
 
-    return {currentUser, editedUser, currentCommunity, emitter, dateDiff, humanDateTime, humanDate};
+    return {currentUser, editedUser, currentCommunity, emitter, dateDiff, humanDateTime, humanDate, formatDate};
   },
   data() {
     return {
-      calendarOptions: {
-        dateFormat: 'dd/MM/yyyy',
-        lang: 'es',
-        showTodayButton: false,
-        showClearButton: false,
-        weekStart: 1,
-        validateLabel: 'Confirmar',
-        minuteSteps: 1,
-        type: 'date',
-      },
       timezones: {} as Dictionary<string, string>,
       isLoading: true,
       noPassword: false,
@@ -404,7 +391,9 @@ export default defineComponent({
 
       this.noPassword = false;
       try {
-        await userService.updateUser(this.editedUser);
+        const updatedUser = { ...this.editedUser };
+        updatedUser.birthdate = this.formatDate(this.editedUser.birthdate, 'DD/MM/YYYY');
+        await userService.updateUser(updatedUser);
         notificationService.showNotification("Ajustes cambiados correctamente");
 
       } catch (reason: any) {

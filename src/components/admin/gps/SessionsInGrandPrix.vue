@@ -1,9 +1,11 @@
 <template>
-  <label class="label">Sesiones</label>
-  <section class="flex flex-wrap flex-column">
+  <PTitle type="subtitle">
+    Sesiones
+  </PTitle>
+  <section class="flex flex-col">
     <div
       v-if="!sessions.length"
-      class="column"
+      class="flex-1"
     >
       <PrognoAlert
         variant="warning"
@@ -90,11 +92,11 @@
           </option>
         </PSelect>
 
-        <PField label="Fecha">
-          <Calendar
-            :value="newSession.date"
-            :options="calendarOptions"
-            @input="newSession.date = $event;"
+        <PField label="Fecha de la sesión">
+          <CalendarDateTimePicker
+            v-model="newSession.date"
+            placeholder="Click para escoger..."
+            :show-time="true"
           />
         </PField>
 
@@ -115,16 +117,17 @@ import {GrandPrix} from "@/types/GrandPrix";
 import {useDayjs} from "@/composables/useDayjs";
 import {RaceSession} from "@/types/RaceSession";
 import {notificationService, sessionService} from "@/_services";
-import Calendar from "@/components/lib/Calendar.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PCard from "@/components/lib/PCard.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
+import PTitle from "@/components/lib/PTitle.vue";
+import CalendarDateTimePicker from "@/components/lib/CalendarDateTimePicker.vue";
 
 export default defineComponent({
     name: "SessionsInGrandPrix",
-    components: {PButton, PCard, PField, PSelect, PrognoAlert, Calendar },
+    components: {CalendarDateTimePicker, PTitle, PButton, PCard, PField, PSelect, PrognoAlert },
     props: {
         grandPrix: {
             type: Object as PropType<GrandPrix>,

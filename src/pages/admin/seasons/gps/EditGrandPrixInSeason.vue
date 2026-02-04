@@ -44,20 +44,20 @@
         </p-button>
       </nav>
 
-      <div class="columns">
-        <div class="column is-one-fifth">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="basis-1/5">
           <SessionsInGrandPrix
             :grand-prix="grandPrix"
             :sessions="grandPrix.sessions"
           />
         </div>
-        <div class="column">
+        <div class="basis-4/5">
           <h2 class="title">
             Datos del {{ grandPrix.name }}
           </h2>
 
-          <div class="columns">
-            <div class="column is-four-fifths">
+          <div class="flex flex-col md:flex-row gap-4">
+            <div class="w-4/5">
               <PField label="Nombre">
                 <PInput
                   v-model="grandPrix.name"
@@ -67,7 +67,7 @@
                 />
               </PField>
             </div>
-            <div class="column">
+            <div class="flex-1">
               <PField label="Estado">
                 <PSwitch
                   v-model="grandPrix.suspended"
@@ -81,8 +81,8 @@
             </div>
           </div>
 
-          <div class="columns">
-            <div class="column">
+          <div class="flex flex-col md:flex-row gap-4">
+            <div class="flex-1">
               <PField label="Código del Gran Premio">
                 <PInput
                   v-model="grandPrix.code"
@@ -107,7 +107,7 @@
                 Editar datos del gran premio
               </PButton>
             </div>
-            <div class="column">
+            <div class="flex-1">
               <PField label="Circuito del Gran Premio">
                 <PSelect
                   v-model="grandPrix.circuit"
@@ -151,8 +151,8 @@
             </div>
           </div>
 
-          <div class="columns">
-            <div class="column is-half">
+          <div class="flex flex-col md:flex-row gap-4">
+            <div class="flex-1">
               <label class="label mt-2">Imagen promocional del Gran Premio</label>
               <figure class="image is-16by9">
                 <img
