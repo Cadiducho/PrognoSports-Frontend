@@ -69,7 +69,7 @@
                   :row="row"
                   :column="col"
                   :value="getRowData(row, col.field)"
-                  v-bind="col.formatterProps"
+                  v-bind="(col as any).formatterProps || {}"
                 />
               </template>
               <template v-else>
@@ -129,7 +129,6 @@ import {useDayjs} from "@/composables/useDayjs";
 import {Column} from "@/components/lib/table/index";
 import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
-import PIcon from "@/components/lib/PIcon.vue";
 
 interface Props<T> {
     columns: Array<Column>;

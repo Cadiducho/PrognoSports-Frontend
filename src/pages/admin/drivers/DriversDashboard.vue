@@ -30,7 +30,7 @@
           v-if="chosenSeason.id"
           color="info"
           icon="fa fa-cogs"
-          :to="{name: 'adminGpsInSeason', params: {season: chosenSeason.id}}"
+          :to="{name: 'adminDriversInSeason', params: {season: chosenSeason.id}}"
           tag="router-link"
           class="mr-2"
         >

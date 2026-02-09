@@ -7,4 +7,5 @@ export interface Column {
     field: string;
     type?: ColumType;
     formatter?: ((value: any) => string) | Raw<Component>;
+    formatterProps?: Record<string, any>;
 }

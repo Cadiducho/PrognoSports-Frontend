@@ -34,6 +34,14 @@ export class DriversService {
         return await axios.delete(`/drivers/${driver.id}`);
     }
 
+    public async deleteDriversInSeason(season: Season, driver: Driver) {
+        return await axios.delete(`/seasons/${season.id}/drivers/${driver.id}`);
+    }
+
+    public async linkDriverToSeason(season: Season, rawData: {driver: number, color: string, number: number}): Promise<Driver> {
+        return await axios.post(`/seasons/${season.id}/drivers`, rawData);
+    }
+
     public async getDriver(id: string): Promise<Driver> {
         return await axios.get(`/drivers/${id}`);
     }

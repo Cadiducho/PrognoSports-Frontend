@@ -56,7 +56,6 @@
     <p-table
       :columns="columns"
       :rows="constructors"
-      has-view-button
       has-edit-button
       has-delete-button
       :with-filter="filteredConstructors"
@@ -98,6 +97,7 @@ import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import {Constructor} from "@/types/Constructor";
+import ColorBadge from "@/components/lib/table/formatters/ColorBadge.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -113,7 +113,7 @@ const columns = [
   { label: 'ID', field: 'id' },
   { label: 'Nombre', field: 'name' },
   { label: 'Long name', field: 'longname' },
-  { label: 'Color', field: 'teamcolor' }, // ToDo: mostrar colorcito de verdad
+  { label: 'Color', field: 'teamcolor', formatter: ColorBadge },
 ];
 
 onMounted(() => {
