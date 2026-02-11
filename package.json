@@ -15,7 +15,7 @@
     "@vue-leaflet/vue-leaflet": "0.10.1",
     "@vueuse/core": "14.1.0",
     "apexcharts": "5.3.6",
-    "axios": "1.13.4",
+    "axios": "1.13.5",
     "dayjs": "1.11.19",
     "leaflet": "1.9.4",
     "marked": "17.0.1",
