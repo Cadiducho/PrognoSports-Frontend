@@ -42,6 +42,10 @@ export class DriversService {
         return await axios.post(`/seasons/${season.id}/drivers`, rawData);
     }
 
+    public async updateDriverInSeason(seasonId: string, driverId: string, data: {color?: string, number?: number}): Promise<Driver> {
+        return await axios.put(`/seasons/${seasonId}/drivers/${driverId}`, data);
+    }
+
     public async getDriver(id: string): Promise<Driver> {
         return await axios.get(`/drivers/${id}`);
     }

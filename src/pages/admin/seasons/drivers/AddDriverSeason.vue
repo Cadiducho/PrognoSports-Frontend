@@ -53,12 +53,10 @@
         class="mt-4"
         :disabled="!isDataOk()"
         type="solid"
-        label="Crear constructor"
+        label="Agregar piloto a la temporada"
         @click="addDriverToSeason()"
       />
     </form>
-
-    {{ addedDriver }}
   </PCard>
 </template>
 

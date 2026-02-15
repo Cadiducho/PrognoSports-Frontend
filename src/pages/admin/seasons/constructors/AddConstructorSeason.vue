@@ -58,12 +58,10 @@
         class="mt-4"
         :disabled="!isDataOk()"
         type="solid"
-        label="Crear constructor"
+        label="Agregar constructor a la temporada"
         @click="addConstructorToSeason()"
       />
     </form>
-
-    {{ addedConstructor }}
   </PCard>
 </template>
 

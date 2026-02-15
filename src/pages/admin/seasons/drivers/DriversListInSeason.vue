@@ -59,6 +59,7 @@
       has-edit-button
       has-delete-button
       :with-filter="filteredDriver"
+      @edit="goToEdit($event as Driver)"
       @delete="confirmDelete($event as Driver)"
     />
 
@@ -93,11 +94,12 @@ import {driversService, notificationService, seasonService} from "@/_services";
 import { Season } from "@/types/Season";
 
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import {Driver} from "@/types/Driver";
 
 const route = useRoute();
+const router = useRouter();
 
 const season = ref({ id: Number(route.params.season) } as Season);
 const drivers = ref(new Array<Driver>());
@@ -132,6 +134,10 @@ const loadDrivers = async (season: Season) => {
 }
 const onChangeSeason = () => {
   loadDrivers(chosenSeason.value!);
+}
+
+const goToEdit = (driver: Driver) => {
+  router.push({name: 'adminSeasonEditDriver', params: {season: season.value.id, driver: driver.id}});
 }
 
 const confirmDelete = (driver: Driver) => {
