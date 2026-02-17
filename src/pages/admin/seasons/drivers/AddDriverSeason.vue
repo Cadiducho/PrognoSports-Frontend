@@ -41,13 +41,15 @@
         name="number"
         type="number"
       />
-      <PInput
-        v-model="addedDriver.color"
+      <PField
         label="Color del piloto en la temporada"
-        placeholder="Color del piloto en la temporada"
-        name="color"
-        type="color"
-      />
+        required
+      >
+        <ColorPicker
+          v-model="addedDriver.color"
+          required
+        />
+      </PField>
 
       <PButton
         class="mt-4"
@@ -73,6 +75,8 @@ import PSelect from "@/components/lib/forms/PSelect.vue";
 import {Season} from "@/types/Season";
 import Loading from "@/components/lib/Loading.vue";
 import {Driver} from "@/types/Driver";
+import ColorPicker from "@/components/lib/forms/ColorPicker.vue";
+import PField from "@/components/lib/forms/PField.vue";
 
 const router = useRouter();
 const route = useRoute();

@@ -52,7 +52,7 @@
           required
         >
           <PInput
-            v-model="editedConstructor.longname"
+            v-model="editedConstructor.fullname"
             type="text"
             required
             placeholder="Red Bull Racing Honda RBPT"
@@ -64,7 +64,7 @@
           required
         >
           <PInput
-            v-model="editedConstructor.carname"
+            v-model="editedConstructor.car"
             type="text"
             required
             placeholder="RB20"
@@ -122,8 +122,8 @@ const router = useRouter();
 const season = ref<Season>({} as Season);
 const constructor = ref<Constructor>({} as Constructor);
 const editedConstructor = ref({
-  longname: '',
-  carname: '',
+  fullname: '',
+  car: '',
   teamcolor: ''
 });
 const isLoading = ref(true);
@@ -132,8 +132,8 @@ const isSaving = ref(false);
 const isFormValid = computed(() => {
   const colorRegex = /^#?[0-9A-Fa-f]{6}$/;
   return (
-    editedConstructor.value.longname.trim().length > 0 &&
-    editedConstructor.value.carname.trim().length > 0 &&
+    editedConstructor.value.fullname.trim().length > 0 &&
+    editedConstructor.value.car.trim().length > 0 &&
     colorRegex.test(editedConstructor.value.teamcolor)
   );
 });
@@ -159,8 +159,8 @@ onMounted(async () => {
 
     constructor.value = foundConstructor;
     editedConstructor.value = {
-      longname: foundConstructor.longname,
-      carname: foundConstructor.carname,
+      fullname: foundConstructor.longname,
+      car: foundConstructor.carname,
       teamcolor: foundConstructor.teamcolor.replace('#', '')
     };
   } catch (error) {
@@ -173,8 +173,8 @@ onMounted(async () => {
 
 const resetForm = () => {
   editedConstructor.value = {
-    longname: constructor.value.longname,
-    carname: constructor.value.carname,
+    fullname: constructor.value.longname,
+    car: constructor.value.carname,
     teamcolor: constructor.value.teamcolor.replace('#', '')
   };
 };
@@ -188,9 +188,9 @@ const updateConstructor = async () => {
 
     await constructorService.updateConstructorInSeason(seasonId, {
       id: constructor.value.id,
-      longname: editedConstructor.value.longname,
-      carname: editedConstructor.value.carname,
-      teamcolor: editedConstructor.value.teamcolor.replace('#', '')
+      fullname: editedConstructor.value.fullname,
+      car: editedConstructor.value.car,
+      teamcolor: editedConstructor.value.teamcolor
     });
 
     notificationService.showNotification(

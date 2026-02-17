@@ -52,11 +52,12 @@ const pickerValue = ref('');
 
 // Inicializar el valor del picker
 watch(() => props.modelValue, (newValue) => {
-  pickerValue.value = newValue.startsWith('#') ? newValue : `#${newValue}`;
+  const normalizedValue = newValue.startsWith('#') ? newValue : `#${newValue}`;
+  pickerValue.value = normalizedValue;
 }, { immediate: true });
 
 const displayValue = computed(() => {
-  return props.modelValue;
+  return props.modelValue.startsWith('#') ? props.modelValue : `#${props.modelValue}`;
 });
 
 const previewColor = computed(() => {
@@ -69,19 +70,20 @@ const onInputChange = (event: Event) => {
   const input = event.target as HTMLInputElement;
   let value = input.value.trim();
 
-  // Eliminar # si existe para mantener consistencia
-  if (value.startsWith('#')) {
-    value = value.substring(1);
+  // Asegurar que siempre tenga #
+  if (!value.startsWith('#')) {
+    value = `#${value}`;
   }
 
   emit('update:modelValue', value);
-  pickerValue.value = value.startsWith('#') ? value : `#${value}`;
+  pickerValue.value = value;
 };
 
 const onPickerChange = (event: Event) => {
   const input = event.target as HTMLInputElement;
-  const value = input.value.replace('#', '');
+  const value = input.value; // Ya incluye el #
   emit('update:modelValue', value);
 };
 </script>
+
 

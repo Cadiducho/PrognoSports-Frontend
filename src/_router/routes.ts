@@ -280,6 +280,12 @@ export const routes = [
                                   component: () => import('@/pages/admin/seasons/constructors/AddConstructorSeason.vue'),
                                   meta: { title: "Agregar Constructor" }
                                 },
+                                {
+                                  path: ':constructor',
+                                  name: 'adminSeasonEditConstructor',
+                                  component: () => import('@/pages/admin/seasons/constructors/EditConstructorInSeason.vue'),
+                                  meta: { title: "Editar Constructor" }
+                                },
                               ]
                             },
                             {
@@ -296,6 +302,12 @@ export const routes = [
                                   name: 'adminSeasonAddDriver',
                                   component: () => import('@/pages/admin/seasons/drivers/AddDriverSeason.vue'),
                                   meta: { title: "Agregar Piloto" }
+                                },
+                                {
+                                  path: ':driver',
+                                  name: 'adminSeasonEditDriver',
+                                  component: () => import('@/pages/admin/seasons/drivers/EditDriverInSeason.vue'),
+                                  meta: { title: "Editar Piloto" }
                                 },
                               ]
                             },

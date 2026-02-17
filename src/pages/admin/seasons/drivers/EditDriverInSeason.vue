@@ -69,14 +69,6 @@
             required
           />
         </PField>
-
-        <PField label="Equipo">
-          <PInput
-            :model-value="driver.team?.name || 'Sin equipo'"
-            disabled
-            readonly
-          />
-        </PField>
       </div>
 
       <div class="flex gap-2 mt-6">
@@ -145,7 +137,7 @@ onMounted(async () => {
     ]);
 
     season.value = seasonData;
-    const foundDriver = driversData.find(d => d.id === driverId);
+    const foundDriver = driversData.find(d => d.id == driverId);
 
     if (!foundDriver) {
       notificationService.showNotification("Piloto no encontrado en esta temporada", "error");
@@ -156,7 +148,7 @@ onMounted(async () => {
     driver.value = foundDriver;
     editedDriver.value = {
       number: foundDriver.number,
-      color: foundDriver.color.replace('#', '')
+      color: foundDriver.color,
     };
   } catch (error) {
     notificationService.showNotification("Error al cargar los datos", "error");
@@ -183,7 +175,7 @@ const updateDriver = async () => {
 
     await driversService.updateDriverInSeason(seasonId, driverId, {
       number: editedDriver.value.number,
-      color: editedDriver.value.color.replace('#', '')
+      color: editedDriver.value.color,
     });
 
     notificationService.showNotification(

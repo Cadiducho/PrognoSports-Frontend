@@ -21,7 +21,7 @@
 
     <form>
       <p-select
-        v-model="addedConstructor.id"
+        v-model="addedConstructor.constructorId"
         label="Constructor"
         placeholder="Selecciona un constructor"
         class="mb-3"
@@ -35,28 +35,30 @@
         </option>
       </p-select>
       <PInput
-        v-model="addedConstructor.longname"
+        v-model="addedConstructor.fullname"
         label="Nombre largo"
         placeholder="Nombre largo"
         name="longname"
       />
       <PInput
-        v-model="addedConstructor.carname"
+        v-model="addedConstructor.car"
         label="Nombre del coche"
         placeholder="Nombre del coche"
         name="carname"
       />
-      <PInput
-        v-model="addedConstructor.color"
+      <PField
         label="Color del equipo"
-        placeholder="Color del equipo"
-        name="color"
-        type="color"
-      />
+        required
+      >
+        <ColorPicker
+          v-model="addedConstructor.teamcolor"
+          required
+        />
+      </PField>
 
       <PButton
         class="mt-4"
-        :disabled="!isDataOk()"
+        :disabled="!isFormValid"
         type="solid"
         label="Agregar constructor a la temporada"
         @click="addConstructorToSeason()"
@@ -67,9 +69,9 @@
 
 <script setup lang="ts">
 import PTitle from "@/components/lib/PTitle.vue";
-import {constructorService, grandPrixService, notificationService, seasonService} from "@/_services";
+import {constructorService, notificationService, seasonService} from "@/_services";
 
-import {onMounted, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import {useRoute, useRouter} from "vue-router";
@@ -78,6 +80,8 @@ import PSelect from "@/components/lib/forms/PSelect.vue";
 import {Season} from "@/types/Season";
 import Loading from "@/components/lib/Loading.vue";
 import {Constructor} from "@/types/Constructor";
+import ColorPicker from "@/components/lib/forms/ColorPicker.vue";
+import PField from "@/components/lib/forms/PField.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -86,10 +90,10 @@ const isLoading = ref(true);
 const season = ref({} as Season);
 const constructorsList = ref([] as Array<Constructor>);
 const addedConstructor = ref({
-  id: 0,
-  longname: '',
-  carname: '',
-  color: ''
+  constructorId: 0,
+  fullname: '',
+  car: '',
+  teamcolor: ''
 })
 
 onMounted(async () => {
@@ -100,40 +104,34 @@ onMounted(async () => {
     ])
 
     season.value = seasonResponse;
-    constructorsList.value = constructorsListResponse;
-
-    console.log('season', season)
-    console.log('list', constructorsList)
+    constructorsList.value = constructorsListResponse
     isLoading.value = false;
   } catch (e) {
-
+    console.error(e);
   }
 });
 
-const isDataOk = (): boolean => {
-  return !!(addedConstructor.value.id && addedConstructor.value.longname && addedConstructor.value.carname && addedConstructor.value.color)
-};
+const isFormValid = computed(() => {
+  const colorRegex = /^#?[0-9A-Fa-f]{6}$/;
+  return (
+    addedConstructor.value.constructorId > 0 &&
+    addedConstructor.value.fullname.trim().length > 0 &&
+    addedConstructor.value.car.trim().length > 0 &&
+    colorRegex.test(addedConstructor.value.teamcolor)
+  );
+});
 
 const addConstructorToSeason = async () => {
   const seasonId = route.params.season.toString()
-  console.log('addedConstructor', addedConstructor.value)
-  console.log('season', season)
-
-  const rawData = {
-    constructor: addedConstructor.value.id,
-    car: addedConstructor.value.carname,
-    fullname: addedConstructor.value.longname,
-    teamcolor: addedConstructor.value.color,
-  }
-
   try {
-    const result = await constructorService.linkConstructorToSeason(seasonId, rawData)
+    const result = await constructorService.linkConstructorToSeason(seasonId, addedConstructor.value)
     notificationService.showNotification("Se ha añadido correctamente el  constructor `" + result.name + "`");
 
     router.push({
       name: 'adminConstructorsInSeason'
     })
   } catch (error: any) {
+    console.error(error);
     notificationService.showNotification(error.message, "error");
   }
 }

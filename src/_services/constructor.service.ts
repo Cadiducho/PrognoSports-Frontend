@@ -2,6 +2,7 @@ import axios from "axios";
 import {Constructor, IConstructor} from "@/types/Constructor";
 import {PrognoService} from "@/_services/progno.service";
 import {Season} from "@/types/Season";
+import {Driver} from "@/types/Driver";
 
 export class ConstructorService extends PrognoService<IConstructor, Constructor> {
 
@@ -59,14 +60,14 @@ export class ConstructorService extends PrognoService<IConstructor, Constructor>
    */
   public async linkConstructorToSeason(seasonId: string, data: {
     car: string;
-    constructor: number;
+    constructorId: number;
     teamcolor: string;
     fullname: string
-  }) {
+  }): Promise<Constructor> {
     return await axios.post(`/seasons/${seasonId}/constructors`, data);
   }
 
-  public async updateConstructorInSeason(seasonId: string, constructor: Partial<Constructor>): Promise<Array<Constructor>> {
+  public async updateConstructorInSeason(seasonId: string, constructor: {id: number, car: string, fullname: string, teamcolor: string}): Promise<Array<Constructor>> {
     return await axios.put(`/seasons/${seasonId}/constructors/${constructor.id}`, constructor);
   }
 
