@@ -1,5 +1,9 @@
+<script setup lang="ts">
+import PCard from "@/components/lib/PCard.vue";
+</script>
+
 <template>
-  <div class="container mt-6 mb-6">
+  <PCard class="container mt-6 mb-6">
     <h1 class="title">
       Políticas de Privacidad
     </h1>
@@ -48,5 +52,5 @@
         Normativa
       </router-link>
     </p>
-  </div>
+  </PCard>
 </template>

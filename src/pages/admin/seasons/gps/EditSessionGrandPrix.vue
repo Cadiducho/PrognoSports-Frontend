@@ -165,7 +165,7 @@ import CalendarDateTimePicker from "@/components/lib/CalendarDateTimePicker.vue"
 export default defineComponent({
   name: "EditSessionGrandPrix",
   components: {
-    CalendarDateTimePicker, PField,
+    PField,
     PCard,
     GrandPrixPageHeader,
     PLabel,
@@ -176,7 +176,7 @@ export default defineComponent({
     EditResults,
     PTitle,
     SessionsInGrandPrix,
-    Calendar
+    CalendarDateTimePicker
   },
   setup() {
     const authStore = useAuthStore();

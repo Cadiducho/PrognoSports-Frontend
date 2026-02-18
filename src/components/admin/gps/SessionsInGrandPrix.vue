@@ -86,6 +86,7 @@
         >
           <option
             v-for="ses in sessions"
+            :key="ses.id"
             :value="ses"
           >
             {{ ses.humanName() }} del {{ humanDate(ses.date) }}
@@ -100,12 +101,13 @@
           />
         </PField>
 
-        <button
-          class="button is-primary is-fullwidth"
+        <PButton
+          expanded
+          size="small"
           @click="addSessionToGP()"
         >
           Añadir
-        </button>
+        </PButton>
       </PCard>
     </div>
   </section>

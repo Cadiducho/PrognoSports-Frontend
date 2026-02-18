@@ -1,7 +1,7 @@
 <template>
-  <h2 class="title">
+  <PTitle type="subtitle">
     Pilotos y equipos del Gran Premio
-  </h2>
+  </PTitle>
 
   <div class="flex flex-col md:flex-row gap-6">
     <div class="basis-1/5">
@@ -19,7 +19,11 @@
         </option>
       </PSelect>
 
-      <label class="label">Pilotos de <router-link :to="{name: 'adminSeasonEdit', params: grandPrix.season.id}">{{ grandPrix.season.name }}</router-link></label>
+      <PLabel>
+        Pilotos de <router-link :to="{name: 'adminDriversInSeason', params: {season: grandPrix.season.id}}">
+          {{ grandPrix.season.name }}
+        </router-link>
+      </PLabel>
 
       <draggable
         id="driversInSeason"
@@ -95,15 +99,17 @@ import draggable from "vuedraggable";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PCard from "@/components/lib/PCard.vue";
+import PLabel from "@/components/lib/forms/PLabel.vue";
+import PTitle from "@/components/lib/PTitle.vue";
 
 export default defineComponent({
     name: "DriversInGrandPrix",
     components: {
-      PCard,
+      PTitle,
+      PLabel,
       PButton,
       PSelect,
-        draggable,
-        DraggableDriverCard,
+      draggable,
     },
     props: {
         grandPrix: {

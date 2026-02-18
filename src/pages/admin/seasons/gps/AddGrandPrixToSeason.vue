@@ -80,7 +80,7 @@
         class="mt-4"
         :disabled="!isDataOk()"
         type="solid"
-        label="Crear temporada"
+        label="Añadir gran premio a la temporada"
         @click="addGrandPrixToSeason()"
       />
     </form>
