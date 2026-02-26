@@ -49,15 +49,21 @@
           <tr v-for="pos in positionsInRuleSet">
             <th>{{ pos }}º</th>
             <td v-for="session in competition.availableSessions">
-              {{ ruleSet.data.pointsByEqualsPosition[session.id][pos] || 0 }}
+              {{ ruleSet.data.pointsByEqualsPosition[session.id][pos] || '-' }}
             </td>
           </tr>
         </tbody>
         <tfoot>
           <tr>
-            <th>Total</th>
+            <th>Total por sesión</th>
             <td v-for="session in competition.availableSessions">
               {{ maxPointsPerSession[session.id] || 0 }}
+            </td>
+          </tr>
+          <tr>
+            <th>Bonus por más aciertos en el GP</th>
+            <td colspan="999">
+              {{ ruleSet.data.pointsByTopScorer || 0 }} puntos (global para todo el GP)
             </td>
           </tr>
         </tfoot>

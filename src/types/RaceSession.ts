@@ -2,8 +2,10 @@ import {Competition, ICompetition} from "@/types/Competition";
 import {GrandPrix, IGrandPrix} from "@/types/GrandPrix";
 import {useDayjs} from "@/composables/useDayjs";
 
+export type SessionId = number;
+
 export interface IRaceSession {
-    id: number;
+    id: SessionId;
     name: string;
     code: string;
     hasGrid: boolean;
@@ -16,7 +18,7 @@ export interface IRaceSession {
 }
 
 export class RaceSession implements IRaceSession {
-    id: number;
+    id: SessionId;
     name: string;
     code: string;
     hasGrid: boolean;

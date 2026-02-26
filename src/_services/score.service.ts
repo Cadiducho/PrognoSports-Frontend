@@ -6,6 +6,7 @@ import {RaceSession} from "@/types/RaceSession";
 import {Dictionary} from "@/types/Dictionary";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
+import {ScoreCalculations} from "@/types/ScoreCalculations";
 
 export class ScoreService {
 
@@ -40,7 +41,7 @@ export class ScoreService {
         return await axios.get(`/communities/${community.id}/${community.competition.id}/${gp.season.id}/points/${gp.id}`);
     }
 
-    public async getPointsByPositionInGrandPrix(community: Community, gp: GrandPrix, session: RaceSession): Promise<Dictionary<number, Dictionary<number, number>>> {
+    public async getPointsByPositionInGrandPrix(community: Community, gp: GrandPrix, session: RaceSession): Promise<ScoreCalculations> {
         return await axios.get(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.id}/tipps/${community.id}/calculations`);
     }
 }

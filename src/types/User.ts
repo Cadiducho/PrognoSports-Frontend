@@ -4,8 +4,9 @@ import {Dictionary} from "@/types/Dictionary";
 import {BASE_URL} from "@/_services";
 import {RaceSession} from "@/types/RaceSession";
 
+export type UserId = number;
 export interface IUser {
-  id: number;
+  id: UserId;
   username: string;
   email: string;
   bio?: string;
@@ -24,13 +25,13 @@ export interface IUser {
 }
 
 export class User implements IUser {
+  id: UserId;
   bio: string;
   birthdate?: Date;
   created?: Date;
   currentCommunity: Community;
   email: string;
   gender: string;
-  id: number;
   last_activity?: Date;
   verified_at?: Date;
   location: string;

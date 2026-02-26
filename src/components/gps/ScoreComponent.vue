@@ -4,7 +4,7 @@
     <template v-else>
       <span class="title is-5 dark:text-gray-300">Puntuaciones de {{ session.humanName() }} </span> <br>
       <span class="title is-6 dark:text-gray-300">Leyenda</span>
-      <p class="m-0 p-0 mb-6 dark:text-gray-300">
+      <p class="m-0 p-0 mb-4 dark:text-gray-300">
         Tus puntuaciones salen reflejadas con color
         <PTag
           color="success"
@@ -22,6 +22,11 @@
         </PTag>
         <br>
         Los ganadores de cada sesión tendrán representado un <i class="fas fa-trophy" />
+
+        <span v-if="ruleSet.data.pointsByTopScorer > 0">
+          <br>
+          El usuario que haya logrado el mayor número de aciertos en todo el Gran Premio tendrá el un bonus de {{ ruleSet.data.pointsByTopScorer || 0 }} puntos.
+        </span>
       </p>
 
       <PrognoAlert
@@ -167,26 +172,48 @@
         </o-table-column>
 
         <o-table-column
-          v-for="session in gp.sessions"
-          :key="session.id"
+          v-for="ses in gp.sessions"
+          :key="ses.id"
           v-slot="props"
-          :field="`score.bySession.${session.id}`"
-          :label="session.code"
+          :field="`score.bySession.${ses.id}`"
+          :label="ses.code"
           sortable
           numeric
         >
-          <span :class="{'has-text-danger': (props.row.score.bySession[session.id] || 0) < 0}">
-            {{ props.row.score.bySession[session.id] || 0 }}
+          <span
+            :class="{'has-text-danger': (props.row.score.bySession[ses.id] || 0) < 0}"
+          >
+            {{ props.row.score.bySession[ses.id] || 0 }}
           </span>
 
           <PTooltip
             v-if="checkAndInsertTrophy(props.row.user.username, session)"
             :label="'Ganador de la sesión de ' + session.humanName()"
-            variant="light"
           >
             <span class="text-blue-500"><i class="fas fa-trophy" /></span>
           </PTooltip>
         </o-table-column>
+
+
+        <o-table-column
+          v-slot="props"
+          label="🎯"
+          sortable
+          numeric
+        >
+          <PTooltip :label="`${totalHits[props.row.user.id] ?? 0} aciertos en el GP`">
+            <span :class="{'font-semibold': topScorerUsers.includes(props.row.user.id)}">
+              {{ totalHits[props.row.user.id] ?? 0 }}
+              <sub
+                v-if="ruleSet.data.pointsByTopScorer && topScorerUsers.includes(props.row.user.id)"
+                class="text-success-600 font-semibold"
+              >
+                +{{ ruleSet.data.pointsByTopScorer }}
+              </sub>
+            </span>
+          </PTooltip>
+        </o-table-column>
+
 
         <o-table-column
           v-slot="props"
@@ -289,8 +316,8 @@
 </template>
 
 <script lang="ts">
-import {User} from "@/types/User";
-import {RaceSession} from "@/types/RaceSession";
+import {User, UserId} from "@/types/User";
+import {RaceSession, SessionId} from "@/types/RaceSession";
 import {grandPrixService, scoreService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
 import {RaceResult} from "@/types/RaceResult";
@@ -306,8 +333,9 @@ interface TableType {
     user: User;
     tipps: Array<RaceResult>;
     score: {
-        bySession: Dictionary<string, number>;
-        hitPercentageBySession: Dictionary<string, number>;
+        bySession: Dictionary<SessionId, number>;
+        hitPercentageBySession: Dictionary<SessionId, number>;
+        hits: Dictionary<SessionId, number>
         gp: number,
         hitPercentageInGP: number;
         accumulated: number,
@@ -328,6 +356,7 @@ import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PTag from "@/components/lib/PTag.vue";
 import {storeToRefs} from "pinia";
 import PTooltip from "@/components/lib/PTooltip.vue";
+import {ScoreCalculations} from "@/types/ScoreCalculations";
 
 export default defineComponent({
     name: "LandingNavbar",
@@ -376,12 +405,31 @@ export default defineComponent({
             loaded: false,
             thereAreFinishResults: false,
             sessionResults: new Array<RaceResult>(),
-            pointsByPosition: {} as Dictionary<number, Dictionary<number, number>>,
+            pointsByPosition: {} as Dictionary<SessionId, Dictionary<UserId, number>>,
+            totalHits: {} as Dictionary<UserId, number>,
+
             tableData: new Array<TableType>(),
 
             winnersBySession: new Map<RaceSession, Array<string>>(),
             winnersOfGrandPrix: new Array<string>(),
         }
+    },
+    computed: {
+      topScorerUsers(): Array<UserId> {
+        let topScorers: UserId[] = [];
+        let maxHits = -1;
+
+        for (let userId in this.totalHits) {
+          if ((this.totalHits[userId] || 0) > maxHits) {
+            maxHits = this.totalHits[userId]!;
+            topScorers = [Number(userId)];
+          } else if ((this.totalHits[userId] || 0) === maxHits && maxHits > -1) {
+            topScorers.push(Number(userId));
+          }
+        }
+
+        return topScorers;
+      }
     },
     mounted() {
         this.emitter.on('updatedTipps', (e: {session: RaceSession, tipps: Array<Driver>}) => {
@@ -416,9 +464,13 @@ export default defineComponent({
 
                 // Si ya se ha cerrado el pronóstico para esta sesión, quizás hay puntos
                 if (!this.session.isBeforeClosureDate()) {
-                    scoreService.getPointsByPositionInGrandPrix(this.currentCommunity, this.gp, this.session).then(points => {
-                        this.pointsByPosition = points;
-                    }).catch(() => {}); // Capturar el error de pronósticos antes de tiempo, ignorarlo
+                    scoreService.getPointsByPositionInGrandPrix(this.currentCommunity, this.gp, this.session).then((score: ScoreCalculations)  => {
+                        this.pointsByPosition = score.pointsByPosition;
+                        this.totalHits = score.totalHits;
+                        // ToDo: coger hitsBySession y mostrar con un tooltip los de cada sesión
+                    }).catch((e) => {
+                      console.error(e)
+                    });
                 }
 
                 this.communityMembers.forEach(comUser => {
