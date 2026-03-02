@@ -187,8 +187,8 @@
           </span>
 
           <PTooltip
-            v-if="checkAndInsertTrophy(props.row.user.username, session)"
-            :label="'Ganador de la sesión de ' + session.humanName()"
+            v-if="checkAndInsertTrophy(props.row.user.username, ses)"
+            :label="'Ganador de la sesión de ' + ses.humanName()"
           >
             <span class="text-blue-500"><i class="fas fa-trophy" /></span>
           </PTooltip>
@@ -201,7 +201,7 @@
           sortable
           numeric
         >
-          <PTooltip :label="`${totalHits[props.row.user.id] ?? 0} aciertos en el GP`">
+          <PTooltip>
             <span :class="{'font-semibold': topScorerUsers.includes(props.row.user.id)}">
               {{ totalHits[props.row.user.id] ?? 0 }}
               <sub
@@ -211,6 +211,21 @@
                 +{{ ruleSet.data.pointsByTopScorer }}
               </sub>
             </span>
+
+            <template #tooltip>
+              <ul
+                v-if="gp.sessions.length > 1"
+              >
+                <li><b>{{ totalHits[props.row.user.id] ?? 0 }} aciertos en el Gran Premio</b></li>
+
+                <li
+                  v-for="ses in gp.sessions"
+                  :key="ses.id"
+                >
+                  <b>{{ sessionHumanName(ses.id) }}</b>: {{ hitsBySession[props.row.user.id]?.[ses.id] ?? 0 }} aciertos
+                </li>
+              </ul>
+            </template>
           </PTooltip>
         </o-table-column>
 
@@ -398,7 +413,11 @@ export default defineComponent({
 
         const { showAdvancedStadistics, showResults, showUserColor, showWinnerColor } = storeToRefs(useAppStore())
 
-      return { currentUser, currentCommunity, dateDiff, humanDateTime, styleCodeInResults, emitter, showAdvancedStadistics, showResults, showUserColor, showWinnerColor };
+        function sessionHumanName(id: number) {
+          return RaceSession.findById(id)?.humanName() ?? "Desconocida";
+        }
+
+      return { currentUser, currentCommunity, dateDiff, humanDateTime, styleCodeInResults, emitter, showAdvancedStadistics, showResults, showUserColor, showWinnerColor, sessionHumanName };
     },
     data() {
         return {
@@ -407,6 +426,7 @@ export default defineComponent({
             sessionResults: new Array<RaceResult>(),
             pointsByPosition: {} as Dictionary<SessionId, Dictionary<UserId, number>>,
             totalHits: {} as Dictionary<UserId, number>,
+            hitsBySession: {} as Dictionary<UserId, Dictionary<SessionId, number>>,
 
             tableData: new Array<TableType>(),
 
@@ -467,6 +487,8 @@ export default defineComponent({
                     scoreService.getPointsByPositionInGrandPrix(this.currentCommunity, this.gp, this.session).then((score: ScoreCalculations)  => {
                         this.pointsByPosition = score.pointsByPosition;
                         this.totalHits = score.totalHits;
+                        this.hitsBySession = score.hitsBySession;
+                      console.log('score recibido:', score)
                         // ToDo: coger hitsBySession y mostrar con un tooltip los de cada sesión
                     }).catch((e) => {
                       console.error(e)
