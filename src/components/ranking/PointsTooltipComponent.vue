@@ -13,6 +13,9 @@
           <b>{{ sessionHumanName(session) }}</b>: {{ points }}
         </li>
         <li>
+          <b>Bonus de aciertos: </b> {{ props.userPoints.bonusPoints }} ({{ props.userPoints.hitsInGP }} aciertos)
+        </li>
+        <li>
           <b>Gran Premio</b>: {{ props.userPoints.pointsInGP }}
         </li>
         <li>

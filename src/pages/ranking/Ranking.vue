@@ -3,7 +3,7 @@
     <PTitle name="Ranking" />
 
     <PCard>
-      <nav class="block is-flex is-justify-content-space-between">
+      <nav class="block flex justify-between">
         <PField label="Temporada">
           <PSelect
             v-if="Object.keys(chosenSeason).length"
@@ -242,6 +242,10 @@
                 dorado
               </PTag> es la máxima acumulada para ese Gran Premio<br>
             </p>
+
+            <h1 class="title is-4 mt-4">
+              Puntos acumulados por Gran Premio
+            </h1>
             <VueApexCharts
               ref="chartAcumuladasComp"
               height="400"
@@ -251,8 +255,96 @@
             />
           </o-tab-item>
           <o-tab-item
-            label="Ranking por clasificación"
+            label="Ranking por aciertos"
             :value="2"
+          >
+            <PTitle type="subtitle">
+              Aciertos
+            </PTitle>
+            <o-table
+              :data="tableDataAciertos"
+              hoverable
+              :mobile-cards="false"
+              default-sort="totalScore"
+              default-sort-direction="DESC"
+              :row-class="checkRowClass"
+            >
+              <o-table-column
+                field="user.username"
+                label="Nombre"
+                sortable
+              >
+                <template #default="props">
+                  <o-tooltip
+                    position="right"
+                    variant="light"
+                  >
+                    <template #content>
+                      <UserMiniCard :user="communityMembers.get(props.row.user.username)" />
+                    </template>
+
+                    <span class="has-text-weight-bold">{{ props.row.user.username }}</span>
+                  </o-tooltip>
+                </template>
+              </o-table-column>
+
+              <o-table-column
+                v-for="gp in grandPrixList()"
+                :key="gp.code"
+                :field="gp.code"
+                sortable
+                numeric
+              >
+                <template #header="{ column }">
+                  <PTooltip :label="gp.name">
+                    {{ gp.code }}
+                  </PTooltip>
+                </template>
+                <template #default="props">
+                  <template v-if="props.row.gps.has(gp.id)">
+                    <PTag
+                      v-if="checkMaxHitsCell(gp.id, props.row.gps.get(gp.id).hitsInGP)"
+                      color="warning"
+                      size="small"
+                    >
+                      <HitsTooltipComponent
+                        :gp-name="gp.name"
+                        :user-points="props.row.gps.get(gp.id)"
+                      />
+                    </PTag>
+                    <template v-else>
+                      <template v-if="props.row.gps.get(gp.id).hitsInGP >= 0">
+                        <HitsTooltipComponent
+                          :gp-name="gp.name"
+                          :user-points="props.row.gps.get(gp.id)"
+                        />
+                      </template>
+                      <template v-else>
+                        --
+                      </template>
+                    </template>
+                  </template>
+                  <template v-else>
+                    :(
+                  </template>
+                </template>
+              </o-table-column>
+            </o-table>
+
+            <h1 class="title is-4 mt-4">
+              Aciertos por Gran Premio
+            </h1>
+            <VueApexCharts
+              ref="chartHitsComp"
+              height="400"
+              type="heatmap"
+              :options="chartHitsOptions"
+              :series="chartHits"
+            />
+          </o-tab-item>
+          <o-tab-item
+            label="Ranking por clasificación"
+            :value="3"
           >
             <PTitle type="subtitle">
               Clasificaciones
@@ -297,7 +389,6 @@
                   </PTooltip>
                 </template>
                 <template #default="props">
-                  <!-- //ToDo: Tooltip desglosando puntos por sesiones-->
                   <template v-if="props.row.gps.has(gp.id)">
                     <PTag
                       v-if="props.row.gps.get(gp.id).standings === 1"
@@ -322,6 +413,9 @@
               </o-table-column>
             </o-table>
 
+            <h1 class="title is-4 mt-4">
+              Clasificación por Gran Premio
+            </h1>
             <VueApexCharts
               ref="chartStandingsComp"
               height="400"
@@ -358,6 +452,7 @@ import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PTag from "@/components/lib/PTag.vue";
 import PTooltip from "@/components/lib/PTooltip.vue";
 import PIcon from "@/components/lib/PIcon.vue";
+import HitsTooltipComponent from "@/components/ranking/HitsTooltipComponent.vue";
 
 interface TableEntry {
     user: User;
@@ -369,6 +464,7 @@ interface TableEntry {
     export default defineComponent({
         name: "LandingNavbar",
         components: {
+          HitsTooltipComponent,
           PIcon,
           PTooltip,
           PrognoAlert,
@@ -389,8 +485,9 @@ interface TableEntry {
             const chartStandingsComp = ref<VueApexChartsComponent | null>(null);
             const chartAcumuladasComp = ref<VueApexChartsComponent | null>(null);
             const chartPointsComp = ref<VueApexChartsComponent | null>(null);
+            const chartHitsComp = ref<VueApexChartsComponent | null>(null);
 
-            return { currentUser, currentCommunity, darkMode, chartStandingsComp, chartAcumuladasComp, chartPointsComp };
+            return { currentUser, currentCommunity, darkMode, chartStandingsComp, chartAcumuladasComp, chartPointsComp, chartHitsComp };
         },
         data() {
             return {
@@ -403,12 +500,16 @@ interface TableEntry {
                 gpsWithPoints: new Array<number>(), // gp ids
                 maxPointsInGrandPrix: new Map<number, number>(),
                 maxAccumulatedPointsInGrandPrix: new Map<number, number>(),
+                maxHitsInGrandPrix: new Map<number, number>(),
                 communityMembers: new Map<string, User>(),
                 tableData: new Array<TableEntry>(),
                 tableDataAcumulada: new Array<TableEntry>(),
+                tableDataAciertos: new Array<TableEntry>(),
                 chartSeries: [] as any[],
                 chartSeriesAcumuladas: [] as any[],
                 chartStandings: [] as any[],
+                chartHits: [] as any[],
+                topScorerUsers: [] as string[], // Lista de los 8 usuarios con más puntos totales en la temporada, para destacar en la gráfica de puntos por GP
                 chartOptions: {
                     chart: {
                         shadow: {
@@ -463,7 +564,8 @@ interface TableEntry {
                         palette: 'palette8'
                     }
                 },
-                chartStandingsOptions: {}
+                chartStandingsOptions: {},
+                chartHitsOptions: {},
             }
         },
         computed: {
@@ -484,6 +586,7 @@ interface TableEntry {
                 this.chartAcumuladasComp?.updateOptions(theme);
                 this.chartPointsComp?.updateOptions(theme);
                 this.chartStandingsComp?.updateOptions(theme);
+                this.chartHitsComp?.updateOptions(theme);
             }
         },
         created() {
@@ -518,6 +621,58 @@ interface TableEntry {
                     }
                 },
             }
+          this.chartHitsOptions = {
+            chart: {
+              type: 'heatmap',
+              toolbar: {
+                show: true
+              }
+            },
+            dataLabels: {
+              enabled: true,
+              formatter: function(val: any, opts: any) {
+                // Mostrar el valor real de aciertos, no el normalizado
+                const dataPoint = opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex];
+                return dataPoint.hits;
+              }
+            },
+            xaxis: {
+              type: 'category',
+              categories: [...this.gps.map(gp => gp)],
+              title: {
+                text: 'Grandes Premios'
+              }
+            },
+            yaxis: {
+              title: {
+                text: 'Usuarios'
+              }
+            },
+            plotOptions: {
+              heatmap: {
+                colorScale: {
+                  ranges: [
+                    {from: 0, to: 0, color: '#808080', name: 'Sin datos'},
+                    {from: 0.01, to: 33, color: '#ff9f6b', name: 'Bajo'},
+                    {from: 33.01, to: 66, color: '#efd800', name: 'Medio'},
+                    {from: 66.01, to: 99, color: '#44d63c', name: 'Alto'},
+                    {from: 99.01, to: 100, color: '#ae29d0', name: 'Máximo'}
+                  ]
+                }
+              }
+            },
+            tooltip: {
+              y: {
+                formatter: function(val: any, opts: any) {
+                  const dataPoint = opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex];
+                  return dataPoint.hits + " aciertos";
+                }
+              }
+            },
+            theme: {
+              mode: this.darkMode ? 'dark' : 'light'
+            }
+          }
         },
         methods: {
             changeSeason() {
@@ -528,10 +683,13 @@ interface TableEntry {
 
                 this.tableData = [];
                 this.tableDataAcumulada = [];
+                this.tableDataAciertos = [];;
 
                 this.chartSeries = [];
                 this.chartSeriesAcumuladas = [];
                 this.chartStandings = [];
+                this.chartHits = [];
+                this.topScorerUsers = [];
 
                 const gpPromise = grandPrixService.getGrandPrixesList(season);
                 const membersPromise = communityService.getMembers(this.currentCommunity);
@@ -555,6 +713,7 @@ interface TableEntry {
 
                 let entradas: Map<string, TableEntry> = new Map(); // Username -> Entrada de la tabla
                 let entradasAcumuladas: Map<string, TableEntry> = new Map(); // Username -> Entrada de la tabla
+                let entradasAciertos: Map<string, TableEntry> = new Map(); // Username -> Entrada de la tabla
 
                 members.forEach((member) => {
                     entradas.set(member!.user.username, {
@@ -563,6 +722,11 @@ interface TableEntry {
                         user: member.user!
                     });
                     entradasAcumuladas.set(member!.user.username, {
+                        gps: new Map(),
+                        totalScore: 0,
+                        user: member.user!
+                    });
+                    entradasAciertos.set(member!.user.username, {
                         gps: new Map(),
                         totalScore: 0,
                         user: member.user!
@@ -576,15 +740,17 @@ interface TableEntry {
                     this.gpsWithPoints.push(gpId);
                     this.maxPointsInGrandPrix.set(gpId, -Infinity);
                     this.maxAccumulatedPointsInGrandPrix.set(gpId, -Infinity);
+                    this.maxHitsInGrandPrix.set(gpId, -Infinity);
 
                     // Cada usuario en cada gran premio
                     for (let [slot, userPoints] of Object.entries(entry!)) {
                         let user = userPoints!.user!.username;
                         // asigno entradas a los usuarios existentes, con sus resultados en el gp iterado
-                        if (user !== undefined && (entradas.has(user) || entradasAcumuladas.has(user))) {
+                        if (user !== undefined && (entradas.has(user) || entradasAcumuladas.has(user) || entradasAciertos.has(user))) {
 
                             entradas.get(user)!.gps.set(gpId, userPoints!);
                             entradasAcumuladas.get(user)!.gps.set(gpId, userPoints!);
+                            entradasAciertos.get(user)!.gps.set(gpId, userPoints!);
 
                             if (userPoints!.pointsInGP! > this.maxPointsInGrandPrix.get(gpId)!) {
                                 this.maxPointsInGrandPrix.set(gpId, userPoints!.pointsInGP!);
@@ -592,9 +758,21 @@ interface TableEntry {
                             if (userPoints!.accumulatedPoints > this.maxAccumulatedPointsInGrandPrix.get(gpId)!) {
                                 this.maxAccumulatedPointsInGrandPrix.set(gpId, userPoints!.accumulatedPoints!);
                             }
+                            if (userPoints!.hitsInGP > this.maxHitsInGrandPrix.get(gpId)!) {
+                              this.maxHitsInGrandPrix.set(gpId, userPoints!.hitsInGP!);
+                            }
                         }
                     }
                 });
+
+                // Calcular los top 10 usuarios con más puntos acumulados
+                const sortedUsers = Object.entries(points)
+                    .filter(([username, totalScore]) => totalScore != 0)
+                    .sort((a, b) => b[1] - a[1]) // Ordenar de mayor a menor por totalScore
+                    .slice(0, 8)
+                    .map(([username]) => username);
+
+                this.topScorerUsers = sortedUsers;
 
                 Object.entries(points).forEach(([username, totalScore]) => {
 
@@ -607,18 +785,20 @@ interface TableEntry {
                         // Guardo las entradas creadas en las filas de la tabla
                         this.tableData.push(entradas.get(username)!);
                         this.tableDataAcumulada.push(entradasAcumuladas.get(username)!);
+                        this.tableDataAciertos.push(entradasAcumuladas.get(username)!);
 
 
                         let chartData = [];
                         let accumulatedChartRawData = [] as { gpId: number, points: number }[];
-                        let standingsChartRawData = [] as { gpId: number, standing: number | null }[];
+                        let standingsChartRawData = [] as { gpId: number, standing: number | null, hits: number }[];
 
                         for (const [gpId, uPoints] of entradas.get(username)!.gps) {
                             chartData.push(uPoints.pointsInGP);
 
                             // Null para no mostrar si no existe una standing, por ejemplo, no tiene resultados las primeras carreras
                             let standing = (uPoints.standings > 0) ? uPoints.standings : null;
-                            standingsChartRawData.push({gpId, standing});
+                            let hits = (uPoints.hitsInGP >= 0) ? uPoints.hitsInGP : null;
+                            standingsChartRawData.push({gpId, standing, hits});
                         }
                         for (const [gpId, uPoints] of entradasAcumuladas.get(username)!.gps) {
                             accumulatedChartRawData.push({gpId, points: uPoints.accumulatedPoints});
@@ -635,6 +815,7 @@ interface TableEntry {
                         // Convierto los datos de acumulados y ranking, ya ordenados por gps, a arrays que entiendan las gráficas
                         const accumulatedChartData = accumulatedChartRawData.map(data => data.points);
                         const standingsChartData = standingsChartRawData.map(data => data.standing);
+                        const hitsChartData = standingsChartRawData.map(data => data.hits);
 
                         // Agrego a la gráfica de puntos
                         this.chartSeries = [
@@ -642,6 +823,7 @@ interface TableEntry {
                             {
                                 name: username,
                                 data: chartData,
+                                hidden: (!this.topScorerUsers.includes(username))
                             },
                         ]
                         this.chartSeriesAcumuladas = [
@@ -649,6 +831,7 @@ interface TableEntry {
                             {
                                 name: username,
                                 data: accumulatedChartData,
+                                hidden: (!this.topScorerUsers.includes(username))
                             },
                         ];
                         this.chartStandings = [
@@ -656,7 +839,35 @@ interface TableEntry {
                             {
                                 name: username,
                                 data: standingsChartData,
+                                hidden: (!this.topScorerUsers.includes(username))
                             },
+                        ];
+
+                        const maxHitsByGP = new Map<number, number>();
+                        this.gps.forEach(gp => {
+                          maxHitsByGP.set(gp.id, this.maxHitsInGrandPrix.get(gp.id) || 0);
+                        });
+
+                        this.chartHits = [
+                          {
+                            name: username,
+                            data: this.gps.map(gp => {
+                              const userPoints = entradas.get(username)!.gps.get(gp.id);
+                              const hits = userPoints?.hitsInGP >= 0 ? userPoints.hitsInGP : 0;
+                              const maxHits = maxHitsByGP.get(gp.id) || 1;
+
+                              // Normalizar a porcentaje (0-100) respecto al máximo del GP
+                              const normalizedValue = maxHits > 0 ? (hits / maxHits) * 100 : 0;
+
+                              return {
+                                x: gp.code,
+                                y: normalizedValue,
+                                hits: hits, // Mantener el valor real para el tooltip
+                                maxHits: maxHits
+                              };
+                            })
+                          },
+                          ...this.chartHits
                         ];
                     }
                 });
@@ -678,6 +889,9 @@ interface TableEntry {
             checkWinnerCell(gp: number, score: number) {
                 return (this.maxAccumulatedPointsInGrandPrix.get(gp)! == score);
             },
+            checkMaxHitsCell(gp: number, hits: number) {
+                return (this.maxHitsInGrandPrix.get(gp)! == hits);
+            },
             updateChartsLegend() {
                 // Actualizar leyenda con los codigos de los gps
                 const xaxis = {
@@ -690,6 +904,10 @@ interface TableEntry {
                 }
                 this.chartStandingsOptions = {
                     ...this.chartStandingsOptions,
+                    xaxis
+                }
+                this.chartHitsOptions = {
+                    ...this.chartHitsOptions,
                     xaxis
                 }
             }
