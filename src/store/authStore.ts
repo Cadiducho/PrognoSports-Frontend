@@ -44,7 +44,7 @@ export const useAuthStore = defineStore('auth', {
             }
         },
         login(payload: { username: string, password: string }): Promise<string> {
-            let {username, password} = payload;
+            const {username, password} = payload;
             return authService.login(username, password).then(
                 token => {
                     this.loginSuccess(token);
@@ -69,7 +69,7 @@ export const useAuthStore = defineStore('auth', {
             }))
         },
         register(payload: { username: string, email: string, password: string }): Promise<any> {
-            let {username, email, password} = payload;
+            const {username, email, password} = payload;
             return authService.register(email, username, password).then(
                 response => {
                     this.changeMailState(email);
@@ -93,7 +93,7 @@ export const useAuthStore = defineStore('auth', {
                 },
                 error => {
                     //console.log("[🍍] user error. Sign out");
-                    this.signOut();
+                    //this.signOut();
                     return Promise.reject(error);
                 }
             );
