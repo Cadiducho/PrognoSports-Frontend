@@ -197,13 +197,14 @@
 
         <o-table-column
           v-slot="props"
+          field="score.totalHits"
           label="🎯"
           sortable
           numeric
         >
           <PTooltip>
             <span :class="{'font-semibold': topScorerUsers.includes(props.row.user.id)}">
-              {{ totalHits[props.row.user.id] ?? 0 }}
+              {{ props.row.score.totalHits }}
               <sub
                 v-if="ruleSet.data.pointsByTopScorer && topScorerUsers.includes(props.row.user.id)"
                 class="text-success-600 font-semibold"
@@ -216,7 +217,7 @@
               <ul
                 v-if="gp.sessions.length > 1"
               >
-                <li><b>{{ totalHits[props.row.user.id] ?? 0 }} aciertos en el Gran Premio</b></li>
+                <li><b>{{ props.row.score.totalHits }} aciertos en el Gran Premio</b></li>
 
                 <li
                   v-for="ses in gp.sessions"
@@ -351,6 +352,7 @@ interface TableType {
         bySession: Dictionary<SessionId, number>;
         hitPercentageBySession: Dictionary<SessionId, number>;
         hits: Dictionary<SessionId, number>
+        totalHits: number,
         gp: number,
         hitPercentageInGP: number;
         accumulated: number,
@@ -488,8 +490,9 @@ export default defineComponent({
                         this.pointsByPosition = score.pointsByPosition;
                         this.totalHits = score.totalHits;
                         this.hitsBySession = score.hitsBySession;
-                      console.log('score recibido:', score)
-                        // ToDo: coger hitsBySession y mostrar con un tooltip los de cada sesión
+                        this.tableData.forEach((row) => {
+                            row.score.totalHits = this.totalHits[row.user.id] ?? 0;
+                        });
                     }).catch((e) => {
                       console.error(e)
                     });
@@ -502,6 +505,8 @@ export default defineComponent({
                         score: {
                             bySession: {},
                             hitPercentageBySession: {},
+                            hits: {},
+                            totalHits: this.totalHits[comUser.user.id] ?? 0,
                             gp: 0,
                             hitPercentageInGP: 0,
                             accumulated: 0,
