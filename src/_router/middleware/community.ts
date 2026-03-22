@@ -1,20 +1,18 @@
-import {NavigationGuardNext, RouteLocationNormalized} from "vue-router";
+import {RouteLocationNormalized} from "vue-router";
 import {useCommunityStore} from "@/store/communityStore";
 
 // Asegurar que el usuario está en una comunidad si esa ruta lo requiere
-export default function checkCommunity(to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) {
+export default function checkCommunity(to: RouteLocationNormalized) {
   const communityStore = useCommunityStore();
   if (to.matched.some(record => record.meta.requiresCommunity)) {
     // Si no tiene comunidad pero la ruta lo requiere, mandar a /communities
     const hasCommunity = communityStore.thereIsCurrentCommunity;
     if (!hasCommunity) {
-      next({
+      return {
         path: '/communities'
-      });
-    } else {
-      next();
+      };
     }
-  } else {
-    next();
   }
+
+  return true;
 }
