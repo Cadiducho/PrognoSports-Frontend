@@ -52,7 +52,7 @@
         :mobile-cards="false"
         default-sort="score.accumulated"
         default-sort-direction="DESC"
-        :row-class="(row, index) => checkRowClass(row)"
+        :row-class="checkRowClass"
       >
         <o-table-column
           field="score.standings"
@@ -580,8 +580,8 @@ export default defineComponent({
             return winners;
         },
         checkRowClass(row: any) {
-            if (this.winnersOfGrandPrix.includes(row.user.username) && this.showWinnerColor) return 'is-winner';
-            if (row.user.username === this.currentUser.username && this.showUserColor) return 'is-user';
+            if (this.winnersOfGrandPrix.includes(row.user.username) && this.showWinnerColor) return 'bg-amber-400';
+            if (row.user.username === this.currentUser.username && this.showUserColor) return 'bg-green-300';
             return '';
         },
         /**
@@ -602,22 +602,3 @@ export default defineComponent({
     }
 });
 </script>
-
-<style lang="scss">
-@import "bulma/sass/utilities/_all.sass";
-
-tr.is-user {
-    background: $primary;
-    &:not(:hover) {
-        color: #fff;
-    }
-}
-
-tr.is-winner {
-    background: $warning;
-}
-
-.has-text-purple {
-    color: #9200d1 !important;
-}
-</style>

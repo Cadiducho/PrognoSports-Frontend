@@ -1,66 +1,93 @@
 <template>
-    <div id="gpPaginationComponent">
-        <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-            <a v-if="thereIsPrevious(grandPrix)" class="pagination-previous" @click="push(false)">&laquo;</a>
-            <a v-if="thereIsNext(grandPrix)" class="pagination-next" @click="push(true)">&raquo;</a>
-            <ul class="pagination-list">
-                <li><a class="pagination-link is-current">{{grandPrix.code}} ({{grandPrix.round}}º)</a></li>
-            </ul>
-        </nav>
-    </div>
+  <div
+    id="gpPaginationComponent"
+    class="w-full"
+  >
+    <nav
+      class="grid w-full grid-cols-[2.25rem_minmax(0,1fr)_2.25rem] items-center gap-2 sm:gap-4"
+      role="navigation"
+      aria-label="Paginacion de Grandes Premios"
+    >
+      <button
+        type="button"
+        :disabled="!hasPrevious"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-gray-300 bg-white text-lg font-semibold text-gray-700 transition hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 disabled:pointer-events-none disabled:opacity-0 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
+        aria-label="Ir al Gran Premio anterior"
+        @click="goToAdjacent(false)"
+      >
+        &laquo;
+      </button>
+
+      <span
+        class="min-w-0 w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-center text-sm font-semibold text-gray-800 shadow-sm dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
+      >
+        <span class="block truncate">{{ props.grandPrix.code }} ({{ props.grandPrix.round }}º)</span>
+      </span>
+
+      <button
+        type="button"
+        :disabled="!hasNext"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-gray-300 bg-white text-lg font-semibold text-gray-700 transition hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 disabled:pointer-events-none disabled:opacity-0 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
+        aria-label="Ir al Gran Premio siguiente"
+        @click="goToAdjacent(true)"
+      >
+        &raquo;
+      </button>
+    </nav>
+  </div>
 </template>
 
-<script lang="ts">
-    import {GrandPrix} from "@/types/GrandPrix";
-    import {Competition} from "@/types/Competition";
-    import {RouteLocationRaw} from "vue-router";
+<script setup lang="ts">
+import { computed } from "vue";
+import { RouteLocationRaw, useRouter } from "vue-router";
 
-    import {defineComponent, PropType} from "vue";
-    import {useAuthStore} from "@/store/authStore";
-    import {useCommunityStore} from "@/store/communityStore";
+import { GrandPrix } from "@/types/GrandPrix";
+import { Competition } from "@/types/Competition";
 
-    export default defineComponent({
-        name: "GrandPrixPagination",
-        props: {
-            competition: {
-                type: Object as PropType<Competition>,
-                required: true,
-            },
-            grandPrix: {
-                type: Object as PropType<GrandPrix>,
-                required: true,
-            },
-            isAdminPag: {
-                type: Boolean,
-                required: false,
-            }
-        },
-        setup() {
-            const authStore = useAuthStore();
-            const communityStore = useCommunityStore();
+interface Props {
+  competition: Competition;
+  grandPrix: GrandPrix;
+  isAdminPag?: boolean;
+}
 
-            const currentUser = authStore.loggedUser;
-            const currentCommunity = communityStore.currentCommunity;
-            return { currentUser, currentCommunity };
-        },
-        methods: {
-            thereIsPrevious(grandPrix: GrandPrix): boolean {
-                return !!grandPrix.previousGrandPrix.id;
-            },
-            thereIsNext(grandPrix: GrandPrix): boolean {
-                return !!grandPrix.nextGrandPrix.id;
-            },
-            push(next: boolean): void {
-                const params: RouteLocationRaw = {
-                    name: this.isAdminPag ? 'adminGpEditInSeason' : 'gpdetails',
-                    params: {
-                        competition: this.grandPrix.competition.code,
-                        season: this.grandPrix.season.name,
-                        gp: (next ? this.grandPrix.nextGrandPrix.id : this.grandPrix.previousGrandPrix.id)
-                    }
-                };
-                this.$router.push(params);
-            }
-        }
-    });
+const props = withDefaults(defineProps<Props>(), {
+  isAdminPag: false,
+});
+
+const emit = defineEmits<{
+  navigate: [payload: { next: boolean; targetGrandPrixId: number }];
+}>();
+
+const router = useRouter();
+
+const hasPrevious = computed(() => Boolean(props.grandPrix.previousGrandPrix?.id));
+const hasNext = computed(() => Boolean(props.grandPrix.nextGrandPrix?.id));
+
+function goToAdjacent(next: boolean): void {
+  const targetGrandPrixId = next
+    ? props.grandPrix.nextGrandPrix?.id
+    : props.grandPrix.previousGrandPrix?.id;
+
+  if (!targetGrandPrixId) {
+    return;
+  }
+
+  const params: RouteLocationRaw = {
+    name: props.isAdminPag ? "adminGpEditInSeason" : "gpdetails",
+    params: {
+      competition: props.competition.code,
+      season: props.grandPrix.season.name,
+      gp: targetGrandPrixId,
+    },
+  };
+
+  emit("navigate", { next, targetGrandPrixId });
+  router.push(params);
+}
+
+defineExpose({
+  goToAdjacent,
+  hasPrevious,
+  hasNext,
+});
 </script>

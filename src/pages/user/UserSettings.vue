@@ -15,35 +15,28 @@
       Cuenta
     </PTitle>
 
-    <div class="buttons">
-      <!-- ToDo: Modales con los ajustes de cuenta -->
-      <button
-        class="button is-info"
-        @click="showChangePassword()"
+    <div class="flex flex-wrap items-center justify-start gap-2">
+      <PButton
+        color="info"
+        icon="fas fa-lock"
+        @click="showChangePassword"
       >
-        <span class="icon">
-          <i class="fas fa-lock" />
-        </span>
-        <span>Cambiar contraseña</span>
-      </button>
-      <button
-        class="button is-info"
+        Cambiar contraseña
+      </PButton>
+      <PButton
+        color="info"
+        icon="fas fa-envelope"
         @click="showChangeMail()"
       >
-        <span class="icon">
-          <i class="fas fa-envelope" />
-        </span>
-        <span>Cambiar email</span>
-      </button>
-      <button
-        class="button is-info"
+        Cambiar Email
+      </PButton>
+      <PButton
+        color="primary"
+        icon="fab fa-telegram"
         @click="showLinkTelegram()"
       >
-        <span class="icon">
-          <i class="fab fa-telegram" />
-        </span>
-        <span>Enlazar cuenta a Telegram</span>
-      </button>
+        Enlazar cuenta a Telegram
+      </PButton>
     </div>
   </PCard>
 
@@ -272,13 +265,13 @@
       </p>
     </template>
     <template #footer>
-      <button
+      <PButton
         v-if="currentUser.preferences['telegram-id']"
-        class="button is-danger"
+        color="danger"
         @click="unlinkTelegram()"
       >
         Desvincular cuenta
-      </button>
+      </PButton>
       <div ref="telegramLoginButton" />
     </template>
   </PrognoModal>
