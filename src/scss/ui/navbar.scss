@@ -1,33 +1,13 @@
-.nav-tag {
-  position: relative;
+// Reset estilos Bulma en dropdowns para evitar márgenes conflictivos
+#avatarComponent > div > *:not(:last-child),
+#communtiesDropdown > div > *:not(:last-child) {
+  margin-bottom: 0 !important;
 }
 
-.nav-tag .icon {
-  height: 2.0rem;
-  width: 2.0rem;
-  border-radius: 50%;
+#avatarComponent > div > *,
+#communtiesDropdown > div > * {
+  margin-top: 0 !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
 }
 
-.nav-tag .counter {
-  border-radius: 50%;
-  position: absolute;
-  top: 5px;
-  right: 0;
-}
-
-.nav-tag .avatar-figure {
-  margin-top: 0.1em;
-  margin-right: 0.3em;
-}
-.nav-tag .avatar {
-  height: 2.0rem;
-  width: 2.0rem;
-  border-radius: 50%;
-  max-height: 100%;
-}
-
-@media (max-width: 768px) {
-  .nav-tag .counter {
-    margin-left: -2px;
-  }
-}

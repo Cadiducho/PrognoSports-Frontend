@@ -1,22 +1,21 @@
 <template>
-  <div class="flex items-center select-none">
+  <label
+    for="switch"
+    class="inline-flex cursor-pointer select-none items-center"
+  >
     <input
       id="switch"
-      v-model="darkMode"
       type="checkbox"
-      class="switch"
       :checked="darkMode"
+      class="peer sr-only"
       @change="switchTheme"
     >
-    <label
-      for="switch"
-      class="label bg-gray-600 dark:bg-gray-200 cursor-pointer"
-    >
-      <span class="">🌑</span>
-      <span class="">☀️</span>
-      <div class="ball dark:bg-gray-600 bg-gray-200" />
-    </label>
-  </div>
+    <span class="switch-container relative flex h-7 w-14 items-center justify-between rounded-full bg-gray-600 px-1.5 text-xs text-white dark:bg-gray-200 dark:text-gray-800">
+      <span class="switch-icon">🌑</span>
+      <span class="switch-icon">☀️</span>
+      <span class="switch-ball absolute left-0.5 top-0.5 h-6 w-6 rounded-full bg-gray-200 shadow dark:bg-gray-700" />
+    </span>
+  </label>
 </template>
 
 <script setup lang="ts">
@@ -28,39 +27,21 @@ const darkMode = styleStore.darkMode;
 const switchTheme = styleStore.toggleDarkMode;
 </script>
 
-<style lang="css" scoped>
-.switch {
-    position: absolute;
-    opacity: 0;
+<style scoped>
+.switch-container {
+  transition: background-color 0.3s ease;
 }
 
-.switch:checked + .label .ball {
-    transform: translateX(24px);
+#switch:checked ~ .switch-container {
+  @apply bg-yellow-300 dark:bg-indigo-700;
 }
 
-.switch + .ball {
-    top: 0;
-    left: 0;
+.switch-ball {
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.label {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-radius: 50px;
-    position: relative;
-    padding: 2px;
-    height: 26px;
-    width: 50px;
-}
-
-.ball {
-    border-radius: 50%;
-    height: 22px;
-    width: 22px;
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    transition: transform 0.2s linear;
+#switch:checked ~ .switch-container .switch-ball {
+  transform: translateX(1.75rem);
 }
 </style>
+
