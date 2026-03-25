@@ -1,7 +1,7 @@
 <template>
   <div
     v-show="show"
-    class="is-fab fixed bottom-0 right-16 p-4"
+    class="fixed bottom-0 right-2 md:right-16 p-4"
   >
     <PTooltip
       label="Volver arriba"
@@ -32,7 +32,7 @@ function scrollToTop() {
         top: 0,
         behavior: "smooth"
     });
-};
+}
 
 onMounted(() => {
     window.addEventListener("scroll", (e) => {

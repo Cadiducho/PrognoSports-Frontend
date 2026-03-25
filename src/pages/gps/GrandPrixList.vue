@@ -1,12 +1,11 @@
 <template>
-  <div
+  <PCard
     id="gplist"
-    class="box"
   >
     <PTitle name="Grandes Premios" />
 
-    <div class="columns is-variable is-5">
-      <div class="column is-8">
+    <div class="grid grid-cols-1 gap-5 lg:grid-cols-12">
+      <div class="order-2 lg:order-1 lg:col-span-8">
         <o-tabs
           v-if="seasonReady && competitionReady"
           v-model="activeTab"
@@ -34,7 +33,7 @@
         </o-tabs>
         <loading v-else />
       </div>
-      <div class="column is-4">
+      <div class="order-1 lg:order-2 lg:col-span-4">
         <div
           v-if="allGps && allGps.length"
           class="timeline"
@@ -45,7 +44,8 @@
             </PTag>
           </header>
           <div
-            v-for="gp in allGps"
+            v-for="(gp, index) in allGps"
+            :key="gp.name + index"
             class="timeline-item"
             :class="{
               'is-primary': isAfter(gp.lastDate()),
@@ -69,7 +69,7 @@
             />
 
             <router-link :to="gp.gpLink()">
-              <div class="timeline-content">
+              <div class="timeline-content text-gray-700 dark:text-white no-underline">
                 <p>
                   <span v-if="Number.isNaN(gp.firstDate().getDate())">Sin fecha</span>
                   <span v-else>{{ gp.firstDate().getDate() }} - {{ humanDayMonth(gp.lastDate()) }}</span>
@@ -93,147 +93,125 @@
         </div>
       </div>
     </div>
-  </div>
+  </PCard>
 </template>
 
-<script lang="ts">
-    import PTitle from "@/components/lib/PTitle.vue";
-    import PTag from "@/components/lib/PTag.vue";
-    import NextGrandPrix from "@/components/gps/NextGrandPrix.vue";
-    import GrandPrixesList from "@/components/gps/list/GrandPrixesList.vue";
-    import {Competition} from "@/types/Competition";
-    import {Season} from "@/types/Season";
-    import {grandPrixService, seasonService} from "@/_services";
+<script setup lang="ts">
+import { computed, ref, watch } from "vue";
+import { storeToRefs } from "pinia";
+import { useRoute } from "vue-router";
 
-    import {defineComponent} from "vue";
-    import {useCommunityStore} from "@/store/communityStore";
-    import {GrandPrix} from "@/types/GrandPrix";
-    import {useDayjs} from "@/composables/useDayjs";
-    import useEmitter from "@/composables/useEmitter";
+import { grandPrixService, seasonService } from "@/_services";
+import { useDayjs } from "@/composables/useDayjs";
+import useEmitter from "@/composables/useEmitter";
+import GrandPrixesList from "@/components/gps/list/GrandPrixesList.vue";
+import PCard from "@/components/lib/PCard.vue";
+import PTag from "@/components/lib/PTag.vue";
+import PTitle from "@/components/lib/PTitle.vue";
+import { useCommunityStore } from "@/store/communityStore";
+import { Competition } from "@/types/Competition";
+import { GrandPrix } from "@/types/GrandPrix";
+import { Season } from "@/types/Season";
 
-    export default defineComponent({
-        name: "GrandPrixList",
-        components: {
-            GrandPrixesList,
-            NextGrandPrix,
-            PTitle,
-          PTag
-        },
-        setup() {
-            const communityStore = useCommunityStore();
-            const dayjs = useDayjs();
-            const emitter = useEmitter();
+const communityStore = useCommunityStore();
+const { currentCommunity } = storeToRefs(communityStore);
+const route = useRoute();
+const dayjs = useDayjs();
+const emitter = useEmitter();
 
-            const currentCommunity = communityStore.currentCommunity;
-            const humanDayMonth = dayjs.humanDayMonth;
-            const humanMonth = dayjs.humanMonth;
-            const isBefore = dayjs.isBefore;
-            const isAfter = dayjs.isAfter;
-            const isThisWeek = dayjs.isThisWeek;
-            return { currentCommunity, emitter, humanDayMonth, humanMonth, isBefore, isAfter, isThisWeek };
-        },
-        data() {
-            return {
-                competition: {id: 0} as Competition,
-                season: {id: 0} as Season,
+const humanDayMonth = dayjs.humanDayMonth;
+const humanMonth = dayjs.humanMonth;
+const isBefore = dayjs.isBefore;
+const isAfter = dayjs.isAfter;
+const isThisWeek = dayjs.isThisWeek;
 
-                shouldSearchDefaultCompetition: false,
-                shouldSearchDefaultSeason: false,
-                activeTab: 0,
+const competition = ref<Competition>({ id: 0 } as Competition);
+const season = ref<Season>({ id: 0 } as Season);
 
-                competitionReady: false,
-                seasonReady: false,
+const shouldSearchDefaultCompetition = ref(false);
+const shouldSearchDefaultSeason = ref(false);
+const activeTab = ref(0);
 
-                allGps: new Array<GrandPrix>(),
-                firstEventYear: "",
-                lastEventYear: "",
-            }
-        },
-        computed: {
-            nextEvents() {
-                return this.allGps.filter(gp => this.isBefore(gp.firstDate()));
-            },
-            pastEvents() {
-                return this.allGps.filter(gp => this.isAfter(gp.lastDate()));
-            }
-        },
-        watch: {
-            currentCommunity(newCommunity, oldCommunity) {
-                this.searchDefaultCompetition();
-                this.searchDefaultSeason();
-            },
-            seasonReady(seasonReady, oldSeasonReady) {
-                if (seasonReady) {
-                    grandPrixService.getGrandPrixesList(this.season).then((list) => {
-                        let activeGps = list.filter(gp => !gp.suspended);
-                        let gpsWithDates = activeGps.filter(gp => !Number.isNaN(gp.lastDate().getTime()))
-                        this.allGps.push(...activeGps);
+const competitionReady = ref(false);
+const seasonReady = ref(false);
 
-                        const firstDate = gpsWithDates.at(0)!.firstDate();
-                        const lastDate = gpsWithDates.at(gpsWithDates.length - 1)!.lastDate()
+const allGps = ref<Array<GrandPrix>>([]);
+const firstEventYear = ref("");
+const lastEventYear = ref("");
 
-                        this.firstEventYear = this.humanMonth(firstDate).toUpperCase() + " " + lastDate.getFullYear();
-                        this.lastEventYear = this.humanMonth(lastDate).toUpperCase() + " " + lastDate.getFullYear();
+const nextEvents = computed(() => allGps.value.filter(gp => isBefore(gp.firstDate())));
+const pastEvents = computed(() => allGps.value.filter(gp => isAfter(gp.lastDate())));
 
-                        this.emitter.emit('breadcrumbLastname', "Lista de Grandes Premios de " + this.season.name);
-                    });
-                }
-            },
-        },
-        created() {
-            this.competition = { code: this.$route.params.competition } as Competition;
-            this.season = { name: this.$route.params.season } as Season;
+function searchDefaultCompetition(): void {
+  if (shouldSearchDefaultCompetition.value) {
+    competition.value = currentCommunity.value.competition;
+  }
+  competitionReady.value = true;
+}
 
-            if (this.competition.code) {
-                this.competitionReady = true;
-            } else {
-                this.shouldSearchDefaultCompetition = true;
-            }
-
-            if (this.season.name) {
-                this.seasonReady = true;
-            } else {
-                this.shouldSearchDefaultSeason = true;
-            }
-
-            this.searchDefaultCompetition();
-            this.searchDefaultSeason();
-        },
-        methods: {
-            /**
-             * Buscar la competición si no se ha especificado en la url. Esta saldrá de la comunidad actual
-             */
-            searchDefaultCompetition(): void {
-                if (this.shouldSearchDefaultCompetition) {
-                    this.competition = this.currentCommunity.competition;
-                }
-                this.competitionReady = true;
-            },
-            /**
-             * Buscar la temporada actual de la competición buscada si esta no se ha especificado en la url
-             */
-            searchDefaultSeason(): void {
-                if (this.shouldSearchDefaultSeason) {
-                    seasonService.getCurrentSeason(this.currentCommunity.competition).then((season) => {
-                        this.season = season;
-                        this.seasonReady = true;
-                    });
-                } else {
-                    this.seasonReady = true;
-                }
-            }
-        }
+function searchDefaultSeason(): void {
+  if (shouldSearchDefaultSeason.value) {
+    seasonService.getCurrentSeason(currentCommunity.value.competition).then((currentSeason) => {
+      season.value = currentSeason;
+      seasonReady.value = true;
     });
+  } else {
+    seasonReady.value = true;
+  }
+}
+
+watch(currentCommunity, () => {
+  searchDefaultCompetition();
+  searchDefaultSeason();
+});
+
+watch(seasonReady, (ready) => {
+  if (ready) {
+    grandPrixService.getGrandPrixesList(season.value).then((list) => {
+      const activeGps = list.filter(gp => !gp.suspended);
+      const gpsWithDates = activeGps.filter(gp => !Number.isNaN(gp.lastDate().getTime()));
+      allGps.value.push(...activeGps);
+
+      const firstDate = gpsWithDates.at(0)!.firstDate();
+      const lastDate = gpsWithDates.at(gpsWithDates.length - 1)!.lastDate();
+
+      firstEventYear.value = humanMonth(firstDate).toUpperCase() + " " + lastDate.getFullYear();
+      lastEventYear.value = humanMonth(lastDate).toUpperCase() + " " + lastDate.getFullYear();
+
+      emitter.emit("breadcrumbLastname", "Lista de Grandes Premios de " + season.value.name);
+    });
+  }
+});
+
+competition.value = { code: route.params.competition as string } as Competition;
+season.value = { name: route.params.season as string } as Season;
+
+if (competition.value.code) {
+  competitionReady.value = true;
+} else {
+  shouldSearchDefaultCompetition.value = true;
+}
+
+if (season.value.name) {
+  seasonReady.value = true;
+} else {
+  shouldSearchDefaultSeason.value = true;
+}
+
+searchDefaultCompetition();
+searchDefaultSeason();
+
+defineExpose({
+  humanDayMonth,
+  isThisWeek,
+  activeTab,
+  nextEvents,
+  pastEvents,
+});
 </script>
 
 <style scoped lang="scss">
-@import "bulma/sass/utilities/_all.sass";
-
 .timeline .timeline-item {
     padding-bottom: 0!important;
-}
-.timeline-content {
-    text-decoration: none;
-    color: $grey-dark;
 }
 </style>

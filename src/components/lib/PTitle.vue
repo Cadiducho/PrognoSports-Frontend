@@ -15,7 +15,7 @@ import {computed} from "vue";
 interface Props {
     name?: string;
     tag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p';
-    type?: 'title' | 'subtitle';
+    type?: 'title' | 'subtitle' | 'header';
 }
 const props = withDefaults(defineProps<Props>(), {
     type: 'title',
@@ -25,6 +25,7 @@ const props = withDefaults(defineProps<Props>(), {
 const computedClass = computed(() => ({
     'font-semibold text-black dark:text-gray-200 mb-3': true,
     'text-2xl md:text-4xl': props.type === 'title',
-    'text-xl md:text-2xl': props.type === 'subtitle'
+    'text-xl md:text-2xl': props.type === 'subtitle',
+    'text-lg md:text-xl': props.type === 'header',
 }));
 </script>

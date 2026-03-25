@@ -1,15 +1,12 @@
 <template>
-  <div
-    v-if="gridPos !== undefined"
-    class="block"
-  >
+  <div>
     <div
-      class="card !text-center"
-      :style="gridCardStyle(gridPos.driver)"
+      class="overflow-hidden rounded-lg border bg-white text-center text-slate-900 shadow-sm dark:bg-slate-800 dark:text-slate-100"
+      :style="cardStyle"
     >
       <header
-        class="p-2"
-        :style="gridCardBackgroundStyle(gridPos.driver)"
+        class="px-2 py-1"
+        :style="headerStyle"
       >
         <div class="flex items-center justify-center gap-2">
           <PTag
@@ -37,11 +34,12 @@
           </PTooltip>
         </div>
       </header>
-      <div class="f1-card-main">
-        <div class="f1-card-main-description">
+
+      <div class="flex flex-col items-center justify-center py-3">
+        <div class="text-center text-xs">
           <PTooltip
             :label="fullname(gridPos.driver)"
-            class="f1-card-driver"
+            class="block text-[17px] font-semibold"
           >
             {{ gridPos.driver.code }}
           </PTooltip>
@@ -51,106 +49,40 @@
   </div>
 </template>
 
+<script setup lang="ts">
+import { computed } from "vue";
 
-<script lang="ts">
 import {StartGridPosition} from "@/types/StartGridPosition";
 import {Driver} from "@/types/Driver";
 
-import {defineComponent, PropType} from "vue";
-import {useAuthStore} from "@/store/authStore";
-import {useCommunityStore} from "@/store/communityStore";
 import PTag from "@/components/lib/PTag.vue";
 import PTooltip from "@/components/lib/PTooltip.vue";
 
-export default defineComponent({
-    name: "StartGridCard",
-  components: {PTooltip, PTag},
-    props: {
-        gridPos: {
-            type: Object as PropType<StartGridPosition>,
-            required: true,
-        }
-    },
-    setup() {
-        const authStore = useAuthStore();
-        const communityStore = useCommunityStore();
+defineOptions({ name: "StartGridCard" });
 
-        const currentUser = authStore.loggedUser;
-        const currentCommunity = communityStore.currentCommunity;
-        return { currentUser, currentCommunity };
-    },
-    methods: {
-        fullname(driver: Driver) {
-            return driver.firstname + " " + driver.lastname;
-        },
-        gridCardStyle(driver: Driver) {
-            return {
-                'border': '1px solid #' + driver.team.teamcolor,
-            }
-        },
-        gridCardBackgroundStyle(driver: Driver) {
-            return {
-                'background-color': '#'+ driver.team.teamcolor,
-            }
-        },
-    }
-});
+const { gridPos } = defineProps<{
+  gridPos: StartGridPosition;
+}>();
+
+function fullname(driver: Driver): string {
+  return driver.firstname + " " + driver.lastname;
+}
+
+function gridCardStyle(driver: Driver): Record<string, string> {
+  return {
+    border: "1px solid #" + driver.team.teamcolor,
+  };
+}
+
+function gridCardBackgroundStyle(driver: Driver): Record<string, string> {
+  return {
+    backgroundColor: "#" + driver.team.teamcolor,
+  };
+}
+
+const cardStyle = computed(() => gridCardStyle(gridPos.driver));
+const headerStyle = computed(() => gridCardBackgroundStyle(gridPos.driver));
+
+defineExpose({ gridPos, fullname, gridCardStyle, gridCardBackgroundStyle, cardStyle, headerStyle });
 </script>
 
-<style scoped lang="scss">
-
-.f1-card-main {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 10px 0;
-}
-
-.f1-card-driver {
-    display: block;
-    font-size: 17px;
-}
-
-.f1-card-main-description {
-    font-size: 12px;
-    text-align: center;
-}
-
-.card.is-wide {
-    width: 550px;
-}
-
-.card.has-text-centered {
-    .card-header,
-    .card-content,
-    .card-footer {
-        justify-content: center;
-        align-items: center;
-    }
-
-    h1 {
-        font-size: 1.75rem;
-        font-weight: bold;
-    }
-}
-
-.card-header {
-    padding: 5px 0;
-}
-
-.card-content {
-    padding: 3.5rem 0;
-}
-
-.card-footer {
-    padding: 1rem 0;
-    border: none;
-    font-size: .9rem;
-    color: lighten(black, 50%);
-}
-
-.tag {
-    font-size: 0.60rem;
-}
-</style>
