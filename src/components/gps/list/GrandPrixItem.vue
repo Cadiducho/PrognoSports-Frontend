@@ -1,62 +1,62 @@
 <template>
-    <article class="w-full sm:w-1/2 md:w-1/2 xl:w-1/3 p-4">
-        <router-link
-            :to="gp.gpLink()"
-            class="c-card block bg-white shadow-md hover:shadow-xl rounded-lg overflow-hidden text-gray-700 hover:scale-110 transition ease-in-out delay-150 duration-300">
-           
-            <div class="relative pb-48 overflow-hidden">
-                <img class="absolute inset-0 h-full w-full object-contain" :src="gp.circuit?.layoutImage()" alt="" />
-            </div>
+  <article class="h-full">
+    <router-link
+      :to="gp.gpLink()"
+      class="c-card group flex h-full min-h-[30rem] flex-col overflow-hidden rounded-lg border border-slate-200 bg-white text-slate-700 shadow-md transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+    >
+      <div class="relative h-48 overflow-hidden bg-slate-50 dark:bg-slate-900/40">
+        <img
+          class="absolute inset-0 h-full w-full object-contain p-3"
+          :src="gp.circuit?.layoutImage()"
+          alt=""
+        >
+      </div>
 
-            <div class="p-4">
-                <span class="inline-block px-2 py-1 leading-none bg-orange-200 text-orange-800 rounded-full font-semibold uppercase tracking-wide text-xs">
-                    Ronda #{{ gp.round }}
-                </span>
-                <h2 class="mt-2 mb-2 font-bold">{{ gp.name }} de {{ gp.season.name }}</h2>
-                <p class="text-sm">{{ gp.circuit.name }}, {{ gp.circuit.locality }} ({{ gp.circuit.country }})</p>
-            </div>
+      <div class="flex flex-1 flex-col p-4">
+        <span class="inline-block w-fit rounded-full bg-orange-200 px-2 py-1 text-xs font-semibold uppercase leading-none tracking-wide text-orange-800 dark:bg-orange-400/20 dark:text-orange-300">
+          Ronda #{{ gp.round }}
+        </span>
+        <h2 class="mt-2 min-h-[3.5rem] text-base font-bold leading-tight text-slate-800 dark:text-slate-100">
+          {{ gp.name }} de {{ gp.season.name }}
+        </h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          <template v-if="gp.circuit">
+            {{ gp.circuit.name }}, {{ gp.circuit.locality }} ({{ gp.circuit.country }})
+          </template>
+          <template v-else>
+            Circuito pendiente
+          </template>
+        </p>
 
-            <div class="p-4 border-t border-b text-xs text-gray-700">
-                <span v-for="(session, key) in gp.sessions" :key="key" class="flex justify-between items-center mb-1">
-                    <b class="mr-1 flex">{{ session.humanName() }}:</b> {{ humanDateTime(session.date) }} ({{ dateDiff(session.date) }}) <br />
-                </span>
-            </div>
-            <!-- Por si quieres header
-                <div class="p-4 flex items-center text-sm text-gray-600">
-                    <span class="ml-2">34 Bewertungen</span>
-                </div>
-            -->
-        </router-link>
-    </article>
+        <div class="mt-auto border-t border-slate-200 pt-4 text-xs text-slate-700 dark:border-slate-700 dark:text-slate-200">
+          <div
+            v-for="(session, key) in gp.sessions"
+            :key="session.id ?? key"
+            class="mb-1 flex items-start justify-between gap-2 last:mb-0"
+          >
+            <b class="shrink-0">{{ session.humanName() }}:</b>
+            <span class="text-right">
+              {{ humanDateTime(session.date) }} ({{ dateDiff(session.date) }})
+            </span>
+          </div>
+        </div>
+      </div>
+    </router-link>
+  </article>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { GrandPrix } from "@/types/GrandPrix";
-import { Circuit } from "@/types/Circuit";
-
-import { defineComponent, PropType } from "vue";
-import { useAuthStore } from "@/store/authStore";
-import { useCommunityStore } from "@/store/communityStore";
 import { useDayjs } from "@/composables/useDayjs";
 
-export default defineComponent({
-    name: "GrandPrixItem",
-    props: {
-        gp: {
-            type: Object as PropType<GrandPrix>,
-            required: true,
-        },
-    },
-    setup() {
-        const dayjs = useDayjs();
-        const { dateDiff, humanDateTime } = dayjs;
+defineOptions({ name: "GrandPrixItem" });
 
-        const authStore = useAuthStore();
-        const communityStore = useCommunityStore();
+const { gp } = defineProps<{
+  gp: GrandPrix;
+}>();
 
-        const currentUser = authStore.loggedUser;
-        const currentCommunity = communityStore.currentCommunity;
-        return { currentUser, currentCommunity, dateDiff, humanDateTime };
-    },
-});
+const dayjs = useDayjs();
+const { dateDiff, humanDateTime } = dayjs;
+
+defineExpose({ gp, dateDiff, humanDateTime });
 </script>
