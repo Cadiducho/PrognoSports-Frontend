@@ -110,7 +110,7 @@
               class="flex flex-col gap-2 md:ml-auto md:h-10 md:flex-row md:items-center md:justify-end md:gap-3"
             >
               <CommunitiesDropdown v-if="thereIsCurrentCommunity" />
-              <SwitchTheme v-if="darkModeActivable" />
+              <SwitchTheme />
               <AvatarComponent />
             </div>
           </div>
@@ -137,18 +137,8 @@ const currentUser = authStore.loggedUser;
 const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
 
 const isOpen = ref(false);
-const counter = ref(0);
-const darkModeActivable = ref(localStorage.getItem('dark-mode') === 'true');
 
 const closeMobileMenu = () => {
   isOpen.value = false;
 };
-
-const clickEasterEgg = () => {
-  counter.value++;
-  if (counter.value >= 33) {
-    darkModeActivable.value = true;
-    localStorage.setItem('dark-mode', 'true')
-  }
-}
 </script>
