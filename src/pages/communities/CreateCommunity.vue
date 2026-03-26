@@ -1,7 +1,6 @@
 <template>
-  <div
+  <PCard
     id="createCommunity"
-    class="box"
   >
     <PTitle
       class="mb-5"
@@ -471,7 +470,7 @@
         </o-step-item>
       </o-steps>
     </section>
-  </div>
+  </PCard>
 </template>
 
 <script lang="ts">
@@ -487,10 +486,12 @@ import PInput from "@/components/lib/forms/PInput.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
+import PCard from "@/components/lib/PCard.vue";
 
 export default defineComponent({
     name: "CreateCommunity",
     components: {
+      PCard,
       AlertInvalidData,
       PrognoAlert,
       PField,
