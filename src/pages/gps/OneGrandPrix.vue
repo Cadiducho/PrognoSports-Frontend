@@ -69,11 +69,16 @@
             :grid="startGrid"
           />
 
-          <section
-            v-if="currentUser.isAdmin()"
-            class="my-2"
-          >
+          <section class="my-2 space-y-2">
             <p-button
+              color="secondary"
+              expanded
+              @click="showCheckTippsModal = true"
+            >
+              Simular resultados
+            </p-button>
+            <p-button
+              v-if="currentUser.isAdmin()"
               color="info"
               expanded
               tag="router-link"
@@ -100,10 +105,22 @@
               :session="session"
               :community-members="communityMembers"
               :user-points="userPoints"
+              :is-simulated="isSimulatedMode && session.id === currentSessionId"
             />
           </o-tab-item>
         </o-tabs>
       </PCard>
+
+      <CheckTippsModal
+        :model-value="showCheckTippsModal"
+        :session="grandPrix.sessions[activeTab]"
+        :grand-prix="grandPrix"
+        :rule-set="ruleSet"
+        :drivers="drivers"
+        :user-tipps="currentUserTipps"
+        @close="showCheckTippsModal = false"
+        @simulate="onSimulateResults"
+      />
     </template>
   </div>
 </template>
@@ -126,6 +143,7 @@ import {StartGridPosition} from "@/types/StartGridPosition";
 import SelectTipps from "@/components/gps/SelectTipps.vue";
 import PitLaneStartGrid from "@/components/gps/PitLaneStartGrid.vue";
 import ScoreComponents from "@/components/gps/ScoreComponent.vue";
+import CheckTippsModal from "@/components/gps/CheckTippsModal.vue";
 import {UserPoints} from "@/types/UserPoints";
 import {Dictionary} from "@/types/Dictionary";
 import dayjs from "dayjs";
@@ -158,6 +176,7 @@ export default defineComponent({
     ScoreComponents,
     PitLaneStartGrid,
     SelectTipps,
+    CheckTippsModal,
     CircuitCard,
     StartGrid
   },
@@ -184,9 +203,21 @@ export default defineComponent({
 
       isLoadingGrandPrix: true,
       thereIsGrandPrix: false,
+      thereAreFinishResults: false,
       startGrid: new Map<RaceSession, Array<StartGridPosition>>(),
       userPoints: {} as Dictionary<number, UserPoints>,
       activeTab: 0,
+
+      showCheckTippsModal: false,
+      isSimulatedMode: false,
+      currentSessionId: -1,
+      currentUserTipps: new Array<Driver>(),
+    }
+  },
+  watch: {
+    activeTab() {
+      this.isSimulatedMode = false;
+      this.loadUserTipps();
     }
   },
   mounted() {
@@ -208,8 +239,8 @@ export default defineComponent({
         this.communityMembers = result[3];
         const rawStartGrids = result[4];
 
-
         this.thereIsGrandPrix = true;
+        this.thereAreFinishResults = rawStartGrids.some((gridArray) => gridArray.length > 0);
 
         points.forEach((points) => {
           this.userPoints[points.user.id] = points;
@@ -249,7 +280,39 @@ export default defineComponent({
         request.push(grandPrixService.getGrandPrixGrid(this.grandPrix!, session));
       }
       return Promise.all(request);
+    },
+    async loadUserTipps(): Promise<void> {
+      try {
+        const session = this.grandPrix.sessions[this.activeTab];
+        if (!session) return;
+
+        const tipps = await grandPrixService.getAllTipps(this.grandPrix, session, this.currentCommunity);
+        this.currentUserTipps = tipps[this.currentUser.id] || [];
+      } catch (error) {
+        this.currentUserTipps = [];
+      }
+    },
+    async onSimulateResults(drivers: Driver[]): Promise<void> {
+      try {
+        const session = this.grandPrix.sessions[this.activeTab];
+        const resultsMap = new Map<number, string>(
+          drivers.map((driver, index) => [index + 1, driver.id])
+        );
+
+        await scoreService.getPointsByPositionInGrandPrixSimulated(
+          this.currentCommunity,
+          this.grandPrix,
+          session,
+          resultsMap
+        );
+
+        this.currentSessionId = session.id;
+        this.isSimulatedMode = true;
+        notificationService.showNotification('Simulación activada. Esta es una visualización de escenarios.', 'info');
+      } catch (error: any) {
+        notificationService.showNotification(error.message || 'Error al simular los resultados', 'error');
+      }
     }
-  },
+  }
 });
 </script>

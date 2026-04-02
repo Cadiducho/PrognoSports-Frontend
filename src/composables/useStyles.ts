@@ -42,7 +42,6 @@ export function useStyles() {
     const styleCodeInResults = (driver: Driver): any => {
         if (driver.code === '???') return {}
         return {
-            color: 'black',
             'padding-left': '5px',
             'border-left': '4px #' + driver.team.teamcolor + ' solid',
             'border-right-image-source': 'linear-gradient(to left, #' + driver.team.teamcolor + ', #ffffff)',
