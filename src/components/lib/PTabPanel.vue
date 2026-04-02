@@ -1,11 +1,11 @@
 <template>
-  <div v-show="isActive">
+  <div v-show="isActiveTab()">
     <slot />
   </div>
 </template>
 
 <script setup lang="ts">
-import { inject, computed, Ref } from "vue";
+import { inject, Ref } from "vue";
 
 const props = defineProps<{
   name: string;
@@ -13,5 +13,7 @@ const props = defineProps<{
 
 const activeTab = inject("activeTab") as Ref<string>;
 
-const isActive = computed(() => activeTab?.value === props.name);
+function isActiveTab(): boolean {
+  return activeTab?.value === props.name;
+}
 </script>

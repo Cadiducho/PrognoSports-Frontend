@@ -20,9 +20,19 @@
         <th
           v-for="col in columns"
           :key="col.field"
-          class="border-b dark:border-slate-600 font-medium p-2 pl-8 pt-0 pb-3 text-slate-500 dark:text-slate-200 text-left"
+          :class="[
+            'border-b dark:border-slate-600 font-medium p-2 pl-8 pt-0 pb-3 text-slate-500 dark:text-slate-200 text-left',
+            col.sortable ? 'cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700' : ''
+          ]"
+          @click="col.sortable && handleSort(col)"
         >
-          {{ col.label }}
+          <div class="flex items-center gap-2">
+            <span>{{ col.label }}</span>
+            <span v-if="col.sortable && sortField === col.sortKey" class="text-xs">
+              <i v-if="sortDirection === 'ASC'" class="fas fa-arrow-up" />
+              <i v-else class="fas fa-arrow-down" />
+            </span>
+          </div>
         </th>
         <td
           v-if="hasActions"
@@ -33,8 +43,8 @@
     <tbody>
       <tr
         v-for="(row, index) in visibleData"
-        :key="index"
-        :class="getRowStyle(index)"
+        :key="props.rowKey ? getRowData(row, props.rowKey) : index"
+        :class="[getRowStyle(index), props.rowClass?.(row) || '']"
       >
         <td
           v-for="col in columns"
@@ -116,17 +126,17 @@
     v-if="paginated"
     :initial-current="currentPage"
     :per-page="perPage"
-    :total="filteredRows.length"
+    :total="sortedAndFilteredRows.length"
     @update:current-page="currentPage = $event"
   />
 </template>
 
 
 <script setup lang="ts" generic="T">
-import {computed, ref} from "vue";
+import {computed, ref, watch} from "vue";
 import PPagination from "@/components/lib/PPagination.vue";
 import {useDayjs} from "@/composables/useDayjs";
-import {Column} from "@/components/lib/table/index";
+import {Column, type SortDirection} from "@/components/lib/table/index";
 import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 
@@ -140,6 +150,10 @@ interface Props<T> {
     paginated?: boolean;
     perPage?: number;
     striped?: boolean;
+    defaultSortField?: string | ((row: T) => any);
+    defaultSortDirection?: SortDirection;
+    rowKey?: string;
+    rowClass?: (row: T) => string;
 }
 const props = withDefaults(defineProps<Props<T>>(), {
     withFilter: undefined,
@@ -148,7 +162,11 @@ const props = withDefaults(defineProps<Props<T>>(), {
     hasDeleteButton: false,
     paginated: false,
     perPage: 10,
-    striped: true
+    striped: true,
+    defaultSortDirection: undefined,
+    defaultSortField: undefined,
+    rowKey: undefined,
+    rowClass: undefined
 });
 defineEmits<{
     view: [element: T],
@@ -163,6 +181,8 @@ const humanDate = dayjs.humanDate;
 
 const currentPage = ref(1);
 const searchInput = ref("");
+const sortField = ref<string | ((row: T) => any) | undefined>(props.defaultSortField);
+const sortDirection = ref<SortDirection>(props.defaultSortDirection ?? "ASC");
 
 const filteredRows = computed((): Array<T> => {
     if (!props.withFilter) return props.rows;
@@ -172,6 +192,64 @@ const filteredRows = computed((): Array<T> => {
     const filterLowerCase = searchInput.value.toLowerCase().trim();
     return props.withFilter(props.rows, filterLowerCase);
 });
+
+watch(
+  () => props.defaultSortField,
+  (newVal) => {
+    if (newVal !== undefined) {
+      sortField.value = newVal;
+    }
+  }
+);
+
+watch(
+  () => props.defaultSortDirection,
+  (newVal) => {
+    if (newVal !== undefined) {
+      sortDirection.value = newVal;
+    }
+  }
+);
+
+const sortedAndFilteredRows = computed((): Array<T> => {
+    let result = [...filteredRows.value];
+
+    if (!sortField.value) return result;
+
+    result.sort((a, b) => {
+        let aVal = typeof sortField.value === 'function'
+            ? sortField.value(a)
+            : getRowData(a, sortField.value as string);
+        let bVal = typeof sortField.value === 'function'
+            ? sortField.value(b)
+            : getRowData(b, sortField.value as string);
+
+        // Handle null/undefined
+        if (aVal == null && bVal == null) return 0;
+        if (aVal == null) return sortDirection.value === 'ASC' ? 1 : -1;
+        if (bVal == null) return sortDirection.value === 'ASC' ? -1 : 1;
+
+        // Compare values
+        if (aVal < bVal) return sortDirection.value === 'ASC' ? -1 : 1;
+        if (aVal > bVal) return sortDirection.value === 'ASC' ? 1 : -1;
+        return 0;
+    });
+
+    return result;
+});
+
+const handleSort = (col: Column) => {
+    const colSortKey = col.sortKey ?? col.field;
+
+    if (sortField.value === colSortKey) {
+        // Toggle direction if clicking same column
+        sortDirection.value = sortDirection.value === 'ASC' ? 'DESC' : 'ASC';
+    } else {
+        // New column, set to ASC
+        sortField.value = colSortKey;
+        sortDirection.value = 'ASC';
+    }
+};
 
 const getHeaderStyle = () => {
   return ["border-b", "dark:border-slate-600", "font-medium", "p-2", "pl-8", "pt-0", "pb-3", "text-slate-500", "dark:text-slate-200", "text-left"];
@@ -194,16 +272,16 @@ const getRowData = (row: T, rowName: string): string => {
 }
 
 const visibleData = computed(() => {
-    if (!props.paginated) return filteredRows.value;
+    if (!props.paginated) return sortedAndFilteredRows.value;
 
     const current = currentPage.value;
     const perPage = props.perPage;
 
-    if (props.rows.length <= perPage) return filteredRows.value;
+    if (sortedAndFilteredRows.value.length <= perPage) return sortedAndFilteredRows.value;
 
     const start = (current - 1) * perPage;
     const end = start + perPage;
-    return filteredRows.value.slice(start, end);
+    return sortedAndFilteredRows.value.slice(start, end);
 });
 
 const hasActions = computed(() => {
