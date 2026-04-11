@@ -6,12 +6,14 @@
           v-if="circuit.hasLogoImage"
           :src="circuit.logoImage()"
           alt="Logo image"
+          class="max-w-full h-auto"
         >
       </figure>
       <figure class="block relative">
         <img
           :src="variant.layoutImage(true)"
           alt="Circuit layout image"
+          class="max-w-full h-auto"
         >
       </figure>
     </div>
