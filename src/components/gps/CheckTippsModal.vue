@@ -1,11 +1,11 @@
 <template>
   <PrognoModal
-    v-show="modelValue"
+    v-show="visible"
     @close="$emit('close')"
     @handle="handleSimulate"
   >
     <template #title>
-      Simular resultados
+      Simular resultados de {{ session.humanName() }}
     </template>
 
     <template #content>
@@ -16,7 +16,7 @@
             Ordena los pilotos ({{ pilotosOrdenados.length }} total)
           </h4>
           <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-            Los primeros {{ cantidadPronosticados }} serán los resultados simulados
+            Debes especificar todo el orden a pesar de pronosticar solo los {{ cantidadPronosticados }} primeros.
           </p>
 
           <draggable
@@ -36,14 +36,6 @@
             </template>
           </draggable>
         </section>
-
-        <!-- Alerta de validación -->
-        <PrognoAlert
-          variant="info"
-          class="mt-4"
-        >
-          <i class="fas fa-info-circle mr-2" /> Los primeros {{ cantidadPronosticados }} pilotos serán los resultados simulados
-        </PrognoAlert>
       </div>
     </template>
 
@@ -67,14 +59,15 @@ import draggable from 'vuedraggable'
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import SmallDriverCard from "@/components/gps/SmallDriverCard.vue";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
+import {RaceResult} from "@/types/RaceResult";
 
+const visible = defineModel<boolean>();
 const props = defineProps<{
-  modelValue: boolean;
   session: RaceSession;
   grandPrix: GrandPrix;
   ruleSet: RuleSet;
   drivers: Array<Driver>;
-  userTipps?: Array<Driver>;
+  userTipps?: Array<RaceResult>;
 }>();
 
 const emit = defineEmits<{
@@ -87,21 +80,23 @@ const pilotosOrdenados = ref(new Array<Driver>());
 const cantidadPronosticados = computed(() => props.ruleSet.cantidadPilotosPronosticados(props.session));
 
 const handleSimulate = () => {
-  // Los primeros N pilotos son los seleccionados
-  const pilotosSimulados = pilotosOrdenados.value.slice(0, cantidadPronosticados.value);
-  emit('simulate', pilotosSimulados);
+  // Se emite la lista completa de piltos
+  emit('simulate', pilotosOrdenados.value);
   emit('close');
 };
 
 onMounted(() => {
-  // Si existen pronósticos del usuario, ordenar los pilotos según ese orden
+  // Si existen pronósticos del usuario, ordenar los pilotos según su posición
   if (props.userTipps && props.userTipps.length > 0) {
-    const userTippsIds = props.userTipps.map(d => d.id);
-    const ordered = [
-      ...props.userTipps,
-      ...props.drivers.filter(d => !userTippsIds.includes(d.id))
+    const orderedUserTipps = [...props.userTipps]
+      .sort((a, b) => a.position - b.position)
+      .map((tip) => tip.driver)
+
+    const userTippsIds = orderedUserTipps.map((driver) => driver.id);
+    pilotosOrdenados.value = [
+      ...orderedUserTipps,
+      ...props.drivers.filter((driver) => !userTippsIds.includes(driver.id))
     ];
-    pilotosOrdenados.value = ordered;
   } else {
     pilotosOrdenados.value = [...props.drivers];
   }

@@ -12,7 +12,7 @@
         <sub
           v-if="getSessionPoints() !== undefined"
           :class="{
-            'text-brand-600 dark:text-brand-400': (getSessionPoints() || 0) > 0,
+            'text-brand-600 dark:text-brand-600': (getSessionPoints() || 0) > 0,
             'text-error-600 dark:text-error-400': (getSessionPoints() || 0) < 0,
           }"
         >
@@ -28,9 +28,11 @@
 
 <script setup lang="ts">
 import PTooltip from "@/components/lib/PTooltip.vue";
+import {Column} from "@/components/lib/table";
 
 const props = defineProps<{
   row: any;
+  column: Column;
   value?: any;
   position: number;
   pointsByPosition: Record<number, Record<number, number>>;
