@@ -2,7 +2,8 @@ import {Driver} from "@/types/Driver";
 
 export function useStyles() {
 
-    const invertColor = (hex: string): string => {
+    const invertColor = (hex?: string): string => {
+        if (!hex) return '#000000';
         if (hex.indexOf('#') === 0) {
             hex = hex.slice(1);
         }
@@ -11,40 +12,41 @@ export function useStyles() {
             hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
         }
         if (hex.length !== 6) {
-            throw new Error('Invalid HEX color.');
+            // fallback to black on invalid input
+            return '#000000';
         }
         const r = parseInt(hex.slice(0, 2), 16),
             g = parseInt(hex.slice(2, 4), 16),
             b = parseInt(hex.slice(4, 6), 16);
 
         // https://stackoverflow.com/a/3943023/112731
-        const ret = (r * 0.299 + g * 0.587 + b * 0.114) > 140
-            ? '#000000'
-            : '#FFFFFF';
-        return ret;
+        return (r * 0.299 + g * 0.587 + b * 0.114) > 140 ? '#000000' : '#FFFFFF';
     }
-    const styleDriverCard = (driver: Driver): any => {
+    const styleDriverCard = (driver?: Driver): any => {
+        const teamcolor = driver && driver.team && driver.team.teamcolor ? driver.team.teamcolor : undefined;
+        const border = teamcolor ? '1px solid #' + teamcolor : '1px solid rgba(0,0,0,0.08)';
+        const borderLeft = teamcolor ? '10px #' + teamcolor + ' solid' : undefined;
         return {
             color: 'black',
-            'border': '1px solid #' + driver.team.teamcolor,
-            'border-left': '10px #' + driver.team.teamcolor + ' solid',
-            'border-right-image-source': 'linear-gradient(to left, #'+ driver.team.teamcolor + ', #ffffff)',
+            border,
+            ...(borderLeft ? { 'border-left': borderLeft } : {}),
             opacity: 0.9,
         }
     }
-    const styleDorsal = (driver: Driver): any => {
+    const styleDorsal = (driver?: Driver): any => {
+        const teamcolor = driver && driver.team && driver.team.teamcolor ? driver.team.teamcolor : undefined;
         return {
-            color: invertColor(driver.team.teamcolor),
+            color: invertColor(teamcolor),
             fontWeight: 'bold',
-            backgroundColor: '#' + driver.team.teamcolor,
+            ...(teamcolor ? { backgroundColor: '#' + teamcolor } : {}),
         }
     }
-    const styleCodeInResults = (driver: Driver): any => {
-        if (driver.code === '???') return {}
+    const styleCodeInResults = (driver?: Driver): any => {
+        if (!driver || driver.code === '???') return {}
+        const teamcolor = driver.team && driver.team.teamcolor ? driver.team.teamcolor : undefined;
         return {
             'padding-left': '5px',
-            'border-left': '4px #' + driver.team.teamcolor + ' solid',
-            'border-right-image-source': 'linear-gradient(to left, #' + driver.team.teamcolor + ', #ffffff)',
+            ...(teamcolor ? { 'border-left': '4px #' + teamcolor + ' solid' } : {}),
             opacity: 0.9,
         }
     }

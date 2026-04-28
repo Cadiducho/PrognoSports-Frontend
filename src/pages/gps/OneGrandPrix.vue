@@ -71,7 +71,7 @@
 
           <section class="my-2 space-y-2">
             <p-button
-              color="secondary"
+              color="green"
               expanded
               @click="showCheckTippsModal = true"
             >
@@ -163,6 +163,7 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import ClouseDateMessage from "@/components/gps/ClouseDateMessage.vue";
 import PCard from "@/components/lib/PCard.vue";
+import {RaceResult} from "@/types/RaceResult";
 
 export default defineComponent({
   name: "OneGrandPrix",
@@ -211,7 +212,7 @@ export default defineComponent({
       showCheckTippsModal: false,
       isSimulatedMode: false,
       currentSessionId: -1,
-      currentUserTipps: new Array<Driver>(),
+      currentUserTipps: new Array<RaceResult>(),
     }
   },
   watch: {

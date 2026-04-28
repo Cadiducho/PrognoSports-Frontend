@@ -105,7 +105,7 @@ import {useStyles} from "@/composables/useStyles";
 import useEmitter from "@/composables/useEmitter";
 import type {GrandPrix} from "@/types/GrandPrix";
 import type {RuleSet} from "@/types/RuleSet";
-import type {RaceSession, SessionId} from "@/types/RaceSession";
+import {RaceSession, SessionId} from "@/types/RaceSession";
 import type {CommunityUser} from "@/types/CommunityUser";
 import type {RaceResult} from "@/types/RaceResult";
 import type {UserPoints} from "@/types/UserPoints";
@@ -252,8 +252,7 @@ const buildColumns = (): Column[] => {
   if (showResults.value) {
     sessionResults.value.forEach((position, index) => {
       cols.push({
-        label: `${index + 1}.`,
-        subtitle: position.driver.code,
+        label: `${index + 1}. ${position.driver.code}`,
         field: `tipps.${index}`,
         formatter: markRaw(SessionResultFormatter),
         formatterProps: {

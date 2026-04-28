@@ -125,7 +125,7 @@
   <p-pagination
     v-if="paginated"
     :initial-current="currentPage"
-    :per-page="perPage"
+    :per-page="perPage!"
     :total="sortedAndFilteredRows.length"
     @update:current-page="currentPage = $event"
   />

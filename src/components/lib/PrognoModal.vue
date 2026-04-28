@@ -59,7 +59,7 @@
                 </slot>
               </p-button>
               <p-button
-                color="warning"
+                color="info"
                 type="soft"
                 @click="close()"
               >
