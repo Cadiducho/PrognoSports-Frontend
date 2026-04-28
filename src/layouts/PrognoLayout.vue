@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="min-h-screen flex flex-col">
     <Navbar />
 
-    <section class="p-4">
+    <main class="flex-1 p-4">
       <section class="w-full lg:px-6 lg:py-4">
         <PrognoAlert
           v-if="isBeta && !betaAceptada"
@@ -14,7 +14,7 @@
 
         <router-view :key="$route.fullPath" />
       </section>
-    </section>
+    </main>
 
     <LandingFooter />
   </div>

@@ -1,9 +1,9 @@
 <template>
+  <PTitle name="Grandes Premios" />
+
   <PCard
     id="gplist"
   >
-    <PTitle name="Grandes Premios" />
-
     <div class="grid grid-cols-1 gap-5 lg:grid-cols-12">
       <div class="order-2 lg:order-1 lg:col-span-8">
         <o-tabs

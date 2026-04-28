@@ -1,12 +1,10 @@
-
 <template>
+  <PTitle
+    name="Lista de Circuitos"
+  />
   <PCard
     id="circuitlist"
   >
-    <PTitle
-      class="mb-5"
-      name="Lista de Circuitos"
-    />
     <div v-if="isLoading">
       <loading />
     </div>

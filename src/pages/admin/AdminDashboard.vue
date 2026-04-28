@@ -1,10 +1,9 @@
 <template>
-  <PCard>
-    <PTitle
-      class="mb-5"
-      name="Administración de PrognoSports"
-    />
+  <PTitle
+    name="Administración de PrognoSports"
+  />
 
+  <PCard>
     <div class="flex flex-wrap justify-between -mx-2 mb-8">
       <article class="w-full md:w-1/2 p-4">
         <router-link
