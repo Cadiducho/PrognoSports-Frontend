@@ -6,31 +6,34 @@
   >
     <div class="grid grid-cols-1 gap-5 lg:grid-cols-12">
       <div class="order-2 lg:order-1 lg:col-span-8">
-        <o-tabs
+        <PTabs
           v-if="seasonReady && competitionReady"
           v-model="activeTab"
         >
-          <o-tab-item
-            label="Todos"
-            :value="0"
-          >
+          <template #tabs>
+            <PTabItem
+              label="Todos"
+              name="0"
+            />
+            <PTabItem
+              label="Próximos"
+              name="1"
+            />
+            <PTabItem
+              label="Pasados"
+              name="2"
+            />
+          </template>
+          <PTabPanel name="0">
             <GrandPrixesList :gps="allGps" />
-          </o-tab-item>
-
-          <o-tab-item
-            label="Próximos"
-            :value="1"
-          >
+          </PTabPanel>
+          <PTabPanel name="1">
             <GrandPrixesList :gps="nextEvents" />
-          </o-tab-item>
-
-          <o-tab-item
-            label="Pasados"
-            :value="2"
-          >
+          </PTabPanel>
+          <PTabPanel name="2">
             <GrandPrixesList :gps="pastEvents" />
-          </o-tab-item>
-        </o-tabs>
+          </PTabPanel>
+        </PTabs>
         <loading v-else />
       </div>
       <div class="order-1 lg:order-2 lg:col-span-4">
@@ -106,12 +109,15 @@ import { useDayjs } from "@/composables/useDayjs";
 import useEmitter from "@/composables/useEmitter";
 import GrandPrixesList from "@/components/gps/list/GrandPrixesList.vue";
 import PCard from "@/components/lib/PCard.vue";
+import PTabPanel from "@/components/lib/PTabPanel.vue";
 import PTag from "@/components/lib/PTag.vue";
 import PTitle from "@/components/lib/PTitle.vue";
 import { useCommunityStore } from "@/store/communityStore";
 import { Competition } from "@/types/Competition";
 import { GrandPrix } from "@/types/GrandPrix";
 import { Season } from "@/types/Season";
+import PTabs from "@/components/lib/PTabs.vue";
+import PTabItem from "@/components/lib/PTabItem.vue";
 
 const communityStore = useCommunityStore();
 const { currentCommunity } = storeToRefs(communityStore);
@@ -130,7 +136,7 @@ const season = ref<Season>({ id: 0 } as Season);
 
 const shouldSearchDefaultCompetition = ref(false);
 const shouldSearchDefaultSeason = ref(false);
-const activeTab = ref(0);
+const activeTab = ref('0');
 
 const competitionReady = ref(false);
 const seasonReady = ref(false);

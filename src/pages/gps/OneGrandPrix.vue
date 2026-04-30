@@ -24,12 +24,22 @@
         <!-- Si hay parrilla de salida, recorto tamaño de los pronósticos -->
         <div :class="startGrid.size ? 'md:col-span-2' : 'md:col-span-2 lg:col-span-3'">
           <PCard>
-            <o-tabs v-model="activeTab">
-              <o-tab-item
-                v-for="(session, index) in grandPrix.sessions"
-                :key="session.id"
-                :label="session.humanName()"
-                :value="index"
+            <PTabs v-model="activeTab">
+              <template #tabs>
+                <PTabItem
+                  v-for="session in grandPrix.sessions"
+                  :key="session.name"
+                  :name="session.name"
+                  :label="session.humanName()"
+                  :active-tab="activeTab"
+                  :set-active-tab="(tabName: string) => activeTab = tabName"
+                />
+              </template>
+              <PTabPanel
+                v-for="session in grandPrix.sessions"
+                :key="`tipps-${session.name}`"
+                :name="session.name"
+                :active-tab="activeTab"
               >
                 <ClouseDateMessage :session="session" />
                 <h6 class="dark:text-gray-300">
@@ -42,8 +52,8 @@
                   :drivers="drivers"
                   :start-grids="startGrid"
                 />
-              </o-tab-item>
-            </o-tabs>
+              </PTabPanel>
+            </PTabs>
           </PCard>
         </div>
         <div
@@ -91,12 +101,22 @@
       </div>
 
       <PCard class="mt-3">
-        <o-tabs v-model="activeTab">
-          <o-tab-item
-            v-for="(session, index) in grandPrix.sessions"
-            :key="session.id"
-            :label="session.humanName()"
-            :value="index"
+        <PTabs v-model="activeTab">
+          <template #tabs>
+            <PTabItem
+              v-for="session in grandPrix.sessions"
+              :key="session.name"
+              :name="session.name"
+              :label="session.humanName()"
+              :active-tab="activeTab"
+              :set-active-tab="(tabName: string) => activeTab = tabName"
+            />
+          </template>
+          <PTabPanel
+            v-for="session in grandPrix.sessions"
+            :key="`score-${session.name}`"
+            :name="session.name"
+            :active-tab="activeTab"
           >
             <ClouseDateMessage :session="session" />
             <ScoreComponents
@@ -107,13 +127,13 @@
               :user-points="userPoints"
               :is-simulated="isSimulatedMode && session.id === currentSessionId"
             />
-          </o-tab-item>
-        </o-tabs>
+          </PTabPanel>
+        </PTabs>
       </PCard>
 
       <CheckTippsModal
         :model-value="showCheckTippsModal"
-        :session="grandPrix.sessions[activeTab]"
+        :session="currentSession"
         :grand-prix="grandPrix"
         :rule-set="ruleSet"
         :drivers="drivers"
@@ -163,6 +183,9 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import ClouseDateMessage from "@/components/gps/ClouseDateMessage.vue";
 import PCard from "@/components/lib/PCard.vue";
+import PTabs from "@/components/lib/PTabs.vue";
+import PTabItem from "@/components/lib/PTabItem.vue";
+import PTabPanel from "@/components/lib/PTabPanel.vue";
 import {RaceResult} from "@/types/RaceResult";
 
 export default defineComponent({
@@ -179,7 +202,10 @@ export default defineComponent({
     SelectTipps,
     CheckTippsModal,
     CircuitCard,
-    StartGrid
+    StartGrid,
+    PTabs,
+    PTabItem,
+    PTabPanel
   },
   setup() {
     const dayjs = useDayjs();
@@ -207,7 +233,7 @@ export default defineComponent({
       thereAreFinishResults: false,
       startGrid: new Map<RaceSession, Array<StartGridPosition>>(),
       userPoints: {} as Dictionary<number, UserPoints>,
-      activeTab: 0,
+      activeTab: "",
 
       showCheckTippsModal: false,
       isSimulatedMode: false,
@@ -219,6 +245,11 @@ export default defineComponent({
     activeTab() {
       this.isSimulatedMode = false;
       this.loadUserTipps();
+    }
+  },
+  computed: {
+    currentSession() {
+      return this.grandPrix.sessions.find(s => s.name === this.activeTab);
     }
   },
   mounted() {
@@ -260,9 +291,8 @@ export default defineComponent({
       // Ordeno las sesiones por fecha
       this.grandPrix.sessions.sort((a: RaceSession, b: RaceSession) => a.date - b.date)
       // Colocar la tab correcta según cuál es la siguiente sesión que va a tener lugar
-      for (let index = 0; index < this.grandPrix.sessions.length; index++) {
-        const ses = this.grandPrix.sessions[index]; // vamos actualizando en orden hasta que lleguemos a la próxima y ahí salimos del bucle
-        this.activeTab = index;
+      for (const ses of this.grandPrix.sessions) {
+        this.activeTab = ses.name;
         if (dayjs().isBefore(dayjs(ses.date).add(2, 'h'))) {
           break;
         }
@@ -284,7 +314,7 @@ export default defineComponent({
     },
     async loadUserTipps(): Promise<void> {
       try {
-        const session = this.grandPrix.sessions[this.activeTab];
+        const session = this.currentSession;
         if (!session) return;
 
         const tipps = await grandPrixService.getAllTipps(this.grandPrix, session, this.currentCommunity);
@@ -295,7 +325,7 @@ export default defineComponent({
     },
     async onSimulateResults(drivers: Driver[]): Promise<void> {
       try {
-        const session = this.grandPrix.sessions[this.activeTab];
+        const session = this.currentSession;
         const resultsMap = new Map<number, string>(
           drivers.map((driver, index) => [index + 1, driver.id])
         );
