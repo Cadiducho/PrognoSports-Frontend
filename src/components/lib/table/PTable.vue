@@ -27,8 +27,15 @@
           @click="col.sortable && handleSort(col)"
         >
           <div class="flex items-center gap-2">
-            <span>{{ col.label }}</span>
-            <span v-if="col.sortable && sortField === col.sortKey" class="text-xs">
+            <span v-if="!col.headerFormatter">{{ col.label }}</span>
+            <component
+              :is="col.headerFormatter"
+              v-else
+              :column="col"
+              v-bind="(col as any).headerFormatterProps || {}"
+            />
+
+            <span v-if="col.sortable && sortField === getColSortKey(col)" class="text-xs">
               <i v-if="sortDirection === 'ASC'" class="fas fa-arrow-up" />
               <i v-else class="fas fa-arrow-down" />
             </span>
@@ -44,7 +51,7 @@
       <tr
         v-for="(row, index) in visibleData"
         :key="props.rowKey ? getRowData(row, props.rowKey) : index"
-        :class="[getRowStyle(index), props.rowClass?.(row) || '']"
+        :class="[getRowStyle(index), props.rowClass?.(row, index) || '']"
       >
         <td
           v-for="col in columns"
@@ -83,7 +90,7 @@
                 />
               </template>
               <template v-else>
-                {{ col.formatter(getRowData(row, col.field)) }}
+                {{ formatFunctionCell(col, row) }}
               </template>
             </template>
             <template v-else>
@@ -132,7 +139,7 @@
 </template>
 
 
-<script setup lang="ts" generic="T">
+<script setup lang="ts">
 import {computed, ref, watch} from "vue";
 import PPagination from "@/components/lib/PPagination.vue";
 import {useDayjs} from "@/composables/useDayjs";
@@ -140,22 +147,22 @@ import {Column, type SortDirection} from "@/components/lib/table/index";
 import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 
-interface Props<T> {
+interface Props {
     columns: Array<Column>;
-    rows: Array<T>;
-    withFilter?: (original: Array<T>, filter: string) => Array<T>;
+    rows: Array<any>;
+    withFilter?: (original: Array<any>, filter: string) => Array<any>;
     hasViewButton?: boolean;
     hasEditButton?: boolean;
     hasDeleteButton?: boolean;
     paginated?: boolean;
     perPage?: number;
     striped?: boolean;
-    defaultSortField?: string | ((row: T) => any);
+    defaultSortField?: string | ((row: any) => any);
     defaultSortDirection?: SortDirection;
     rowKey?: string;
-    rowClass?: (row: T) => string;
+    rowClass?: (row: any, index?: number) => string;
 }
-const props = withDefaults(defineProps<Props<T>>(), {
+const props = withDefaults(defineProps<Props>(), {
     withFilter: undefined,
     hasViewButton: false,
     hasEditButton: false,
@@ -169,10 +176,10 @@ const props = withDefaults(defineProps<Props<T>>(), {
     rowClass: undefined
 });
 defineEmits<{
-    view: [element: T],
-    edit: [element: T],
-    delete: [element: T]
-    click: [element: T, column: Column, value: T]
+    view: [element: any],
+    edit: [element: any],
+    delete: [element: any]
+    click: [element: any, column: Column, value: unknown]
 }>();
 const dayjs = useDayjs();
 const dateDiff = dayjs.dateDiff;
@@ -181,10 +188,10 @@ const humanDate = dayjs.humanDate;
 
 const currentPage = ref(1);
 const searchInput = ref("");
-const sortField = ref<string | ((row: T) => any) | undefined>(props.defaultSortField);
+const sortField = ref<string | ((row: any) => any) | undefined>(props.defaultSortField);
 const sortDirection = ref<SortDirection>(props.defaultSortDirection ?? "ASC");
 
-const filteredRows = computed((): Array<T> => {
+const filteredRows = computed((): Array<any> => {
     if (!props.withFilter) return props.rows;
     if (!searchInput.value.trim()) {
         return props.rows;
@@ -211,7 +218,7 @@ watch(
   }
 );
 
-const sortedAndFilteredRows = computed((): Array<T> => {
+const sortedAndFilteredRows = computed((): Array<any> => {
     let result = [...filteredRows.value];
 
     if (!sortField.value) return result;
@@ -239,7 +246,7 @@ const sortedAndFilteredRows = computed((): Array<T> => {
 });
 
 const handleSort = (col: Column) => {
-    const colSortKey = col.sortKey ?? col.field;
+    const colSortKey = getColSortKey(col);
 
     if (sortField.value === colSortKey) {
         // Toggle direction if clicking same column
@@ -251,9 +258,13 @@ const handleSort = (col: Column) => {
     }
 };
 
-const getHeaderStyle = () => {
-  return ["border-b", "dark:border-slate-600", "font-medium", "p-2", "pl-8", "pt-0", "pb-3", "text-slate-500", "dark:text-slate-200", "text-left"];
-}
+const getColSortKey = (col: Column) => col.sortKey ?? col.field;
+
+const formatFunctionCell = (col: Column, row: any): string => {
+  if (typeof col.formatter !== 'function') return '';
+  return col.formatter(getRowData(row, col.field));
+};
+
 const getTdStyle = () => {
   return ["border-b", "dark:border-slate-600", "p-2", "text-slate-700", "dark:text-slate-200"];
 }
@@ -263,12 +274,16 @@ const getRowStyle = (index: number): string[] => {
     return ["bg-gray-100", "dark:bg-gray-900", "hover:bg-slate-200", "dark:hover:bg-slate-800"];
 }
 
-const getRowData = (row: T, rowName: string): string => {
+const getRowData = (row: any, rowName: string): any => {
+    if (row == null) return undefined;
+    if (!rowName) return row;
+
+    // Support nested access like "user.username" and numeric keys like "gpsById.12.pointsInGP"
     if (rowName.includes(".")) {
         const [first, ...rest] = rowName.split(".");
-        return getRowData(row[first as keyof T] as T, rest.join(".")) as string;
+        return getRowData(row?.[first], rest.join("."));
     }
-    return row[rowName as keyof T] as unknown as string;
+    return row?.[rowName];
 }
 
 const visibleData = computed(() => {

@@ -12,7 +12,7 @@
         <sub
           v-if="getSessionPoints() !== undefined"
           :class="{
-            'text-brand-600 dark:text-brand-600': (getSessionPoints() || 0) > 0,
+            'text-brand-600 dark:text-blue-500': (getSessionPoints() || 0) > 0,
             'text-error-600 dark:text-error-400': (getSessionPoints() || 0) < 0,
           }"
         >

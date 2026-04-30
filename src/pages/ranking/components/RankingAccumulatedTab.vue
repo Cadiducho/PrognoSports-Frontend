@@ -18,73 +18,14 @@
     </template>
 
     <template #table>
-      <o-table
-        :data="rows"
-        hoverable
-        :mobile-cards="false"
-        default-sort="totalScore"
+      <PTable
+        :columns="columns"
+        :rows="rowsForTable"
+        :row-class="rowClassForPTable"
+        row-key="user.username"
+        default-sort-field="totalScore"
         default-sort-direction="DESC"
-        :row-class="rowClass"
-      >
-      <o-table-column
-        v-slot="slotProps"
-        label="Pos."
-        sortable
-        numeric
-      >
-        <RankingPositionCell :index="slotProps.index" />
-      </o-table-column>
-
-      <o-table-column
-        field="user.username"
-        label="Nombre"
-        sortable
-      >
-        <template #default="slotProps">
-          <RankingUserCell
-            :entry="slotProps.row"
-            :community-members="communityMembers"
-          />
-        </template>
-      </o-table-column>
-
-      <o-table-column
-        v-for="gp in grandPrixes"
-        :key="gp.code"
-        :field="gp.code"
-        sortable
-        numeric
-      >
-        <template #header>
-          <RankingGrandPrixHeader :gp="gp" />
-        </template>
-        <template #default="slotProps">
-          <template v-if="slotProps.row.gps.has(gp.id)">
-            <PTag
-              v-if="checkAccumulatedWinner(gp.id, slotProps.row.gps.get(gp.id).accumulatedPoints)"
-              color="warning"
-              size="small"
-            >
-              <PointsTooltipComponent
-                :gp-name="gp.name"
-                :user-points="slotProps.row.gps.get(gp.id)"
-                :display-points="slotProps.row.gps.get(gp.id).accumulatedPoints"
-              />
-            </PTag>
-            <template v-else>
-              <PointsTooltipComponent
-                :gp-name="gp.name"
-                :user-points="slotProps.row.gps.get(gp.id)"
-                :display-points="slotProps.row.gps.get(gp.id).accumulatedPoints"
-              />
-            </template>
-          </template>
-          <template v-else>
-            0 :(
-          </template>
-        </template>
-      </o-table-column>
-      </o-table>
+      />
     </template>
 
     <template #before-chart-title>
@@ -120,13 +61,17 @@ import { GrandPrix } from "@/types/GrandPrix";
 import { RankingChartOptions, RankingLineSeries, TableEntry } from "@/pages/ranking/types/ranking";
 import { User } from "@/types/User";
 import RankingTabTemplate from "@/pages/ranking/components/RankingTabTemplate.vue";
-import RankingPositionCell from "@/pages/ranking/components/RankingPositionCell.vue";
-import RankingUserCell from "@/pages/ranking/components/RankingUserCell.vue";
 import RankingGrandPrixHeader from "@/pages/ranking/components/RankingGrandPrixHeader.vue";
-import PointsTooltipComponent from "@/pages/ranking/components/PointsTooltipComponent.vue";
 import VueApexCharts from "vue3-apexcharts";
+import PTable from "@/components/lib/table/PTable.vue";
+import { computed, markRaw } from "vue";
+import type { Column } from "@/components/lib/table";
+import BoldValueFormatter from "@/components/gps/score/formatters/BoldValueFormatter.vue";
+import RankingPositionFormatter from "@/pages/ranking/components/formatters/RankingPositionFormatter.vue";
+import RankingUserFormatter from "@/pages/ranking/components/formatters/RankingUserFormatter.vue";
+import RankingGpAccumulatedFormatter from "@/pages/ranking/components/formatters/RankingGpAccumulatedFormatter.vue";
 
-defineProps<{
+const props = defineProps<{
   rows: TableEntry[];
   communityMembers: Map<string, User>;
   grandPrixes: GrandPrix[];
@@ -136,6 +81,74 @@ defineProps<{
   accumulatedPointsChartOptions: RankingChartOptions;
   accumulatedPointsChartRef: (el: unknown) => void;
 }>();
+
+const rowsForTable = computed(() => {
+  return props.rows.map((r: TableEntry, idx: number) => {
+    const gpsById: Record<number, any> = {};
+    props.grandPrixes.forEach((gp: GrandPrix) => {
+      gpsById[gp.id] = r.gps?.get(gp.id);
+    });
+
+    return {
+      entry: r,
+      user: r.user,
+      totalScore: r.totalScore,
+      pos: idx + 1,
+      gpsById,
+    };
+  });
+});
+
+const columns = computed<Column[]>(() => {
+  const cols: Column[] = [
+    {
+      label: 'Pos.',
+      field: 'pos',
+      sortable: true,
+      sortKey: 'pos',
+      formatter: markRaw(RankingPositionFormatter),
+    },
+    {
+      label: 'Nombre',
+      field: 'user.username',
+      sortable: true,
+      formatter: markRaw(RankingUserFormatter),
+      formatterProps: {
+        communityMembers: props.communityMembers,
+      },
+    },
+  ];
+
+  props.grandPrixes.forEach((gp: GrandPrix) => {
+    cols.push({
+      label: gp.code,
+      headerFormatter: markRaw(RankingGrandPrixHeader),
+      headerFormatterProps: { gp },
+      field: `gpsById.${gp.id}.accumulatedPoints`,
+      sortable: true,
+      sortKey: `gpsById.${gp.id}.accumulatedPoints`,
+      formatter: markRaw(RankingGpAccumulatedFormatter),
+      formatterProps: {
+        gp,
+        checkAccumulatedWinner: props.checkAccumulatedWinner,
+      },
+    });
+  });
+
+  cols.push({
+    label: 'Total',
+    field: 'totalScore',
+    sortable: true,
+    sortKey: 'totalScore',
+    formatter: markRaw(BoldValueFormatter),
+  });
+
+  return cols;
+});
+
+const rowClassForPTable = (row: any, index: number) => {
+  return props.rowClass?.(row.entry, index) || '';
+};
 </script>
 
 
