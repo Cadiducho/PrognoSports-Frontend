@@ -139,7 +139,7 @@
 </template>
 
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends Record<string, any> = Record<string, any>">
 import {computed, ref, watch} from "vue";
 import PPagination from "@/components/lib/PPagination.vue";
 import {useDayjs} from "@/composables/useDayjs";
@@ -147,22 +147,22 @@ import {Column, type SortDirection} from "@/components/lib/table/index";
 import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 
-interface Props {
-    columns: Array<Column>;
-    rows: Array<any>;
-    withFilter?: (original: Array<any>, filter: string) => Array<any>;
+interface Props<T> {
+    columns: Array<Column<T>>;
+    rows: Array<T>;
+    withFilter?: (original: Array<T>, filter: string) => Array<T>;
     hasViewButton?: boolean;
     hasEditButton?: boolean;
     hasDeleteButton?: boolean;
     paginated?: boolean;
     perPage?: number;
     striped?: boolean;
-    defaultSortField?: string | ((row: any) => any);
+    defaultSortField?: string | ((row: T) => any);
     defaultSortDirection?: SortDirection;
     rowKey?: string;
-    rowClass?: (row: any, index?: number) => string;
+    rowClass?: (row: T, index?: number) => string;
 }
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props<T>>(), {
     withFilter: undefined,
     hasViewButton: false,
     hasEditButton: false,
@@ -176,10 +176,10 @@ const props = withDefaults(defineProps<Props>(), {
     rowClass: undefined
 });
 defineEmits<{
-    view: [element: any],
-    edit: [element: any],
-    delete: [element: any]
-    click: [element: any, column: Column, value: unknown]
+    view: [element: T],
+    edit: [element: T],
+    delete: [element: T]
+    click: [element: T, column: Column<T>, value: unknown]
 }>();
 const dayjs = useDayjs();
 const dateDiff = dayjs.dateDiff;
@@ -188,10 +188,10 @@ const humanDate = dayjs.humanDate;
 
 const currentPage = ref(1);
 const searchInput = ref("");
-const sortField = ref<string | ((row: any) => any) | undefined>(props.defaultSortField);
+const sortField = ref<string | ((row: T) => any) | undefined>(props.defaultSortField);
 const sortDirection = ref<SortDirection>(props.defaultSortDirection ?? "ASC");
 
-const filteredRows = computed((): Array<any> => {
+const filteredRows = computed((): Array<T> => {
     if (!props.withFilter) return props.rows;
     if (!searchInput.value.trim()) {
         return props.rows;
@@ -218,7 +218,7 @@ watch(
   }
 );
 
-const sortedAndFilteredRows = computed((): Array<any> => {
+const sortedAndFilteredRows = computed((): Array<T> => {
     let result = [...filteredRows.value];
 
     if (!sortField.value) return result;
@@ -245,7 +245,7 @@ const sortedAndFilteredRows = computed((): Array<any> => {
     return result;
 });
 
-const handleSort = (col: Column) => {
+const handleSort = (col: Column<T>) => {
     const colSortKey = getColSortKey(col);
 
     if (sortField.value === colSortKey) {
@@ -258,11 +258,11 @@ const handleSort = (col: Column) => {
     }
 };
 
-const getColSortKey = (col: Column) => col.sortKey ?? col.field;
+const getColSortKey = (col: Column<T>) => col.sortKey ?? col.field;
 
-const formatFunctionCell = (col: Column, row: any): string => {
+const formatFunctionCell = (col: Column<T>, row: T): string => {
   if (typeof col.formatter !== 'function') return '';
-  return col.formatter(getRowData(row, col.field));
+  return col.formatter(getRowData(row, col.field), row, col);
 };
 
 const getTdStyle = () => {
@@ -274,7 +274,7 @@ const getRowStyle = (index: number): string[] => {
     return ["bg-gray-100", "dark:bg-gray-900", "hover:bg-slate-200", "dark:hover:bg-slate-800"];
 }
 
-const getRowData = (row: any, rowName: string): any => {
+const getRowData = (row: any, rowName: string): unknown => {
     if (row == null) return undefined;
     if (!rowName) return row;
 
