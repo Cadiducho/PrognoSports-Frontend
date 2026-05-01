@@ -66,8 +66,7 @@
     </div>
 
     <PrognoModal
-      v-show="isJoinModalActive"
-      @close="isJoinModalActive = false"
+      v-model="isJoinModalActive"
       @handle="joinCommunity()"
     >
       <template #title>
@@ -82,8 +81,7 @@
     </PrognoModal>
 
     <PrognoModal
-      v-show="isLeaveModalActive"
-      @close="isLeaveModalActive = false"
+      v-model="isLeaveModalActive"
       @handle="leaveCommunity()"
     >
       <template #title>

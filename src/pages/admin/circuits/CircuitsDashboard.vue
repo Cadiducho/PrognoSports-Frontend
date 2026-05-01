@@ -1,33 +1,56 @@
 <template>
-    <div id="adminDrivers" class="box">
-        <PTitle class="mb-5" name="Administración de circuitos"/>
+  <div
+    id="adminDrivers"
+    class="box"
+  >
+    <PTitle
+      class="mb-5"
+      name="Administración de circuitos"
+    />
 
-        <p-button class="mb-4" label="Nuevo circuito" color="info" to="/admin/circuits/create" />
+    <p-button
+      class="mb-4"
+      label="Nuevo circuito"
+      color="info"
+      to="/admin/circuits/create"
+    />
 
-        <p-table :columns="columns" :rows="circuits"
-                 hasViewButton hasEditButton hasDeleteButton paginated
-                 :with-filter="filteredCircuits"
-                 @view="goToView($event)"
-                 @edit="goToEdit($event)"
-                 @delete="confirmDeleteCircuit($event)"
+    <p-table
+      :columns="columns"
+      :rows="circuits"
+      has-view-button
+      has-edit-button
+      has-delete-button
+      paginated
+      :with-filter="filteredCircuits"
+      @view="goToView($event)"
+      @edit="goToEdit($event)"
+      @delete="confirmDeleteCircuit($event)"
+    />
+
+    <PrognoModal v-model="showConfirmDeleteModal">
+      <template #title>
+        Confirmar eliminación
+      </template>
+      <template #content>
+        ¿Está seguro que desea eliminar el circuito <strong>{{ circuitToDelete?.name }}</strong>? Esta acción no se puede deshacer.
+      </template>
+      <template #footer>
+        <button
+          class="button is-danger"
+          @click="deleteCircuit(circuitToDelete)"
         >
-
-        </p-table>
-
-        <PrognoModal v-show="showConfirmDeleteModal" @close="showConfirmDeleteModal = false">
-            <template v-slot:title>
-                Confirmar eliminación
-            </template>
-            <template v-slot:content>
-                ¿Está seguro que desea eliminar el circuito <strong>{{circuitToDelete?.name}}</strong>? Esta acción no se puede deshacer.
-            </template>
-            <template v-slot:footer>
-                <button class="button is-danger" @click="deleteCircuit(circuitToDelete)">Eliminar</button>
-                <button class="button" @click="showConfirmDeleteModal = false">Cancelar</button>
-            </template>
-        </PrognoModal>
-
-    </div>
+          Eliminar
+        </button>
+        <button
+          class="button"
+          @click="showConfirmDeleteModal = false"
+        >
+          Cancelar
+        </button>
+      </template>
+    </PrognoModal>
+  </div>
 </template>
 
 <script lang="ts">

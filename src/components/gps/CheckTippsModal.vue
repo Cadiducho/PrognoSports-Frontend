@@ -1,6 +1,6 @@
 <template>
   <PrognoModal
-    v-show="visible"
+    v-model="visible"
     @close="$emit('close')"
     @handle="handleSimulate"
   >
@@ -82,6 +82,7 @@ const cantidadPronosticados = computed(() => props.ruleSet.cantidadPilotosPronos
 const handleSimulate = () => {
   // Se emite la lista completa de piltos
   emit('simulate', pilotosOrdenados.value);
+  visible.value = false;
   emit('close');
 };
 

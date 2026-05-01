@@ -66,8 +66,7 @@
       @delete="confirmDeleteDriver($event as Driver)"
     />
     <PrognoModal
-      v-show="isDeleteDriverModalActive"
-      @close="isDeleteDriverModalActive = false"
+      v-model="isDeleteDriverModalActive"
       @handle="deleteDriver(driverToDelete!)"
     >
       <template #title>

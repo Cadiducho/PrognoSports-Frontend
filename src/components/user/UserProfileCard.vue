@@ -97,7 +97,7 @@
   </div>
 
   <UploadFileModal
-    v-show="showEditImageModal"
+    v-model="showEditImageModal"
     :file="selectedFile"
     stencil-component="circle"
     @close="showEditImageModal = false"

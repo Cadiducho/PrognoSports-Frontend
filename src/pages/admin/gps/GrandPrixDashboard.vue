@@ -65,8 +65,7 @@
     />
   </PCard>
   <PrognoModal
-    v-show="isDeleteGrandPrixModalActive"
-    @close="isDeleteGrandPrixModalActive = false"
+    v-model="isDeleteGrandPrixModalActive"
     @handle="deleteGrandPrix(grandPrixToDelete)"
   >
     <template #title>

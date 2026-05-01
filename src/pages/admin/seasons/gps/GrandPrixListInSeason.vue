@@ -66,8 +66,7 @@
     />
 
     <PrognoModal
-      v-show="isDeleteGPModalActive"
-      @close="isDeleteGPModalActive = false"
+      v-model="isDeleteGPModalActive"
       @handle="deleteGrandPrixFromSeason(grandPrixToDelete)"
     >
       <template #title>

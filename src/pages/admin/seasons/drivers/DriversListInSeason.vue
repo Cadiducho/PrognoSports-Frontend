@@ -64,8 +64,7 @@
     />
 
     <PrognoModal
-      v-show="isDeleteModalActive"
-      @close="isDeleteModalActive = false"
+      v-model="isDeleteModalActive"
       @handle="deleteFromSeason(driverToDelete)"
     >
       <template #title>

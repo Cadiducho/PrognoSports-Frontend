@@ -186,7 +186,7 @@
   </PCard>
 
   <PrognoModal
-    v-show="changePasswordModal.show"
+    v-model="changePasswordModal.show"
     @close="closeChangePassword()"
     @handle="changePassword()"
   >
@@ -215,7 +215,7 @@
   </PrognoModal>
 
   <PrognoModal
-    v-show="changeMailModal.show"
+    v-model="changeMailModal.show"
     @close="closeChangeMail()"
     @handle="changeMail()"
   >
@@ -244,7 +244,7 @@
   </PrognoModal>
 
   <PrognoModal
-    v-show="linkTelegramModal.show"
+    v-model="linkTelegramModal.show"
     @close="closeLinkTelegram()"
   >
     <template #title>

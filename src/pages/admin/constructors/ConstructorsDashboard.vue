@@ -29,8 +29,7 @@
     />
 
     <PrognoModal
-      v-show="showConfirmDeleteModal"
-      @close="showConfirmDeleteModal = false"
+      v-model="showConfirmDeleteModal"
     >
       <template #title>
         Confirmar eliminación

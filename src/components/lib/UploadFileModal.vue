@@ -1,20 +1,28 @@
 <template>
-    <PrognoModal @close="this.$emit('close')" @handle="toBlob()">
-        <template v-slot:title><slot name="title"></slot></template>
-        <template v-slot:content>
-            <label class="label"><slot name="label"></slot></label>
-            <cropper
-                class="cropper"
-                :src="blob"
-                :min-height="minHeight"
-                :min-width="minWidth"
-                :stencil-component="stencilType"
-                :stencil-props="stencilProps"
-                :canvas="canvas"
-                @change="onChange"
-            ></cropper>
-        </template>
-    </PrognoModal>
+  <PrognoModal
+    v-model="model"
+    @close="onClose"
+    @handle="toBlob()"
+  >
+    <template #title>
+      <slot name="title" />
+    </template>
+    <template #content>
+      <label class="label">
+        <slot name="label" />
+      </label>
+      <cropper
+        class="cropper"
+        :src="blob"
+        :min-height="minHeight"
+        :min-width="minWidth"
+        :stencil-component="stencilType"
+        :stencil-props="stencilProps"
+        :canvas="canvas"
+        @change="onChange"
+      />
+    </template>
+  </PrognoModal>
 </template>
 
 <script lang="ts">
@@ -29,13 +37,17 @@ export default defineComponent({
     name: "UploadFileModal",
     components: {
         Cropper,
-        CircleStencil,
         PrognoModal
     },
     props: {
+        modelValue: {
+            type: Boolean,
+            default: false,
+        },
         file: {
-            type: Object as PropType <File> | null,
-            required: false
+            type: Object as PropType<File | null>,
+            required: false,
+            default: null,
         },
         format: {
             type: String,
@@ -62,19 +74,27 @@ export default defineComponent({
         },
         canvas: {
             type: [Object, Boolean],
-            default: {
-                maxWidth: 2048,
-                maxHeight: 2048
+            default() {
+                return {
+                    maxWidth: 2048,
+                    maxHeight: 2048
+                };
             },
         },
     },
     emits: {
         close: null,
+        'update:modelValue': null,
         submitFile: null
     },
-    setup(props) {
+    setup(props, { emit }) {
         const authStore = useAuthStore();
         const currentUser = authStore.loggedUser;
+
+        const model = computed({
+            get: () => props.modelValue,
+            set: (value: boolean) => emit('update:modelValue', value),
+        });
 
         const file = toRef(props, 'file');
         const blob = computed(() => {
@@ -91,7 +111,7 @@ export default defineComponent({
             return CircleStencil;
         });
 
-        return { currentUser, blob, stencilType };
+        return { currentUser, blob, stencilType, model };
     },
     data() {
         return {
@@ -99,6 +119,10 @@ export default defineComponent({
         }
     },
     methods: {
+        onClose(reason?: any) {
+            this.$emit('update:modelValue', false);
+            this.$emit('close', reason);
+        },
         onChange(cropperResult: CropperResult) {
             if (cropperResult.canvas) {
                 this.selectedCanvas = cropperResult.canvas;
@@ -109,6 +133,7 @@ export default defineComponent({
                 if (blob) {
                     this.$emit('submitFile', blob);
 
+                    this.$emit('update:modelValue', false);
                     this.$emit('close');
                 }
             }), this.format, 0.75);

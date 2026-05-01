@@ -39,8 +39,7 @@
   </PCard>
 
   <PrognoModal
-    v-show="isDeleteCompetitionModalActive"
-    @close="isDeleteCompetitionModalActive = false"
+    v-model="isDeleteCompetitionModalActive"
     @handle="deleteCompetition(competitionToDelete)"
   >
     <template #title>

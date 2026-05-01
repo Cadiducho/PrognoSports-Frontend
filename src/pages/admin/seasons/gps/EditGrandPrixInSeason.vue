@@ -185,7 +185,7 @@
     </template>
 
     <UploadFileModal
-      v-show="showEditImageModal"
+      v-model="showEditImageModal"
       :stencil-props="{
         aspectRatio: 16/9
       }"

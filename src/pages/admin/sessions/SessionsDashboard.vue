@@ -1,31 +1,54 @@
 <template>
-    <div id="sessionList" class="box">
-        <PTitle class="mb-5" name="Administración de sesiones"/>
+  <div
+    id="sessionList"
+    class="box"
+  >
+    <PTitle
+      class="mb-5"
+      name="Administración de sesiones"
+    />
 
-        <p-button class="mb-4" label="Nueva sesión" color="info" to="/admin/sessions/create" />
+    <p-button
+      class="mb-4"
+      label="Nueva sesión"
+      color="info"
+      to="/admin/sessions/create"
+    />
 
-        <p-table :columns="columns" :rows="sessions"
-                 hasEditButton hasDeleteButton paginated
-                 :with-filter="filteredSessions"
-                 @edit="goToEdit($event as RaceSession)"
-                 @delete="confirmDeleteSeason($event as RaceSession)"
+    <p-table
+      :columns="columns"
+      :rows="sessions"
+      has-edit-button
+      has-delete-button
+      paginated
+      :with-filter="filteredSessions"
+      @edit="goToEdit($event as RaceSession)"
+      @delete="confirmDeleteSeason($event as RaceSession)"
+    />
+
+    <PrognoModal v-model="showConfirmDeleteModal">
+      <template #title>
+        Confirmar eliminación
+      </template>
+      <template #content>
+        ¿Está seguro que desea eliminar la sesión <strong>{{ sessionToDelete?.name }}</strong>? Esta acción no se puede deshacer.
+      </template>
+      <template #footer>
+        <button
+          class="button is-danger"
+          @click="deleteSeason(sessionToDelete)"
         >
-
-        </p-table>
-
-        <PrognoModal v-show="showConfirmDeleteModal" @close="showConfirmDeleteModal = false">
-            <template v-slot:title>
-                Confirmar eliminación
-            </template>
-            <template v-slot:content>
-                ¿Está seguro que desea eliminar la sesión <strong>{{ sessionToDelete?.name }}</strong>? Esta acción no se puede deshacer.
-            </template>
-            <template v-slot:footer>
-                <button class="button is-danger" @click="deleteSeason(sessionToDelete)">Eliminar</button>
-                <button class="button" @click="showConfirmDeleteModal = false">Cancelar</button>
-            </template>
-        </PrognoModal>
-    </div>
+          Eliminar
+        </button>
+        <button
+          class="button"
+          @click="showConfirmDeleteModal = false"
+        >
+          Cancelar
+        </button>
+      </template>
+    </PrognoModal>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -37,6 +60,7 @@ import {useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
 import {notificationService, sessionService} from "@/_services";
 import {RaceSession} from "@/types/RaceSession";
+import {Column} from "@/components/lib/table";
 
 const router = useRouter();
 
@@ -47,6 +71,7 @@ const columns = ref( [
     {label: 'Grid', field: 'hasGrid', type: 'boolean'},
     {label: 'FastLap', field: 'hasFastLap', type: 'boolean'},
 ] as Column[]);
+
 const sessions = ref(new Array<RaceSession>())
 const showConfirmDeleteModal = ref(false);
 const sessionToDelete = ref(undefined as RaceSession | undefined);
