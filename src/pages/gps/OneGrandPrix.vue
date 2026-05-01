@@ -81,13 +81,6 @@
 
           <section class="my-2 space-y-2">
             <p-button
-              color="green"
-              expanded
-              @click="showCheckTippsModal = true"
-            >
-              Simular resultados
-            </p-button>
-            <p-button
               v-if="currentUser.isAdmin()"
               color="info"
               expanded
@@ -123,24 +116,13 @@
               :gp="grandPrix"
               :rule-set="ruleSet"
               :session="session"
+              :drivers="drivers"
               :community-members="communityMembers"
               :user-points="userPoints"
-              :is-simulated="isSimulatedMode && session.id === currentSessionId"
             />
           </PTabPanel>
         </PTabs>
       </PCard>
-
-      <CheckTippsModal
-        :model-value="showCheckTippsModal"
-        :session="currentSession"
-        :grand-prix="grandPrix"
-        :rule-set="ruleSet"
-        :drivers="drivers"
-        :user-tipps="currentUserTipps"
-        @close="showCheckTippsModal = false"
-        @simulate="onSimulateResults"
-      />
     </template>
   </div>
 </template>
@@ -163,7 +145,6 @@ import {StartGridPosition} from "@/types/StartGridPosition";
 import SelectTipps from "@/components/gps/SelectTipps.vue";
 import PitLaneStartGrid from "@/components/gps/PitLaneStartGrid.vue";
 import ScoreComponents from "@/components/gps/ScoreComponent.vue";
-import CheckTippsModal from "@/components/gps/CheckTippsModal.vue";
 import {UserPoints} from "@/types/UserPoints";
 import {Dictionary} from "@/types/Dictionary";
 import dayjs from "dayjs";
@@ -175,7 +156,6 @@ import {CommunityUser} from "@/types/CommunityUser";
 import {defineComponent} from "vue";
 import {useCommunityStore} from "@/store/communityStore";
 import useEmitter from "@/composables/useEmitter";
-import {useDayjs} from "@/composables/useDayjs";
 import Loading from "@/components/lib/Loading.vue";
 import {useAuthStore} from "@/store/authStore";
 import GrandPrixPageHeader from "@/components/gps/GrandPrixPageHeader.vue";
@@ -186,7 +166,6 @@ import PCard from "@/components/lib/PCard.vue";
 import PTabs from "@/components/lib/PTabs.vue";
 import PTabItem from "@/components/lib/PTabItem.vue";
 import PTabPanel from "@/components/lib/PTabPanel.vue";
-import {RaceResult} from "@/types/RaceResult";
 
 export default defineComponent({
   name: "OneGrandPrix",
@@ -200,7 +179,6 @@ export default defineComponent({
     ScoreComponents,
     PitLaneStartGrid,
     SelectTipps,
-    CheckTippsModal,
     CircuitCard,
     StartGrid,
     PTabs,
@@ -208,7 +186,6 @@ export default defineComponent({
     PTabPanel
   },
   setup() {
-    const dayjs = useDayjs();
     const emitter = useEmitter();
     const authStore = useAuthStore();
     const communityStore = useCommunityStore();
@@ -234,22 +211,6 @@ export default defineComponent({
       startGrid: new Map<RaceSession, Array<StartGridPosition>>(),
       userPoints: {} as Dictionary<number, UserPoints>,
       activeTab: "",
-
-      showCheckTippsModal: false,
-      isSimulatedMode: false,
-      currentSessionId: -1,
-      currentUserTipps: new Array<RaceResult>(),
-    }
-  },
-  watch: {
-    activeTab() {
-      this.isSimulatedMode = false;
-      this.loadUserTipps();
-    }
-  },
-  computed: {
-    currentSession() {
-      return this.grandPrix.sessions.find(s => s.name === this.activeTab);
     }
   },
   mounted() {
@@ -289,7 +250,7 @@ export default defineComponent({
       });
 
       // Ordeno las sesiones por fecha
-      this.grandPrix.sessions.sort((a: RaceSession, b: RaceSession) => a.date - b.date)
+      this.grandPrix.sessions.sort((a: RaceSession, b: RaceSession) => a.date.getTime() - b.date.getTime())
       // Colocar la tab correcta según cuál es la siguiente sesión que va a tener lugar
       for (const ses of this.grandPrix.sessions) {
         this.activeTab = ses.name;
@@ -312,38 +273,6 @@ export default defineComponent({
       }
       return Promise.all(request);
     },
-    async loadUserTipps(): Promise<void> {
-      try {
-        const session = this.currentSession;
-        if (!session) return;
-
-        const tipps = await grandPrixService.getAllTipps(this.grandPrix, session, this.currentCommunity);
-        this.currentUserTipps = tipps[this.currentUser.id] || [];
-      } catch (error) {
-        this.currentUserTipps = [];
-      }
-    },
-    async onSimulateResults(drivers: Driver[]): Promise<void> {
-      try {
-        const session = this.currentSession;
-        const resultsMap = new Map<number, string>(
-          drivers.map((driver, index) => [index + 1, driver.id])
-        );
-
-        await scoreService.getPointsByPositionInGrandPrixSimulated(
-          this.currentCommunity,
-          this.grandPrix,
-          session,
-          resultsMap
-        );
-
-        this.currentSessionId = session.id;
-        this.isSimulatedMode = true;
-        notificationService.showNotification('Simulación activada. Esta es una visualización de escenarios.', 'info');
-      } catch (error: any) {
-        notificationService.showNotification(error.message || 'Error al simular los resultados', 'error');
-      }
-    }
   }
 });
 </script>

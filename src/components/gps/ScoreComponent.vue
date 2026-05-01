@@ -2,17 +2,41 @@
   <div>
     <Loading v-if="!loaded" />
     <template v-else>
-      <h5 class="text-lg font-semibold dark:text-gray-300">
-        Puntuaciones de {{ session.humanName() }}
-      </h5>
+      <header class="mt-2 flex flex-col md:flex-row itens-start md:items-center t md:justify-between gap-3">
+        <h5 class="text-lg font-semibold dark:text-gray-300 flex-1">
+          Puntuaciones de {{ session.humanName() }}
+        </h5>
+
+        <PButton
+          v-if="canSimulate"
+          class="shrink-0"
+          color="green"
+          type="outline"
+          size="small"
+          icon="fas fa-flask"
+          @click="showCheckTippsModal = true"
+        >
+          Simular resultados
+        </PButton>
+      </header>
       <h6 class="text-base font-medium dark:text-gray-300 mt-1">
         Leyenda
       </h6>
       <p class="mb-4 dark:text-gray-300">
         Tus puntuaciones salen reflejadas con color
-        <PTag color="success" size="small">verde</PTag><br>
+        <PTag
+          color="success"
+          size="small"
+        >
+          verde
+        </PTag><br>
         El ganador del Gran Premio es reflejado con color
-        <PTag color="warning" size="small">dorado</PTag><br>
+        <PTag
+          color="warning"
+          size="small"
+        >
+          dorado
+        </PTag><br>
         Los ganadores de cada sesión tendrán representado un <i class="fas fa-trophy" />
         <span v-if="ruleSet.data.pointsByTopScorer > 0">
           <br>
@@ -43,8 +67,33 @@
         :icon="false"
         aria-close-label="Close notification"
       >
-        <i class="fas fa-chart-bar" /> Visualización de escenarios — estos resultados no son reales
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <span>
+            <i class="fas fa-flask" /> Simulación de escenarios — estos resultados no son reales
+          </span>
+          <PButton
+            size="small"
+            type="outline"
+            color="warning"
+            icon="fas fa-xmark"
+            @click="onExitSimulation"
+          >
+            Salir de simulación
+          </PButton>
+        </div>
       </PrognoAlert>
+
+      <CheckTippsModal
+        v-if="canSimulate"
+        :model-value="showCheckTippsModal"
+        :session="session"
+        :grand-prix="gp"
+        :rule-set="ruleSet"
+        :drivers="drivers"
+        :user-tipps="currentUserTipps"
+        @close="showCheckTippsModal = false"
+        @simulate="onSimulateResults"
+      />
 
       <PTable
         :columns="columns"
@@ -96,7 +145,7 @@
 <script setup lang="ts">
 import {computed, markRaw, onBeforeUnmount, onMounted, ref, watch} from "vue";
 import {storeToRefs} from "pinia";
-import {grandPrixService, scoreService} from "@/_services";
+import {grandPrixService, notificationService, scoreService} from "@/_services";
 import {useAuthStore} from "@/store/authStore";
 import {useAppStore} from "@/store/appStore";
 import {useCommunityStore} from "@/store/communityStore";
@@ -119,6 +168,8 @@ import PCheckbox from "@/components/lib/forms/PCheckbox.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PTag from "@/components/lib/PTag.vue";
 import PTable from "@/components/lib/table/PTable.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
+import CheckTippsModal from "@/components/gps/CheckTippsModal.vue";
 import StandingsFormatter from "@/components/gps/score/formatters/StandingsFormatter.vue";
 import UsernameFormatter from "@/components/gps/score/formatters/UsernameFormatter.vue";
 import SessionResultFormatter from "@/components/gps/score/formatters/SessionResultFormatter.vue";
@@ -147,9 +198,9 @@ const props = defineProps<{
   gp: GrandPrix;
   ruleSet: RuleSet;
   session: RaceSession;
+  drivers: Driver[];
   communityMembers: CommunityUser[];
   userPoints: Dictionary<number, UserPoints>;
-  isSimulated?: boolean;
 }>();
 
 const authStore = useAuthStore();
@@ -166,11 +217,27 @@ const humanDateTime = dayjs.humanDateTime;
 const styleCodeInResults = styles.styleCodeInResults;
 const {showAdvancedStadistics, showResults, showUserColor, showWinnerColor} = storeToRefs(appStore);
 
-const isSimulated = computed(() => props.isSimulated ?? false);
+const showCheckTippsModal = ref(false);
+const isSimulated = ref(false);
+const simulatedResults = ref<Driver[] | undefined>(undefined);
+const simulatedCalculations = ref<ScoreCalculations | undefined>(undefined);
+
+const canSimulate = computed(() => Array.isArray(props.drivers) && props.drivers.length > 0);
+
+const simulationActive = computed(() => {
+  return isSimulated.value
+    && Array.isArray(simulatedResults.value)
+    && simulatedResults.value.length > 0
+    && simulatedCalculations.value !== undefined;
+});
 const loaded = ref(false);
 const thereAreFinishResults = ref(false);
 const sessionResults = ref<RaceResult[]>([]);
-const pointsByPosition = ref<Dictionary<SessionId, Dictionary<UserId, number>>>({});
+
+const currentUserTipps = ref<RaceResult[]>([]);
+
+// Estructura usada por SessionResultFormatter: userId -> (position -> points)
+const pointsByPosition = ref<Record<number, Record<number, number>>>({});
 const totalHits = ref<Dictionary<UserId, number>>({});
 const hitsBySession = ref<Dictionary<UserId, Dictionary<SessionId, number>>>({});
 const tableData = ref<TableRow[]>([]);
@@ -347,6 +414,38 @@ const onUpdatedTipps = (event: {session: RaceSession; tipps: Driver[]}): void =>
   }
 };
 
+const onExitSimulation = (): void => {
+  isSimulated.value = false;
+  simulatedResults.value = undefined;
+  simulatedCalculations.value = undefined;
+  notificationService.showNotification('Simulación desactivada. Mostrando resultados reales.', 'info');
+  loadData();
+};
+
+const onSimulateResults = async (drivers: Driver[]): Promise<void> => {
+  try {
+    const resultsMap = new Map<number, string>(
+      drivers.map((driver, index) => [index + 1, driver.id])
+    );
+
+    const calculations = await scoreService.getPointsByPositionInGrandPrixSimulated(
+      currentCommunity,
+      props.gp,
+      props.session,
+      resultsMap
+    );
+
+    simulatedResults.value = drivers;
+    simulatedCalculations.value = calculations;
+    isSimulated.value = true;
+    showCheckTippsModal.value = false;
+    notificationService.showNotification('Simulación activada. Esta es una visualización de escenarios.', 'info');
+    loadData();
+  } catch (error: any) {
+    notificationService.showNotification(error.message || 'Error al simular los resultados', 'error');
+  }
+};
+
 const loadData = async (): Promise<void> => {
   loaded.value = false;
   thereAreFinishResults.value = false;
@@ -359,28 +458,55 @@ const loadData = async (): Promise<void> => {
   winnersOfGrandPrix.value = [];
 
   try {
-    const results = await grandPrixService.getResults(props.gp, props.session);
-    thereAreFinishResults.value = results.length > 0;
-
     const pronosticados = props.ruleSet.cantidadPilotosPronosticados(props.session);
-    sessionResults.value = Array.from({length: pronosticados}, (_, position) => {
-      if (position >= results.length) {
-        return {position: position + 1, driver: {code: "---"} as Driver, raceSession: props.session};
+
+    if (simulationActive.value) {
+      // Modo simulación: usamos el orden de pilotos seleccionado por el usuario.
+      thereAreFinishResults.value = true;
+      sessionResults.value = Array.from({length: pronosticados}, (_, position) => {
+        const driver = simulatedResults.value?.[position];
+        if (!driver) {
+          return {position: position + 1, driver: {code: "---"} as Driver, raceSession: props.session};
+        }
+        return {position: position + 1, driver, raceSession: props.session};
+      });
+
+      const score = simulatedCalculations.value!;
+      pointsByPosition.value = (score.pointsByPosition as any) || {};
+      totalHits.value = score.totalHits || {};
+      hitsBySession.value = score.hitsBySession || {};
+    } else {
+      const results = await grandPrixService.getResults(props.gp, props.session);
+      thereAreFinishResults.value = results.length > 0;
+
+      sessionResults.value = Array.from({length: pronosticados}, (_, position) => {
+        if (position >= results.length) {
+          return {position: position + 1, driver: {code: "---"} as Driver, raceSession: props.session};
+        }
+        return {
+          position: position + 1,
+          driver: results[position]!.driver,
+          raceSession: results[position]!.raceSession,
+        };
+      });
+
+      if (!props.session.isBeforeClosureDate()) {
+        const score: ScoreCalculations = await scoreService.getPointsByPositionInGrandPrix(currentCommunity, props.gp, props.session);
+        pointsByPosition.value = (score.pointsByPosition as any) || {};
+        totalHits.value = score.totalHits || {};
+        hitsBySession.value = score.hitsBySession || {};
       }
-      return {
-        position: position + 1,
-        driver: results[position]!.driver,
-        raceSession: results[position]!.raceSession,
-      };
-    });
+    }
 
     const tipps = await grandPrixService.getAllTipps(props.gp, props.session, currentCommunity);
+    currentUserTipps.value = tipps[currentUser.id] || [];
 
-    if (!props.session.isBeforeClosureDate()) {
-      const score: ScoreCalculations = await scoreService.getPointsByPositionInGrandPrix(currentCommunity, props.gp, props.session);
-      pointsByPosition.value = score.pointsByPosition;
-      totalHits.value = score.totalHits;
-      hitsBySession.value = score.hitsBySession;
+    const simulatedSessionPointsByUser: Record<number, number> = {};
+    if (simulationActive.value) {
+      for (const userId in pointsByPosition.value) {
+        const positions = pointsByPosition.value[Number(userId)] || {};
+        simulatedSessionPointsByUser[Number(userId)] = Object.values(positions).reduce((acc, v) => acc + (v ?? 0), 0);
+      }
     }
 
     tableData.value = props.communityMembers.map((comUser) => {
@@ -410,6 +536,18 @@ const loadData = async (): Promise<void> => {
         row.score.previousStandings = userScore.previousStandings || 0;
       }
 
+      // Ajuste visual en modo simulación: sustituimos los puntos de esta sesión por los simulados
+      // y arrastramos el delta a GP/TOT para que la ordenación y el ganador se vean afectados.
+      if (simulationActive.value) {
+        const originalSessionPoints = row.score.bySession[props.session.id] ?? 0;
+        const simulatedSessionPoints = simulatedSessionPointsByUser[comUser.user.id] ?? originalSessionPoints;
+        const delta = simulatedSessionPoints - originalSessionPoints;
+
+        row.score.bySession = {...row.score.bySession, [props.session.id]: simulatedSessionPoints};
+        row.score.gp = (row.score.gp ?? 0) + delta;
+        row.score.accumulated = (row.score.accumulated ?? 0) + delta;
+      }
+
       row.score.totalHits = totalHits.value[comUser.user.id] ?? row.score.totalHits;
       return row;
     });
@@ -418,6 +556,22 @@ const loadData = async (): Promise<void> => {
       winnersBySession.value[ses.id] = findWinnerUserOfSession(ses);
     });
     winnersOfGrandPrix.value = findWinnerUserOfSession();
+
+    if (simulationActive.value) {
+      const findWinnersFromRows = (getter: (row: TableRow) => number): string[] => {
+        let max = -Infinity;
+        for (const row of tableData.value) {
+          max = Math.max(max, getter(row));
+        }
+        if (!Number.isFinite(max) || max === 0) return [];
+        return tableData.value
+          .filter((row) => getter(row) === max)
+          .map((row) => row.user.username);
+      };
+
+      winnersBySession.value[props.session.id] = findWinnersFromRows((row) => row.score.bySession[props.session.id] ?? 0);
+      winnersOfGrandPrix.value = findWinnersFromRows((row) => row.score.gp ?? 0);
+    }
   } finally {
     loaded.value = true;
   }
@@ -432,7 +586,14 @@ onBeforeUnmount(() => {
 });
 
 watch(
-  () => [props.session.id, props.gp.id, props.communityMembers.length],
+  () => [
+    props.session.id,
+    props.gp.id,
+    props.communityMembers.length,
+    isSimulated.value,
+    simulatedResults.value,
+    simulatedCalculations.value,
+  ],
   () => {
     loadData();
   },

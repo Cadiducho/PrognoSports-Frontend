@@ -46,10 +46,16 @@ export class ScoreService {
     }
 
     public async getPointsByPositionInGrandPrixSimulated(community: Community, gp: GrandPrix, session: RaceSession, results: Map<number, string>): Promise<ScoreCalculations> {
-        const resultsObject: Dictionary<number, string> = {};
-        results.forEach((value, key) => {
-            resultsObject[key] = value;
+        const resultsPayload = Array.from(results.entries()).map(([position, driverId]) => {
+            return {
+                position,
+                driver: Number(driverId),
+            };
         });
-        return await axios.post(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.id}/tipps/${community.id}/calculations`, { results: resultsObject });
+
+        return await axios.post(
+            `/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.id}/tipps/${community.id}/calculations`,
+            {results: resultsPayload}
+        );
     }
 }
