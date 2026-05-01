@@ -1,6 +1,7 @@
 import js from '@eslint/js';
 import ts from 'typescript-eslint';
 import vue from 'eslint-plugin-vue';
+import vueParser from 'vue-eslint-parser';
 
 export default [
     // js
@@ -26,8 +27,12 @@ export default [
     {
         files: ['*.vue', '**/*.vue'],
         languageOptions: {
+            parser: vueParser,
             parserOptions: {
                 parser: ts.parser,
+                extraFileExtensions: ['.vue'],
+                ecmaVersion: 'latest',
+                sourceType: 'module',
             },
         },
     },

@@ -27,8 +27,15 @@
           @click="col.sortable && handleSort(col)"
         >
           <div class="flex items-center gap-2">
-            <span>{{ col.label }}</span>
-            <span v-if="col.sortable && sortField === col.sortKey" class="text-xs">
+            <span v-if="!col.headerFormatter">{{ col.label }}</span>
+            <component
+              :is="col.headerFormatter"
+              v-else
+              :column="col"
+              v-bind="(col as any).headerFormatterProps || {}"
+            />
+
+            <span v-if="col.sortable && sortField === getColSortKey(col)" class="text-xs">
               <i v-if="sortDirection === 'ASC'" class="fas fa-arrow-up" />
               <i v-else class="fas fa-arrow-down" />
             </span>
@@ -44,7 +51,7 @@
       <tr
         v-for="(row, index) in visibleData"
         :key="props.rowKey ? getRowData(row, props.rowKey) : index"
-        :class="[getRowStyle(index), props.rowClass?.(row) || '']"
+        :class="[getRowStyle(index), props.rowClass?.(row, index) || '']"
       >
         <td
           v-for="col in columns"
@@ -83,7 +90,7 @@
                 />
               </template>
               <template v-else>
-                {{ col.formatter(getRowData(row, col.field)) }}
+                {{ formatFunctionCell(col, row) }}
               </template>
             </template>
             <template v-else>
@@ -125,14 +132,14 @@
   <p-pagination
     v-if="paginated"
     :initial-current="currentPage"
-    :per-page="perPage"
+    :per-page="perPage!"
     :total="sortedAndFilteredRows.length"
     @update:current-page="currentPage = $event"
   />
 </template>
 
 
-<script setup lang="ts" generic="T">
+<script setup lang="ts" generic="T extends Record<string, any> = Record<string, any>">
 import {computed, ref, watch} from "vue";
 import PPagination from "@/components/lib/PPagination.vue";
 import {useDayjs} from "@/composables/useDayjs";
@@ -141,7 +148,7 @@ import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 
 interface Props<T> {
-    columns: Array<Column>;
+    columns: Array<Column<T>>;
     rows: Array<T>;
     withFilter?: (original: Array<T>, filter: string) => Array<T>;
     hasViewButton?: boolean;
@@ -153,7 +160,7 @@ interface Props<T> {
     defaultSortField?: string | ((row: T) => any);
     defaultSortDirection?: SortDirection;
     rowKey?: string;
-    rowClass?: (row: T) => string;
+    rowClass?: (row: T, index?: number) => string;
 }
 const props = withDefaults(defineProps<Props<T>>(), {
     withFilter: undefined,
@@ -172,7 +179,7 @@ defineEmits<{
     view: [element: T],
     edit: [element: T],
     delete: [element: T]
-    click: [element: T, column: Column, value: T]
+    click: [element: T, column: Column<T>, value: unknown]
 }>();
 const dayjs = useDayjs();
 const dateDiff = dayjs.dateDiff;
@@ -238,8 +245,8 @@ const sortedAndFilteredRows = computed((): Array<T> => {
     return result;
 });
 
-const handleSort = (col: Column) => {
-    const colSortKey = col.sortKey ?? col.field;
+const handleSort = (col: Column<T>) => {
+    const colSortKey = getColSortKey(col);
 
     if (sortField.value === colSortKey) {
         // Toggle direction if clicking same column
@@ -251,9 +258,13 @@ const handleSort = (col: Column) => {
     }
 };
 
-const getHeaderStyle = () => {
-  return ["border-b", "dark:border-slate-600", "font-medium", "p-2", "pl-8", "pt-0", "pb-3", "text-slate-500", "dark:text-slate-200", "text-left"];
-}
+const getColSortKey = (col: Column<T>) => col.sortKey ?? col.field;
+
+const formatFunctionCell = (col: Column<T>, row: T): string => {
+  if (typeof col.formatter !== 'function') return '';
+  return col.formatter(getRowData(row, col.field), row, col);
+};
+
 const getTdStyle = () => {
   return ["border-b", "dark:border-slate-600", "p-2", "text-slate-700", "dark:text-slate-200"];
 }
@@ -263,12 +274,16 @@ const getRowStyle = (index: number): string[] => {
     return ["bg-gray-100", "dark:bg-gray-900", "hover:bg-slate-200", "dark:hover:bg-slate-800"];
 }
 
-const getRowData = (row: T, rowName: string): string => {
+const getRowData = (row: any, rowName: string): unknown => {
+    if (row == null) return undefined;
+    if (!rowName) return row;
+
+    // Support nested access like "user.username" and numeric keys like "gpsById.12.pointsInGP"
     if (rowName.includes(".")) {
         const [first, ...rest] = rowName.split(".");
-        return getRowData(row[first as keyof T] as T, rest.join(".")) as string;
+        return getRowData(row?.[first], rest.join("."));
     }
-    return row[rowName as keyof T] as unknown as string;
+    return row?.[rowName];
 }
 
 const visibleData = computed(() => {

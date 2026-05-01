@@ -31,53 +31,64 @@
           No hay datos de esta temporada
         </PrognoAlert>
 
-        <o-tabs
+        <PTabs
           v-else
           v-model="activeTab"
         >
-          <RankingByGpTab
-            :rows="byGpRows"
-            :community-members="communityMembers"
-            :grand-prixes="grandPrixesWithPoints"
-            :row-class="checkRowClass"
-            :check-gp-winner="checkGpWinner"
-            :gp-points-series="gpPointsSeries"
-            :gp-points-chart-options="gpPointsChartOptions"
-            :gp-points-chart-ref="setGpPointsChartRef"
-          />
-
-          <RankingAccumulatedTab
-            :rows="accumulatedRows"
-            :community-members="communityMembers"
-            :grand-prixes="grandPrixesWithPoints"
-            :row-class="checkRowClass"
-            :check-accumulated-winner="checkAccumulatedWinner"
-            :accumulated-points-series="accumulatedPointsSeries"
-            :accumulated-points-chart-options="accumulatedPointsChartOptions"
-            :accumulated-points-chart-ref="setAccumulatedPointsChartRef"
-          />
-
-          <RankingHitsTab
-            :rows="hitsRows"
-            :community-members="communityMembers"
-            :grand-prixes="grandPrixesWithPoints"
-            :row-class="checkRowClass"
-            :check-max-hits="checkMaxHits"
-            :hits-heatmap-series="hitsHeatmapSeries"
-            :hits-heatmap-options="hitsHeatmapOptions"
-            :hits-heatmap-chart-ref="setHitsHeatmapChartRef"
-          />
-
-          <RankingStandingsTab
-            :rows="accumulatedRows"
-            :community-members="communityMembers"
-            :grand-prixes="grandPrixesWithPoints"
-            :row-class="checkRowClass"
-            :standings-series="standingsSeries"
-            :standings-chart-options="standingsChartOptions"
-            :standings-chart-ref="setStandingsChartRef"
-          />
-        </o-tabs>
+          <template #tabs>
+            <PTabItem name="byGp" label="Ranking por Gran Premio" />
+            <PTabItem name="accumulated" label="Ranking acumulado" />
+            <PTabItem name="byHits" label="Ranking por aciertos" />
+            <PTabItem name="byRanking" label="Ranking por clasificacion" />
+          </template>
+          <PTabPanel name="byGp">
+            <RankingByGpTab
+              :rows="byGpRows"
+              :community-members="communityMembers"
+              :grand-prixes="grandPrixesWithPoints"
+              :row-class="checkRowClass"
+              :check-gp-winner="checkGpWinner"
+              :gp-points-series="gpPointsSeries"
+              :gp-points-chart-options="gpPointsChartOptions"
+              :gp-points-chart-ref="setGpPointsChartRef"
+            />
+          </PTabPanel>
+          <PTabPanel name="accumulated">
+            <RankingAccumulatedTab
+              :rows="accumulatedRows"
+              :community-members="communityMembers"
+              :grand-prixes="grandPrixesWithPoints"
+              :row-class="checkRowClass"
+              :check-accumulated-winner="checkAccumulatedWinner"
+              :accumulated-points-series="accumulatedPointsSeries"
+              :accumulated-points-chart-options="accumulatedPointsChartOptions"
+              :accumulated-points-chart-ref="setAccumulatedPointsChartRef"
+            />
+          </PTabPanel>
+          <PTabPanel name="byHits">
+            <RankingHitsTab
+              :rows="hitsRows"
+              :community-members="communityMembers"
+              :grand-prixes="grandPrixesWithPoints"
+              :row-class="checkRowClass"
+              :check-max-hits="checkMaxHits"
+              :hits-heatmap-series="hitsHeatmapSeries"
+              :hits-heatmap-options="hitsHeatmapOptions"
+              :hits-heatmap-chart-ref="setHitsHeatmapChartRef"
+            />
+          </PTabPanel>
+          <PTabPanel name="byRanking">
+            <RankingStandingsTab
+              :rows="accumulatedRows"
+              :community-members="communityMembers"
+              :grand-prixes="grandPrixesWithPoints"
+              :row-class="checkRowClass"
+              :standings-series="standingsSeries"
+              :standings-chart-options="standingsChartOptions"
+              :standings-chart-ref="setStandingsChartRef"
+            />
+          </PTabPanel>
+        </PTabs>
       </template>
     </PCard>
   </div>
@@ -97,10 +108,13 @@ import RankingByGpTab from "@/pages/ranking/components/RankingByGpTab.vue";
 import RankingAccumulatedTab from "@/pages/ranking/components/RankingAccumulatedTab.vue";
 import RankingHitsTab from "@/pages/ranking/components/RankingHitsTab.vue";
 import RankingStandingsTab from "@/pages/ranking/components/RankingStandingsTab.vue";
+import PTabPanel from "@/components/lib/PTabPanel.vue";
 import { TableEntry } from "@/pages/ranking/types/ranking";
 import { useRankingData } from "@/pages/ranking/composables/useRankingData";
 import { useRankingCharts } from "@/pages/ranking/composables/useRankingCharts";
 import { isApexChartInstance } from "@/composables/useApexChart";
+import PTabs from "@/components/lib/PTabs.vue";
+import PTabItem from "@/components/lib/PTabItem.vue";
 
 const authStore = useAuthStore();
 const communityStore = useCommunityStore();

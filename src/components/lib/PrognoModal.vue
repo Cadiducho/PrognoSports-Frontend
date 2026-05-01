@@ -9,12 +9,12 @@
       class="absolute top-0 right-0 bottom-0 left-0 bg-gray-800/80"
       @click="close()"
     />
-    <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700 w-full md:w-1/2">
+    <div class="relative bg-white rounded-lg shadow-sm dark:dark:bg-gray-900 w-full md:w-1/2">
       <form @submit.prevent="handle()">
         <header class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
           <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
             <slot name="title">
-              Modal title
+              {{ props.title }}
             </slot>
           </h3>
           <button
@@ -59,7 +59,7 @@
                 </slot>
               </p-button>
               <p-button
-                color="warning"
+                color="info"
                 type="soft"
                 @click="close()"
               >
@@ -79,6 +79,9 @@
 
 import PButton from "@/components/lib/forms/PButton.vue";
 
+const props = defineProps({
+  title: { type: String, required: false },
+})
 const emit = defineEmits(['close', 'handle']);
 
 const close = () => {

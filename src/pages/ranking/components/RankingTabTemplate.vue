@@ -1,25 +1,20 @@
 <template>
-  <o-tab-item
-    :label="label"
-    :value="value"
+  <PTitle
+    type="subtitle"
+    class="mb-3"
   >
-    <PTitle
-      type="subtitle"
-      class="mb-3"
-    >
-      {{ title }}
-    </PTitle>
+    {{ title }}
+  </PTitle>
 
-    <slot name="intro" />
-    <slot name="table" />
-    <slot name="before-chart-title" />
+  <slot name="intro" />
+  <slot name="table" />
+  <slot name="before-chart-title" />
 
-    <h1 class="mt-4 mb-3 text-2xl font-semibold">
-      {{ chartTitle }}
-    </h1>
+  <h1 class="mt-4 mb-3 text-2xl font-semibold">
+    {{ chartTitle }}
+  </h1>
 
-    <slot name="chart" />
-  </o-tab-item>
+  <slot name="chart" />
 </template>
 
 <script setup lang="ts">
@@ -32,4 +27,3 @@ defineProps<{
   chartTitle: string;
 }>();
 </script>
-

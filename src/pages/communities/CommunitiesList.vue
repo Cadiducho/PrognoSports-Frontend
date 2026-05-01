@@ -27,14 +27,29 @@
         Nueva comunidad
       </p-button>
 
-      <o-tabs
+      <PTabs
         v-model="activeTab"
         variant="boxed"
       >
-        <o-tab-item
-          label="Mis comunidades"
-          :value="0"
-        >
+        <template #tabs>
+          <PTabItem
+            label="Mis comunidades"
+            name="0"
+          />
+          <PTabItem
+            label="Abiertas"
+            name="1"
+          />
+          <PTabItem
+            label="Cerradas"
+            name="2"
+          />
+          <PTabItem
+            label="Todas"
+            name="3"
+          />
+        </template>
+        <PTabPanel name="0">
           <PInput
             v-model="filtroComunidad"
             placeholder="Buscar comunidad"
@@ -48,12 +63,9 @@
             :community="community"
             :is-user-in-community="myCommunityList.some(c => c.id === community.id)"
           />
-        </o-tab-item>
+        </PTabPanel>
 
-        <o-tab-item
-          label="Abiertas"
-          :value="1"
-        >
+        <PTabPanel name="1">
           <PInput
             v-model="filtroComunidad"
             placeholder="Buscar comunidad"
@@ -67,12 +79,9 @@
             :community="community"
             :is-user-in-community="myCommunityList.some(c => c.id === community.id)"
           />
-        </o-tab-item>
+        </PTabPanel>
 
-        <o-tab-item
-          label="Cerradas"
-          :value="2"
-        >
+        <PTabPanel name="2">
           <PInput
             v-model="filtroComunidad"
             placeholder="Buscar comunidad"
@@ -89,12 +98,9 @@
             :community="community"
             :is-user-in-community="myCommunityList.some(c => c.id === community.id)"
           />
-        </o-tab-item>
+        </PTabPanel>
 
-        <o-tab-item
-          label="Todas"
-          :value="3"
-        >
+        <PTabPanel name="3">
           <PInput
             v-model="filtroComunidad"
             placeholder="Buscar comunidad"
@@ -108,8 +114,8 @@
             :community="community"
             :is-user-in-community="myCommunityList.some(c => c.id === community.id)"
           />
-        </o-tab-item>
-      </o-tabs>
+        </PTabPanel>
+      </PTabs>
     </div>
   </PCard>
 </template>
@@ -127,6 +133,9 @@ import CommunityListItem from "@/components/communities/CommunityListItem.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
+import PTabPanel from "@/components/lib/PTabPanel.vue";
+import PTabs from "@/components/lib/PTabs.vue";
+import PTabItem from "@/components/lib/PTabItem.vue";
 
 const emitter = useEmitter();
 const authStore = useAuthStore();
@@ -135,7 +144,7 @@ const communityStore = useCommunityStore();
 const currentUser = authStore.loggedUser;
 const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
 
-const activeTab = ref(1);
+const activeTab = ref('1');
 const filtroComunidad = ref('');
 const isLoading = ref(true);
 const communityList = ref<Array<Community>>([]);

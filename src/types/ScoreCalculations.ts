@@ -1,10 +1,11 @@
 import {Dictionary} from "@/types/Dictionary";
-import {UserId} from "@/types/User";
-import {SessionId} from "@/types/RaceSession";
+import type {UserId} from "@/types/User";
+import type {SessionId} from "@/types/RaceSession";
 
 export interface ScoreCalculations {
   /**
-   * Points by position and session. The first key is the user id, the second key is the position, the value is the points for that position. For example:
+   * Points by position for the requested RaceSession.
+   * El primer nivel es el userId, el segundo nivel es la posición (1..N) y el valor son los puntos.
    * {
    *   "1": { // user id
    *     "1": 25, // position 1 -> 25 points
@@ -19,7 +20,7 @@ export interface ScoreCalculations {
    *   ...
    * }
    */
-  pointsByPosition: Dictionary<SessionId, Dictionary<UserId, number>>
+  pointsByPosition: Dictionary<UserId, Dictionary<number, number>>
 
   /**
    * Hit amount by each user for this RaceSession. The key is the user id, the value is the amount of hits for that user. For example:
@@ -57,5 +58,5 @@ export interface ScoreCalculations {
    *   ...
    * }
    */
-  totalHits: Dictionary<UserId, UserId>
+  totalHits: Dictionary<UserId, number>
 }

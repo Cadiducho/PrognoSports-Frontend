@@ -73,7 +73,7 @@ const closeAlert = () => {
 const alertClasses = computed(() => {
   const baseClasses = "flex items-center text-sm font-bold px-4 py-3 mb-4 rounded";
   const variantClasses = {
-    info: "bg-info-100 dark:bg-info-400 text-info-700 dark:text-white border-info-500",
+    info: "bg-info-100 dark:bg-info-600 text-info-700 dark:text-slate-200 border-info-500",
     danger: "bg-error-100 text-error-500 border border-error-200",
     warning: "bg-warning-100 border border-warning-200 text-warning-600",
     success: "bg-success-100 border border-success-200 text-success-500"

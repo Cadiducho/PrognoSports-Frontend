@@ -12,7 +12,7 @@ export function useRankingData(currentCommunity: Ref<Community>) {
   const seasonList = ref<Season[]>([]);
   const chosenSeason = ref<Season | null>(null);
 
-  const activeTab = ref(0);
+  const activeTab = ref('byGp');
   const grandPrixes = ref<GrandPrix[]>([]);
   const grandPrixesWithPointsIds = ref<number[]>([]);
 
