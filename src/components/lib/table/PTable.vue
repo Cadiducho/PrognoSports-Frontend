@@ -14,120 +14,131 @@
     </PField>
   </form>
 
-  <table class="table-auto w-full border-collapse">
-    <thead class="border-b-2">
-      <tr>
-        <th
-          v-for="col in columns"
-          :key="col.field"
-          :class="[
-            'border-b dark:border-slate-600 font-medium p-2 pl-8 pt-0 pb-3 text-slate-500 dark:text-slate-200 text-left',
-            col.sortable ? 'cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700' : ''
-          ]"
-          @click="col.sortable && handleSort(col)"
-        >
-          <div class="flex items-center gap-2">
-            <span v-if="!col.headerFormatter">{{ col.label }}</span>
-            <component
-              :is="col.headerFormatter"
-              v-else
-              :column="col"
-              v-bind="(col as any).headerFormatterProps || {}"
-            />
+  <div class="overflow-x-auto">
+    <table class="table-auto min-w-max w-full border-collapse">
+      <thead class="border-b-2">
+        <tr>
+          <th
+            v-for="col in columns"
+            :key="col.field"
+            :class="[
+              'border-b dark:border-slate-600 font-medium p-2 pl-8 pt-0 pb-3 text-slate-500 dark:text-slate-200 text-left',
+              col.sortable ? 'cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700' : ''
+            ]"
+            @click="col.sortable && handleSort(col)"
+          >
+            <div class="flex items-center gap-2">
+              <span v-if="!col.headerFormatter">{{ col.label }}</span>
+              <component
+                :is="col.headerFormatter"
+                v-else
+                :column="col"
+                v-bind="(col as any).headerFormatterProps || {}"
+              />
 
-            <span v-if="col.sortable && sortField === getColSortKey(col)" class="text-xs">
-              <i v-if="sortDirection === 'ASC'" class="fas fa-arrow-up" />
-              <i v-else class="fas fa-arrow-down" />
-            </span>
-          </div>
-        </th>
-        <td
-          v-if="hasActions"
-          class="empty"
-        />
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        v-for="(row, index) in visibleData"
-        :key="props.rowKey ? getRowData(row, props.rowKey) : index"
-        :class="[getRowStyle(index), props.rowClass?.(row, index) || '']"
-      >
-        <td
-          v-for="col in columns"
-          :key="col.field"
-          :class="getTdStyle()"
-          @click="$emit('click', row, col, getRowData(row, col.field))"
-        >
-          <template v-if="col.type === 'boolean'">
-            <span
-              v-if="getRowData(row, col.field)"
-              class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-success-500"
-            >Sí</span>
-            <span
-              v-else
-              class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-error-500"
-            >No</span>
-          </template>
-          <template v-else-if="col.type === 'date'">
-            {{ humanDate(getRowData(row, col.field) as unknown as Date) }}
-          </template>
-          <template v-else-if="col.type === 'datetime'">
-            {{ humanDateTime(getRowData(row, col.field) as unknown as Date) }}
-          </template>
-          <template v-else-if="col.type === 'datediff'">
-            {{ dateDiff(getRowData(row, col.field) as unknown as Date) }}
-          </template>
-          <template v-else>
-            <template v-if="col.formatter !== undefined">
-              <template v-if="typeof col.formatter !== 'function'">
-                <component
-                  :is="col.formatter"
-                  :row="row"
-                  :column="col"
-                  :value="getRowData(row, col.field)"
-                  v-bind="(col as any).formatterProps || {}"
+              <span
+                v-if="col.sortable && sortField === getColSortKey(col)"
+                class="text-xs"
+              >
+                <i
+                  v-if="sortDirection === 'ASC'"
+                  class="fas fa-arrow-up"
                 />
-              </template>
-              <template v-else>
-                {{ formatFunctionCell(col, row) }}
-              </template>
+                <i
+                  v-else
+                  class="fas fa-arrow-down"
+                />
+              </span>
+            </div>
+          </th>
+          <td
+            v-if="hasActions"
+            class="empty"
+          />
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="(row, index) in visibleData"
+          :key="props.rowKey ? getRowData(row, props.rowKey) : index"
+          :class="[getRowStyle(index), props.rowClass?.(row, index) || '']"
+        >
+          <td
+            v-for="col in columns"
+            :key="col.field"
+            :class="getTdStyle()"
+            @click="$emit('click', row, col, getRowData(row, col.field))"
+          >
+            <template v-if="col.type === 'boolean'">
+              <span
+                v-if="getRowData(row, col.field)"
+                class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-success-500"
+              >Sí</span>
+              <span
+                v-else
+                class="px-3 py-1 text-sm text-white font-semibold rounded-full bg-error-500"
+              >No</span>
+            </template>
+            <template v-else-if="col.type === 'date'">
+              {{ humanDate(getRowData(row, col.field) as unknown as Date) }}
+            </template>
+            <template v-else-if="col.type === 'datetime'">
+              {{ humanDateTime(getRowData(row, col.field) as unknown as Date) }}
+            </template>
+            <template v-else-if="col.type === 'datediff'">
+              {{ dateDiff(getRowData(row, col.field) as unknown as Date) }}
             </template>
             <template v-else>
-              {{ getRowData(row, col.field) }}
+              <template v-if="col.formatter !== undefined">
+                <template v-if="typeof col.formatter !== 'function'">
+                  <component
+                    :is="col.formatter"
+                    :row="row"
+                    :column="col"
+                    :value="getRowData(row, col.field)"
+                    v-bind="(col as any).formatterProps || {}"
+                  />
+                </template>
+                <template v-else>
+                  {{ formatFunctionCell(col, row) }}
+                </template>
+              </template>
+              <template v-else>
+                {{ getRowData(row, col.field) }}
+              </template>
             </template>
-          </template>
-        </td>
-        <td
-          v-if="hasActions"
-          :class="getTdStyle()"
-          class="!text-right"
-        >
-          <slot
-            name="actions"
-            :row="row"
-            :index="index"
+          </td>
+          <td
+            v-if="hasActions"
+            :class="getTdStyle()"
+            class="!text-right"
           >
-            <i
-              v-if="hasViewButton"
-              class="fa fa-eye cursor-pointer p-1 text-brand-accent-500 hover:text-brand-accent-600 dark:text-brand-accent-500 dark:hover:text-brand-accent-600"
-              @click="$emit('view', row)"
-            />
-            <i
-              v-if="hasEditButton"
-              class="fa fa-pencil cursor-pointer text-warning-500 hover:text-warning-600 p-1"
-              @click="$emit('edit', row)"
-            />
-            <i
-              v-if="hasDeleteButton"
-              class="fa fa-trash cursor-pointer text-error-600 hover:text-error-700 p-1"
-              @click="$emit('delete', row)"
-            />
-          </slot>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+            <slot
+              name="actions"
+              :row="row"
+              :index="index"
+            >
+              <i
+                v-if="hasViewButton"
+                class="fa fa-eye cursor-pointer p-1 text-brand-accent-500 hover:text-brand-accent-600 dark:text-brand-accent-500 dark:hover:text-brand-accent-600"
+                @click="$emit('view', row)"
+              />
+              <i
+                v-if="hasEditButton"
+                class="fa fa-pencil cursor-pointer text-warning-500 hover:text-warning-600 p-1"
+                @click="$emit('edit', row)"
+              />
+              <i
+                v-if="hasDeleteButton"
+                class="fa fa-trash cursor-pointer text-error-600 hover:text-error-700 p-1"
+                @click="$emit('delete', row)"
+              />
+            </slot>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <p-pagination
     v-if="paginated"

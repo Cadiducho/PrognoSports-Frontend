@@ -153,7 +153,7 @@
     <p-button
       v-else
       type="soft"
-      color="warning"
+      color="danger"
       expanded
       disabled
     >
