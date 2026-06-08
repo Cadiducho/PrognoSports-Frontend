@@ -47,12 +47,10 @@ export function useRankingCharts(darkMode: Ref<boolean>, grandPrixesForTooltip: 
         opacity: 1,
       },
       zoom: {
-        type: "xy",
-        enabled: true,
-        autoScaleYaxis: true,
+        enabled: false,
       },
       toolbar: {
-        autoSelected: "zoom",
+        show: false
       },
     },
     dataLabels: {

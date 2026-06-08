@@ -491,10 +491,22 @@ const loadData = async (): Promise<void> => {
       });
 
       if (!props.session.isBeforeClosureDate()) {
-        const score: ScoreCalculations = await scoreService.getPointsByPositionInGrandPrix(currentCommunity, props.gp, props.session);
-        pointsByPosition.value = (score.pointsByPosition as any) || {};
-        totalHits.value = score.totalHits || {};
-        hitsBySession.value = score.hitsBySession || {};
+        try {
+          // Obtenemos el cálculo de puntos con los resultados guardados
+          const score: ScoreCalculations = await scoreService.getPointsByPositionInGrandPrix(
+            currentCommunity,
+            props.gp,
+            props.session
+          );
+          pointsByPosition.value = (score.pointsByPosition as any) || {};
+          totalHits.value = score.totalHits || {};
+          hitsBySession.value = score.hitsBySession || {};
+        } catch {
+          // Si la API responde invalid request (sin resultados guardados), mantenemos la tabla sin puntos.
+          pointsByPosition.value = {};
+          totalHits.value = {};
+          hitsBySession.value = {};
+        }
       }
     }
 
