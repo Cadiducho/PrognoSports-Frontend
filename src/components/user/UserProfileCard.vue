@@ -187,16 +187,15 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
-@use '@/scss/variables';
+<style scoped>
 
 .photoOpacity {
     opacity: 0.75;
 }
 
-// Resolución móvil
-@media screen and (max-width: variables.$tablet) {
-    .image img {
+/* Resolución móvil */
+@media screen and (max-width: 769px) {
+    .ui-image img {
         max-width: 50%;
     }
     .edit-icon {

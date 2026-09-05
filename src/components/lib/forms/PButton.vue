@@ -117,7 +117,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .small {
   @apply py-1 px-3 text-sm;
 }

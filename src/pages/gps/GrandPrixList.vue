@@ -216,7 +216,7 @@ defineExpose({
 });
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 .timeline .timeline-item {
     padding-bottom: 0!important;
 }

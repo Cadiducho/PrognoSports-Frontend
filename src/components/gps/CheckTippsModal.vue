@@ -104,7 +104,7 @@ onMounted(() => {
 });
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 .simulate-container {
   padding: 0.5rem 0;
 }

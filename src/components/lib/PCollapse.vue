@@ -13,7 +13,7 @@
 const isOpen = defineModel<boolean>("open", { default: true });
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 .collapse-enter-active, .collapse-leave-active {
   transition: opacity 0.2s ease;
 }

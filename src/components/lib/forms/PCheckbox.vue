@@ -42,7 +42,7 @@ const checkboxClasses = computed(() => ({
 
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .checkbox {
   @apply cursor-pointer w-5 h-5 rounded focus:ring-2 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800;
 

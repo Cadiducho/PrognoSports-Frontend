@@ -148,7 +148,7 @@ const sendToRegister = () => {
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 * {
     padding: 0;
     margin: 0;
