@@ -15,7 +15,7 @@
     "@vue-leaflet/vue-leaflet": "0.10.1",
     "@vueuse/core": "14.2.1",
     "apexcharts": "5.10.5",
-    "axios": "1.16.0",
+    "axios": "1.18.0",
     "dayjs": "1.11.20",
     "leaflet": "1.9.4",
     "marked": "18.0.2",
@@ -36,12 +36,12 @@
     "bulma": "^0.9.4",
     "eslint": "10.2.1",
     "eslint-plugin-vue": "10.9.0",
-    "postcss": "8.5.9",
+    "postcss": "8.5.23",
     "sass": "1.77.0",
     "tailwindcss": "3.4.19",
     "typescript": "6.0.3",
     "typescript-eslint": "8.59.1",
-    "vite": "8.0.10",
+    "vite": "8.0.16",
     "vue-eslint-parser": "^10.4.0"
   }
 }
