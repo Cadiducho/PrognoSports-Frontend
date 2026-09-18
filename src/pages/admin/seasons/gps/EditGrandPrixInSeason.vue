@@ -113,6 +113,7 @@
                   v-model="grandPrix.circuit"
                   placeholder="Selecciona un circuito"
                   expanded
+                  @update:model-value="onCircuitChange"
                 >
                   <option
                     v-for="circuit in circuitList"
@@ -269,9 +270,16 @@ export default defineComponent({
         this.grandPrix = gp;
         this.thereIsGrandPrix = true;
 
-        circuitService.getCircuitList().then((list) => {
+        circuitService.getCircuitList().then(async (list) => {
           this.circuitList = [];
           this.circuitList.push(...list);
+
+          const selectedCircuit = this.circuitList.find(circuit => circuit.id === gp.circuit?.id);
+          if (selectedCircuit) {
+            this.grandPrix.circuit = selectedCircuit;
+            await this.loadCircuitVariants(selectedCircuit);
+            this.syncGrandPrixVariant();
+          }
         });
         seasonService.getSeasonList().then((list) => {
           this.seasonList = [];
@@ -287,34 +295,59 @@ export default defineComponent({
     });
   },
   methods: {
+    async loadCircuitVariants(circuit: Circuit): Promise<void> {
+      if (circuit.variants.length === 0) {
+        circuit.variants.push(...await circuitService.listCircuitVariant(circuit));
+      }
+    },
+    syncGrandPrixVariant(): void {
+      const variants = this.grandPrix.circuit?.variants ?? [];
+      const selectedVariant = variants.find(variant => variant.id === this.grandPrix.variant?.id)
+        ?? variants.find(variant => variant.name === this.grandPrix.variant?.name);
+
+      this.grandPrix.variant = selectedVariant;
+    },
+    async onCircuitChange(circuit?: Circuit): Promise<void> {
+      this.grandPrix.variant = undefined;
+      if (!circuit) {
+        return;
+      }
+
+      await this.loadCircuitVariants(circuit);
+      if (circuit.variants.length === 1) {
+        this.grandPrix.variant = circuit.variants[0];
+      }
+    },
     isDataOk(): boolean {
-      return !(this.grandPrix!.id == undefined
-        && this.grandPrix!.code == undefined
-        && this.grandPrix!.name == undefined
-        && this.grandPrix!.circuit!.id == undefined
-        && this.grandPrix!.laps == undefined
-        && this.grandPrix!.round == undefined
-        && this.grandPrix!.season!.id == undefined
-      )
+      return !!(this.grandPrix.id
+        && this.grandPrix.code
+        && this.grandPrix.name
+        && this.grandPrix.circuit?.id
+        && this.grandPrix.variant?.name
+        && this.grandPrix.laps != undefined
+        && this.grandPrix.round != undefined
+        && this.season.id
+      );
     },
     editGrandPrix(): void {
       let data = {
-        id: this.grandPrix!.id,
+        id: this.grandPrix.id,
         season: this.season.id,
+        competition: this.grandPrix.competition.id,
         round: this.grandPrix!.round,
         name: this.grandPrix!.name,
         code: this.grandPrix!.code,
-        circuit: this.grandPrix!.circuit.id,
-        variant: this.grandPrix!.circuit.variant.name,
+        circuit: this.grandPrix.circuit!.id,
+        variant: this.grandPrix.variant!.name,
         laps: this.grandPrix!.laps,
         suspended: this.grandPrix!.suspended
       };
 
-      grandPrixService.editGrandPrix(data).then((result) => {
-        notificationService.showNotification("Se ha editado correctamente el gran premio `" + result.name + "`", "error");
+      grandPrixService.editGrandPrixInSeason(data).then((result) => {
+        notificationService.showNotification("Se ha editado correctamente el gran premio `" + result.name + "`", "success");
 
         this.$router.push({
-          name: 'adminGps'
+          name: 'adminGpsInSeason'
         })
       }).catch((error) => {
         notificationService.showNotification(error.message, "error");
