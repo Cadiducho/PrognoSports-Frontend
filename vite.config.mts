@@ -16,10 +16,6 @@ export default defineConfig(({ command, mode }) => {
         plugins: [
             vue(),
         ],
-        build: {
-            // Cambia el minificador de CSS de 'lightningcss' a 'esbuild' para soportar Bulma. Eliminar cuando se elimine Bulma
-            cssMinify: 'esbuild'
-        },
         resolve: {
             alias: {
                 '@': fileURLToPath(new URL('./src', import.meta.url))

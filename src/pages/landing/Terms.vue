@@ -4,10 +4,10 @@ import PCard from "@/components/lib/PCard.vue";
 
 <template>
   <PCard class="container mt-6 mb-6">
-    <h1 class="title">
+    <h1 class="ui-title">
       Términos y Condiciones
     </h1>
-    <section class="content">
+    <section class="ui-content">
       <h2>Condiciones generales</h2>
       <section>
         <ul>
@@ -29,7 +29,7 @@ import PCard from "@/components/lib/PCard.vue";
       </section>
     </section>
 
-    <section class="content">
+    <section class="ui-content">
       <h2>Responsabilidad</h2>
       <section>
         <ul>
@@ -43,7 +43,7 @@ import PCard from "@/components/lib/PCard.vue";
       </section>
     </section>
 
-    <section class="content">
+    <section class="ui-content">
       <h2>Propiedad de los contenidos</h2>
       <ul>
         <li><b>PrognoSports</b> no está asociado de ninguna manera con empresas externas propietarias de contenidos como <b>Fórmula 1</b>, <b>IndyCar</b>, <b>World Endurance Championship</b>, <b>NASCAR</b>, <b>IMSA</b>, <b>Moto GP</b>, <b>LaLiga</b>, <b>UEFA</b>, <b>ATP</b> o similares. Todos estas marcas pertenecen a sus respectivos propietarios.</li>
@@ -53,7 +53,7 @@ import PCard from "@/components/lib/PCard.vue";
       </ul>
     </section>
 
-    <section class="content">
+    <section class="ui-content">
       <h2>Financiación</h2>
       <p>
         La financiación del a plataforma, propiedad de <b>PrognoSports</b>, provienen de donaciones de los usuarios. Aquellos usuarios donantes recibirán un distintivo rango dentro de la plataforma a modo de reconocimiento.
@@ -63,7 +63,7 @@ import PCard from "@/components/lib/PCard.vue";
         </router-link>.
       </p>
     </section>
-    <p class="content">
+    <p class="ui-content">
       Más enlaces de interés: <router-link :to="{name: 'rules'}">
         Normativa
       </router-link> · <router-link :to="{name: 'privacy'}">

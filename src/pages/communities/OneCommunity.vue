@@ -11,21 +11,21 @@
     </p>
     <div
       v-else
-      class="columns"
+      class="ui-grid"
     >
-      <div class="column is-3">
+      <div class="ui-column ui-col-3">
         <PCard>
-          <div class="card-image">
-            <figure class="image">
+          <div class="ui-card-content">
+            <figure class="ui-image">
               <img
                 :src="community.communityImage()"
                 alt="Community logo"
               >
             </figure>
           </div>
-          <div class="card-content">
-            <div class="media">
-              <div class="media-content">
+          <div class="ui-card-content">
+            <div class="ui-media">
+              <div class="ui-media-content">
                 <PTitle>
                   {{ community.name }}
                 </PTitle>
@@ -35,7 +35,7 @@
               </div>
             </div>
 
-            <div class="content">
+            <div class="ui-content">
               <p class="card-text">
                 <b>Fecha de creación: </b>{{ humanDateTime(community.created) }}
               </p>
@@ -47,13 +47,13 @@
               </p>
               <p
                 v-if="community.open"
-                class="card-text has-text-success"
+                class="card-text ui-text-success"
               >
                 Comunidad abierta/pública
               </p>
               <p
                 v-else
-                class="card-text has-text-danger"
+                class="card-text ui-text-danger"
               >
                 Comunidad cerrada/privada
               </p>
@@ -65,12 +65,12 @@
                 variant="rounded is-info"
               >
                 <input
-                  class="input is-rounded is-small"
+                  class="ui-input rounded-full ui-small"
                   type="text"
                   :value="community.invitation"
                 >
                 <PButton
-                  class="button is-primary is-small is-rounded"
+                  class="ui-button ui-primary ui-small rounded-full"
                   size="small"
                   @click="clickInvitation"
                 >
@@ -85,18 +85,18 @@
           </div>
         </PCard>
       </div>
-      <div class="column">
+      <div class="ui-column">
         <PCard>
           <div
             v-if="!community.open && !isUserInCommunity"
-            class="card-content"
+            class="ui-card-content"
           >
-            <div class="media">
-              <div class="media-content">
-                <p class="title is-4">
+            <div class="ui-media">
+              <div class="ui-media-content">
+                <p class="ui-title ui-title-4">
                   Comunidad cerrada
                 </p>
-                <p class="subtitle is-6">
+                <p class="ui-subtitle ui-subtitle-6">
                   Esta comunidad tiene la privacidad cerrada y
                   por lo tanto no puedes ver su lista de participantes si tú no eres miembro
                 </p>
@@ -105,10 +105,10 @@
           </div>
           <div
             v-else-if="!members.length"
-            class="card-content"
+            class="ui-card-content"
           >
-            <div class="media">
-              <div class="media-content">
+            <div class="ui-media">
+              <div class="ui-media-content">
                 <PTitle type="title">
                   Comunidad sin participantes
                 </PTitle>
@@ -120,11 +120,11 @@
           </div>
           <div
             v-else
-            class="card-content"
+            class="ui-card-content"
           >
             <section
               v-if="currentCommunity && currentCommunity.competition"
-              class="content"
+              class="ui-content"
             >
               <h2>Normas y puntuaciones</h2>
               <RulesAndPointsTable
@@ -133,7 +133,7 @@
               />
             </section>
 
-            <p class="title is-4">
+            <p class="ui-title ui-title-4">
               Usuarios participando
             </p>
 
@@ -156,9 +156,9 @@
               :open="opcionesOrdenadoOpen"
               class="box-ordenado"
             >
-              <div class="box mt-1">
+              <div class="ui-surface mt-1">
                 <label class="label">Orderar lista de usuarios</label>
-                <div class="field mb-0">
+                <div class="ui-field mb-0">
                   <PRadio
                     v-model="orderType"
                     :value="0"
@@ -166,7 +166,7 @@
                     Por nombre de usuario
                   </PRadio>
                 </div>
-                <div class="field mb-0">
+                <div class="ui-field mb-0">
                   <PRadio
                     v-model="orderType"
                     :value="1"
@@ -174,7 +174,7 @@
                     Por rango
                   </PRadio>
                 </div>
-                <div class="field mb-0">
+                <div class="ui-field mb-0">
                   <PRadio
                     v-model="orderType"
                     :value="2"
@@ -182,7 +182,7 @@
                     Por conexión reciente
                   </PRadio>
                 </div>
-                <div class="field mb-1">
+                <div class="ui-field mb-1">
                   <PRadio
                     v-model="orderType"
                     :value="3"
@@ -191,7 +191,7 @@
                   </PRadio>
                 </div>
                 <label class="label mt-2">Dirección del orden</label>
-                <div class="field">
+                <div class="ui-field">
                   <PRadio
                     v-model="orderAscendent"
                     :value="true"

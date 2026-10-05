@@ -1,5 +1,5 @@
 <template>
-    <div id="createConstructor" class="box">
+    <div id="createConstructor" class="ui-surface">
         <PTitle class="mb-5" name="Crear constructor"/>
 
         <PInput label="Nombre del constructor" name="name" v-model="name" />

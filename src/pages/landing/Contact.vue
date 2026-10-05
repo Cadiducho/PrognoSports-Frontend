@@ -4,7 +4,7 @@
     <section class="dark:text-gray-200">
       <p>Si así se desea, el usuario podrá contactar con los propietarios y administración de la plataforma mediante correo electrónico a través de la dirección <a href="mailto:info@prognosports.com">info@prognosports.com</a></p>
 
-      <h2 class="subtitle my-2 dark:text-gray-200">
+      <h2 class="ui-subtitle my-2 dark:text-gray-200">
         Redes Sociales
       </h2>
       <p>Mantente en contacto con <b>PrognoSports</b> a través de sus redes sociales:</p>

@@ -1,19 +1,16 @@
 <template>
   <div
     id="createCompetition"
-    class="box"
+    class="ui-surface"
   >
     <PTitle
       class="mb-5"
       name="Crear competición"
     />
 
-    <o-steps v-model="activeStep">
-      <o-step-item
-        step="1"
-        label="Datos de la competición"
-      >
-        <h2 class="title">
+    <PStepper v-model="activeStep" :steps="[{ label: 'Datos de la competición' }, { label: 'Finalizar' }]">
+      <template #step-0>
+        <h2 class="ui-title">
           Datos de la competición
         </h2>
 
@@ -54,13 +51,10 @@
         </PField>
 
         <hr>
-      </o-step-item>
+      </template>
 
-      <o-step-item
-        step="2"
-        label="Finalizar"
-      >
-        <h2 class="title">
+      <template #step-1>
+        <h2 class="ui-title">
           Finalizar
         </h2>
 
@@ -85,7 +79,7 @@
           Revisa los datos, se va a crear la siguiente competición
         </PrognoAlert>
 
-        <div class="content">
+        <div class="ui-content">
           <p class="card-text">
             <b>Nombre de la competición: </b>{{ createdCompetition.name }}
           </p>
@@ -96,7 +90,7 @@
             <b>Code de la competición: </b>{{ createdCompetition.code }}
           </p>
         </div>
-        <section class="content">
+        <section class="ui-content">
           <div v-html="compiledRules" />
         </section>
 
@@ -110,8 +104,8 @@
         >
           Crear competición
         </PButton>
-      </o-step-item>
-    </o-steps>
+      </template>
+    </PStepper>
   </div>
 </template>
 
@@ -119,7 +113,6 @@
 import PTitle from "@/components/lib/PTitle.vue";
 import {competitionService, notificationService} from "@/_services";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
-import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {ICompetition} from "@/types/Competition";
 import {marked} from "marked";
 
@@ -129,16 +122,17 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
+import PStepper from "@/components/lib/PStepper.vue";
 
 export default defineComponent({
     name: "CreateCompetition",
 
     components: {
       PrognoAlert,
+      PStepper,
       PInput,
       PField,
       PButton,
-        AlertNoPermission,
         AlertInvalidData,
         PTitle,
     },

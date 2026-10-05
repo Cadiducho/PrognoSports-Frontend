@@ -1,7 +1,7 @@
 <template>
   <div
     id="adminDrivers"
-    class="box"
+    class="ui-surface"
   >
     <PTitle
       class="mb-5"
@@ -37,13 +37,13 @@
       </template>
       <template #footer>
         <button
-          class="button is-danger"
+          class="ui-button ui-danger"
           @click="deleteCircuit(circuitToDelete)"
         >
           Eliminar
         </button>
         <button
-          class="button"
+          class="ui-button"
           @click="showConfirmDeleteModal = false"
         >
           Cancelar

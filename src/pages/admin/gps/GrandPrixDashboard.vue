@@ -72,7 +72,7 @@
       ¿Borrar Gran Premio?
     </template>
     <template #content>
-      Estás seguro de que deseas borrar el Gran Premio <span class="has-text-weight-semibold">{{ grandPrixToDelete.name }}</span>?
+      Estás seguro de que deseas borrar el Gran Premio <span class="ui-weight-semibold">{{ grandPrixToDelete.name }}</span>?
     </template>
     <template #saveText>
       Borrar Gran Premio

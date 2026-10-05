@@ -51,24 +51,24 @@
             :key="gp.name + index"
             class="timeline-item"
             :class="{
-              'is-primary': isAfter(gp.lastDate()),
-              'is-danger': isThisWeek(gp.lastDate()),
-              'is-warning': isBefore(gp.firstDate()),
+              'ui-primary': isAfter(gp.lastDate()),
+              'ui-danger': isThisWeek(gp.lastDate()),
+              'ui-warning': isBefore(gp.firstDate()),
             }"
           >
             <div
               v-if="isThisWeek(gp.lastDate())"
-              class="timeline-marker is-danger is-icon"
+              class="timeline-marker ui-danger ui-icon"
             >
               <i class="fa fa-flag" />
             </div>
             <div
               v-else-if="isBefore(gp.lastDate()) || Number.isNaN(gp.lastDate().getTime())"
-              class="timeline-marker is-warning"
+              class="timeline-marker ui-warning"
             />
             <div
               v-else
-              class="timeline-marker is-primary"
+              class="timeline-marker ui-primary"
             />
 
             <router-link :to="gp.gpLink()">

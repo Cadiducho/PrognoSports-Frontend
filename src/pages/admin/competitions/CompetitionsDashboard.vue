@@ -46,7 +46,7 @@
       ¿Borrar competición?
     </template>
     <template #content>
-      ¿Estás seguro de que quieres <b>eliminar</b> la competición <span class="has-text-weight-semibold">{{
+      ¿Estás seguro de que quieres <b>eliminar</b> la competición <span class="ui-weight-semibold">{{
         competitionToDelete.name }} (id: {{ competitionToDelete.id }})? <br>Esta acción se puede deshacer. </span>
     </template>
     <template #saveText>

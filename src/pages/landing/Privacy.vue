@@ -4,14 +4,14 @@ import PCard from "@/components/lib/PCard.vue";
 
 <template>
   <PCard class="container mt-6 mb-6">
-    <h1 class="title">
+    <h1 class="ui-title">
       Políticas de Privacidad
     </h1>
-    <p class="content">
+    <p class="ui-content">
       <b>PrognoSports</b> está sometida al cumplimiento de la normativa española y europea en materia de protección de datos.
       <b>PrognoSports</b> garantiza en todo momento el pleno cumplimiento de las obligaciones dispuestas por la General Data Protection Regulation (GDPR), así como cualquier otra Ley o norma competente que complemente o sustituya a las anteriores.
     </p>
-    <section class="content">
+    <section class="ui-content">
       <ul>
         <li>
           <b>PrognoSports</b> se compromete a la no difusión en ninguna forma de cualquier dato relacionado con cualquier usuario de la plataforma.
@@ -45,7 +45,7 @@ import PCard from "@/components/lib/PCard.vue";
         </li>
       </ul>
     </section>
-    <p class="content">
+    <p class="ui-content">
       Más enlaces de interés: <router-link :to="{name: 'terms'}">
         Términos y Condiciones
       </router-link> · <router-link :to="{name: 'rules'}">

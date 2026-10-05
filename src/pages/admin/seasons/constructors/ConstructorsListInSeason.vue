@@ -73,7 +73,7 @@
       </template>
       <template #content>
         ¿Estás seguro de que quieres <b>eliminar</b> el Constructor
-        <span class="has-text-weight-semibold">{{ constructorToDelete.name }}</span>
+        <span class="ui-weight-semibold">{{ constructorToDelete.name }}</span>
         de esta competición? <br>Esta acción no se puede deshacer.
       </template>
       <template #saveText>
@@ -151,24 +151,6 @@ const confirmDelete = (gp: Constructor) => {
 
 const deleteFromSeason = (gp: Constructor) => {
   console.log("deleteFromSeason", gp);
-/*
-  grandPrixService.deleteGranPrix(gp).then((ok) => {
-
-    // Elimino de la lista y por lo tanto de la tabla
-    this.gps.splice(this.gps.findIndex(s => s.id === gp.id), 1);
-
-    this.$oruga.notification.open({
-      position: 'top',
-      message: `Se ha eliminado correctamente el gran premio ${gp.name} #${gp.season.name}`,
-      variant: "danger",
-    });
-  }).catch((error) => {
-    this.$oruga.notification.open({
-      position: 'top',
-      message: error.message,
-      variant: "danger",
-    });
-  });*/
 }
 
 

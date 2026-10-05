@@ -1,7 +1,7 @@
 <template>
   <div
     id="adminConstructor"
-    class="box"
+    class="ui-surface"
   >
     <PTitle
       class="mb-5"
@@ -39,13 +39,13 @@
       </template>
       <template #footer>
         <button
-          class="button is-danger"
+          class="ui-button ui-danger"
           @click="deleteConstructor(constructorToDelete)"
         >
           Eliminar
         </button>
         <button
-          class="button"
+          class="ui-button"
           @click="showConfirmDeleteModal = false"
         >
           Cancelar

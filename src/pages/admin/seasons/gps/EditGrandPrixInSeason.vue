@@ -1,7 +1,7 @@
 <template>
   <nav
     id="adminDrivers"
-    class="box"
+    class="ui-surface"
   >
     <loading v-if="isLoadingGrandPrix" />
     <template v-else-if="!thereIsGrandPrix">
@@ -52,7 +52,7 @@
           />
         </div>
         <div class="basis-4/5">
-          <h2 class="title">
+          <h2 class="ui-title">
             Datos del {{ grandPrix.name }}
           </h2>
 
@@ -155,13 +155,13 @@
           <div class="flex flex-col md:flex-row gap-4">
             <div class="flex-1">
               <label class="label mt-2">Imagen promocional del Gran Premio</label>
-              <figure class="image is-16by9">
+              <figure class="ui-image ui-image-16by9">
                 <img
                   :src="grandPrix.promoImage()"
                   alt="Promo image"
                 >
 
-                <label class="icon edit-icon">
+                <label class="ui-icon edit-icon">
                   <i class="fa fa-camera" />
                   <input
                     accept="image/*"

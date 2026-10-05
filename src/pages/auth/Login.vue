@@ -2,18 +2,18 @@
   <div class="m-0 w-auto grow mt-2 mb-2 lg:mt-6 lg:mb-6">
     <div class="flex justify-center">
       <div class="flex w-full lg:w-2/5">
-        <div class="card w-full">
-          <div class="card-header">
-            <div class="card-header-title">
+        <div class="ui-card w-full">
+          <div class="ui-card-header">
+            <div class="ui-card-title">
               Datos de inicio de sesión
             </div>
           </div>
-          <div class="card-content">
+          <div class="ui-card-content">
             <form @submit.prevent="handleSubmit()">
-              <div class="field">
+              <div class="ui-field">
                 <label class="label">Email</label>
-                <div class="control has-icons-left has-icons-right">
-                  <span class="icon is-small">
+                <div class="ui-control ui-has-icons-left ui-has-icons-right">
+                  <span class="ui-icon ui-small">
                     <i class="fas fa-user" />
                   </span>
 
@@ -22,15 +22,15 @@
                     type="email"
                     autofocus
                     required
-                    class="input"
+                    class="ui-input"
                     :class="{ 'is-danger': form.submitted && !form.username }"
                   >
                 </div>
               </div>
-              <div class="field">
+              <div class="ui-field">
                 <label class="label">Contraseña</label>
-                <div class="control has-icons-left has-icons-right">
-                  <span class="icon is-small">
+                <div class="ui-control ui-has-icons-left ui-has-icons-right">
+                  <span class="ui-icon ui-small">
                     <i class="fas fa-lock" />
                   </span>
 
@@ -38,13 +38,13 @@
                     v-model="form.password"
                     type="password"
                     required
-                    class="input"
+                    class="ui-input"
                     :class="{ 'is-danger': form.submitted && !form.password }"
                   >
                 </div>
               </div>
-              <div class="field is-grouped">
-                <div class="control">
+              <div class="ui-field ui-grouped">
+                <div class="ui-control">
                   <p-button
                     native-type="submit"
                     :disabled="form.isLoggingIn"
@@ -55,13 +55,13 @@
               </div>
             </form>
           </div>
-          <div class="card-footer">
-            <div class="card-footer-item">
+          <div class="ui-card-footer">
+            <div class="ui-card-footer-item">
               <router-link :to="{ name: 'register', query: { redirect: redirectTo }}">
                 Registrarse
               </router-link>
             </div>
-            <div class="card-footer-item">
+            <div class="ui-card-footer-item">
               <router-link :to="{ name: 'forgotpassword', query: { redirect: redirectTo }}">
                 He olvidado mi contraseña
               </router-link>

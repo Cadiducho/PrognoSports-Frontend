@@ -22,14 +22,14 @@
     >
       <router-link :to="{ name: 'adminGpEditSession', params: { session: ses.id } }">
         <article
-          class="card"
+          class="ui-card"
           :class="{
             '!bg-cyan-200': currentSession?.id === ses.id,
             'hover:!bg-cyan-100': currentSession?.id !== ses.id
           }"
         >
-          <div class="card-content">
-            <p class="subtitle mb-2">
+          <div class="ui-card-content">
+            <p class="ui-subtitle mb-2">
               {{ ses.humanName() }}
               <span
                 v-if="currentSession?.id === ses.id"
@@ -39,7 +39,7 @@
               </span>
             </p>
 
-            <div class="content">
+            <div class="ui-content">
               <p class="card-text mb-0">
                 <i class="fa-solid fa-pencil mr-2" />
                 <b>Code: </b> {{ ses.name }}

@@ -19,12 +19,9 @@
     </nav>
 
     <section>
-      <o-steps v-model="activeStep">
-        <o-step-item
-          step="1"
-          label="Descripción"
-        >
-          <h1 class="title has-text-centered">
+      <PStepper v-model="activeStep" :steps="[{ label: 'Descripción' }, { label: 'Reglas' }, { label: 'Finalizar' }]">
+        <template #step-0>
+          <h1 class="ui-title ui-text-center">
             Descripción
           </h1>
 
@@ -62,60 +59,53 @@
             Cualquiera podrá acceder a una comunidad abierta.
           </p>
           <PField label="Privacidad de la comunidad">
-            <o-switch
+            <PSwitch
               v-model="privacy"
-              passive-type="is-success"
-              type="is-danger"
+              color="danger"
+              inactive-color="success"
             >
               {{ privacy ? "Cerrada" : "Abierta" }}
-            </o-switch>
+            </PSwitch>
           </PField>
-        </o-step-item>
+        </template>
 
-        <o-step-item
-          step="2"
-          label="Reglas"
-        >
-          <h1 class="title has-text-centered">
+        <template #step-1>
+          <h1 class="ui-title ui-text-center">
             Reglas
           </h1>
 
           <!-- FixMe: al creador de rulesets -->
-          <div class="columns">
-            <div class="column">
+          <div class="ui-grid">
+            <div class="ui-column">
               <PField label="Posiciones pronosticadas en clasificación">
-                <o-slider
+                <PRangeInput
                   v-model="numberQualify"
                   :min="3"
                   :max="20"
-                  :tooltip="false"
-                  indicator
                   ticks
                 />
               </PField>
             </div>
-            <div class="column">
+            <div class="ui-column">
               <PField label="Posiciones pronosticadas en carrera">
-                <o-slider
+                <PRangeInput
                   v-model="numberRace"
                   :min="3"
                   :max="20"
-                  :tooltip="false"
-                  indicator
                   ticks
                 />
               </PField>
             </div>
           </div>
 
-          <h1 class="title has-text-centered">
+          <h1 class="ui-title ui-text-center">
             Puntuaciones
           </h1>
 
-          <h2 class="subtitle mb-0">
+          <h2 class="ui-subtitle mb-0">
             Descripción del conjunto de reglas
           </h2>
-          <p class="content">
+          <p class="ui-content">
             Un conjunto de reglas podrá ser utilizado por otra comunidad, o podrás usar otros diferentes en cada carrera. Conviene poner un nombre y descripción
           </p>
           <PField label="Nombre del conjunto de reglas">
@@ -131,28 +121,28 @@
             />
           </PField>
 
-          <h2 class="subtitle mb-0">
+          <h2 class="ui-subtitle mb-0">
             Puntos por acertar la posición
           </h2>
-          <div class="columns">
-            <div class="column">
-              <p class="content is-italic">
+          <div class="ui-grid">
+            <div class="ui-column">
+              <p class="ui-content italic">
                 Posiciones de clasificación
               </p>
-              <template v-for="pos in numberQualify">
+              <template v-for="pos in numberQualify" :key="`qualify-${pos}`">
                 <PField :label="pos + 'º puesto de Clasificación'">
-                  <o-numberinput v-model="pointsByEqualsPosition.QUALIFY[pos]" />
+                  <PNumberInput v-model="pointsByEqualsPosition.QUALIFY[pos]" />
                 </PField>
               </template>
             </div>
 
-            <div class="column">
-              <p class="content is-italic">
+            <div class="ui-column">
+              <p class="ui-content italic">
                 Posiciones de carrera
               </p>
-              <template v-for="pos in numberRace">
+              <template v-for="pos in numberRace" :key="`race-${pos}`">
                 <PField :label="pos + 'º puesto de Carrera'">
-                  <o-numberinput v-model="pointsByEqualsPosition.RACE[pos]" />
+                  <PNumberInput v-model="pointsByEqualsPosition.RACE[pos]" />
                 </PField>
               </template>
             </div>
@@ -160,144 +150,141 @@
           <hr>
 
 
-          <h2 class="subtitle mb-0">
+          <h2 class="ui-subtitle mb-0">
             Puntos por posición siguiente
           </h2>
-          <p class="content is-italic">
+          <p class="ui-content italic">
             Ejemplo: Pronostica un piloto en la 7ª posición, pero el resultado de este piloto es la 6ª
           </p>
-          <div class="columns">
-            <div class="column">
+          <div class="ui-grid">
+            <div class="ui-column">
               <PField label="Clasificación">
-                <o-numberinput v-model="pointsByNextPosition.QUALIFY" />
+                <PNumberInput v-model="pointsByNextPosition.QUALIFY" />
               </PField>
             </div>
-            <div class="column">
+            <div class="ui-column">
               <PField label="Carrera">
-                <o-numberinput v-model="pointsByNextPosition.RACE" />
+                <PNumberInput v-model="pointsByNextPosition.RACE" />
               </PField>
             </div>
           </div>
           <hr>
 
-          <h2 class="subtitle mb-0">
+          <h2 class="ui-subtitle mb-0">
             Puntos por posición siguiente de la siguiente
           </h2>
-          <p class="content is-italic">
+          <p class="ui-content italic">
             Ejemplo: Pronostica un piloto en la 7ª posición, pero el resultado de este piloto es la 5ª
           </p>
-          <div class="columns">
-            <div class="column">
+          <div class="ui-grid">
+            <div class="ui-column">
               <PField label="Clasificación">
-                <o-numberinput v-model="pointsByNextOfFollowingPosition.QUALIFY" />
+                <PNumberInput v-model="pointsByNextOfFollowingPosition.QUALIFY" />
               </PField>
             </div>
-            <div class="column">
+            <div class="ui-column">
               <PField label="Carrera">
-                <o-numberinput v-model="pointsByNextOfFollowingPosition.RACE" />
+                <PNumberInput v-model="pointsByNextOfFollowingPosition.RACE" />
               </PField>
             </div>
           </div>
           <hr>
 
-          <h2 class="subtitle mb-0">
+          <h2 class="ui-subtitle mb-0">
             Puntos por posición anterior
           </h2>
-          <p class="content is-italic">
+          <p class="ui-content italic">
             Ejemplo: Pronostica un piloto en la 3ª posición, pero el resultado de este piloto es la 4ª
           </p>
-          <div class="columns">
-            <div class="column">
+          <div class="ui-grid">
+            <div class="ui-column">
               <PField label="Clasificación">
-                <o-numberinput v-model="pointsByPreviousPosition.QUALIFY" />
+                <PNumberInput v-model="pointsByPreviousPosition.QUALIFY" />
               </PField>
             </div>
-            <div class="column">
+            <div class="ui-column">
               <PField label="Carrera">
-                <o-numberinput v-model="pointsByPreviousPosition.RACE" />
+                <PNumberInput v-model="pointsByPreviousPosition.RACE" />
               </PField>
             </div>
           </div>
           <hr>
 
-          <h2 class="subtitle mb-0">
+          <h2 class="ui-subtitle mb-0">
             Puntos por posición anterior de la anterior
           </h2>
-          <p class="content is-italic">
+          <p class="ui-content italic">
             Ejemplo: Pronostica un piloto en la 3ª posición, pero el resultado de este piloto es la 5ª
           </p>
-          <div class="columns">
-            <div class="column">
+          <div class="ui-grid">
+            <div class="ui-column">
               <PField label="Clasificación">
-                <o-numberinput v-model="pointsByPreviousOfPreviousPosition.QUALIFY" />
+                <PNumberInput v-model="pointsByPreviousOfPreviousPosition.QUALIFY" />
               </PField>
             </div>
-            <div class="column">
+            <div class="ui-column">
               <PField label="Carrera">
-                <o-numberinput v-model="pointsByPreviousOfPreviousPosition.RACE" />
+                <PNumberInput v-model="pointsByPreviousOfPreviousPosition.RACE" />
               </PField>
             </div>
           </div>
           <hr>
 
-          <h2 class="subtitle mb-0">
+          <h2 class="ui-subtitle mb-0">
             Puntos por pronosticar a alguien en podio y fallar
           </h2>
-          <p class="content is-italic">
+          <p class="ui-content italic">
             Ejemplo: Pronostica un piloto en la 2ª posición, pero el resultado de este piloto es la 8ª (fuera del podio)
           </p>
-          <div class="columns">
-            <div class="column">
+          <div class="ui-grid">
+            <div class="ui-column">
               <PField label="Clasificación">
-                <o-numberinput v-model="pointsIfIsNotInPodium.QUALIFY" />
+                <PNumberInput v-model="pointsIfIsNotInPodium.QUALIFY" />
               </PField>
             </div>
-            <div class="column">
+            <div class="ui-column">
               <PField label="Carrera">
-                <o-numberinput v-model="pointsIfIsNotInPodium.RACE" />
+                <PNumberInput v-model="pointsIfIsNotInPodium.RACE" />
               </PField>
             </div>
           </div>
           <hr>
 
-          <h2 class="subtitle mb-0">
+          <h2 class="ui-subtitle mb-0">
             Puntos por pronosticar alguien y no terminar en el margen de resultados
           </h2>
-          <p class="content is-italic">
+          <p class="ui-content italic">
             Ejemplo: Se pronostican 10 puestos en carrera, pronostica un piloto en la 8ª posición, pero el resultado de este piloto es la 15ª (fuera del margen)
           </p>
-          <div class="columns">
-            <div class="column">
+          <div class="ui-grid">
+            <div class="ui-column">
               <PField label="Clasificación">
-                <o-numberinput v-model="pointsIfIsNotInResults.QUALIFY" />
+                <PNumberInput v-model="pointsIfIsNotInResults.QUALIFY" />
               </PField>
             </div>
-            <div class="column">
+            <div class="ui-column">
               <PField label="Carrera">
-                <o-numberinput v-model="pointsIfIsNotInResults.RACE" />
+                <PNumberInput v-model="pointsIfIsNotInResults.RACE" />
               </PField>
             </div>
           </div>
           <hr>
           <PField label="Privacidad del conjunto de reglas">
-            <o-switch
+            <PSwitch
               v-model="rulesetPrivacy"
-              passive-type="is-success"
-              type="is-danger"
+              color="danger"
+              inactive-color="success"
             >
               {{ rulesetPrivacy ? "Privadas" : "Públicas" }}
-            </o-switch>
+            </PSwitch>
           </PField>
           <p class="block">
             Esta opción determinará si otras comunidades ajenas a ti podrán utilizar tus reglas o no.
           </p>
-        </o-step-item>
+        </template>
 
-        <o-step-item
-          step="3"
-          label="Finalizar"
-        >
-          <h1 class="title has-text-centered">
+        <template #step-2>
+          <h1 class="ui-title ui-text-center">
             Finalizar
           </h1>
 
@@ -314,11 +301,11 @@
             Revisa los datos, se va a registrar la siguiente comunidad
           </PrognoAlert>
 
-          <div class="columns">
-            <div class="column is-3">
-              <div class="card">
-                <div class="card-image">
-                  <figure class="image">
+          <div class="ui-grid">
+            <div class="ui-column ui-col-3">
+              <div class="ui-card">
+                <div class="ui-card-content">
+                  <figure class="ui-image">
                     <img
                       v-if="imageUrl"
                       :src="imageUrl"
@@ -332,31 +319,31 @@
                   </figure>
                 </div>
 
-                <div class="card-content">
-                  <div class="media">
-                    <div class="media-content">
-                      <p class="title is-4">
+                <div class="ui-card-content">
+                  <div class="ui-media">
+                    <div class="ui-media-content">
+                      <p class="ui-title ui-title-4">
                         {{ name }}
                       </p>
-                      <p class="subtitle is-6">
+                      <p class="ui-subtitle ui-subtitle-6">
                         {{ description }}
                       </p>
                     </div>
                   </div>
 
-                  <div class="content">
+                  <div class="ui-content">
                     <p class="card-text">
                       <b>Creador: {{ currentUser.username }} </b>
                     </p>
                     <p
                       v-if="privacy"
-                      class="card-text has-text-danger"
+                      class="card-text ui-text-danger"
                     >
                       Comunidad cerrada/privada
                     </p>
                     <p
                       v-else
-                      class="card-text has-text-success"
+                      class="card-text ui-text-success"
                     >
                       Comunidad abierta/pública
                     </p>
@@ -372,19 +359,19 @@
                 </div>
               </div>
             </div>
-            <div class="column">
-              <div class="card">
-                <div class="card-content">
-                  <p class="title">
+            <div class="ui-column">
+              <div class="ui-card">
+                <div class="ui-card-content">
+                  <p class="ui-title">
                     Reglas y puntuaciones
                   </p>
                 </div>
-                <div class="card-content">
-                  <p class="subtitle">
+                <div class="ui-card-content">
+                  <p class="ui-subtitle">
                     Puntos por acertar posiciones
                   </p>
-                  <div class="content">
-                    <table class="table is-hoverable is-striped">
+                  <div class="ui-content">
+                    <table class="ui-table ui-hoverable ui-striped">
                       <thead>
                         <tr>
                           <th>Posición</th>
@@ -393,7 +380,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="pos in Math.max(numberQualify, numberRace)">
+                        <tr v-for="pos in Math.max(numberQualify, numberRace)" :key="pos">
                           <th>{{ pos }}º</th>
                           <td>{{ (numberQualify >= pos) ? (pointsByEqualsPosition.QUALIFY[pos] || 0) : 0 }}</td>
                           <td>{{ (numberRace >= pos) ? (pointsByEqualsPosition.RACE[pos] || 0) : 0 }}</td>
@@ -409,11 +396,11 @@
                     </table>
                   </div>
 
-                  <p class="subtitle">
+                  <p class="ui-subtitle">
                     Posiciones no acertadas
                   </p>
-                  <div class="content">
-                    <table class="table is-hoverable">
+                  <div class="ui-content">
+                    <table class="ui-table ui-hoverable">
                       <thead>
                         <tr>
                           <th />
@@ -467,8 +454,8 @@
             color="primary"
             @click="registerCommunity()"
           />
-        </o-step-item>
-      </o-steps>
+        </template>
+      </PStepper>
     </section>
   </PCard>
 </template>
@@ -487,11 +474,19 @@ import PField from "@/components/lib/forms/PField.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
 import PCard from "@/components/lib/PCard.vue";
+import PStepper from "@/components/lib/PStepper.vue";
+import PSwitch from "@/components/lib/forms/PSwitch.vue";
+import PRangeInput from "@/components/lib/forms/PRangeInput.vue";
+import PNumberInput from "@/components/lib/forms/PNumberInput.vue";
 
 export default defineComponent({
     name: "CreateCommunity",
     components: {
       PCard,
+      PStepper,
+      PSwitch,
+      PRangeInput,
+      PNumberInput,
       AlertInvalidData,
       PrognoAlert,
       PField,
@@ -521,7 +516,7 @@ export default defineComponent({
 
             rulesetName: "",
             rulesetDescription: "",
-            rulesetPrivacy: "",
+            rulesetPrivacy: false,
 
             pointsByEqualsPosition: {
                 QUALIFY: {

@@ -1,7 +1,7 @@
 <template>
   <div
     id="createCircuit"
-    class="box"
+    class="ui-surface"
   >
     <PTitle
       class="mb-5"

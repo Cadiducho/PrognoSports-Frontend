@@ -48,17 +48,17 @@
           class="w-1/5 p-2"
         >
           <!-- ToDo: Adaptar PCard para soportar headers de colorines -->
-          <div class="card">
-            <header class="card-header">
+          <div class="ui-card">
+            <header class="ui-card-header">
               <p
-                class="card-header-title"
+                class="ui-card-title"
                 :style="teamCarColor(constructor)"
               >
                 {{ constructor.name }}
               </p>
             </header>
 
-            <div class="card-content">
+            <div class="ui-card-content">
               <draggable
                 :id="`driversByConstructor-${constructor.id}`"
                 class="w-full h-full select-none space-y-2"

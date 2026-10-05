@@ -49,13 +49,13 @@
       </template>
       <template #footer>
         <button
-          class="button is-danger"
+          class="ui-button ui-danger"
           @click="deleteSeason(seasonToDelete)"
         >
           Eliminar
         </button>
         <button
-          class="button"
+          class="ui-button"
           @click="showConfirmDeleteModal = false"
         >
           Cancelar

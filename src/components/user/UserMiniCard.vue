@@ -1,16 +1,16 @@
 <template>
-    <div class="card">
-        <div class="card-content">
-            <div class="media">
-                <div class="media-left">
-                    <figure class="image is-64x64 zuga">
-                        <img :src="objUser.profileImage()" alt="Profile image" class="profile-image is-rounded" />
+    <div class="ui-card">
+        <div class="ui-card-content">
+            <div class="ui-media">
+                <div class="ui-media-left">
+                    <figure class="ui-image ui-image-64 zuga">
+                        <img :src="objUser.profileImage()" alt="Profile image" class="profile-image rounded-full" />
                     </figure>
                 </div>
                 <hr />
-                <div class="media-content">
-                    <div class="media-content-header">
-                        <span class="title is-4 multiline-text">{{ objUser.username }}</span>
+                <div class="ui-media-content">
+                    <div class="ui-media-content-header">
+                        <span class="ui-title ui-title-4 multiline-text">{{ objUser.username }}</span>
 
                         <span class="content-rank">
                             <span :style="{ color: `#${objUser.rank.color}`, 'border-color': `#${objUser.rank.color}` }" class="content-rank-name">
@@ -18,19 +18,19 @@
                             </span>
                         </span>
                     </div>
-                    <p v-if="objUser.bio" class="subtitle is-6 multiline-text">{{ objUser.bio }}</p>
+                    <p v-if="objUser.bio" class="ui-subtitle ui-subtitle-6 multiline-text">{{ objUser.bio }}</p>
                 </div>
             </div>
             <div class="divisor"></div>
-            <div class="content">
+            <div class="ui-content">
                 <p v-if="objUser.location" class="content-icon content-location">
-                    <span class="icon is-small">
+                    <span class="ui-icon ui-small">
                         <i class="fas fa-map-marker-alt fa-sm mr-2"></i>
                     </span>
                     <span class="multiline-text">{{ objUser.location }}</span>
                 </p>
                 <p class="content-icon content-last_activity">
-                    <span class="icon is-small">
+                    <span class="ui-icon ui-small">
                         <i class="fas fa-clock fa-sm mr-2"></i>
                     </span>
                     <span class="multiline-text">Visto por última vez {{ dateDiff(objUser.last_activity) }}</span>

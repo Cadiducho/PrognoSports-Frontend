@@ -1,7 +1,7 @@
 <template>
   <div
     id="adminDrivers"
-    class="box"
+    class="ui-surface"
   >
     <loading v-if="isLoadingGrandPrix" />
     <template v-else>
@@ -23,9 +23,9 @@
         El Gran Premio {{ id }} no ha sido encontrado
       </p>
       <template v-else>
-        <div class="columns">
-          <div class="column">
-            <h2 class="title">
+        <div class="ui-grid">
+          <div class="ui-column">
+            <h2 class="ui-title">
               Datos del {{ grandPrix.name }}
             </h2>
 

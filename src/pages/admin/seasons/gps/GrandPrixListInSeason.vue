@@ -73,7 +73,7 @@
         ¿Eliminar Grand Prix de esta competición?
       </template>
       <template #content>
-        ¿Estás seguro de que quieres <b>eliminar</b> el Gran Premio <span class="has-text-weight-semibold">{{ grandPrixToDelete.name }} {{ grandPrixToDelete.season?.name }}</span> de esta competición? <br>Esta acción se puede deshacer.
+        ¿Estás seguro de que quieres <b>eliminar</b> el Gran Premio <span class="ui-weight-semibold">{{ grandPrixToDelete.name }} {{ grandPrixToDelete.season?.name }}</span> de esta competición? <br>Esta acción se puede deshacer.
       </template>
       <template #saveText>
         Eliminar Grand Prix
@@ -154,24 +154,6 @@ const confirmDeleteGrandPrix = (gp: GrandPrix) => {
 
 const deleteGrandPrixFromSeason = (gp: GrandPrix) => {
   console.log("deleteGrandPrixFromSeason", gp);
-/*
-  grandPrixService.deleteGranPrix(gp).then((ok) => {
-
-    // Elimino de la lista y por lo tanto de la tabla
-    this.gps.splice(this.gps.findIndex(s => s.id === gp.id), 1);
-
-    this.$oruga.notification.open({
-      position: 'top',
-      message: `Se ha eliminado correctamente el gran premio ${gp.name} #${gp.season.name}`,
-      variant: "danger",
-    });
-  }).catch((error) => {
-    this.$oruga.notification.open({
-      position: 'top',
-      message: error.message,
-      variant: "danger",
-    });
-  });*/
 }
 
 

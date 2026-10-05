@@ -1,7 +1,7 @@
 <template>
   <div
     id="createGrandPrix"
-    class="box"
+    class="ui-surface"
   >
     <PTitle
       class="mb-5"
@@ -19,12 +19,9 @@
       </PButton>
     </nav>
 
-    <o-steps v-model="activeStep">
-      <o-step-item
-        step="1"
-        label="Datos del gran premio"
-      >
-        <h2 class="title">
+    <PStepper v-model="activeStep" :steps="[{ label: 'Datos del gran premio' }, { label: 'Finalizar' }]">
+      <template #step-0>
+        <h2 class="ui-title">
           Datos del gran premio
         </h2>
 
@@ -45,13 +42,10 @@
             lazy
           />
         </PField>
-      </o-step-item>
+      </template>
 
-      <o-step-item
-        step="2"
-        label="Finalizar"
-      >
-        <h2 class="title">
+      <template #step-1>
+        <h2 class="ui-title">
           Finalizar
         </h2>
 
@@ -71,7 +65,7 @@
           Revisa los datos, se va a crear el Gran Premio
         </PrognoAlert>
 
-        <div class="content">
+        <div class="ui-content">
           <p class="card-text">
             <b>Nombre del Gran Premio: </b>{{ createdGrandPrix.name }}
           </p>
@@ -87,8 +81,8 @@
           color="primary"
           @click="registerGrandPrix()"
         />
-      </o-step-item>
-    </o-steps>
+      </template>
+    </PStepper>
   </div>
 </template>
 
@@ -96,7 +90,6 @@
 import PTitle from "@/components/lib/PTitle.vue"
 import {circuitService, grandPrixService, notificationService, seasonService} from "@/_services";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
-import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Season} from "@/types/Season";
 import {Circuit} from "@/types/Circuit";
@@ -107,15 +100,16 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
+import PStepper from "@/components/lib/PStepper.vue";
 
 export default defineComponent({
     name: "CreateGrandPrix",
     components: {
       PrognoAlert,
+      PStepper,
       PInput,
       PField,
       PButton,
-        AlertNoPermission,
         AlertInvalidData,
         PTitle,
     },

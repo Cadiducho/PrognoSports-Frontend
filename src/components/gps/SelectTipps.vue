@@ -1,5 +1,5 @@
 <template>
-  <div class="content mt-5">
+  <div class="ui-content mt-5">
     <PrognoAlert message="Arrastra las tarjetas para completar tu pronóstico." />
 
     <div class="grid grid-cols-2 space-x-4 mb-4">
@@ -20,7 +20,7 @@
 
           <PInput
             v-model="filtroPiloto"
-            class="field lg:flex-2"
+            class="ui-field lg:flex-2"
             placeholder="Buscar..."
             no-margin
           />
@@ -32,7 +32,7 @@
         >
           <PCard class="mt-1">
             <label class="label">Orderar lista de pilotos</label>
-            <div class="field mb-0">
+            <div class="ui-field mb-0">
               <PRadio
                 v-model="orderType"
                 :value="0"
@@ -40,7 +40,7 @@
                 Por nombre
               </PRadio>
             </div>
-            <div class="field mb-0">
+            <div class="ui-field mb-0">
               <PRadio
                 v-model="orderType"
                 :value="1"
@@ -48,7 +48,7 @@
                 Por equipos
               </PRadio>
             </div>
-            <div class="field mb-0">
+            <div class="ui-field mb-0">
               <PRadio
                 v-model="orderType"
                 :value="2"
@@ -56,7 +56,7 @@
                 Por dorsal
               </PRadio>
             </div>
-            <div class="field mb-1">
+            <div class="ui-field mb-1">
               <PRadio
                 v-if="indexedGrid.size > 0"
                 v-model="orderType"
@@ -66,7 +66,7 @@
               </PRadio>
             </div>
             <label class="label mt-2">Dirección del orden</label>
-            <div class="field">
+            <div class="ui-field">
               <PRadio
                 v-model="orderAscendent"
                 :value="true"

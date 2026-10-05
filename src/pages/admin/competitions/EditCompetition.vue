@@ -1,7 +1,7 @@
 <template>
   <div
     id="adminDrivers"
-    class="box"
+    class="ui-surface"
   >
     <PTitle
       class="mb-5"
@@ -25,7 +25,7 @@
         La competición {{ competitionId }} no ha sido encontrada
       </p>
       <template v-else>
-        <h2 class="title">
+        <h2 class="ui-title">
           Datos de la competición
         </h2>
 
@@ -82,7 +82,7 @@
                 :rows="60"
               />
             </div>
-            <div class="w-1/2 content">
+            <div class="w-1/2 ui-content">
               <div v-html="previewRules" />
             </div>
           </section>

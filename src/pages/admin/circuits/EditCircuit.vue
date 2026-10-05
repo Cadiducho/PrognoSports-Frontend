@@ -1,7 +1,7 @@
 <template>
   <div
     id="adminDrivers"
-    class="box"
+    class="ui-surface"
   >
     <PTitle
       class="mb-5"
@@ -23,7 +23,7 @@
       <template v-else>
         <div class="flex">
           <section class="w-1/2 mr-2">
-            <h2 class="title">
+            <h2 class="ui-title">
               Datos del circuito
             </h2>
 

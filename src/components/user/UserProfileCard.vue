@@ -1,10 +1,10 @@
 <template>
   <div class="section">
     <div class="container">
-      <div class="columns is-mobile">
-        <div class="column is-1" />
-        <div class="column">
-          <figure class="image">
+      <div class="ui-grid ui-grid-mobile">
+        <div class="ui-column ui-col-1" />
+        <div class="ui-column">
+          <figure class="ui-image">
             <img
               :class="{ photoOpacity : !showSettingsButton}"
               :src="profile.profileImage()"
@@ -13,7 +13,7 @@
 
             <label
               v-if="!showSettingsButton"
-              class="icon edit-icon"
+              class="ui-icon edit-icon"
             >
               <i class="fa fa-camera" />
               <input
@@ -26,10 +26,10 @@
             </label>
           </figure>
         </div>
-        <div class="column is-1" />
-        <div class="column is-two-thirds content">
-          <p class="is-flex is-mobile is-justify-content-space-between">
-            <span class="title is-bold">
+        <div class="ui-column ui-col-1" />
+        <div class="ui-column ui-col-2-3 ui-content">
+          <p class="flex ui-grid-mobile justify-between">
+            <span class="ui-title font-bold">
               {{ profile.username }}
 
               <PTag
@@ -48,22 +48,22 @@
             </PButton>
           </p>
           <p v-if="profile.bio">
-            <span class="subtitle">
+            <span class="ui-subtitle">
               <small>{{ profile.bio }}</small>
             </span>
           </p>
 
           <div class="block mb-1">
-            <span class="icon-text">
-              <span class="icon mr-2">
+            <span class="ui-icon-text">
+              <span class="ui-icon mr-2">
                 <i class="fas fa-clock" />
               </span>
               Última conexión: {{ dateDiff(profile.last_activity) }}
             </span>
           </div>
           <div class="block mb-1">
-            <span class="icon-text">
-              <span class="icon mr-2">
+            <span class="ui-icon-text">
+              <span class="ui-icon mr-2">
                 <i class="fas fa-calendar" />
               </span>
               Registrado el {{ humanDateTime(profile.created) }}
@@ -73,8 +73,8 @@
             v-if="profile.location"
             class="block mb-1"
           >
-            <span class="icon-text">
-              <span class="icon mr-2">
+            <span class="ui-icon-text">
+              <span class="ui-icon mr-2">
                 <i class="fas fa-map-marker-alt" />
               </span>
               {{ profile.location }}
@@ -84,8 +84,8 @@
             v-if="profile.birthdate"
             class="block mb-1"
           >
-            <span class="icon-text">
-              <span class="icon mr-2">
+            <span class="ui-icon-text">
+              <span class="ui-icon mr-2">
                 <i class="fas fa-birthday-cake" />
               </span>
               {{ humanDate(profile.birthdate) }}

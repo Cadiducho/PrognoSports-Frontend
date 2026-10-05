@@ -1,19 +1,19 @@
 <template>
   <div class="container mt-6 mb-6">
-    <div class="columns is-centered">
-      <div class="column is-two-fifths">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-header-title">
+    <div class="ui-grid ui-grid-center">
+      <div class="ui-column ui-col-2-5">
+        <div class="ui-card">
+          <div class="ui-card-header">
+            <div class="ui-card-title">
               Registro en PrognoSports
             </div>
           </div>
-          <div class="card-content">
+          <div class="ui-card-content">
             <form @submit.prevent="handleSubmit()">
-              <div class="field">
+              <div class="ui-field">
                 <label class="label">Correo electrónico</label>
-                <div class="control has-icons-left has-icons-right">
-                  <span class="icon is-small is-left">
+                <div class="ui-control ui-has-icons-left ui-has-icons-right">
+                  <span class="ui-icon ui-small ui-icon-left">
                     <i class="fas fa-at" />
                   </span>
 
@@ -21,15 +21,15 @@
                     v-model="form.email"
                     type="email"
                     required
-                    class="input"
+                    class="ui-input"
                     :class="{ 'is-danger': form.submitted && !form.email }"
                   >
                 </div>
               </div>
-              <div class="field">
+              <div class="ui-field">
                 <label class="label">Nombre de usuario</label>
-                <div class="control has-icons-left has-icons-right">
-                  <span class="icon is-small is-left">
+                <div class="ui-control ui-has-icons-left ui-has-icons-right">
+                  <span class="ui-icon ui-small ui-icon-left">
                     <i class="fas fa-user" />
                   </span>
 
@@ -38,15 +38,15 @@
                     type="text"
                     autofocus
                     required
-                    class="input"
+                    class="ui-input"
                     :class="{ 'is-danger': form.submitted && !form.username }"
                   >
                 </div>
               </div>
-              <div class="field">
+              <div class="ui-field">
                 <label class="label">Contraseña</label>
-                <div class="control has-icons-left has-icons-right">
-                  <span class="icon is-small is-left">
+                <div class="ui-control ui-has-icons-left ui-has-icons-right">
+                  <span class="ui-icon ui-small ui-icon-left">
                     <i class="fas fa-lock" />
                   </span>
 
@@ -54,13 +54,13 @@
                     v-model="form.password"
                     type="password"
                     required
-                    class="input"
+                    class="ui-input"
                     :class="{ 'is-danger': form.submitted && !form.password }"
                   >
                 </div>
               </div>
-              <div class="field">
-                <label class="checkbox select-none">
+              <div class="ui-field">
+                <label class="ui-checkbox select-none">
                   <input
                     v-model="form.tos"
                     type="checkbox"
@@ -75,8 +75,8 @@
                   >políticas de privacidad</a>.
                 </label>
               </div>
-              <div class="field is-grouped">
-                <div class="control">
+              <div class="ui-field ui-grouped">
+                <div class="ui-control">
                   <p-button
                     native-type="submit"
                     :disabled="!form.tos || form.isRegistering"
@@ -87,13 +87,13 @@
               </div>
             </form>
           </div>
-          <div class="card-footer">
-            <div class="card-footer-item">
+          <div class="ui-card-footer">
+            <div class="ui-card-footer-item">
               <router-link :to="{ name: 'login', query: { redirect: redirectTo }}">
                 Ya tengo usuario
               </router-link>
             </div>
-            <div class="card-footer-item">
+            <div class="ui-card-footer-item">
               <router-link :to="{ name: 'forgotpassword', query: { redirect: redirectTo }}">
                 He olvidado mi contraseña
               </router-link>

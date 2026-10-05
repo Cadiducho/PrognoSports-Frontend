@@ -1,5 +1,5 @@
 <template>
-    <div id="createSession" class="box">
+    <div id="createSession" class="ui-surface">
         <PTitle class="mb-5" name="Crear sesión"/>
 
         <PInput label="Nombre de la sesión" name="name" v-model="createdSession.name" />

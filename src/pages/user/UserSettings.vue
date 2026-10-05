@@ -42,8 +42,8 @@
 
   <PCard class="mt-1">
     <form @submit.prevent="save()">
-      <div class="columns">
-        <div class="column">
+      <div class="ui-grid">
+        <div class="ui-column">
           <PTitle type="subtitle">
             Datos
           </PTitle>
@@ -85,13 +85,13 @@
           </PField>
         </div>
 
-        <div class="column">
+        <div class="ui-column">
           <PTitle type="subtitle">
             Preferencias
           </PTitle>
 
           <label class="label">Nombres de los equipos</label>
-          <div class="field">
+          <div class="ui-field">
             <PRadio
               v-model="editedUser.preferences['use-long-team-names']"
               :value="false"
@@ -99,7 +99,7 @@
               Mostrar nombres cortos
             </PRadio>
           </div>
-          <div class="field">
+          <div class="ui-field">
             <PRadio
               v-model="editedUser.preferences['use-long-team-names']"
               :value="true"
@@ -109,7 +109,7 @@
           </div>
 
           <label class="label">Privacidad</label>
-          <div class="field">
+          <div class="ui-field">
             <PRadio
               v-model="editedUser.preferences['hide-tipps-until-start']"
               :value="false"
@@ -117,7 +117,7 @@
               No ocultar mis pronósticos
             </PRadio>
           </div>
-          <div class="field">
+          <div class="ui-field">
             <PRadio
               v-model="editedUser.preferences['hide-tipps-until-start']"
               :value="true"
@@ -166,8 +166,8 @@
     v-if="!isLoading"
     class="mt-1"
   >
-    <div class="columns">
-      <div class="column">
+    <div class="ui-grid">
+      <div class="ui-column">
         <PTitle type="subtitle">
           Notificaciones
         </PTitle>
@@ -179,7 +179,7 @@
 
         <NotificationSettingsTable />
       </div>
-      <div class="column">
+      <div class="ui-column">
         <AuthTokenList />
       </div>
     </div>

@@ -1,8 +1,8 @@
 <template>
-  <PCard class="card mb-4">
-    <div class="media">
-      <div class="media-left">
-        <figure class="image is-48x48">
+  <PCard class="ui-card mb-4">
+    <div class="ui-media">
+      <div class="ui-media-left">
+        <figure class="ui-image ui-image-48">
           <router-link :to="'/communities/' + community.name">
             <img
               :src="community.communityImage()"
@@ -11,17 +11,17 @@
           </router-link>
         </figure>
       </div>
-      <div class="media-content">
-        <p class="title is-4">
+      <div class="ui-media-content">
+        <p class="ui-title ui-title-4">
           <router-link
             :to="'/communities/' + community.name"
-            class="has-text-black"
+            class="ui-text-black"
           >
             {{ community.name }}
           </router-link>
           <i> - {{ community.competition.name }}</i>
         </p>
-        <p class="subtitle is-6">
+        <p class="ui-subtitle ui-subtitle-6">
           {{ community.description }} (Creada por
           <router-link :to="'/u/' + community.owner.id">
             @{{ community.owner.username }}
@@ -31,7 +31,7 @@
       </div>
     </div>
 
-    <div class="content">
+    <div class="ui-content">
       <span :class="[community.open ? 'has-text-success' : 'has-text-danger']">
         Comunidad {{ community.open ? "abierta" : "cerrada" }} con {{ community.members_amount }} participantes
       </span><br>
@@ -73,7 +73,7 @@
         ¿Unirse a la comunidad?
       </template>
       <template #content>
-        ¿Deseas unirte a la comunidad <span class="has-text-weight-semibold">{{ community.name }}</span>?
+        ¿Deseas unirte a la comunidad <span class="ui-weight-semibold">{{ community.name }}</span>?
       </template>
       <template #saveText>
         Unirse a la comunidad
@@ -88,7 +88,7 @@
         ¿Salir de la comunidad?
       </template>
       <template #content>
-        Estás seguro de que deseas abandonar la comunidad <span class="has-text-weight-semibold">{{ community.name }}</span>?
+        Estás seguro de que deseas abandonar la comunidad <span class="ui-weight-semibold">{{ community.name }}</span>?
       </template>
       <template #saveText>
         Dejar comunidad

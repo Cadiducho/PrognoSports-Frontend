@@ -1,7 +1,7 @@
 <template>
   <div
     id="createDriver"
-    class="box"
+    class="ui-surface"
   >
     <PTitle
       class="mb-5"
@@ -19,12 +19,9 @@
       </PButton>
     </nav>
 
-    <o-steps v-model="activeStep">
-      <o-step-item
-        step="1"
-        label="Datos del piloto"
-      >
-        <h2 class="title">
+    <PStepper v-model="activeStep" :steps="[{ label: 'Datos del piloto' }, { label: 'Finalizar' }]">
+      <template #step-0>
+        <h2 class="ui-title">
           Datos del piloto
         </h2>
 
@@ -65,13 +62,10 @@
         </PField>
 
         <hr>
-      </o-step-item>
+      </template>
 
-      <o-step-item
-        step="2"
-        label="Finalizar"
-      >
-        <h2 class="title">
+      <template #step-1>
+        <h2 class="ui-title">
           Finalizar
         </h2>
 
@@ -100,7 +94,7 @@
           Revisa los datos, se va a crear el siguiente piloto
         </PrognoAlert>
 
-        <div class="content">
+        <div class="ui-content">
           <p class="card-text">
             <b>ID del piloto: </b>{{ createdDriver.id }}
           </p>
@@ -125,8 +119,8 @@
           color="primary"
           @click="registerDriver()"
         />
-      </o-step-item>
-    </o-steps>
+      </template>
+    </PStepper>
   </div>
 </template>
 
@@ -144,11 +138,13 @@ import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import CalendarDateTimePicker from "@/components/lib/CalendarDateTimePicker.vue";
+import PStepper from "@/components/lib/PStepper.vue";
 
 export default defineComponent({
     name: "CreateDriver",
     components: {
       CalendarDateTimePicker,
+      PStepper,
       PrognoAlert,
       PInput,
       PField,

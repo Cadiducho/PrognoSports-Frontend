@@ -6,7 +6,7 @@
           <router-link to="/">
             <img
               src="@/assets/logo.png"
-              class="image is-128x128"
+              class="ui-image ui-image-128"
               alt="Logo PrognoSports"
             >
           </router-link>

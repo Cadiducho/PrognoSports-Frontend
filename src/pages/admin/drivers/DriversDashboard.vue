@@ -73,7 +73,7 @@
         ¿Borrar Piloto?
       </template>
       <template #content>
-        Estás seguro de que deseas borrar el Piloto <span class="has-text-weight-semibold">{{ driverToDelete.firstname }} {{ driverToDelete.lastname }} (ID {{ driverToDelete.id }})</span>?
+        Estás seguro de que deseas borrar el Piloto <span class="ui-weight-semibold">{{ driverToDelete.firstname }} {{ driverToDelete.lastname }} (ID {{ driverToDelete.id }})</span>?
       </template>
       <template #saveText>
         Borrar Piloto

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <header class="masthead has-text-light has-text-centered has-text-weight-semibold">
+    <header class="masthead ui-text-light ui-text-center ui-weight-semibold">
       <div class="section">
         <h1 class="heading mb-2">
           <span>Pronostica resultados de carreras<br> con tus amigos y compite por ser el mejor</span>
@@ -9,62 +9,62 @@
     </header>
 
     <div class="container landing-content">
-      <div class="tile is-ancestor features-icons mb-0 has-text-centered">
-        <div class="tile is-parent">
-          <article class="tile is-child features-icons-item">
+      <div class="ui-tile ui-tile-ancestor features-icons mb-0 ui-text-center">
+        <div class="ui-tile ui-tile-parent">
+          <article class="ui-tile ui-tile-child features-icons-item">
             <div class="features-icons-icon">
               <i class="material-icons text-brand-500">people</i>
             </div>
-            <p class="title">
+            <p class="ui-title">
               Comunitario
             </p>
-            <p class="subtitle">
+            <p class="ui-subtitle">
               Crea una comunidad con tus amigos o únete a una ya existente.
               Podrás participar en distintas comunidades con diferentes pronósticos y reglas.
             </p>
           </article>
         </div>
-        <div class="tile is-parent">
-          <article class="tile is-child features-icons-item">
+        <div class="ui-tile ui-tile-parent">
+          <article class="ui-tile ui-tile-child features-icons-item">
             <div class="features-icons-icon">
               <i class="material-icons text-brand-500">favorite_border</i>
             </div>
-            <p class="title">
+            <p class="ui-title">
               Intuitivo
             </p>
-            <p class="subtitle feature-icons-text">
+            <p class="ui-subtitle feature-icons-text">
               PrognoSports está diseñado para ser intuitivo con las competiciones de motor.
               Escoge el orden de los pilotos en las distintas sesiones y obtén más puntos que tus rivales.
             </p>
           </article>
         </div>
-        <div class="tile is-parent">
-          <article class="tile is-child features-icons-item">
+        <div class="ui-tile ui-tile-parent">
+          <article class="ui-tile ui-tile-child features-icons-item">
             <div class="features-icons-icon">
               <i class="material-icons text-brand-500">important_devices</i>
             </div>
-            <p class="title">
+            <p class="ui-title">
               Versátil
             </p>
-            <p class="subtitle">
+            <p class="ui-subtitle">
               Realiza tus pronósticos desde el PC, móvil o tablet sin ninguna limitación.
             </p>
           </article>
         </div>
       </div>
     </div>
-    <div class="content">
+    <div class="ui-content">
       <div class="section">
-        <div class="columns">
-          <div class="column feature-box">
-            <div class="title">
+        <div class="ui-grid">
+          <div class="ui-column feature-box">
+            <div class="ui-title">
               Dedicado
             </div>
             <div class="text">
               Con un diseño orientado a competiciones de Fórmula 1™, en una misma página podrás ver todos los datos útiles para tus pronósticos.
             </div>
           </div>
-          <div class="column">
+          <div class="ui-column">
             <img
               class="image-box border-shadow "
               src="https://prognosports.com/dist/img/landing/dedicado.png"
@@ -74,18 +74,18 @@
         </div>
       </div>
     </div>
-    <div class="content">
+    <div class="ui-content">
       <div class="section">
-        <div class="columns reverse-in-mobile">
-          <div class="column">
+        <div class="ui-grid reverse-in-mobile">
+          <div class="ui-column">
             <img
               class="image-box border-shadow "
               src="https://prognosports.com/dist/img/landing/visual.png"
               alt=""
             >
           </div>
-          <div class="column feature-box">
-            <div class="title">
+          <div class="ui-column feature-box">
+            <div class="ui-title">
               Visual
             </div>
             <div class="text">
@@ -95,18 +95,18 @@
         </div>
       </div>
     </div>
-    <div class="content">
+    <div class="ui-content">
       <div class="section">
-        <div class="columns">
-          <div class="column feature-box">
-            <div class="title">
+        <div class="ui-grid">
+          <div class="ui-column feature-box">
+            <div class="ui-title">
               A medida
             </div>
             <div class="text">
               Personaliza cómo quieres visualizar ciertas secciones de la web o qué notificaciones quieres recibir y a dónde. Podrás personalizar PrognoSports a medida.
             </div>
           </div>
-          <div class="column">
+          <div class="ui-column">
             <img
               class="image-box border-shadow"
               src="https://prognosports.com/dist/img/landing/personalizable.png"

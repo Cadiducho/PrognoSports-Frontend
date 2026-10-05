@@ -1,6 +1,6 @@
 <template>
     <loading v-if="isLoading"/>
-    <div v-if="constructor.id" id="editConstrcutor" class="box">
+    <div v-if="constructor.id" id="editConstrcutor" class="ui-surface">
         <PTitle class="mb-5" name="Editar constructor"/>
 
         <PInput label="Nombre del constructor" name="name" v-model="constructor.name" />

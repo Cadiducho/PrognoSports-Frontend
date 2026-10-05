@@ -1,11 +1,11 @@
 <template>
-    <nav class="breadcrumb" aria-label="breadcrumbs">
+    <nav class="ui-breadcrumb" aria-label="breadcrumbs">
         <ul>
             <li>
                 <router-link :to="{name: 'home'}">PrognoSports</router-link>
             </li>
 
-            <li v-for="(crumb, index) in crumbs" :class="{ 'is-active': crumb.isLast}">
+            <li v-for="(crumb, index) in crumbs" :class="{ 'ui-active': crumb.isLast}">
                 <router-link :to="{name: crumb.target, params: crumb.params}">{{ crumb.title }}</router-link>
             </li>
         </ul>

@@ -1,21 +1,21 @@
 <template>
   <div class="container mt-6 mb-6">
-    <div class="columns is-centered">
-      <div class="column is-two-fifths">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-header-title">
+    <div class="ui-grid ui-grid-center">
+      <div class="ui-column ui-col-2-5">
+        <div class="ui-card">
+          <div class="ui-card-header">
+            <div class="ui-card-title">
               Cambio de contraseña
             </div>
           </div>
-          <div class="card-content">
-            <div class="content">
-              <p class="has-text-justified">
+          <div class="ui-card-content">
+            <div class="ui-content">
+              <p class="ui-text-justified">
                 Para solicitar un cambio de contraseña,
                 deberás introducir el correo electrónico de
                 tu cuenta, donde recibirás un código de recuperación.
               </p>
-              <p class="has-text-justified">
+              <p class="ui-text-justified">
                 Con dicho código podrás establecer una nueva
                 contraseña para tu cuenta.
               </p>
@@ -24,59 +24,59 @@
               v-if="form.showChangePasswordForm"
               @submit.prevent="handleSubmitChangePassword()"
             >
-              <div class="field">
+              <div class="ui-field">
                 <label class="label">Correo electrónico</label>
-                <div class="control has-icons-left has-icons-right">
+                <div class="ui-control ui-has-icons-left ui-has-icons-right">
                   <input
                     v-model="form.email"
                     required
-                    class="input"
+                    class="ui-input"
                     type="email"
                   >
-                  <span class="icon is-small is-left">
+                  <span class="ui-icon ui-small ui-icon-left">
                     <i class="fas fa-at" />
                   </span>
                 </div>
               </div>
-              <div class="field">
+              <div class="ui-field">
                 <label class="label">Código de verificación</label>
-                <div class="control has-icons-left has-icons-right">
+                <div class="ui-control ui-has-icons-left ui-has-icons-right">
                   <input
                     v-model="form.inputToken"
                     required
-                    class="input"
+                    class="ui-input"
                     type="text"
                   >
-                  <span class="icon is-small is-left">
+                  <span class="ui-icon ui-small ui-icon-left">
                     <i class="fas fa-qrcode" />
                   </span>
                 </div>
               </div>
-              <div class="field">
+              <div class="ui-field">
                 <label class="label">Nueva contraseña</label>
-                <div class="control has-icons-left has-icons-right">
+                <div class="ui-control ui-has-icons-left ui-has-icons-right">
                   <input
                     v-model="form.inputPassword"
                     required
-                    class="input"
+                    class="ui-input"
                     type="password"
                   >
-                  <span class="icon is-small is-left">
+                  <span class="ui-icon ui-small ui-icon-left">
                     <i class="fas fa-lock" />
                   </span>
                 </div>
               </div>
-              <div class="field is-grouped">
-                <div class="control">
+              <div class="ui-field ui-grouped">
+                <div class="ui-control">
                   <p-button
                     native-type="submit"
-                    class="button is-link"
+                    class="ui-button ui-info"
                     :disabled="loading.changePassword || !form.email || !form.inputToken || !form.inputPassword"
                   >
                     Cambiar contraseña
                   </p-button>
                 </div>
-                <div class="control">
+                <div class="ui-control">
                   <p-button
                     type="soft"
                     color="teal"
@@ -92,31 +92,31 @@
               v-else
               @submit.prevent="handleSendCode()"
             >
-              <div class="field">
+              <div class="ui-field">
                 <label class="label">Correo electrónico</label>
-                <div class="control has-icons-left has-icons-right">
+                <div class="ui-control ui-has-icons-left ui-has-icons-right">
                   <input
                     v-model="form.email"
                     required
-                    class="input"
+                    class="ui-input"
                     type="email"
                   >
-                  <span class="icon is-small is-left">
+                  <span class="ui-icon ui-small ui-icon-left">
                     <i class="fas fa-at" />
                   </span>
                 </div>
               </div>
-              <div class="field is-grouped">
-                <div class="control">
+              <div class="ui-field ui-grouped">
+                <div class="ui-control">
                   <p-button
                     native-type="submit"
-                    class="button is-link"
+                    class="ui-button ui-info"
                     :disabled="loading.sendCode || !form.email"
                   >
                     Solicitar código
                   </p-button>
                 </div>
-                <div class="control">
+                <div class="ui-control">
                   <p-button
                     type="soft"
                     color="teal"
@@ -128,13 +128,13 @@
               </div>
             </form>
           </div>
-          <div class="card-footer">
-            <div class="card-footer-item">
+          <div class="ui-card-footer">
+            <div class="ui-card-footer-item">
               <router-link :to="{ name: 'register', query: { redirect: redirectTo }}">
                 Registrarse
               </router-link>
             </div>
-            <div class="card-footer-item">
+            <div class="ui-card-footer-item">
               <router-link :to="{ name: 'login', query: { redirect: redirectTo }}">
                 Ya tengo usuario
               </router-link>

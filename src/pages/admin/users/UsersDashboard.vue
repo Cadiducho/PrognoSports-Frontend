@@ -1,7 +1,7 @@
 <template>
   <div
     id="adminUsers"
-    class="box"
+    class="ui-surface"
   >
     <PTitle
       class="mb-5"

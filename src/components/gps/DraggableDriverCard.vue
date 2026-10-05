@@ -42,8 +42,7 @@ const styleDriverCard = styles.styleDriverCard;
 const styleDorsal = styles.styleDorsal;
 </script>
 
-<style scoped lang="scss">
-@use '@/scss/variables';
+<style scoped>
 
 .driver-card {
     display: flex;
@@ -53,8 +52,8 @@ const styleDorsal = styles.styleDorsal;
     margin-left: 0.5rem;
 }
 
-// Resolución móvil
-@media screen and (max-width: variables.$desktop) {
+/* Resolución móvil */
+@media screen and (max-width: 1024px) {
     .driver-card {
         a, span {
             font-size: 0.8rem;

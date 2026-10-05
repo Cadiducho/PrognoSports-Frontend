@@ -1,13 +1,13 @@
 <template>
   <PCard class="container mt-6 mb-6">
-    <h1 class="title">
+    <h1 class="ui-title">
       Reglas y normativa
     </h1>
 
-    <p class="content">
+    <p class="ui-content">
       Cada Competición y Comunidad tendrán su normativa añadida a esta general, especificando reglas en los pronósticos o en el cálculo de resultados y puntuaciones.
     </p>
-    <section class="content">
+    <section class="ui-content">
       <h2>Generales</h2>
       <section>
         <ul>
@@ -19,7 +19,7 @@
 
     <section
       v-if="competition.id !== 0"
-      class="content"
+      class="ui-content"
     >
       <h2>Competición {{ competition.name }}</h2>
       <section>
@@ -29,13 +29,13 @@
 
     <section
       v-if="currentCommunity && competition.id !== 0"
-      class="content"
+      class="ui-content"
     >
       <h2>Normas y puntuaciones de la comunidad {{ currentCommunity.name }}</h2>
       <RulesAndPointsTable :community="currentCommunity" />
     </section>
 
-    <p class="content">
+    <p class="ui-content">
       Más enlaces de interés: <router-link :to="{name: 'terms'}">
         Términos y Condiciones
       </router-link> · <router-link :to="{name: 'privacy'}">
