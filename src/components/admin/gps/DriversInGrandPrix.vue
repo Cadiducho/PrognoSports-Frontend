@@ -181,6 +181,7 @@ export default defineComponent({
         saveDrivers() {
             if (this.driversByConstructor) {
                 driversService.setDriversInGrandPrix(this.grandPrix, this.driversByConstructor).then(() => {
+                  this.loadDriversInGrandPrix(this.grandPrix);
                     notificationService.showNotification( "Lista de pilotos guardada correctamente.");
                 }).catch((error) => {
                     notificationService.showNotification( "Ha ocurrido un error.", "error");
