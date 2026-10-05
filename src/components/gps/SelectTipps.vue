@@ -1,6 +1,12 @@
 <template>
   <div class="content mt-5">
     <PrognoAlert message="Arrastra las tarjetas para completar tu pronóstico." />
+    <PrognoAlert
+      v-if="hasUnavailablePredictions"
+      variant="danger"
+    >
+      Tu pronóstico contiene pilotos que ya no están inscritos en este Gran Premio. Sustitúyelos antes de guardarlo.
+    </PrognoAlert>
 
     <div class="grid grid-cols-2 space-x-4 mb-4">
       <section>
@@ -88,7 +94,7 @@
           class="w-full h-full select-none space-y-2"
           :list="pilotosDisponiblesFiltrados"
           group="people"
-          item-key="name"
+          item-key="id"
         >
           <template #item="{ element, index }">
             <DraggableDriverCard
@@ -117,13 +123,14 @@
           class="w-full h-full select-none space-y-2"
           :list="pilotosPronosticados"
           group="people"
-          item-key="name"
+          item-key="id"
         >
           <template #item="{ element, index }">
             <DraggableDriverCard
               :driver="element"
               :index="index"
               show-position
+              :unavailable="!driverIds.has(element.id)"
             />
           </template>
         </draggable>
@@ -135,7 +142,7 @@
         v-if="pilotosPronosticados.length === ruleSet.cantidadPilotosPronosticados(session)"
         color="primary"
         expanded
-        :disabled="sendingPronostico"
+        :disabled="sendingPronostico || hasUnavailablePredictions"
         @click="enviarPronostico"
       >
         Enviar pronóstico
@@ -222,6 +229,8 @@ const opcionesOrdenadoOpen = ref(false);
 const orderType = ref(1);
 const orderAscendent = ref(true);
 const sendingPronostico = ref(false);
+const driverIds = computed(() => new Set(props.drivers.map(driver => driver.id)));
+const hasUnavailablePredictions = computed(() => pilotosPronosticados.some(driver => !driverIds.value.has(driver.id)));
 
 const pilotosDisponiblesFiltrados = computed({
   get() {
@@ -257,7 +266,7 @@ const pilotosDisponiblesFiltrados = computed({
 
 const changed = computed(() => {
   return pilotosGuardados.value.length !== pilotosPronosticados.length
-    || pilotosGuardados.value.some((d, index) => d.code !== pilotosPronosticados[index].code);
+    || pilotosGuardados.value.some((d, index) => d.id !== pilotosPronosticados[index]?.id);
 })
 
 const aplicaFiltrito = (driver: Driver) => {
@@ -324,10 +333,13 @@ onMounted(async() => {
       // Básicamente, si hay pronóstico. De otro modo, driver es undefined (value es {})
       if (value.driver != undefined) {
         // Elimino al piloto pronosticado de la lsita de disponibles
-        pilotosDisponibles.value = pilotosDisponibles.value.filter(d => d.code != value.driver.code);
+        const activeDriver = props.drivers.find(driver => driver.id === value.driver.id);
+        const predictedDriver = activeDriver ?? value.driver;
+
+        pilotosDisponibles.value = pilotosDisponibles.value.filter(d => d.id !== value.driver.id);
 
         // Añado el piloto pronosticado a la lista de pronósticos
-        pilotosPronosticados.push(value.driver);
+        pilotosPronosticados.push(predictedDriver);
       }
     }
   } catch (error) {

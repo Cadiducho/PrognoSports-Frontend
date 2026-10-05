@@ -40,8 +40,8 @@ export class Notification implements INotification {
     }
 
     public title(): string {
-        switch (this.type.toString()) {
-            case 'INFO':
+        switch (this.type.toString().toLowerCase()) {
+            case 'info':
                 return "Info #" + this.id;
             case 'QUALI_PRE_ALERT':
                 return "Clasificación mañana";
@@ -63,17 +63,17 @@ export class Notification implements INotification {
     }
 
     public body(): string {
-        switch (this.type.toString()) {
-            case 'INFO':
+        switch (this.type.toString().toLowerCase()) {
+            case 'info':
                 return this.data.info;
-            case 'QUALI_PRE_ALERT':
-            case 'QUALI_ALERT':
-            case 'RACE_PRE_ALERT':
-            case 'RACE_ALERT':
+            case 'quali-pre-alert':
+            case 'quali-alert':
+            case 'race-pre-alert':
+            case 'race-alert':
                 return `Realiza tus pronósticos para <a href='/gps/${this.data.competition}/${this.data.gpSeason}/${this.data.gpRound}'>${this.data.gpName}</a> antes del ${dayjs.tz(this.data.time).format('D/M/YY [a las] H:mm')}`;
-            case 'GRID_CHANGES':
+            case 'grid-changes':
                 return "Se han producido cambios en la parrilla de salida de " + this.data.gpName;
-            case 'QUALI_POINTS': {
+            case 'quali-points': {
                 if (Object.keys(this.data.points).length == 0) {
                     return "No has recibido puntos";
                 }
@@ -89,7 +89,7 @@ export class Notification implements INotification {
                 }
                 return mensaje;
             }
-            case 'RACE_POINTS':
+            case 'race-points':
                 if (Object.keys(this.data.points).length == 0) {
                     return "No has recibido puntos";
                 }

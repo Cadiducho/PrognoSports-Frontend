@@ -9,6 +9,7 @@
       <PTag
         variant="rounded"
         size="small"
+        class="align-middle"
         :style="styleDorsal(driver)"
       >
         #{{ driver.number }}
@@ -18,6 +19,15 @@
         <span v-if="currentUser.preferences['use-long-team-names']">{{ driver.team.longname }} ({{ driver.team.carname }})</span>
         <span v-else>{{ driver.team.name }}</span>
       </span>
+      <PTag
+        v-if="unavailable"
+        variant="rounded"
+        size="small"
+        color="error"
+        class="align-middle ml-2"
+      >
+        No disponible
+      </PTag>
     </span>
   </div>
 </template>
@@ -32,6 +42,7 @@ defineProps<{
   index: number;
   showPosition?: boolean;
   driver: Driver;
+  unavailable?: boolean;
 }>();
 
 const authStore = useAuthStore();
@@ -52,7 +63,6 @@ const styleDorsal = styles.styleDorsal;
 .margin-left-card {
     margin-left: 0.5rem;
 }
-
 // Resolución móvil
 @media screen and (max-width: variables.$desktop) {
     .driver-card {
