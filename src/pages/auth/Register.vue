@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-6 mb-6">
+  <div class="container mx-auto my-6 w-full px-4 sm:px-6">
     <div class="ui-grid ui-grid-center">
       <div class="ui-column ui-col-2-5">
         <div class="ui-card">
@@ -11,7 +11,7 @@
           <div class="ui-card-content">
             <form @submit.prevent="handleSubmit()">
               <div class="ui-field">
-                <label class="label">Correo electrónico</label>
+                <label class="ui-label">Correo electrónico</label>
                 <div class="ui-control ui-has-icons-left ui-has-icons-right">
                   <span class="ui-icon ui-small ui-icon-left">
                     <i class="fas fa-at" />
@@ -22,12 +22,12 @@
                     type="email"
                     required
                     class="ui-input"
-                    :class="{ 'is-danger': form.submitted && !form.email }"
+                    :class="{ 'ui-input-error': form.submitted && !form.email }"
                   >
                 </div>
               </div>
               <div class="ui-field">
-                <label class="label">Nombre de usuario</label>
+                <label class="ui-label">Nombre de usuario</label>
                 <div class="ui-control ui-has-icons-left ui-has-icons-right">
                   <span class="ui-icon ui-small ui-icon-left">
                     <i class="fas fa-user" />
@@ -39,12 +39,12 @@
                     autofocus
                     required
                     class="ui-input"
-                    :class="{ 'is-danger': form.submitted && !form.username }"
+                    :class="{ 'ui-input-error': form.submitted && !form.username }"
                   >
                 </div>
               </div>
               <div class="ui-field">
-                <label class="label">Contraseña</label>
+                <label class="ui-label">Contraseña</label>
                 <div class="ui-control ui-has-icons-left ui-has-icons-right">
                   <span class="ui-icon ui-small ui-icon-left">
                     <i class="fas fa-lock" />
@@ -55,7 +55,7 @@
                     type="password"
                     required
                     class="ui-input"
-                    :class="{ 'is-danger': form.submitted && !form.password }"
+                    :class="{ 'ui-input-error': form.submitted && !form.password }"
                   >
                 </div>
               </div>
@@ -106,6 +106,8 @@
 </template>
 
 <script setup lang="ts">
+defineOptions({ name: 'RegisterPage' });
+
 import {useAuthStore} from "@/store/authStore";
 import {notificationService} from "@/_services";
 import {reactive} from "vue";

@@ -154,7 +154,7 @@
 
           <div class="flex flex-col md:flex-row gap-4">
             <div class="flex-1">
-              <label class="label mt-2">Imagen promocional del Gran Premio</label>
+              <label class="ui-label mt-2">Imagen promocional del Gran Premio</label>
               <figure class="ui-image ui-image-16by9">
                 <img
                   :src="grandPrix.promoImage()"

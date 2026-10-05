@@ -90,7 +90,7 @@
             Preferencias
           </PTitle>
 
-          <label class="label">Nombres de los equipos</label>
+          <label class="ui-label">Nombres de los equipos</label>
           <div class="ui-field">
             <PRadio
               v-model="editedUser.preferences['use-long-team-names']"
@@ -108,7 +108,7 @@
             </PRadio>
           </div>
 
-          <label class="label">Privacidad</label>
+          <label class="ui-label">Privacidad</label>
           <div class="ui-field">
             <PRadio
               v-model="editedUser.preferences['hide-tipps-until-start']"

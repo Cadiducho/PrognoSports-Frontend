@@ -1,5 +1,5 @@
 <template>
-  <div class="m-0 w-auto grow mt-2 mb-2 lg:mt-6 lg:mb-6">
+  <div class="m-0 w-full grow px-4 py-2 sm:px-6 lg:py-6">
     <div class="flex justify-center">
       <div class="flex w-full lg:w-2/5">
         <div class="ui-card w-full">
@@ -11,9 +11,9 @@
           <div class="ui-card-content">
             <form @submit.prevent="handleSubmit()">
               <div class="ui-field">
-                <label class="label">Email</label>
+                <label class="ui-label">Email</label>
                 <div class="ui-control ui-has-icons-left ui-has-icons-right">
-                  <span class="ui-icon ui-small">
+                  <span class="ui-icon ui-small ui-icon-left">
                     <i class="fas fa-user" />
                   </span>
 
@@ -23,14 +23,14 @@
                     autofocus
                     required
                     class="ui-input"
-                    :class="{ 'is-danger': form.submitted && !form.username }"
+                    :class="{ 'ui-input-error': form.submitted && !form.username }"
                   >
                 </div>
               </div>
               <div class="ui-field">
-                <label class="label">Contraseña</label>
+                <label class="ui-label">Contraseña</label>
                 <div class="ui-control ui-has-icons-left ui-has-icons-right">
-                  <span class="ui-icon ui-small">
+                  <span class="ui-icon ui-small ui-icon-left">
                     <i class="fas fa-lock" />
                   </span>
 
@@ -39,7 +39,7 @@
                     type="password"
                     required
                     class="ui-input"
-                    :class="{ 'is-danger': form.submitted && !form.password }"
+                    :class="{ 'ui-input-error': form.submitted && !form.password }"
                   >
                 </div>
               </div>
@@ -74,6 +74,8 @@
 </template>
 
 <script setup lang="ts">
+defineOptions({ name: 'LoginPage' });
+
 import {useAuthStore} from "@/store/authStore";
 import {LocationQueryValue, useRoute} from "vue-router";
 import {onMounted, reactive} from "vue";
@@ -116,7 +118,7 @@ const handleSubmit = async () => {
       password: form.password,
     };
     await auth.login(payload, redirectTo);
-  } catch (error: any) {
+  } catch {
     form.isLoggingIn = false;
   }
 };

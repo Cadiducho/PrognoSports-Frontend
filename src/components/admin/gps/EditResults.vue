@@ -28,7 +28,7 @@
       <hr>
     </section>
 
-    <label class="label">Resultados</label>
+    <label class="ui-label">Resultados</label>
     <PrognoAlert
       v-if="!hasSavedResults"
       variant="warning"

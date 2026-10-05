@@ -29,7 +29,7 @@
                 <PTitle>
                   {{ community.name }}
                 </PTitle>
-                <p class="dark:text-dark-300">
+                <p class="dark:text-gray-300">
                   {{ community.description }}
                 </p>
               </div>
@@ -62,7 +62,6 @@
                 v-if="!community.open && isUserInCommunity"
                 grouped
                 label="URL de Invitación:"
-                variant="rounded is-info"
               >
                 <input
                   class="ui-input rounded-full ui-small"
@@ -70,8 +69,8 @@
                   :value="community.invitation"
                 >
                 <PButton
-                  class="ui-button ui-primary ui-small rounded-full"
                   size="small"
+                  pilled
                   @click="clickInvitation"
                 >
                   Copiar
@@ -157,7 +156,7 @@
               class="box-ordenado"
             >
               <div class="ui-surface mt-1">
-                <label class="label">Orderar lista de usuarios</label>
+                <label class="ui-label">Orderar lista de usuarios</label>
                 <div class="ui-field mb-0">
                   <PRadio
                     v-model="orderType"
@@ -190,7 +189,7 @@
                     Por fecha de registro
                   </PRadio>
                 </div>
-                <label class="label mt-2">Dirección del orden</label>
+                <label class="ui-label mt-2">Dirección del orden</label>
                 <div class="ui-field">
                   <PRadio
                     v-model="orderAscendent"
@@ -240,7 +239,6 @@ import Loading from "@/components/lib/Loading.vue";
 import UserInCommunityCard from "@/components/communities/UserInCommunityCard.vue";
 import RulesAndPointsTable from "@/components/communities/RulesAndPointsTable.vue";
 import PRadio from "@/components/lib/forms/PRadio.vue";
-import PSwitch from "@/components/lib/forms/PSwitch.vue";
 import PCard from "@/components/lib/PCard.vue";
 import PCollapse from "@/components/lib/PCollapse.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
@@ -314,7 +312,7 @@ export default defineComponent({
                 case 3: pickedSort = sortRegisterDate; break;
                 default: pickedSort = sortUsername;
             }
-            let listaOrdenada = this.members.sort(pickedSort);
+            let listaOrdenada = [...this.members].sort(pickedSort);
 
             if (this.orderAscendent) {
                 listaOrdenada = listaOrdenada.reverse();
@@ -352,7 +350,7 @@ export default defineComponent({
             communityService.getMembers(community).then(list => {
                 this.members.push(...list);
             }).catch(() => {}); // Ignorar si no tiene permisos, simplemente no se rellena
-        }).catch((reason) => {
+        }).catch(() => {
             this.thereIsCommunity = false;
         }).finally(() => {
             this.isLoading = false;

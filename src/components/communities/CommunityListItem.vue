@@ -32,7 +32,7 @@
     </div>
 
     <div class="ui-content">
-      <span :class="[community.open ? 'has-text-success' : 'has-text-danger']">
+      <span :class="[community.open ? 'ui-text-success' : 'ui-text-danger']">
         Comunidad {{ community.open ? "abierta" : "cerrada" }} con {{ community.members_amount }} participantes
       </span><br>
       <br>

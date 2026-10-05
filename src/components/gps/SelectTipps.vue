@@ -2,7 +2,7 @@
   <div class="ui-content mt-5">
     <PrognoAlert message="Arrastra las tarjetas para completar tu pronóstico." />
 
-    <div class="grid grid-cols-2 space-x-4 mb-4">
+    <div class="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
       <section>
         <h3 class="select-none dark:text-gray-300">
           Pilotos disponibles
@@ -31,7 +31,7 @@
           class="box-ordenado"
         >
           <PCard class="mt-1">
-            <label class="label">Orderar lista de pilotos</label>
+            <label class="ui-label">Orderar lista de pilotos</label>
             <div class="ui-field mb-0">
               <PRadio
                 v-model="orderType"
@@ -65,7 +65,7 @@
                 Por parrilla
               </PRadio>
             </div>
-            <label class="label mt-2">Dirección del orden</label>
+            <label class="ui-label mt-2">Dirección del orden</label>
             <div class="ui-field">
               <PRadio
                 v-model="orderAscendent"

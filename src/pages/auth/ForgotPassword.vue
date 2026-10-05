@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-6 mb-6">
+  <div class="container mx-auto my-6 w-full px-4 sm:px-6">
     <div class="ui-grid ui-grid-center">
       <div class="ui-column ui-col-2-5">
         <div class="ui-card">
@@ -25,7 +25,7 @@
               @submit.prevent="handleSubmitChangePassword()"
             >
               <div class="ui-field">
-                <label class="label">Correo electrónico</label>
+                <label class="ui-label">Correo electrónico</label>
                 <div class="ui-control ui-has-icons-left ui-has-icons-right">
                   <input
                     v-model="form.email"
@@ -39,7 +39,7 @@
                 </div>
               </div>
               <div class="ui-field">
-                <label class="label">Código de verificación</label>
+                <label class="ui-label">Código de verificación</label>
                 <div class="ui-control ui-has-icons-left ui-has-icons-right">
                   <input
                     v-model="form.inputToken"
@@ -53,7 +53,7 @@
                 </div>
               </div>
               <div class="ui-field">
-                <label class="label">Nueva contraseña</label>
+                <label class="ui-label">Nueva contraseña</label>
                 <div class="ui-control ui-has-icons-left ui-has-icons-right">
                   <input
                     v-model="form.inputPassword"
@@ -93,7 +93,7 @@
               @submit.prevent="handleSendCode()"
             >
               <div class="ui-field">
-                <label class="label">Correo electrónico</label>
+                <label class="ui-label">Correo electrónico</label>
                 <div class="ui-control ui-has-icons-left ui-has-icons-right">
                   <input
                     v-model="form.email"

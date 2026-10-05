@@ -1,43 +1,58 @@
 <template>
-    <div class="ui-card">
-        <div class="ui-card-content">
-            <div class="ui-media">
-                <div class="ui-media-left">
-                    <figure class="ui-image ui-image-64 zuga">
-                        <img :src="objUser.profileImage()" alt="Profile image" class="profile-image rounded-full" />
-                    </figure>
-                </div>
-                <hr />
-                <div class="ui-media-content">
-                    <div class="ui-media-content-header">
-                        <span class="ui-title ui-title-4 multiline-text">{{ objUser.username }}</span>
-
-                        <span class="content-rank">
-                            <span :style="{ color: `#${objUser.rank.color}`, 'border-color': `#${objUser.rank.color}` }" class="content-rank-name">
-                                {{ objUser.rank.name }}
-                            </span>
-                        </span>
-                    </div>
-                    <p v-if="objUser.bio" class="ui-subtitle ui-subtitle-6 multiline-text">{{ objUser.bio }}</p>
-                </div>
-            </div>
-            <div class="divisor"></div>
-            <div class="ui-content">
-                <p v-if="objUser.location" class="content-icon content-location">
-                    <span class="ui-icon ui-small">
-                        <i class="fas fa-map-marker-alt fa-sm mr-2"></i>
-                    </span>
-                    <span class="multiline-text">{{ objUser.location }}</span>
-                </p>
-                <p class="content-icon content-last_activity">
-                    <span class="ui-icon ui-small">
-                        <i class="fas fa-clock fa-sm mr-2"></i>
-                    </span>
-                    <span class="multiline-text">Visto por última vez {{ dateDiff(objUser.last_activity) }}</span>
-                </p>
-            </div>
+  <div class="ui-card user-mini-card">
+    <div class="ui-card-content user-mini-card-content">
+      <div class="ui-media user-mini-card-media">
+        <div class="ui-media-left">
+          <figure class="ui-image ui-image-64 zuga">
+            <img
+              :src="objUser.profileImage()"
+              alt="Profile image"
+              class="profile-image rounded-full"
+            >
+          </figure>
         </div>
+        <div class="divisor" />
+        <div class="ui-media-content">
+          <div class="user-mini-card-header">
+            <span class="ui-title ui-title-4 multiline-text">{{ objUser.username }}</span>
+
+            <span class="content-rank">
+              <span
+                :style="{ color: `#${objUser.rank.color}`, 'border-color': `#${objUser.rank.color}` }"
+                class="content-rank-name"
+              >
+                {{ objUser.rank.name }}
+              </span>
+            </span>
+          </div>
+          <p
+            v-if="objUser.bio"
+            class="ui-subtitle ui-subtitle-6 multiline-text"
+          >
+            {{ objUser.bio }}
+          </p>
+        </div>
+      </div>
+      <div class="divisor" />
+      <div class="ui-content user-mini-card-details">
+        <p
+          v-if="objUser.location"
+          class="content-icon content-location"
+        >
+          <span class="ui-icon ui-small">
+            <i class="fas fa-map-marker-alt fa-sm mr-2" />
+          </span>
+          <span class="multiline-text">{{ objUser.location }}</span>
+        </p>
+        <p class="content-icon content-last_activity">
+          <span class="ui-icon ui-small">
+            <i class="fas fa-clock fa-sm mr-2" />
+          </span>
+          <span class="multiline-text">Visto por última vez {{ dateDiff(objUser.last_activity) }}</span>
+        </p>
+      </div>
     </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -62,82 +77,48 @@ export default defineComponent({
 });
 </script>
 
-<style lang="css" scoped>
-.card {
-    max-width: 350px;
-    min-width: 350px;
-    background-color: whitesmoke;
-    -webkit-box-shadow: none;
-    box-shadow: none;
+<style scoped>
+.user-mini-card {
+    @apply w-full max-w-sm overflow-hidden;
+}
 
-    white-space: nowrap;
-    overflow: hidden;
+.user-mini-card-content {
+    @apply p-3;
+}
+
+.user-mini-card-media {
+    @apply flex-col gap-3 sm:flex-row sm:items-start;
 }
 
 .divisor {
-    display: block;
-    position: relative;
-    border-top: 0.1rem solid #dbdbdb;
-    height: 0.1rem;
-    margin: 0.2rem 0;
-    text-align: center;
+    @apply my-2 h-px border-0 bg-gray-200 dark:bg-gray-700;
 }
 
-.card-content {
-    padding: 0.7rem;
+.user-mini-card-header {
+    @apply flex flex-wrap justify-between gap-2;
 }
 
-.title {
-    margin-bottom: 0.25em;
-}
-
-.media {
-    margin-bottom: 0.5rem;
-}
-
-.media-content-header {
-    display: flex; 
-    justify-content: space-between;
-}
-
-.content {
-    margin-top: 0.5rem;
+.user-mini-card-details {
+    @apply mt-2;
 }
 
 .content-icon {
-    margin-bottom: 0.5em;
+    @apply mb-2 flex items-center text-sm;
 }
 
 .content-rank-name {
-    border: 1px solid transparent;
-    border-radius: 4px;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-    display: inline-flex;
-
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-
-    text-align: center;
-    white-space: nowrap;
-
-    background-color: transparent;
+    @apply inline-flex justify-center rounded border border-transparent px-2 text-center text-sm whitespace-nowrap;
 }
 
 .profile-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
+    @apply max-h-full max-w-full object-contain;
 }
 
 .zuga {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @apply flex items-center justify-center;
 }
 
 .multiline-text {
-    white-space: initial;
+    white-space: normal;
 }
 </style>

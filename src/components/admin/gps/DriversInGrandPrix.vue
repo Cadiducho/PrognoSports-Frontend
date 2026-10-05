@@ -32,7 +32,7 @@
         group="drivers"
         item-key="id"
       >
-        <template #item="{ element, index }">
+        <template #item="{ element }">
           <div class="p-1 cursor-move rounded-lg flex items-center justify-center bg-cyan-400 hover:bg-cyan-600 shadow-lg">
             {{ element.firstname }} {{ element.lastname }} #{{ element.number }}
           </div>
@@ -40,7 +40,7 @@
       </draggable>
     </div>
     <div class="basis-4/5">
-      <label class="label">Pilotos en el Gran Premio</label>
+      <label class="ui-label">Pilotos en el Gran Premio</label>
       <div class="flex flex-wrap">
         <div
           v-for="constructor in constructorList"
@@ -66,7 +66,7 @@
                 group="drivers"
                 item-key="id"
               >
-                <template #item="{ element, index }">
+                <template #item="{ element }">
                   <div class="cursor-move flex items-center justify-center">
                     {{ element.firstname }} {{ element.lastname }} #{{ element.number }}
                   </div>
@@ -94,11 +94,9 @@ import {Driver} from "@/types/Driver";
 import {Constructor} from "@/types/Constructor";
 import {constructorService, driversService, grandPrixService, notificationService} from "@/_services";
 import {useStyles} from "@/composables/useStyles";
-import DraggableDriverCard from "@/components/gps/DraggableDriverCard.vue";
 import draggable from "vuedraggable";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
-import PCard from "@/components/lib/PCard.vue";
 import PLabel from "@/components/lib/forms/PLabel.vue";
 import PTitle from "@/components/lib/PTitle.vue";
 
@@ -182,7 +180,7 @@ export default defineComponent({
             if (this.driversByConstructor) {
                 driversService.setDriversInGrandPrix(this.grandPrix, this.driversByConstructor).then(() => {
                     notificationService.showNotification( "Lista de pilotos guardada correctamente.");
-                }).catch((error) => {
+            }).catch(() => {
                     notificationService.showNotification( "Ha ocurrido un error.", "error");
                 });
             }

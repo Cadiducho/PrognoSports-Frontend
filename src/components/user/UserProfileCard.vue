@@ -1,41 +1,48 @@
 <template>
-  <div class="section">
-    <div class="container">
-      <div class="ui-grid ui-grid-mobile">
-        <div class="ui-column ui-col-1" />
-        <div class="ui-column">
-          <figure class="ui-image">
-            <img
-              :class="{ photoOpacity : !showSettingsButton}"
-              :src="profile.profileImage()"
-              alt="Profile image"
-            >
+  <section class="w-full py-6">
+    <div class="mx-auto w-full max-w-6xl px-4 sm:px-6">
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+        <figure class="relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800">
+          <img
+            class="h-full w-full object-cover"
+            :class="{ photoOpacity : !showSettingsButton}"
+            :src="profile.profileImage()"
+            alt="Profile image"
+          >
 
-            <label
-              v-if="!showSettingsButton"
-              class="ui-icon edit-icon"
+          <label
+            v-if="!showSettingsButton"
+            class="ui-icon edit-icon"
+          >
+            <i class="fa fa-camera" />
+            <input
+              accept="image/*"
+              tabindex="-1"
+              type="file"
+              hidden
+              @change="onFileChange"
             >
-              <i class="fa fa-camera" />
-              <input
-                accept="image/*"
-                tabindex="-1"
-                type="file"
-                hidden
-                @change="onFileChange"
-              >
-            </label>
-          </figure>
-        </div>
-        <div class="ui-column ui-col-1" />
-        <div class="ui-column ui-col-2-3 ui-content">
-          <p class="flex ui-grid-mobile justify-between">
-            <span class="ui-title font-bold">
-              {{ profile.username }}
+          </label>
+        </figure>
+        <div class="min-w-0 ui-content">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p class="ui-title font-bold">
+                {{ profile.username }}
 
-              <PTag
-                :style="profile.styleRankTag()"
-              >{{ profile.rank.name }}</PTag>
-            </span>
+                <PTag
+                  :style="profile.styleRankTag()"
+                >
+                  {{ profile.rank.name }}
+                </PTag>
+              </p>
+
+              <p v-if="profile.bio">
+                <span class="ui-subtitle">
+                  <small>{{ profile.bio }}</small>
+                </span>
+              </p>
+            </div>
 
             <PButton
               v-if="showSettingsButton && profile.id === currentUser.id"
@@ -46,12 +53,7 @@
             >
               Ajustes
             </PButton>
-          </p>
-          <p v-if="profile.bio">
-            <span class="ui-subtitle">
-              <small>{{ profile.bio }}</small>
-            </span>
-          </p>
+          </div>
 
           <div class="block mb-1">
             <span class="ui-icon-text">
@@ -94,7 +96,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
   <UploadFileModal
     v-model="showEditImageModal"
@@ -193,13 +195,4 @@ export default defineComponent({
     opacity: 0.75;
 }
 
-/* Resolución móvil */
-@media screen and (max-width: 769px) {
-    .ui-image img {
-        max-width: 50%;
-    }
-    .edit-icon {
-        left: 25%;
-    }
-}
 </style>
