@@ -1,107 +1,64 @@
 <template>
-  <div class="container mx-auto my-6 w-full px-4 sm:px-6">
-    <div class="ui-grid ui-grid-center">
-      <div class="ui-column ui-col-2-5">
-        <div class="ui-card">
-          <div class="ui-card-header">
-            <div class="ui-card-title">
-              Registro en PrognoSports
-            </div>
-          </div>
-          <div class="ui-card-content">
-            <form @submit.prevent="handleSubmit()">
-              <div class="ui-field">
-                <label class="ui-label">Correo electrónico</label>
-                <div class="ui-control ui-has-icons-left ui-has-icons-right">
-                  <span class="ui-icon ui-small ui-icon-left">
-                    <i class="fas fa-at" />
-                  </span>
-
-                  <input
-                    v-model="form.email"
-                    type="email"
-                    required
-                    class="ui-input"
-                    :class="{ 'ui-input-error': form.submitted && !form.email }"
-                  >
-                </div>
-              </div>
-              <div class="ui-field">
-                <label class="ui-label">Nombre de usuario</label>
-                <div class="ui-control ui-has-icons-left ui-has-icons-right">
-                  <span class="ui-icon ui-small ui-icon-left">
-                    <i class="fas fa-user" />
-                  </span>
-
-                  <input
-                    v-model="form.username"
-                    type="text"
-                    autofocus
-                    required
-                    class="ui-input"
-                    :class="{ 'ui-input-error': form.submitted && !form.username }"
-                  >
-                </div>
-              </div>
-              <div class="ui-field">
-                <label class="ui-label">Contraseña</label>
-                <div class="ui-control ui-has-icons-left ui-has-icons-right">
-                  <span class="ui-icon ui-small ui-icon-left">
-                    <i class="fas fa-lock" />
-                  </span>
-
-                  <input
-                    v-model="form.password"
-                    type="password"
-                    required
-                    class="ui-input"
-                    :class="{ 'ui-input-error': form.submitted && !form.password }"
-                  >
-                </div>
-              </div>
-              <div class="ui-field">
-                <label class="ui-checkbox select-none">
-                  <input
-                    v-model="form.tos"
-                    type="checkbox"
-                    required
-                  >
-                  Acepto los <a
-                    href="/terms"
-                    target="_blank"
-                  >términos de servicio</a> y las <a
-                    href="/privacy"
-                    target="_blank"
-                  >políticas de privacidad</a>.
-                </label>
-              </div>
-              <div class="ui-field ui-grouped">
-                <div class="ui-control">
-                  <p-button
-                    native-type="submit"
-                    :disabled="!form.tos || form.isRegistering"
-                  >
-                    Regístrate
-                  </p-button>
-                </div>
-              </div>
-            </form>
-          </div>
-          <div class="ui-card-footer">
-            <div class="ui-card-footer-item">
-              <router-link :to="{ name: 'login', query: { redirect: redirectTo }}">
-                Ya tengo usuario
-              </router-link>
-            </div>
-            <div class="ui-card-footer-item">
-              <router-link :to="{ name: 'forgotpassword', query: { redirect: redirectTo }}">
-                He olvidado mi contraseña
-              </router-link>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="py-6">
+    <PContainer size="sm">
+      <PCard title="Registro en PrognoSports">
+        <form @submit.prevent="handleSubmit()">
+          <PInput
+            v-model="form.email"
+            label="Correo electrónico"
+            icon="fas fa-at"
+            type="email"
+            required
+            :error="form.submitted && !form.email"
+          />
+          <PInput
+            v-model="form.username"
+            label="Nombre de usuario"
+            icon="fas fa-user"
+            autofocus
+            required
+            :error="form.submitted && !form.username"
+          />
+          <PInput
+            v-model="form.password"
+            label="Contraseña"
+            icon="fas fa-lock"
+            type="password"
+            required
+            :error="form.submitted && !form.password"
+          />
+          <PCheckbox
+            v-model="form.tos"
+            class="mb-4 select-none"
+          >
+            Acepto los <a
+              class="text-brand-600 hover:underline dark:text-brand-300"
+              href="/terms"
+              target="_blank"
+            >términos de servicio</a> y las <a
+              class="text-brand-600 hover:underline dark:text-brand-300"
+              href="/privacy"
+              target="_blank"
+            >políticas de privacidad</a>.
+          </PCheckbox>
+          <PButton
+            native-type="submit"
+            expanded
+            :disabled="!form.tos || form.isRegistering"
+          >
+            Regístrate
+          </PButton>
+        </form>
+        <template #footer>
+          <PCardFooterItem :to="{ name: 'login', query: { redirect: redirectTo }}">
+            Ya tengo usuario
+          </PCardFooterItem>
+          <PCardFooterItem :to="{ name: 'forgotpassword', query: { redirect: redirectTo }}">
+            He olvidado mi contraseña
+          </PCardFooterItem>
+        </template>
+      </PCard>
+    </PContainer>
   </div>
 </template>
 
@@ -113,6 +70,11 @@ import {notificationService} from "@/_services";
 import {reactive} from "vue";
 import {LocationQueryValue, useRoute, useRouter} from "vue-router";
 import PButton from "@/components/lib/forms/PButton.vue";
+import PInput from "@/components/lib/forms/PInput.vue";
+import PCheckbox from "@/components/lib/forms/PCheckbox.vue";
+import PCard from "@/components/lib/PCard.vue";
+import PContainer from "@/components/lib/PContainer.vue";
+import PCardFooterItem from "@/components/lib/PCardFooterItem.vue";
 
 const authStore = useAuthStore();
 const router = useRouter();

@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="createCircuit"
-    class="ui-surface"
-  >
+  <PCard tag="div" id="createCircuit">
     <PTitle
       class="mb-5"
       name="Crear circuito"
@@ -44,7 +41,7 @@
       variant="primary"
       @click="createCircuit()"
     />
-  </div>
+  </PCard>
 </template>
 
 <script setup lang="ts">
@@ -56,6 +53,7 @@ import PInput from "@/components/lib/forms/PInput.vue";
 import {useRouter} from "vue-router";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
+import PCard from "@/components/lib/PCard.vue";
 
 const router = useRouter();
 

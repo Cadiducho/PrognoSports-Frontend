@@ -1,12 +1,12 @@
 <template>
-    <div id="createConstructor" class="ui-surface">
+    <PCard tag="div" id="createConstructor">
         <PTitle class="mb-5" name="Crear constructor"/>
 
         <PInput label="Nombre del constructor" name="name" v-model="name" />
 
         <PButton class="mt-4" @click="createConstructor" type="solid" label="Crear constructor" />
 
-    </div>
+    </PCard>
 </template>
 
 <script setup lang="ts">
@@ -17,6 +17,7 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import {ref} from "vue";
 import {constructorService, notificationService} from "@/_services";
 import {useRouter} from "vue-router";
+import PCard from "@/components/lib/PCard.vue";
 
 const router = useRouter();
 const name = ref('');

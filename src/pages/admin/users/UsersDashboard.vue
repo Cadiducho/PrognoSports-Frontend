@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="adminUsers"
-    class="ui-surface"
-  >
+  <PCard tag="div" id="adminUsers">
     <PTitle
       class="mb-5"
       name="Administración de usuarios"
@@ -56,7 +53,7 @@
         />-->
       </template>
     </PTable>
-  </div>
+  </PCard>
 </template>
 
 <script setup lang="ts">
@@ -69,6 +66,7 @@ import PSwitch from "@/components/lib/forms/PSwitch.vue";
 import PTable from "@/components/lib/table/PTable.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import {Constructor} from "@/types/Constructor";
+import PCard from "@/components/lib/PCard.vue";
 
 const dayjs = useDayjs();
 const humanDateTime = dayjs.humanDateTime;

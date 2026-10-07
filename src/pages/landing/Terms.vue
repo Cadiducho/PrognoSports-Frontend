@@ -1,13 +1,20 @@
 <script setup lang="ts">
 import PCard from "@/components/lib/PCard.vue";
+import PContainer from "@/components/lib/PContainer.vue";
+import PTitle from "@/components/lib/PTitle.vue";
+import PProse from "@/components/lib/PProse.vue";
 </script>
 
 <template>
-  <PCard class="container mt-6 mb-6">
-    <h1 class="ui-title">
+  <PContainer
+    size="xl"
+    class="py-6"
+  >
+    <PCard>
+    <PTitle tag="h1" type="title">
       Términos y Condiciones
-    </h1>
-    <section class="ui-content">
+    </PTitle>
+    <PProse>
       <h2>Condiciones generales</h2>
       <section>
         <ul>
@@ -27,9 +34,9 @@ import PCard from "@/components/lib/PCard.vue";
           <li>A efectos de discrepancias con estos Términos y Condiciones el usuario podrá contactar con la administración de la plataforma a través de <a href="mailto:info@prognosports.com">info@prognosports.com</a></li>
         </ul>
       </section>
-    </section>
+    </PProse>
 
-    <section class="ui-content">
+    <PProse>
       <h2>Responsabilidad</h2>
       <section>
         <ul>
@@ -41,9 +48,9 @@ import PCard from "@/components/lib/PCard.vue";
           <li>En caso conflicto y ausencia de norma, primará el criterio de los administradores de cualquiera de las plataformas, así como los propietarios de <b>PrognoSports</b>.</li>
         </ul>
       </section>
-    </section>
+    </PProse>
 
-    <section class="ui-content">
+    <PProse>
       <h2>Propiedad de los contenidos</h2>
       <ul>
         <li><b>PrognoSports</b> no está asociado de ninguna manera con empresas externas propietarias de contenidos como <b>Fórmula 1</b>, <b>IndyCar</b>, <b>World Endurance Championship</b>, <b>NASCAR</b>, <b>IMSA</b>, <b>Moto GP</b>, <b>LaLiga</b>, <b>UEFA</b>, <b>ATP</b> o similares. Todos estas marcas pertenecen a sus respectivos propietarios.</li>
@@ -51,9 +58,9 @@ import PCard from "@/components/lib/PCard.vue";
         <li>El código fuente del cliente web es de <a href="https://github.com/Cadiducho/PrognoSports-Frontend>">código libre</a> y se rige bajo una licencia <a href="https://github.com/Cadiducho/PrognoSports-Frontend/blob/master/LICENSE.md">MIT</a>.</li>
         <li>Bajo esta licencia, no está permitido la copia y/o modificación sin permiso expreso y por escrito de los administradores del sitio. En ningún caso, el material expuesto se usará con fines comerciales.</li>
       </ul>
-    </section>
+    </PProse>
 
-    <section class="ui-content">
+    <PProse>
       <h2>Financiación</h2>
       <p>
         La financiación del a plataforma, propiedad de <b>PrognoSports</b>, provienen de donaciones de los usuarios. Aquellos usuarios donantes recibirán un distintivo rango dentro de la plataforma a modo de reconocimiento.
@@ -62,13 +69,14 @@ import PCard from "@/components/lib/PCard.vue";
           Normativa
         </router-link>.
       </p>
-    </section>
-    <p class="ui-content">
+    </PProse>
+    <p class="text-gray-700 dark:text-gray-300">
       Más enlaces de interés: <router-link :to="{name: 'rules'}">
         Normativa
       </router-link> · <router-link :to="{name: 'privacy'}">
         Políticas de privacidad
       </router-link>
     </p>
-  </PCard>
+    </PCard>
+  </PContainer>
 </template>

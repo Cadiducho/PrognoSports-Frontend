@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="adminConstructor"
-    class="ui-surface"
-  >
+  <PCard tag="div" id="adminConstructor">
     <PTitle
       class="mb-5"
       name="Administración de Constructores"
@@ -38,21 +35,21 @@
         ¿Está seguro que desea eliminar el constructor <strong>{{ constructorToDelete?.name }}</strong>? Esta acción no se puede deshacer.
       </template>
       <template #footer>
-        <button
-          class="ui-button ui-danger"
+        <p-button
+          color="danger"
           @click="deleteConstructor(constructorToDelete)"
         >
           Eliminar
-        </button>
-        <button
-          class="ui-button"
+        </p-button>
+        <p-button
+          type="soft"
           @click="showConfirmDeleteModal = false"
         >
           Cancelar
-        </button>
+        </p-button>
       </template>
     </PrognoModal>
-  </div>
+  </PCard>
 </template>
 
 <script setup lang="ts">
@@ -64,6 +61,7 @@ import PTable from "@/components/lib/table/PTable.vue";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
+import PCard from "@/components/lib/PCard.vue";
 
 const router = useRouter();
 

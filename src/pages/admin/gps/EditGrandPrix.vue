@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="adminDrivers"
-    class="ui-surface"
-  >
+  <PCard tag="div" id="adminDrivers">
     <loading v-if="isLoadingGrandPrix" />
     <template v-else>
       <PTitle :name="'Administración de ' + grandPrix.name" />
@@ -23,11 +20,11 @@
         El Gran Premio {{ id }} no ha sido encontrado
       </p>
       <template v-else>
-        <div class="ui-grid">
-          <div class="ui-column">
-            <h2 class="ui-title">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div class="min-w-0">
+            <PTitle tag="h2" type="title">
               Datos del {{ grandPrix.name }}
-            </h2>
+            </PTitle>
 
             <PField label="Nombre">
               <PInput
@@ -45,7 +42,7 @@
             </PField>
 
 
-            <hr>
+            <PDivider />
             <PButton
               :disabled="!isDataOk()"
               label="Editar Gran Premio"
@@ -56,7 +53,7 @@
         </div>
       </template>
     </template>
-  </div>
+  </PCard>
 </template>
 
 <script lang="ts">
@@ -69,10 +66,14 @@ import {useAuthStore} from "@/store/authStore";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
+import PDivider from "@/components/lib/PDivider.vue";
+import PCard from "@/components/lib/PCard.vue";
 
 export default defineComponent({
     name: "EditGrandPrix",
     components: {
+    PCard,
+    PDivider,
       PInput,
       PField,
       PButton,

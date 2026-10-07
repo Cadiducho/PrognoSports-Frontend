@@ -73,7 +73,7 @@
         ¿Eliminar Grand Prix de esta competición?
       </template>
       <template #content>
-        ¿Estás seguro de que quieres <b>eliminar</b> el Gran Premio <span class="ui-weight-semibold">{{ grandPrixToDelete.name }} {{ grandPrixToDelete.season?.name }}</span> de esta competición? <br>Esta acción se puede deshacer.
+        ¿Estás seguro de que quieres <b>eliminar</b> el Gran Premio <span class="font-semibold">{{ grandPrixToDelete.name }} {{ grandPrixToDelete.season?.name }}</span> de esta competición? <br>Esta acción se puede deshacer.
       </template>
       <template #saveText>
         Eliminar Grand Prix

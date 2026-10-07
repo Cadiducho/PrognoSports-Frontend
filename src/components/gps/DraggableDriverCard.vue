@@ -1,10 +1,9 @@
 <template>
   <div
-    class="font-semibold driver-card justify-start p-3 rounded-md opacity-90 bg-contrast
-        hover:bg-sky-50 dark:bg-contrast-dark dark:hover:bg-gray-700 shadow-sm"
+    class="flex cursor-move justify-start rounded-md bg-white p-3 font-semibold text-gray-800 opacity-90 shadow-sm hover:bg-sky-50 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
     :style="styleDriverCard(driver)"
   >
-    <span class="dark:text-gray-100">
+    <span class="max-lg:text-[0.8rem]">
       <b v-if="showPosition">{{ index + 1 }}º.</b> {{ driver.firstname }} {{ driver.lastname }}
       <PTag
         variant="rounded"
@@ -14,7 +13,7 @@
         #{{ driver.number }}
       </PTag>
 
-      <span class="margin-left-card font-normal">
+      <span class="ml-0 block font-normal lg:ml-2 lg:inline">
         <span v-if="currentUser.preferences['use-long-team-names']">{{ driver.team.longname }} ({{ driver.team.carname }})</span>
         <span v-else>{{ driver.team.name }}</span>
       </span>
@@ -41,30 +40,3 @@ const currentUser = authStore.loggedUser;
 const styleDriverCard = styles.styleDriverCard;
 const styleDorsal = styles.styleDorsal;
 </script>
-
-<style scoped>
-
-.driver-card {
-    display: flex;
-    cursor: move !important;
-}
-.margin-left-card {
-    margin-left: 0.5rem;
-}
-
-/* Resolución móvil */
-@media screen and (max-width: 1024px) {
-    .driver-card {
-        a, span {
-            font-size: 0.8rem;
-        }
-        .tag {
-            display: none;
-        }
-    }
-    .margin-left-card {
-        display: block;
-        margin-left: 0.0rem;
-    }
-}
-</style>

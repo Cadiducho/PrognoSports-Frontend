@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="createGrandPrix"
-    class="ui-surface"
-  >
+  <PCard tag="div" id="createGrandPrix">
     <PTitle
       class="mb-5"
       name="Crear gran premio"
@@ -21,9 +18,9 @@
 
     <PStepper v-model="activeStep" :steps="[{ label: 'Datos del gran premio' }, { label: 'Finalizar' }]">
       <template #step-0>
-        <h2 class="ui-title">
+        <PTitle tag="h2" type="title">
           Datos del gran premio
-        </h2>
+        </PTitle>
 
         <PField label="Nombre del Gran Premio">
           <PInput
@@ -45,9 +42,9 @@
       </template>
 
       <template #step-1>
-        <h2 class="ui-title">
+        <PTitle tag="h2" type="title">
           Finalizar
-        </h2>
+        </PTitle>
 
         <AlertInvalidData
           :object="createdGrandPrix.name"
@@ -65,16 +62,16 @@
           Revisa los datos, se va a crear el Gran Premio
         </PrognoAlert>
 
-        <div class="ui-content">
-          <p class="card-text">
+        <PProse>
+          <p>
             <b>Nombre del Gran Premio: </b>{{ createdGrandPrix.name }}
           </p>
-          <p class="card-text">
+          <p>
             <b>Código del Gran Premio: </b>{{ createdGrandPrix.code }}
           </p>
-        </div>
+        </PProse>
 
-        <hr>
+        <PDivider />
         <PButton
           :disabled="!isDataOk()"
           label="Crear Gran Premio"
@@ -83,7 +80,7 @@
         />
       </template>
     </PStepper>
-  </div>
+  </PCard>
 </template>
 
 <script lang="ts">
@@ -101,10 +98,16 @@ import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PStepper from "@/components/lib/PStepper.vue";
+import PProse from "@/components/lib/PProse.vue";
+import PDivider from "@/components/lib/PDivider.vue";
+import PCard from "@/components/lib/PCard.vue";
 
 export default defineComponent({
     name: "CreateGrandPrix",
     components: {
+    PCard,
+    PProse,
+    PDivider,
       PrognoAlert,
       PStepper,
       PInput,

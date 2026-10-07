@@ -4,7 +4,7 @@
         <PTitle tag="p">No hay próximo Gran Premio</PTitle>
     </PCard>
 
-    <PCard v-else-if="!loadingGpData" class="text-black no-underline">
+    <PCard v-else-if="!loadingGpData" class="text-gray-900 no-underline dark:text-gray-100">
         <PTitle type="subtitle" tag="h2">Próximo Gran Premio</PTitle>
         <PTitle tag="h1">{{ nextGp.name }}</PTitle>
         <figure v-if="nextGp.hasPromoImage" class="max-w-lg">

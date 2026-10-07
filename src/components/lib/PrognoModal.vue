@@ -14,7 +14,7 @@
         <!-- dialog -->
         <div
           ref="dialogEl"
-          class="relative w-full rounded-lg bg-white shadow-sm dark:dark:bg-gray-900 md:w-1/2"
+          class="relative mx-4 my-4 max-h-[90vh] w-full overflow-y-auto rounded-lg bg-white shadow-sm dark:bg-gray-900 md:w-1/2"
           role="dialog"
           aria-modal="true"
           :aria-labelledby="ariaLabelledby"

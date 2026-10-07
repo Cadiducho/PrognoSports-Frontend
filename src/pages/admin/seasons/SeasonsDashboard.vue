@@ -48,18 +48,18 @@
         ¿Está seguro que desea eliminar la temporada <strong>{{ seasonToDelete?.name }}</strong>? Esta acción no se puede deshacer.
       </template>
       <template #footer>
-        <button
-          class="ui-button ui-danger"
+        <p-button
+          color="danger"
           @click="deleteSeason(seasonToDelete)"
         >
           Eliminar
-        </button>
-        <button
-          class="ui-button"
+        </p-button>
+        <p-button
+          type="soft"
           @click="showConfirmDeleteModal = false"
         >
           Cancelar
-        </button>
+        </p-button>
       </template>
     </PrognoModal>
   </PCard>

@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="sessionList"
-    class="ui-surface"
-  >
+  <PCard tag="div" id="sessionList">
     <PTitle
       class="mb-5"
       name="Administración de sesiones"
@@ -34,21 +31,21 @@
         ¿Está seguro que desea eliminar la sesión <strong>{{ sessionToDelete?.name }}</strong>? Esta acción no se puede deshacer.
       </template>
       <template #footer>
-        <button
-          class="ui-button ui-danger"
+        <p-button
+          color="danger"
           @click="deleteSeason(sessionToDelete)"
         >
           Eliminar
-        </button>
-        <button
-          class="ui-button"
+        </p-button>
+        <p-button
+          type="soft"
           @click="showConfirmDeleteModal = false"
         >
           Cancelar
-        </button>
+        </p-button>
       </template>
     </PrognoModal>
-  </div>
+  </PCard>
 </template>
 
 <script setup lang="ts">
@@ -61,6 +58,7 @@ import {onMounted, ref} from "vue";
 import {notificationService, sessionService} from "@/_services";
 import {RaceSession} from "@/types/RaceSession";
 import {Column} from "@/components/lib/table";
+import PCard from "@/components/lib/PCard.vue";
 
 const router = useRouter();
 

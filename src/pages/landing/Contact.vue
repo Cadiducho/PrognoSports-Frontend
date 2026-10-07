@@ -1,12 +1,20 @@
 <template>
-  <PCard class="container mt-6 mb-6">
+  <PContainer
+    size="xl"
+    class="py-6"
+  >
+    <PCard>
     <PTitle name="Contacto" />
-    <section class="dark:text-gray-200">
+    <PProse>
       <p>Si así se desea, el usuario podrá contactar con los propietarios y administración de la plataforma mediante correo electrónico a través de la dirección <a href="mailto:info@prognosports.com">info@prognosports.com</a></p>
 
-      <h2 class="ui-subtitle my-2 dark:text-gray-200">
+      <PTitle
+        tag="h2"
+        type="subtitle"
+        class="my-2"
+      >
         Redes Sociales
-      </h2>
+      </PTitle>
       <p>Mantente en contacto con <b>PrognoSports</b> a través de sus redes sociales:</p>
       <ul>
         <li>
@@ -35,11 +43,14 @@
           </a>
         </li>
       </ul>
-    </section>
-  </pcard>
+    </PProse>
+    </PCard>
+  </PContainer>
 </template>
 
 <script setup lang="ts">
 import PTitle from "@/components/lib/PTitle.vue";
 import PCard from "@/components/lib/PCard.vue";
+import PContainer from "@/components/lib/PContainer.vue";
+import PProse from "@/components/lib/PProse.vue";
 </script>

@@ -73,7 +73,7 @@
       </template>
       <template #content>
         ¿Estás seguro de que quieres <b>eliminar</b> el Constructor
-        <span class="ui-weight-semibold">{{ constructorToDelete.name }}</span>
+        <span class="font-semibold">{{ constructorToDelete.name }}</span>
         de esta competición? <br>Esta acción no se puede deshacer.
       </template>
       <template #saveText>

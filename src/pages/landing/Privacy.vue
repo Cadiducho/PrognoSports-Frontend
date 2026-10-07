@@ -1,17 +1,24 @@
 <script setup lang="ts">
 import PCard from "@/components/lib/PCard.vue";
+import PContainer from "@/components/lib/PContainer.vue";
+import PTitle from "@/components/lib/PTitle.vue";
+import PProse from "@/components/lib/PProse.vue";
 </script>
 
 <template>
-  <PCard class="container mt-6 mb-6">
-    <h1 class="ui-title">
+  <PContainer
+    size="xl"
+    class="py-6"
+  >
+    <PCard>
+    <PTitle tag="h1" type="title">
       Políticas de Privacidad
-    </h1>
-    <p class="ui-content">
+    </PTitle>
+    <p class="text-gray-700 dark:text-gray-300">
       <b>PrognoSports</b> está sometida al cumplimiento de la normativa española y europea en materia de protección de datos.
       <b>PrognoSports</b> garantiza en todo momento el pleno cumplimiento de las obligaciones dispuestas por la General Data Protection Regulation (GDPR), así como cualquier otra Ley o norma competente que complemente o sustituya a las anteriores.
     </p>
-    <section class="ui-content">
+    <PProse>
       <ul>
         <li>
           <b>PrognoSports</b> se compromete a la no difusión en ninguna forma de cualquier dato relacionado con cualquier usuario de la plataforma.
@@ -44,13 +51,14 @@ import PCard from "@/components/lib/PCard.vue";
           En caso de que el usuario quiera eliminar o modificar cualquiera de sus datos podrá dirigir un escrito al correo electrónico <a href="mailto:info@prognosports.com">info@prognosports.com</a>. En caso de la baja total del usuario se borrarán todos los registros.
         </li>
       </ul>
-    </section>
-    <p class="ui-content">
+    </PProse>
+    <p class="text-gray-700 dark:text-gray-300">
       Más enlaces de interés: <router-link :to="{name: 'terms'}">
         Términos y Condiciones
       </router-link> · <router-link :to="{name: 'rules'}">
         Normativa
       </router-link>
     </p>
-  </PCard>
+    </PCard>
+  </PContainer>
 </template>

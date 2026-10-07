@@ -4,7 +4,11 @@
       name="Verifica tu email"
       class="text-2xl font-bold mb-4"
     />
-    <PCard class="p-6 bg-white rounded-lg shadow-md">
+    <PContainer
+      size="sm"
+      class="my-6"
+    >
+      <PCard>
       <p class="text-gray-700 dark:text-gray-300">
         Hemos enviado un email a tu dirección de correo electrónico. Por favor, introduce el código para verificar tu cuenta.
       </p>
@@ -51,12 +55,14 @@
         </PButton>
       </div>
     </PCard>
+    </PContainer>
   </div>
 </template>
 
 <script setup lang="ts">
 import PTitle from "@/components/lib/PTitle.vue";
 import PCard from "@/components/lib/PCard.vue";
+import PContainer from "@/components/lib/PContainer.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 
 import {authService, notificationService} from "@/_services";

@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="adminDrivers"
-    class="ui-surface"
-  >
+  <PCard tag="div" id="adminDrivers">
     <PTitle
       class="mb-5"
       name="Administración de circuitos"
@@ -21,11 +18,11 @@
         El circuito {{ circuitId }} no ha sido encontrada
       </p>
       <template v-else>
-        <div class="flex">
-          <section class="w-1/2 mr-2">
-            <h2 class="ui-title">
+        <div class="flex flex-col gap-4 md:flex-row">
+          <section class="w-full md:mr-2 md:w-1/2">
+            <PTitle tag="h2" type="title">
               Datos del circuito
-            </h2>
+            </PTitle>
 
             <PInput
               v-model="circuit!.name"
@@ -80,8 +77,8 @@
             >
           </section>
 
-          <section class="w-1/2 border-l-4">
-            <h2 class="font-bold mb-2 ml-3 text-2xl">
+          <section class="w-full border-brand-200 dark:border-gray-700 md:w-1/2 md:border-l-4">
+            <h2 class="mb-2 text-2xl font-bold text-gray-900 dark:text-gray-100 md:ml-3">
               Variantes del circuito
             </h2>
             <div class="flex flex-wrap">
@@ -115,7 +112,7 @@
         />
       </template>
     </template>
-  </div>
+  </PCard>
 </template>
 
 <script setup lang="ts">
@@ -130,6 +127,7 @@ import PInput from "@/components/lib/forms/PInput.vue";
 
 import {useRoute, useRouter} from "vue-router";
 import {CircuitVariant} from "@/types/CircuitVariant";
+import PCard from "@/components/lib/PCard.vue";
 
 const route = useRoute();
 const router = useRouter();

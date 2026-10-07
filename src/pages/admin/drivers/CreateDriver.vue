@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="createDriver"
-    class="ui-surface"
-  >
+  <PCard tag="div" id="createDriver">
     <PTitle
       class="mb-5"
       name="Crear piloto"
@@ -21,9 +18,9 @@
 
     <PStepper v-model="activeStep" :steps="[{ label: 'Datos del piloto' }, { label: 'Finalizar' }]">
       <template #step-0>
-        <h2 class="ui-title">
+        <PTitle tag="h2" type="title">
           Datos del piloto
-        </h2>
+        </PTitle>
 
         <PField label="Nombre del piloto">
           <PInput
@@ -61,13 +58,13 @@
           />
         </PField>
 
-        <hr>
+        <PDivider />
       </template>
 
       <template #step-1>
-        <h2 class="ui-title">
+        <PTitle tag="h2" type="title">
           Finalizar
-        </h2>
+        </PTitle>
 
         <AlertInvalidData
           :object="createdDriver.id"
@@ -94,25 +91,25 @@
           Revisa los datos, se va a crear el siguiente piloto
         </PrognoAlert>
 
-        <div class="ui-content">
-          <p class="card-text">
+        <PProse>
+          <p>
             <b>ID del piloto: </b>{{ createdDriver.id }}
           </p>
-          <p class="card-text">
+          <p>
             <b>Nombre del piloto: </b>{{ createdDriver.firstname }} {{ createdDriver.lastname }}
           </p>
-          <p class="card-text">
+          <p>
             <b>Código del piloto: </b>{{ createdDriver.code }}
           </p>
-          <p class="card-text">
+          <p>
             <b>Nacionalidad del piloto: </b>{{ createdDriver.nationality }}
           </p>
-          <p class="card-text">
+          <p>
             <b>Fecha de nacimiento: </b>{{ humanDate(createdDriver.birth) }}
           </p>
-        </div>
+        </PProse>
 
-        <hr>
+        <PDivider />
         <PButton
           :disabled="!isDataOk()"
           label="Crear piloto"
@@ -121,7 +118,7 @@
         />
       </template>
     </PStepper>
-  </div>
+  </PCard>
 </template>
 
 <script lang="ts">
@@ -139,10 +136,16 @@ import PInput from "@/components/lib/forms/PInput.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import CalendarDateTimePicker from "@/components/lib/CalendarDateTimePicker.vue";
 import PStepper from "@/components/lib/PStepper.vue";
+import PProse from "@/components/lib/PProse.vue";
+import PDivider from "@/components/lib/PDivider.vue";
+import PCard from "@/components/lib/PCard.vue";
 
 export default defineComponent({
     name: "CreateDriver",
     components: {
+    PCard,
+    PProse,
+    PDivider,
       CalendarDateTimePicker,
       PStepper,
       PrognoAlert,

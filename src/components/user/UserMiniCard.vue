@@ -1,66 +1,63 @@
 <template>
-  <div class="ui-card user-mini-card">
-    <div class="ui-card-content user-mini-card-content">
-      <div class="ui-media user-mini-card-media">
-        <div class="ui-media-left">
-          <figure class="ui-image ui-image-64 zuga">
-            <img
-              :src="objUser.profileImage()"
-              alt="Profile image"
-              class="profile-image rounded-full"
-            >
-          </figure>
-        </div>
-        <div class="divisor" />
-        <div class="ui-media-content">
-          <div class="user-mini-card-header">
-            <span class="ui-title ui-title-4 multiline-text">{{ objUser.username }}</span>
-
-            <span class="content-rank">
-              <span
-                :style="{ color: `#${objUser.rank.color}`, 'border-color': `#${objUser.rank.color}` }"
-                class="content-rank-name"
-              >
-                {{ objUser.rank.name }}
-              </span>
-            </span>
-          </div>
-          <p
-            v-if="objUser.bio"
-            class="ui-subtitle ui-subtitle-6 multiline-text"
+  <PCard
+    tag="div"
+    padding="sm"
+    class="w-full max-w-sm"
+  >
+    <PMedia>
+      <template #left>
+        <figure class="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
+          <img
+            :src="objUser.profileImage()"
+            alt="Profile image"
+            class="h-full w-full object-cover"
           >
-            {{ objUser.bio }}
-          </p>
-        </div>
-      </div>
-      <div class="divisor" />
-      <div class="ui-content user-mini-card-details">
-        <p
-          v-if="objUser.location"
-          class="content-icon content-location"
+        </figure>
+      </template>
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <span class="break-words text-xl font-semibold text-gray-900 dark:text-gray-100">{{ objUser.username }}</span>
+        <span
+          :style="{ color: `#${objUser.rank.color}`, 'border-color': `#${objUser.rank.color}` }"
+          class="inline-flex whitespace-nowrap rounded border px-2 text-sm"
         >
-          <span class="ui-icon ui-small">
-            <i class="fas fa-map-marker-alt fa-sm mr-2" />
-          </span>
-          <span class="multiline-text">{{ objUser.location }}</span>
-        </p>
-        <p class="content-icon content-last_activity">
-          <span class="ui-icon ui-small">
-            <i class="fas fa-clock fa-sm mr-2" />
-          </span>
-          <span class="multiline-text">Visto por última vez {{ dateDiff(objUser.last_activity) }}</span>
-        </p>
+          {{ objUser.rank.name }}
+        </span>
       </div>
-    </div>
-  </div>
+      <p
+        v-if="objUser.bio"
+        class="mt-1 break-words text-sm text-gray-600 dark:text-gray-300"
+      >
+        {{ objUser.bio }}
+      </p>
+    </PMedia>
+
+    <hr class="my-2 border-gray-200 dark:border-gray-700">
+
+    <ul class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+      <li
+        v-if="objUser.location"
+        class="flex items-center gap-2"
+      >
+        <i class="fas fa-map-marker-alt fa-sm" />
+        <span class="break-words">{{ objUser.location }}</span>
+      </li>
+      <li class="flex items-center gap-2">
+        <i class="fas fa-clock fa-sm" />
+        <span>Visto por última vez {{ dateDiff(objUser.last_activity) }}</span>
+      </li>
+    </ul>
+  </PCard>
 </template>
 
 <script lang="ts">
 import { User } from "@/types/User";
 import {computed, defineComponent, PropType} from "vue";
 import {useDayjs} from "@/composables/useDayjs";
+import PMedia from "@/components/lib/PMedia.vue";
+import PCard from "@/components/lib/PCard.vue";
 
 export default defineComponent({
+  components: { PMedia, PCard },
     name: "ScoreComponents",
     props: {
         user: {
@@ -76,49 +73,3 @@ export default defineComponent({
     }
 });
 </script>
-
-<style scoped>
-.user-mini-card {
-    @apply w-full max-w-sm overflow-hidden;
-}
-
-.user-mini-card-content {
-    @apply p-3;
-}
-
-.user-mini-card-media {
-    @apply flex-col gap-3 sm:flex-row sm:items-start;
-}
-
-.divisor {
-    @apply my-2 h-px border-0 bg-gray-200 dark:bg-gray-700;
-}
-
-.user-mini-card-header {
-    @apply flex flex-wrap justify-between gap-2;
-}
-
-.user-mini-card-details {
-    @apply mt-2;
-}
-
-.content-icon {
-    @apply mb-2 flex items-center text-sm;
-}
-
-.content-rank-name {
-    @apply inline-flex justify-center rounded border border-transparent px-2 text-center text-sm whitespace-nowrap;
-}
-
-.profile-image {
-    @apply max-h-full max-w-full object-contain;
-}
-
-.zuga {
-    @apply flex items-center justify-center;
-}
-
-.multiline-text {
-    white-space: normal;
-}
-</style>

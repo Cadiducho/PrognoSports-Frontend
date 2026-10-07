@@ -8,7 +8,7 @@
       <slot name="title" />
     </template>
     <template #content>
-      <label class="ui-label">
+      <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300">
         <slot name="label" />
       </label>
       <cropper

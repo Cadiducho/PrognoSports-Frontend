@@ -1,148 +1,98 @@
 <template>
-  <div class="container mx-auto my-6 w-full px-4 sm:px-6">
-    <div class="ui-grid ui-grid-center">
-      <div class="ui-column ui-col-2-5">
-        <div class="ui-card">
-          <div class="ui-card-header">
-            <div class="ui-card-title">
-              Cambio de contraseña
-            </div>
-          </div>
-          <div class="ui-card-content">
-            <div class="ui-content">
-              <p class="ui-text-justified">
-                Para solicitar un cambio de contraseña,
-                deberás introducir el correo electrónico de
-                tu cuenta, donde recibirás un código de recuperación.
-              </p>
-              <p class="ui-text-justified">
-                Con dicho código podrás establecer una nueva
-                contraseña para tu cuenta.
-              </p>
-            </div>
-            <form
-              v-if="form.showChangePasswordForm"
-              @submit.prevent="handleSubmitChangePassword()"
+  <div class="py-6">
+    <PContainer size="sm">
+      <PCard title="Cambio de contraseña">
+        <PProse class="mb-4">
+          <p>
+            Para solicitar un cambio de contraseña,
+            deberás introducir el correo electrónico de
+            tu cuenta, donde recibirás un código de recuperación.
+          </p>
+          <p>
+            Con dicho código podrás establecer una nueva
+            contraseña para tu cuenta.
+          </p>
+        </PProse>
+        <form
+          v-if="form.showChangePasswordForm"
+          @submit.prevent="handleSubmitChangePassword()"
+        >
+          <PInput
+            v-model="form.email"
+            label="Correo electrónico"
+            icon="fas fa-at"
+            type="email"
+            required
+          />
+          <PInput
+            v-model="form.inputToken"
+            label="Código de verificación"
+            icon="fas fa-qrcode"
+            required
+          />
+          <PInput
+            v-model="form.inputPassword"
+            label="Nueva contraseña"
+            icon="fas fa-lock"
+            type="password"
+            required
+          />
+          <div class="mt-2 flex flex-wrap gap-2">
+            <PButton
+              native-type="submit"
+              color="info"
+              :disabled="loading.changePassword || !form.email || !form.inputToken || !form.inputPassword"
             >
-              <div class="ui-field">
-                <label class="ui-label">Correo electrónico</label>
-                <div class="ui-control ui-has-icons-left ui-has-icons-right">
-                  <input
-                    v-model="form.email"
-                    required
-                    class="ui-input"
-                    type="email"
-                  >
-                  <span class="ui-icon ui-small ui-icon-left">
-                    <i class="fas fa-at" />
-                  </span>
-                </div>
-              </div>
-              <div class="ui-field">
-                <label class="ui-label">Código de verificación</label>
-                <div class="ui-control ui-has-icons-left ui-has-icons-right">
-                  <input
-                    v-model="form.inputToken"
-                    required
-                    class="ui-input"
-                    type="text"
-                  >
-                  <span class="ui-icon ui-small ui-icon-left">
-                    <i class="fas fa-qrcode" />
-                  </span>
-                </div>
-              </div>
-              <div class="ui-field">
-                <label class="ui-label">Nueva contraseña</label>
-                <div class="ui-control ui-has-icons-left ui-has-icons-right">
-                  <input
-                    v-model="form.inputPassword"
-                    required
-                    class="ui-input"
-                    type="password"
-                  >
-                  <span class="ui-icon ui-small ui-icon-left">
-                    <i class="fas fa-lock" />
-                  </span>
-                </div>
-              </div>
-              <div class="ui-field ui-grouped">
-                <div class="ui-control">
-                  <p-button
-                    native-type="submit"
-                    class="ui-button ui-info"
-                    :disabled="loading.changePassword || !form.email || !form.inputToken || !form.inputPassword"
-                  >
-                    Cambiar contraseña
-                  </p-button>
-                </div>
-                <div class="ui-control">
-                  <p-button
-                    type="soft"
-                    color="teal"
-                    @click="form.showChangePasswordForm = false"
-                  >
-                    Enviar nuevo código
-                  </p-button>
-                </div>
-              </div>
-            </form>
+              Cambiar contraseña
+            </PButton>
+            <PButton
+              type="soft"
+              color="teal"
+              @click="form.showChangePasswordForm = false"
+            >
+              Enviar nuevo código
+            </PButton>
+          </div>
+        </form>
 
-            <form
-              v-else
-              @submit.prevent="handleSendCode()"
+        <form
+          v-else
+          @submit.prevent="handleSendCode()"
+        >
+          <PInput
+            v-model="form.email"
+            label="Correo electrónico"
+            icon="fas fa-at"
+            type="email"
+            required
+          />
+          <div class="mt-2 flex flex-wrap gap-2">
+            <PButton
+              native-type="submit"
+              color="info"
+              :disabled="loading.sendCode || !form.email"
             >
-              <div class="ui-field">
-                <label class="ui-label">Correo electrónico</label>
-                <div class="ui-control ui-has-icons-left ui-has-icons-right">
-                  <input
-                    v-model="form.email"
-                    required
-                    class="ui-input"
-                    type="email"
-                  >
-                  <span class="ui-icon ui-small ui-icon-left">
-                    <i class="fas fa-at" />
-                  </span>
-                </div>
-              </div>
-              <div class="ui-field ui-grouped">
-                <div class="ui-control">
-                  <p-button
-                    native-type="submit"
-                    class="ui-button ui-info"
-                    :disabled="loading.sendCode || !form.email"
-                  >
-                    Solicitar código
-                  </p-button>
-                </div>
-                <div class="ui-control">
-                  <p-button
-                    type="soft"
-                    color="teal"
-                    @click="form.showChangePasswordForm = true"
-                  >
-                    Ya tengo un código
-                  </p-button>
-                </div>
-              </div>
-            </form>
+              Solicitar código
+            </PButton>
+            <PButton
+              type="soft"
+              color="teal"
+              @click="form.showChangePasswordForm = true"
+            >
+              Ya tengo un código
+            </PButton>
           </div>
-          <div class="ui-card-footer">
-            <div class="ui-card-footer-item">
-              <router-link :to="{ name: 'register', query: { redirect: redirectTo }}">
-                Registrarse
-              </router-link>
-            </div>
-            <div class="ui-card-footer-item">
-              <router-link :to="{ name: 'login', query: { redirect: redirectTo }}">
-                Ya tengo usuario
-              </router-link>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        </form>
+        <template #footer>
+          <PCardFooterItem :to="{ name: 'register', query: { redirect: redirectTo }}">
+            Registrarse
+          </PCardFooterItem>
+          <PCardFooterItem :to="{ name: 'login', query: { redirect: redirectTo }}">
+            Ya tengo usuario
+          </PCardFooterItem>
+        </template>
+      </PCard>
+    </PContainer>
   </div>
 </template>
 
@@ -151,6 +101,11 @@ import {LocationQueryValue, useRoute, useRouter} from "vue-router";
 import {reactive} from "vue";
 import {notificationService, userService} from "@/_services";
 import PButton from "@/components/lib/forms/PButton.vue";
+import PInput from "@/components/lib/forms/PInput.vue";
+import PCard from "@/components/lib/PCard.vue";
+import PContainer from "@/components/lib/PContainer.vue";
+import PProse from "@/components/lib/PProse.vue";
+import PCardFooterItem from "@/components/lib/PCardFooterItem.vue";
 
 const router = useRouter();
 const route = useRoute();

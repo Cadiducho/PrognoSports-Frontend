@@ -1,144 +1,101 @@
 <template>
   <div>
-    <header class="masthead ui-text-light ui-text-center ui-weight-semibold">
-      <div class="section">
-        <h1 class="heading mb-2">
-          <span>Pronostica resultados de carreras<br> con tus amigos y compite por ser el mejor</span>
-        </h1>
-      </div>
+    <header
+      class="bg-gray-700 bg-cover bg-center bg-no-repeat px-4 py-24 text-center font-semibold text-gray-100 md:py-48"
+      style="background-image: url('/spa-portada.jpg')"
+    >
+      <h1 class="text-3xl leading-snug md:text-5xl md:leading-snug">
+        <span class="box-decoration-clone bg-black/45 px-1">
+          Pronostica resultados de carreras<br> con tus amigos y compite por ser el mejor
+        </span>
+      </h1>
     </header>
 
-    <div class="container landing-content">
-      <div class="ui-tile ui-tile-ancestor features-icons mb-0 ui-text-center">
-        <div class="ui-tile ui-tile-parent">
-          <article class="ui-tile ui-tile-child features-icons-item">
-            <div class="features-icons-icon">
-              <i class="material-icons text-brand-500">people</i>
-            </div>
-            <p class="ui-title">
-              Comunitario
-            </p>
-            <p class="ui-subtitle">
-              Crea una comunidad con tus amigos o únete a una ya existente.
-              Podrás participar en distintas comunidades con diferentes pronósticos y reglas.
-            </p>
-          </article>
+    <PContainer
+      tag="section"
+      size="2xl"
+      class="grid grid-cols-1 gap-8 py-12 text-center md:grid-cols-3 md:py-16"
+    >
+      <article
+        v-for="feature in features"
+        :key="feature.title"
+        class="group mx-auto max-w-xs"
+      >
+        <div class="flex h-28 items-center justify-center">
+          <i class="material-icons text-7xl text-brand-500 transition-all group-hover:text-8xl">{{ feature.icon }}</i>
         </div>
-        <div class="ui-tile ui-tile-parent">
-          <article class="ui-tile ui-tile-child features-icons-item">
-            <div class="features-icons-icon">
-              <i class="material-icons text-brand-500">favorite_border</i>
-            </div>
-            <p class="ui-title">
-              Intuitivo
-            </p>
-            <p class="ui-subtitle feature-icons-text">
-              PrognoSports está diseñado para ser intuitivo con las competiciones de motor.
-              Escoge el orden de los pilotos en las distintas sesiones y obtén más puntos que tus rivales.
-            </p>
-          </article>
+        <PTitle
+          tag="h2"
+          type="subtitle"
+        >
+          {{ feature.title }}
+        </PTitle>
+        <p class="text-gray-600 dark:text-gray-300">
+          {{ feature.text }}
+        </p>
+      </article>
+    </PContainer>
+
+    <section
+      v-for="(highlight, index) in highlights"
+      :key="highlight.title"
+      class="bg-white even:bg-gray-50 dark:bg-gray-900 dark:even:bg-gray-800/50"
+    >
+      <PContainer
+        size="2xl"
+        class="grid grid-cols-1 items-center gap-8 py-12 md:grid-cols-2 md:gap-12 md:py-16"
+      >
+        <div :class="{ 'md:order-2': index % 2 === 1 }">
+          <PTitle
+            tag="h2"
+            type="title"
+          >
+            {{ highlight.title }}
+          </PTitle>
+          <p class="text-lg text-gray-600 dark:text-gray-300">
+            {{ highlight.text }}
+          </p>
         </div>
-        <div class="ui-tile ui-tile-parent">
-          <article class="ui-tile ui-tile-child features-icons-item">
-            <div class="features-icons-icon">
-              <i class="material-icons text-brand-500">important_devices</i>
-            </div>
-            <p class="ui-title">
-              Versátil
-            </p>
-            <p class="ui-subtitle">
-              Realiza tus pronósticos desde el PC, móvil o tablet sin ninguna limitación.
-            </p>
-          </article>
-        </div>
-      </div>
-    </div>
-    <div class="ui-content">
-      <div class="section">
-        <div class="ui-grid">
-          <div class="ui-column feature-box">
-            <div class="ui-title">
-              Dedicado
-            </div>
-            <div class="text">
-              Con un diseño orientado a competiciones de Fórmula 1™, en una misma página podrás ver todos los datos útiles para tus pronósticos.
-            </div>
-          </div>
-          <div class="ui-column">
-            <img
-              class="image-box border-shadow "
-              src="https://prognosports.com/dist/img/landing/dedicado.png"
-              alt=""
-            >
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="ui-content">
-      <div class="section">
-        <div class="ui-grid reverse-in-mobile">
-          <div class="ui-column">
-            <img
-              class="image-box border-shadow "
-              src="https://prognosports.com/dist/img/landing/visual.png"
-              alt=""
-            >
-          </div>
-          <div class="ui-column feature-box">
-            <div class="ui-title">
-              Visual
-            </div>
-            <div class="text">
-              Podrás comprobar tus resultados y compararlos con tus rivales mediante sencillas gráficas de puntos, o detalladas tablas de valores.
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="ui-content">
-      <div class="section">
-        <div class="ui-grid">
-          <div class="ui-column feature-box">
-            <div class="ui-title">
-              A medida
-            </div>
-            <div class="text">
-              Personaliza cómo quieres visualizar ciertas secciones de la web o qué notificaciones quieres recibir y a dónde. Podrás personalizar PrognoSports a medida.
-            </div>
-          </div>
-          <div class="ui-column">
-            <img
-              class="image-box border-shadow"
-              src="https://prognosports.com/dist/img/landing/personalizable.png"
-              alt=""
-            >
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="primary-background">
-      <div class="call-to-action-container">
+        <img
+          class="w-full rounded-lg shadow-lg ring-1 ring-black/5 dark:ring-white/10"
+          :src="highlight.image"
+          alt=""
+          loading="lazy"
+        >
+      </PContainer>
+    </section>
+
+    <section class="bg-brand-accent-600 px-4 py-10 dark:bg-brand-accent-800">
+      <PContainer
+        size="md"
+        class="flex flex-col items-center justify-center gap-6 text-center text-white md:flex-row md:text-left"
+      >
         <div>
-          <h1 class="call-to-action-h1">
+          <h2 class="text-3xl font-semibold">
             ¿Preparado para comenzar?
-          </h1>
-          <p class="call-to-action-p">
+          </h2>
+          <p class="text-lg">
             ¡Regístrate y prúebalo gratis!
           </p>
         </div>
-        <button
-          class="btn call-to-action-btn"
+        <PButton
+          class="shrink-0 !bg-white !text-brand-accent-700 hover:!bg-gray-100"
+          pilled
+          size="large"
           @click="sendToRegister"
         >
           Registrarse
-        </button>
-      </div>
-    </div>
+        </PButton>
+      </PContainer>
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
+import PTitle from "@/components/lib/PTitle.vue";
+import PContainer from "@/components/lib/PContainer.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
 
 const router = useRouter();
 const sendToRegister = () => {
@@ -146,140 +103,40 @@ const sendToRegister = () => {
 
     router.push({path: '/register'});
 };
+
+const features = [
+  {
+    icon: 'people',
+    title: 'Comunitario',
+    text: 'Crea una comunidad con tus amigos o únete a una ya existente. Podrás participar en distintas comunidades con diferentes pronósticos y reglas.'
+  },
+  {
+    icon: 'favorite_border',
+    title: 'Intuitivo',
+    text: 'PrognoSports está diseñado para ser intuitivo con las competiciones de motor. Escoge el orden de los pilotos en las distintas sesiones y obtén más puntos que tus rivales.'
+  },
+  {
+    icon: 'important_devices',
+    title: 'Versátil',
+    text: 'Realiza tus pronósticos desde el PC, móvil o tablet sin ninguna limitación.'
+  }
+];
+
+const highlights = [
+  {
+    title: 'Dedicado',
+    text: 'Con un diseño orientado a competiciones de Fórmula 1™, en una misma página podrás ver todos los datos útiles para tus pronósticos.',
+    image: 'https://prognosports.com/dist/img/landing/dedicado.png'
+  },
+  {
+    title: 'Visual',
+    text: 'Podrás comprobar tus resultados y compararlos con tus rivales mediante sencillas gráficas de puntos, o detalladas tablas de valores.',
+    image: 'https://prognosports.com/dist/img/landing/visual.png'
+  },
+  {
+    title: 'A medida',
+    text: 'Personaliza cómo quieres visualizar ciertas secciones de la web o qué notificaciones quieres recibir y a dónde. Podrás personalizar PrognoSports a medida.',
+    image: 'https://prognosports.com/dist/img/landing/personalizable.png'
+  }
+];
 </script>
-
-<style scoped>
-* {
-    padding: 0;
-    margin: 0;
-}
-a {
-    text-decoration: none;
-}
-
-body {
-    font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-weight: 700;
-}
-
-header.masthead {
-    position: relative;
-    background: #343a40 url("/spa-portada.jpg") no-repeat center center;
-    background-size: cover;
-    padding-top: 8rem;
-    padding-bottom: 8rem;
-}
-
-header.masthead h1 {
-    font-size: 2rem;
-}
-
-@media (min-width: 768px) {
-    header.masthead {
-        padding-top: 12rem;
-        padding-bottom: 12rem;
-    }
-    header.masthead h1 {
-        font-size: 3rem;
-    }
-}
-
-.heading {
-    font-size: 3rem;
-    text-transform: none!important;
-
-    span {
-        background-color: rgba(0,0,0,.45);
-    }
-}
-
-.features-icons {
-    padding-top: 4rem;
-    padding-bottom: 4rem;
-}
-
-.features-icons .features-icons-item {
-    max-width: 20rem;
-}
-
-.features-icons .features-icons-item .features-icons-icon {
-    height: 7rem;
-}
-
-.features-icons .features-icons-item .features-icons-icon i {
-    font-size: 4.5rem;
-}
-
-.features-icons .features-icons-item:hover .features-icons-icon i {
-    font-size: 5rem;
-}
-
-.features-icons .features-icons-item .features-icons-text {
-    font-size: 1.25rem;
-    font-weight: 300;
-}
-
-.btn {
-    width: 280px;
-    height: 50px;
-    border-radius: 100px;
-    border: none;
-    font-size: 16px;
-    color: #507ce8;
-    box-sizing: border-box;
-    padding: 0 30px 0 51px;
-    background-image: url("@/assets/logo.png");
-    background-size: 26px 26px;
-    background-repeat: no-repeat;
-    background-position: 39px;
-    background-color: white;
-    outline: none;
-    cursor: pointer;
-}
-
-.landing-content {
-    max-width: 1280px;
-    margin: 0 auto;
-}
-
-.feature-box {
-    margin: 4rem;
-    align-self: center;
-}
-
-.text {
-    font-size: 17px;
-    margin-top: 1rem;
-    height: 100px;
-    color: #6d7d93;
-}
-.primary-background {
-    background-color: #507ce8;
-    padding: 38px 20px;
-}
-.call-to-action-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.call-to-action-btn {
-    margin: 2rem;
-}
-.call-to-action-h1 {
-    font-size: 28px;
-    color: white;
-}
-.call-to-action-p {
-    font-size: 17px;
-    color: white;
-}
-</style>

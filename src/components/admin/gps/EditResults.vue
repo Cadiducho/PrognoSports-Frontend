@@ -25,10 +25,10 @@
         </option>
       </PSelect>
 
-      <hr>
+      <PDivider />
     </section>
 
-    <label class="ui-label">Resultados</label>
+    <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300">Resultados</label>
     <PrognoAlert
       v-if="!hasSavedResults"
       variant="warning"
@@ -91,10 +91,12 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import PCard from "@/components/lib/PCard.vue";
 import PCheckbox from "@/components/lib/forms/PCheckbox.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
+import PDivider from "@/components/lib/PDivider.vue";
 
 export default defineComponent({
     name: "EditResults",
     components: {
+    PDivider,
       PSelect,
       PCheckbox,
       PCard,

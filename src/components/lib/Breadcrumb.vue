@@ -1,15 +1,34 @@
 <template>
-    <nav class="ui-breadcrumb" aria-label="breadcrumbs">
-        <ul>
-            <li>
-                <router-link :to="{name: 'home'}">PrognoSports</router-link>
-            </li>
+  <nav
+    class="mb-4 text-sm text-gray-600 dark:text-gray-300"
+    aria-label="breadcrumbs"
+  >
+    <ol class="flex flex-wrap items-center gap-x-2 gap-y-1">
+      <li>
+        <router-link
+          class="hover:underline"
+          :to="{name: 'home'}"
+        >
+          PrognoSports
+        </router-link>
+      </li>
 
-            <li v-for="(crumb, index) in crumbs" :class="{ 'ui-active': crumb.isLast}">
-                <router-link :to="{name: crumb.target, params: crumb.params}">{{ crumb.title }}</router-link>
-            </li>
-        </ul>
-    </nav>
+      <li
+        v-for="crumb in crumbs"
+        :key="crumb.target"
+        class="flex items-center gap-2"
+      >
+        <i class="fas fa-chevron-right text-xs text-gray-400 dark:text-gray-500" />
+        <router-link
+          :class="crumb.isLast ? 'font-semibold text-gray-900 dark:text-white' : 'hover:underline'"
+          :aria-current="crumb.isLast ? 'page' : undefined"
+          :to="{name: crumb.target, params: crumb.params}"
+        >
+          {{ crumb.title }}
+        </router-link>
+      </li>
+    </ol>
+  </nav>
 </template>
 
 <script lang="ts">

@@ -5,12 +5,12 @@
       :show-settings-button="false"
     />
 
-    <hr>
+    <PDivider />
 
     <UserLevelResume :user="currentUser" />
   </PCard>
 
-  <PCard class="mt-1">
+  <PCard class="mt-4">
     <PTitle type="subtitle">
       Cuenta
     </PTitle>
@@ -40,10 +40,10 @@
     </div>
   </PCard>
 
-  <PCard class="mt-1">
+  <PCard class="mt-4">
     <form @submit.prevent="save()">
-      <div class="ui-grid">
-        <div class="ui-column">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="min-w-0">
           <PTitle type="subtitle">
             Datos
           </PTitle>
@@ -85,13 +85,13 @@
           </PField>
         </div>
 
-        <div class="ui-column">
+        <div class="min-w-0">
           <PTitle type="subtitle">
             Preferencias
           </PTitle>
 
-          <label class="ui-label">Nombres de los equipos</label>
-          <div class="ui-field">
+          <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300">Nombres de los equipos</label>
+          <div class="mb-4">
             <PRadio
               v-model="editedUser.preferences['use-long-team-names']"
               :value="false"
@@ -99,7 +99,7 @@
               Mostrar nombres cortos
             </PRadio>
           </div>
-          <div class="ui-field">
+          <div class="mb-4">
             <PRadio
               v-model="editedUser.preferences['use-long-team-names']"
               :value="true"
@@ -108,8 +108,8 @@
             </PRadio>
           </div>
 
-          <label class="ui-label">Privacidad</label>
-          <div class="ui-field">
+          <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300">Privacidad</label>
+          <div class="mb-4">
             <PRadio
               v-model="editedUser.preferences['hide-tipps-until-start']"
               :value="false"
@@ -117,7 +117,7 @@
               No ocultar mis pronósticos
             </PRadio>
           </div>
-          <div class="ui-field">
+          <div class="mb-4">
             <PRadio
               v-model="editedUser.preferences['hide-tipps-until-start']"
               :value="true"
@@ -143,7 +143,7 @@
         </div>
       </div>
 
-      <hr>
+      <PDivider />
 
       <PInput
         v-model="editedUser.password"
@@ -166,8 +166,8 @@
     v-if="!isLoading"
     class="mt-1"
   >
-    <div class="ui-grid">
-      <div class="ui-column">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div class="min-w-0">
         <PTitle type="subtitle">
           Notificaciones
         </PTitle>
@@ -179,7 +179,7 @@
 
         <NotificationSettingsTable />
       </div>
-      <div class="ui-column">
+      <div class="min-w-0">
         <AuthTokenList />
       </div>
     </div>
@@ -301,10 +301,12 @@ import PCard from "@/components/lib/PCard.vue";
 import PTitle from "@/components/lib/PTitle.vue";
 import NotificationSettingsTable from "@/components/user/settings/NotificationSettingsTable.vue";
 import CalendarDateTimePicker from "@/components/lib/CalendarDateTimePicker.vue";
+import PDivider from "@/components/lib/PDivider.vue";
 
 export default defineComponent({
   name: "UserSettings",
   components: {
+    PDivider,
     CalendarDateTimePicker,
     NotificationSettingsTable,
     PTitle,

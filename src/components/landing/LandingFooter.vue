@@ -1,12 +1,12 @@
 <template>
   <div class="flex min-h-[60vh] bg-gray-200 dark:bg-gray-900">
-    <footer class="m-0 p-20 pt-14 flex-1 text-center">
+    <footer class="m-0 flex-1 px-6 py-10 text-center md:p-20 md:pt-14">
       <div class="flex mb-4 lg:flex-row flex-col">
-        <div class="flex-1 p-4 basis-0 md:mr-80">
+        <div class="flex-1 p-4 basis-0 lg:mr-80">
           <router-link to="/">
             <img
               src="@/assets/logo.png"
-              class="ui-image ui-image-128"
+              class="block h-32 w-32 overflow-hidden"
               alt="Logo PrognoSports"
             >
           </router-link>

@@ -1,7 +1,7 @@
 <template>
-  <nav
+  <PCard
     id="adminDrivers"
-    class="ui-surface"
+    tag="section"
   >
     <loading v-if="isLoadingGrandPrix" />
     <template v-else-if="!thereIsGrandPrix">
@@ -14,7 +14,7 @@
         :is-admin="true"
       />
 
-      <nav class="flex my-4">
+      <nav class="my-4 flex flex-wrap gap-2">
         <p-button
           tag="router-link"
           color="success"
@@ -45,19 +45,22 @@
       </nav>
 
       <div class="flex flex-col md:flex-row gap-4">
-        <div class="basis-1/5">
+        <div class="md:basis-1/5">
           <SessionsInGrandPrix
             :grand-prix="grandPrix"
             :sessions="grandPrix.sessions"
           />
         </div>
-        <div class="basis-4/5">
-          <h2 class="ui-title">
+        <div class="min-w-0 md:basis-4/5">
+          <PTitle
+            tag="h2"
+            type="subtitle"
+          >
             Datos del {{ grandPrix.name }}
-          </h2>
+          </PTitle>
 
           <div class="flex flex-col md:flex-row gap-4">
-            <div class="w-4/5">
+            <div class="md:w-4/5">
               <PField label="Nombre">
                 <PInput
                   v-model="grandPrix.name"
@@ -154,30 +157,20 @@
 
           <div class="flex flex-col md:flex-row gap-4">
             <div class="flex-1">
-              <label class="ui-label mt-2">Imagen promocional del Gran Premio</label>
-              <figure class="ui-image ui-image-16by9">
-                <img
-                  :src="grandPrix.promoImage()"
-                  alt="Promo image"
-                >
-
-                <label class="ui-icon edit-icon">
-                  <i class="fa fa-camera" />
-                  <input
-                    accept="image/*"
-                    tabindex="-1"
-                    type="file"
-                    hidden
-                    @change="onFileChange"
-                  >
-                </label>
-              </figure>
+              <PLabel label="Imagen promocional del Gran Premio" />
+              <PEditableImage
+                :src="grandPrix.promoImage()"
+                alt="Promo image"
+                label="Cambiar imagen promocional"
+                aspect="video"
+                @select="onFileSelected"
+              />
             </div>
           </div>
         </div>
       </div>
 
-      <hr>
+      <PDivider />
 
       <DriversInGrandPrix
         v-if="thereIsGrandPrix"
@@ -203,7 +196,7 @@
         Cambiar imagen de promoción del Gran Premio
       </template>
     </UploadFileModal>
-  </nav>
+  </PCard>
 </template>
 
 <script lang="ts">
@@ -224,10 +217,20 @@ import PField from "@/components/lib/forms/PField.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PSwitch from "@/components/lib/forms/PSwitch.vue";
+import PLabel from "@/components/lib/forms/PLabel.vue";
+import PTitle from "@/components/lib/PTitle.vue";
+import PCard from "@/components/lib/PCard.vue";
+import PDivider from "@/components/lib/PDivider.vue";
+import PEditableImage from "@/components/lib/PEditableImage.vue";
 
 export default defineComponent({
   name: "EditGrandPrixInSeason",
   components: {
+    PLabel,
+    PTitle,
+    PCard,
+    PDivider,
+    PEditableImage,
     PSwitch,
     PInput,
     PSelect,
@@ -253,7 +256,7 @@ export default defineComponent({
       isLoadingGrandPrix: true,
 
       showEditImageModal: false,
-      selectedFile: null,
+      selectedFile: null as File | null,
 
       circuitList: new Array<Circuit>(),
       seasonList: new Array<Season>(),
@@ -353,15 +356,9 @@ export default defineComponent({
         notificationService.showNotification(error.message, "error");
       });
     },
-    onFileChange(e: any) {
-      this.showEditImageModal = false;
-      this.selectedFile = null;
-
-      let file = e.target.files[0];
-      if (file) {
-        this.selectedFile = file;
-        this.showEditImageModal = true;
-      }
+    onFileSelected(file: File) {
+      this.selectedFile = file;
+      this.showEditImageModal = true;
     },
     uploadPromoImage(blob: Blob) {
       grandPrixService.changePromoImage(this.grandPrix, blob).then(() => {
@@ -373,10 +370,3 @@ export default defineComponent({
   }
 });
 </script>
-
-<style>
-.image.is-256x256 {
-  height: 256px;
-  width: 256px;
-}
-</style>

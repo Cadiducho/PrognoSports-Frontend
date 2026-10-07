@@ -72,7 +72,7 @@
       </template>
       <template #content>
         ¿Estás seguro de que quieres <b>eliminar</b> el Piloto
-        <span class="ui-weight-semibold">{{ driverToDelete.firstname }} {{ driverToDelete.lastname }}</span>
+        <span class="font-semibold">{{ driverToDelete.firstname }} {{ driverToDelete.lastname }}</span>
         de esta temporada? <br>Esta acción no se puede deshacer.
       </template>
       <template #saveText>

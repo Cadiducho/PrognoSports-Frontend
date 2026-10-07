@@ -37,42 +37,21 @@
         <loading v-else />
       </div>
       <div class="order-1 lg:order-2 lg:col-span-4">
-        <div
-          v-if="allGps && allGps.length"
-          class="timeline"
-        >
-          <header class="timeline-header">
+        <PTimeline v-if="allGps && allGps.length">
+          <header class="w-16 text-center">
             <PTag color="info">
               {{ firstEventYear }}
             </PTag>
           </header>
-          <div
+          <PTimelineItem
             v-for="(gp, index) in allGps"
             :key="gp.name + index"
-            class="timeline-item"
-            :class="{
-              'ui-primary': isAfter(gp.lastDate()),
-              'ui-danger': isThisWeek(gp.lastDate()),
-              'ui-warning': isBefore(gp.firstDate()),
-            }"
+            class="!pb-0"
+            :variant="timelineVariant(gp)"
+            :icon="isThisWeek(gp.lastDate()) ? 'fa fa-flag' : undefined"
           >
-            <div
-              v-if="isThisWeek(gp.lastDate())"
-              class="timeline-marker ui-danger ui-icon"
-            >
-              <i class="fa fa-flag" />
-            </div>
-            <div
-              v-else-if="isBefore(gp.lastDate()) || Number.isNaN(gp.lastDate().getTime())"
-              class="timeline-marker ui-warning"
-            />
-            <div
-              v-else
-              class="timeline-marker ui-primary"
-            />
-
             <router-link :to="gp.gpLink()">
-              <div class="timeline-content text-gray-700 dark:text-white no-underline">
+              <div class="text-gray-700 dark:text-white">
                 <p>
                   <span v-if="Number.isNaN(gp.firstDate().getDate())">Sin fecha</span>
                   <span v-else>{{ gp.firstDate().getDate() }} - {{ humanDayMonth(gp.lastDate()) }}</span>
@@ -87,13 +66,13 @@
                 <p>{{ gp.name }}</p>
               </div>
             </router-link>
-          </div>
-          <div class="timeline-header">
+          </PTimelineItem>
+          <header class="mt-4 w-16 text-center">
             <PTag color="info">
               {{ lastEventYear }}
             </PTag>
-          </div>
-        </div>
+          </header>
+        </PTimeline>
       </div>
     </div>
   </PCard>
@@ -112,6 +91,8 @@ import PCard from "@/components/lib/PCard.vue";
 import PTabPanel from "@/components/lib/PTabPanel.vue";
 import PTag from "@/components/lib/PTag.vue";
 import PTitle from "@/components/lib/PTitle.vue";
+import PTimeline from "@/components/lib/PTimeline.vue";
+import PTimelineItem from "@/components/lib/PTimelineItem.vue";
 import { useCommunityStore } from "@/store/communityStore";
 import { Competition } from "@/types/Competition";
 import { GrandPrix } from "@/types/GrandPrix";
@@ -207,6 +188,12 @@ if (season.value.name) {
 searchDefaultCompetition();
 searchDefaultSeason();
 
+const timelineVariant = (gp: GrandPrix) => {
+  if (isThisWeek(gp.lastDate())) return 'danger';
+  if (isBefore(gp.lastDate()) || Number.isNaN(gp.lastDate().getTime())) return 'warning';
+  return 'primary';
+};
+
 defineExpose({
   humanDayMonth,
   isThisWeek,
@@ -215,9 +202,3 @@ defineExpose({
   pastEvents,
 });
 </script>
-
-<style scoped>
-.timeline .timeline-item {
-    padding-bottom: 0!important;
-}
-</style>

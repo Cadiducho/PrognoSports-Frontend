@@ -1,87 +1,67 @@
 <template>
-  <div class="ui-content mt-5">
+  <div class="mt-5">
     <PrognoAlert message="Arrastra las tarjetas para completar tu pronóstico." />
 
-    <div class="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+    <div class="mb-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
       <section>
-        <h3 class="select-none dark:text-gray-300">
-          Pilotos disponibles
-        </h3>
-
-        <section class="busqueda-ordenada mb-2">
-          <p-button
-            color="info"
-            expanded
-            class="lg:flex-1"
-            @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen"
-          >
-            Ordenar
-          </p-button>
-
-          <PInput
-            v-model="filtroPiloto"
-            class="ui-field lg:flex-2"
-            placeholder="Buscar..."
-            no-margin
-          />
-        </section>
-
-        <PCollapse
-          :open="opcionesOrdenadoOpen"
-          class="box-ordenado"
+        <PTitle
+          tag="h3"
+          type="section"
         >
-          <PCard class="mt-1">
-            <label class="ui-label">Orderar lista de pilotos</label>
-            <div class="ui-field mb-0">
-              <PRadio
-                v-model="orderType"
-                :value="0"
-              >
-                Por nombre
-              </PRadio>
-            </div>
-            <div class="ui-field mb-0">
-              <PRadio
-                v-model="orderType"
-                :value="1"
-              >
-                Por equipos
-              </PRadio>
-            </div>
-            <div class="ui-field mb-0">
-              <PRadio
-                v-model="orderType"
-                :value="2"
-              >
-                Por dorsal
-              </PRadio>
-            </div>
-            <div class="ui-field mb-1">
-              <PRadio
-                v-if="indexedGrid.size > 0"
-                v-model="orderType"
-                :value="3"
-              >
-                Por parrilla
-              </PRadio>
-            </div>
-            <label class="ui-label mt-2">Dirección del orden</label>
-            <div class="ui-field">
-              <PRadio
-                v-model="orderAscendent"
-                :value="true"
-              >
-                Orden ascendente
-              </PRadio>
-              <PRadio
-                v-model="orderAscendent"
-                :value="false"
-              >
-                Orden descendente
-              </PRadio>
-            </div>
-          </PCard>
-        </PCollapse>
+          Pilotos disponibles
+        </PTitle>
+
+        <PSearchSortBar
+          v-model="filtroPiloto"
+          v-model:open="opcionesOrdenadoOpen"
+          placeholder="Buscar piloto o equipo..."
+        >
+          <template #options>
+            <PLabel label="Ordenar lista de pilotos" />
+            <PRadio
+              v-model="orderType"
+              :value="0"
+            >
+              Por nombre
+            </PRadio>
+            <PRadio
+              v-model="orderType"
+              :value="1"
+            >
+              Por equipos
+            </PRadio>
+            <PRadio
+              v-model="orderType"
+              :value="2"
+            >
+              Por dorsal
+            </PRadio>
+            <PRadio
+              v-if="indexedGrid.size > 0"
+              v-model="orderType"
+              :value="3"
+            >
+              Por parrilla
+            </PRadio>
+
+            <PLabel
+              class="mt-3"
+              label="Dirección del orden"
+            />
+            <PRadio
+              v-model="orderAscendent"
+              :value="true"
+            >
+              Orden ascendente
+            </PRadio>
+            <PRadio
+              v-model="orderAscendent"
+              :value="false"
+            >
+              Orden descendente
+            </PRadio>
+          </template>
+        </PSearchSortBar>
 
         <draggable
           :id="`pronosticados-${session.id}`"
@@ -102,15 +82,20 @@
       </section>
 
       <section>
-        <h3 class="select-none dark:text-gray-300 inline-flex flex-wrap items-center  gap-2">
+        <PTitle
+          tag="h3"
+          type="section"
+          class="inline-flex flex-wrap items-center gap-2"
+        >
           Tu pronóstico
           <PTag
             v-if="changed"
             color="warning"
+            size="small"
           >
             Modificado
           </PTag>
-        </h3>
+        </PTitle>
 
         <draggable
           :id="`pronosticados-${session.id}`"
@@ -160,7 +145,7 @@
       Ya no se puede pronosticar
     </p-button>
 
-    <hr v-if="(pilotosPronosticados.length > 0) && session.isBeforeClosureDate()">
+    <PDivider v-if="(pilotosPronosticados.length > 0) && session.isBeforeClosureDate()" />
     <p-button
       v-if="(pilotosPronosticados.length > 0) && session.isBeforeClosureDate()"
       color="danger"
@@ -190,10 +175,11 @@ import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import DraggableDriverCard from "@/components/gps/DraggableDriverCard.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PRadio from "@/components/lib/forms/PRadio.vue";
-import PInput from "@/components/lib/forms/PInput.vue";
-import PCollapse from "@/components/lib/PCollapse.vue";
+import PLabel from "@/components/lib/forms/PLabel.vue";
+import PSearchSortBar from "@/components/lib/PSearchSortBar.vue";
+import PTitle from "@/components/lib/PTitle.vue";
+import PDivider from "@/components/lib/PDivider.vue";
 import useEmitter from "@/composables/useEmitter";
-import PCard from "@/components/lib/PCard.vue";
 import PTag from "@/components/lib/PTag.vue";
 
 const props = defineProps<{

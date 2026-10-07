@@ -1,5 +1,5 @@
 <template>
-    <div id="createSession" class="ui-surface">
+    <PCard tag="div" id="createSession">
         <PTitle class="mb-5" name="Crear sesión"/>
 
         <PInput label="Nombre de la sesión" name="name" v-model="createdSession.name" />
@@ -11,7 +11,7 @@
             <PButton color="danger" type="soft" class="me-4" @click="router.push({name: 'adminSessions'})">Cancelar</PButton>
             <PButton class="mt-4" :disabled="!isDataOk()" @click="registerSession">Crear sesión</PButton>
         </div>
-    </div>
+    </PCard>
 </template>
 
 <script setup lang="ts">
@@ -23,6 +23,7 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import {useRouter} from "vue-router";
 import PSwitch from "@/components/lib/forms/PSwitch.vue";
+import PCard from "@/components/lib/PCard.vue";
 
 const router = useRouter();
 

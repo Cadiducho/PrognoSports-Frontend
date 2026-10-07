@@ -1,12 +1,12 @@
 <template>
     <loading v-if="isLoading"/>
-    <div v-if="constructor.id" id="editConstrcutor" class="ui-surface">
+    <PCard tag="div" v-if="constructor.id" id="editConstrcutor">
         <PTitle class="mb-5" name="Editar constructor"/>
 
         <PInput label="Nombre del constructor" name="name" v-model="constructor.name" />
 
         <PButton class="mt-4" @click="editConstructor" type="solid" label="Editar constructor" />
-    </div>
+    </PCard>
     <div v-else>
         <p>El constructor no ha sido encontrado</p>
     </div>
@@ -21,6 +21,7 @@ import {onMounted, ref} from "vue";
 import {constructorService, notificationService} from "@/_services";
 import {useRoute, useRouter} from "vue-router";
 import Loading from "@/components/lib/Loading.vue";
+import PCard from "@/components/lib/PCard.vue";
 
 const router = useRouter();
 const route = useRoute();

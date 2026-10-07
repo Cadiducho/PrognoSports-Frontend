@@ -1,75 +1,47 @@
 <template>
-  <div class="m-0 w-full grow px-4 py-2 sm:px-6 lg:py-6">
-    <div class="flex justify-center">
-      <div class="flex w-full lg:w-2/5">
-        <div class="ui-card w-full">
-          <div class="ui-card-header">
-            <div class="ui-card-title">
-              Datos de inicio de sesión
-            </div>
-          </div>
-          <div class="ui-card-content">
-            <form @submit.prevent="handleSubmit()">
-              <div class="ui-field">
-                <label class="ui-label">Email</label>
-                <div class="ui-control ui-has-icons-left ui-has-icons-right">
-                  <span class="ui-icon ui-small ui-icon-left">
-                    <i class="fas fa-user" />
-                  </span>
-
-                  <input
-                    v-model="form.username"
-                    type="email"
-                    autofocus
-                    required
-                    class="ui-input"
-                    :class="{ 'ui-input-error': form.submitted && !form.username }"
-                  >
-                </div>
-              </div>
-              <div class="ui-field">
-                <label class="ui-label">Contraseña</label>
-                <div class="ui-control ui-has-icons-left ui-has-icons-right">
-                  <span class="ui-icon ui-small ui-icon-left">
-                    <i class="fas fa-lock" />
-                  </span>
-
-                  <input
-                    v-model="form.password"
-                    type="password"
-                    required
-                    class="ui-input"
-                    :class="{ 'ui-input-error': form.submitted && !form.password }"
-                  >
-                </div>
-              </div>
-              <div class="ui-field ui-grouped">
-                <div class="ui-control">
-                  <p-button
-                    native-type="submit"
-                    :disabled="form.isLoggingIn"
-                  >
-                    Acceder
-                  </p-button>
-                </div>
-              </div>
-            </form>
-          </div>
-          <div class="ui-card-footer">
-            <div class="ui-card-footer-item">
-              <router-link :to="{ name: 'register', query: { redirect: redirectTo }}">
-                Registrarse
-              </router-link>
-            </div>
-            <div class="ui-card-footer-item">
-              <router-link :to="{ name: 'forgotpassword', query: { redirect: redirectTo }}">
-                He olvidado mi contraseña
-              </router-link>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="py-6">
+    <PContainer size="sm">
+      <PCard
+        title="Datos de inicio de sesión"
+        padding="md"
+      >
+        <form @submit.prevent="handleSubmit()">
+          <PInput
+            v-model="form.username"
+            label="Email"
+            icon="fas fa-user"
+            type="email"
+            autofocus
+            required
+            :error="form.submitted && !form.username"
+          />
+          <PInput
+            v-model="form.password"
+            label="Contraseña"
+            icon="fas fa-lock"
+            type="password"
+            required
+            :error="form.submitted && !form.password"
+          />
+          <PButton
+            native-type="submit"
+            class="mt-2"
+            expanded
+            :disabled="form.isLoggingIn"
+          >
+            Acceder
+          </PButton>
+        </form>
+        <template #footer>
+          <PCardFooterItem :to="{ name: 'register', query: { redirect: redirectTo }}">
+            Registrarse
+          </PCardFooterItem>
+          <PCardFooterItem :to="{ name: 'forgotpassword', query: { redirect: redirectTo }}">
+            He olvidado mi contraseña
+          </PCardFooterItem>
+        </template>
+      </PCard>
+    </PContainer>
   </div>
 </template>
 
@@ -81,6 +53,10 @@ import {LocationQueryValue, useRoute} from "vue-router";
 import {onMounted, reactive} from "vue";
 import {useAuth} from "@/composables/useAuth";
 import PButton from "@/components/lib/forms/PButton.vue";
+import PInput from "@/components/lib/forms/PInput.vue";
+import PCard from "@/components/lib/PCard.vue";
+import PContainer from "@/components/lib/PContainer.vue";
+import PCardFooterItem from "@/components/lib/PCardFooterItem.vue";
 
 const authStore = useAuthStore();
 const route = useRoute();

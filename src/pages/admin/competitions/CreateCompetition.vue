@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="createCompetition"
-    class="ui-surface"
-  >
+  <PCard tag="div" id="createCompetition">
     <PTitle
       class="mb-5"
       name="Crear competición"
@@ -10,9 +7,9 @@
 
     <PStepper v-model="activeStep" :steps="[{ label: 'Datos de la competición' }, { label: 'Finalizar' }]">
       <template #step-0>
-        <h2 class="ui-title">
+        <PTitle tag="h2" type="title">
           Datos de la competición
-        </h2>
+        </PTitle>
 
         <PField label="Nombre de la competición">
           <PInput
@@ -50,13 +47,13 @@
           />
         </PField>
 
-        <hr>
+        <PDivider />
       </template>
 
       <template #step-1>
-        <h2 class="ui-title">
+        <PTitle tag="h2" type="title">
           Finalizar
-        </h2>
+        </PTitle>
 
         <AlertInvalidData
           :object="createdCompetition.name"
@@ -79,22 +76,22 @@
           Revisa los datos, se va a crear la siguiente competición
         </PrognoAlert>
 
-        <div class="ui-content">
-          <p class="card-text">
+        <PProse>
+          <p>
             <b>Nombre de la competición: </b>{{ createdCompetition.name }}
           </p>
-          <p class="card-text">
+          <p>
             <b>Nombre completo de la competición: </b>{{ createdCompetition.fullname }}
           </p>
-          <p class="card-text">
+          <p>
             <b>Code de la competición: </b>{{ createdCompetition.code }}
           </p>
-        </div>
-        <section class="ui-content">
+        </PProse>
+        <PProse>
           <div v-html="compiledRules" />
-        </section>
+        </PProse>
 
-        <hr>
+        <PDivider />
 
 
         <PButton
@@ -106,7 +103,7 @@
         </PButton>
       </template>
     </PStepper>
-  </div>
+  </PCard>
 </template>
 
 <script lang="ts">
@@ -123,11 +120,17 @@ import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PStepper from "@/components/lib/PStepper.vue";
+import PProse from "@/components/lib/PProse.vue";
+import PDivider from "@/components/lib/PDivider.vue";
+import PCard from "@/components/lib/PCard.vue";
 
 export default defineComponent({
     name: "CreateCompetition",
 
     components: {
+    PCard,
+    PProse,
+    PDivider,
       PrognoAlert,
       PStepper,
       PInput,
