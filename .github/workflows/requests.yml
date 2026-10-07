@@ -1,11 +1,20 @@
 name: Test PR
 
-on: [ pull_request ]
+on:
+  pull_request:
+    branches: [ develop, master ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
   build:
     name: Build
-    uses: Cadiducho/PrognoSports-Frontend/.github/workflows/vite.yml@develop
+    uses: ./.github/workflows/vite.yml
     with:
-      node_version: '24.x'
       build_command: 'buildBeta'
+      lint: true
