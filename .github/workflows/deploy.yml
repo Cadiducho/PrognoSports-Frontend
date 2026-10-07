@@ -15,7 +15,7 @@ concurrency:
 jobs:
   build:
     name: Build
-    uses: ./.github/workflows/vite.yml
+    uses: $/.github/workflows/vite.yml
     with:
       build_command: 'build'
   deploy:
