@@ -1,7 +1,5 @@
 <template>
-  <div id="homeComponent">
-    <PTitle name="Dashboard" />
-
+  <PPage variant="plain">
     <div class="flex flex-wrap -mx-4">
       <div class="w-full md:w-1/3 p-4">
         <NextGrandPrix />
@@ -16,7 +14,7 @@
         </PCard>
       </div>
     </div>
-  </div>
+  </PPage>
 </template>
 
 <script lang="ts">

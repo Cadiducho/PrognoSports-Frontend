@@ -1,9 +1,5 @@
 <template>
-  <PTitle name="Grandes Premios" />
-
-  <PCard
-    id="gplist"
-  >
+  <PPage :subtitle="season?.name ? `Temporada ${season.name}` : undefined">
     <div class="grid grid-cols-1 gap-5 lg:grid-cols-12">
       <div class="order-2 lg:order-1 lg:col-span-8">
         <PTabs
@@ -75,7 +71,7 @@
         </PTimeline>
       </div>
     </div>
-  </PCard>
+  </PPage>
 </template>
 
 <script setup lang="ts">
@@ -85,12 +81,9 @@ import { useRoute } from "vue-router";
 
 import { grandPrixService, seasonService } from "@/_services";
 import { useDayjs } from "@/composables/useDayjs";
-import useEmitter from "@/composables/useEmitter";
 import GrandPrixesList from "@/components/gps/list/GrandPrixesList.vue";
-import PCard from "@/components/lib/PCard.vue";
 import PTabPanel from "@/components/lib/PTabPanel.vue";
 import PTag from "@/components/lib/PTag.vue";
-import PTitle from "@/components/lib/PTitle.vue";
 import PTimeline from "@/components/lib/PTimeline.vue";
 import PTimelineItem from "@/components/lib/PTimelineItem.vue";
 import { useCommunityStore } from "@/store/communityStore";
@@ -104,7 +97,6 @@ const communityStore = useCommunityStore();
 const { currentCommunity } = storeToRefs(communityStore);
 const route = useRoute();
 const dayjs = useDayjs();
-const emitter = useEmitter();
 
 const humanDayMonth = dayjs.humanDayMonth;
 const humanMonth = dayjs.humanMonth;
@@ -164,8 +156,6 @@ watch(seasonReady, (ready) => {
 
       firstEventYear.value = humanMonth(firstDate).toUpperCase() + " " + lastDate.getFullYear();
       lastEventYear.value = humanMonth(lastDate).toUpperCase() + " " + lastDate.getFullYear();
-
-      emitter.emit("breadcrumbLastname", "Lista de Grandes Premios de " + season.value.name);
     });
   }
 });

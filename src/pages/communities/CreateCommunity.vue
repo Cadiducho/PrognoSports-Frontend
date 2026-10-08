@@ -1,12 +1,5 @@
 <template>
-  <PCard
-    id="createCommunity"
-  >
-    <PTitle
-      class="mb-5"
-      name="Crear comunidad"
-    />
-
+  <PPage>
     <nav class="block">
       <PButton
         color="info"
@@ -19,9 +12,16 @@
     </nav>
 
     <section>
-      <PStepper v-model="activeStep" :steps="[{ label: 'Descripción' }, { label: 'Reglas' }, { label: 'Finalizar' }]">
+      <PStepper
+        v-model="activeStep"
+        :steps="[{ label: 'Descripción' }, { label: 'Reglas' }, { label: 'Finalizar' }]"
+      >
         <template #step-0>
-          <PTitle tag="h1" type="title" align="center">
+          <PTitle
+            tag="h1"
+            type="title"
+            align="center"
+          >
             Descripción
           </PTitle>
 
@@ -70,7 +70,11 @@
         </template>
 
         <template #step-1>
-          <PTitle tag="h1" type="title" align="center">
+          <PTitle
+            tag="h1"
+            type="title"
+            align="center"
+          >
             Reglas
           </PTitle>
 
@@ -98,11 +102,19 @@
             </div>
           </div>
 
-          <PTitle tag="h1" type="title" align="center">
+          <PTitle
+            tag="h1"
+            type="title"
+            align="center"
+          >
             Puntuaciones
           </PTitle>
 
-          <PTitle tag="h2" type="subtitle" no-margin>
+          <PTitle
+            tag="h2"
+            type="subtitle"
+            no-margin
+          >
             Descripción del conjunto de reglas
           </PTitle>
           <p class="text-gray-700 dark:text-gray-300">
@@ -121,7 +133,11 @@
             />
           </PField>
 
-          <PTitle tag="h2" type="subtitle" no-margin>
+          <PTitle
+            tag="h2"
+            type="subtitle"
+            no-margin
+          >
             Puntos por acertar la posición
           </PTitle>
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -129,7 +145,10 @@
               <p class="text-gray-700 dark:text-gray-300 italic">
                 Posiciones de clasificación
               </p>
-              <template v-for="pos in numberQualify" :key="`qualify-${pos}`">
+              <template
+                v-for="pos in numberQualify"
+                :key="`qualify-${pos}`"
+              >
                 <PField :label="pos + 'º puesto de Clasificación'">
                   <PNumberInput v-model="pointsByEqualsPosition.QUALIFY[pos]" />
                 </PField>
@@ -140,7 +159,10 @@
               <p class="text-gray-700 dark:text-gray-300 italic">
                 Posiciones de carrera
               </p>
-              <template v-for="pos in numberRace" :key="`race-${pos}`">
+              <template
+                v-for="pos in numberRace"
+                :key="`race-${pos}`"
+              >
                 <PField :label="pos + 'º puesto de Carrera'">
                   <PNumberInput v-model="pointsByEqualsPosition.RACE[pos]" />
                 </PField>
@@ -150,7 +172,11 @@
           <PDivider />
 
 
-          <PTitle tag="h2" type="subtitle" no-margin>
+          <PTitle
+            tag="h2"
+            type="subtitle"
+            no-margin
+          >
             Puntos por posición siguiente
           </PTitle>
           <p class="text-gray-700 dark:text-gray-300 italic">
@@ -170,7 +196,11 @@
           </div>
           <PDivider />
 
-          <PTitle tag="h2" type="subtitle" no-margin>
+          <PTitle
+            tag="h2"
+            type="subtitle"
+            no-margin
+          >
             Puntos por posición siguiente de la siguiente
           </PTitle>
           <p class="text-gray-700 dark:text-gray-300 italic">
@@ -190,7 +220,11 @@
           </div>
           <PDivider />
 
-          <PTitle tag="h2" type="subtitle" no-margin>
+          <PTitle
+            tag="h2"
+            type="subtitle"
+            no-margin
+          >
             Puntos por posición anterior
           </PTitle>
           <p class="text-gray-700 dark:text-gray-300 italic">
@@ -210,7 +244,11 @@
           </div>
           <PDivider />
 
-          <PTitle tag="h2" type="subtitle" no-margin>
+          <PTitle
+            tag="h2"
+            type="subtitle"
+            no-margin
+          >
             Puntos por posición anterior de la anterior
           </PTitle>
           <p class="text-gray-700 dark:text-gray-300 italic">
@@ -230,7 +268,11 @@
           </div>
           <PDivider />
 
-          <PTitle tag="h2" type="subtitle" no-margin>
+          <PTitle
+            tag="h2"
+            type="subtitle"
+            no-margin
+          >
             Puntos por pronosticar a alguien en podio y fallar
           </PTitle>
           <p class="text-gray-700 dark:text-gray-300 italic">
@@ -250,7 +292,11 @@
           </div>
           <PDivider />
 
-          <PTitle tag="h2" type="subtitle" no-margin>
+          <PTitle
+            tag="h2"
+            type="subtitle"
+            no-margin
+          >
             Puntos por pronosticar alguien y no terminar en el margen de resultados
           </PTitle>
           <p class="text-gray-700 dark:text-gray-300 italic">
@@ -284,7 +330,11 @@
         </template>
 
         <template #step-2>
-          <PTitle tag="h1" type="title" align="center">
+          <PTitle
+            tag="h1"
+            type="title"
+            align="center"
+          >
             Finalizar
           </PTitle>
 
@@ -303,7 +353,10 @@
 
           <div class="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
             <div class="min-w-0">
-              <PCard tag="div" padding="none">
+              <PCard
+                tag="div"
+                padding="none"
+              >
                 <div class="p-4 sm:p-5">
                   <figure class="block overflow-hidden">
                     <img
@@ -322,7 +375,10 @@
                 <div class="p-4 sm:p-5">
                   <div class="flex items-start gap-4">
                     <div class="min-w-0 flex-1">
-                      <PTitle tag="p" type="header">
+                      <PTitle
+                        tag="p"
+                        type="header"
+                      >
                         {{ name }}
                       </PTitle>
                       <p class="text-base text-gray-600 dark:text-gray-300">
@@ -360,80 +416,95 @@
               </PCard>
             </div>
             <div class="min-w-0">
-              <PCard tag="div" padding="none">
+              <PCard
+                tag="div"
+                padding="none"
+              >
                 <div class="p-4 sm:p-5">
-                  <PTitle tag="p" type="title">
+                  <PTitle
+                    tag="p"
+                    type="title"
+                  >
                     Reglas y puntuaciones
                   </PTitle>
                 </div>
                 <div class="p-4 sm:p-5">
-                  <PTitle tag="p" type="subtitle">
+                  <PTitle
+                    tag="p"
+                    type="subtitle"
+                  >
                     Puntos por acertar posiciones
                   </PTitle>
                   <PSimpleTable>
-                      <template #head>
-                        <tr>
-                          <th>Posición</th>
-                          <th>Clasificación</th>
-                          <th>Carrera</th>
-                        </tr>
-                      </template>
-                        <tr v-for="pos in Math.max(numberQualify, numberRace)" :key="pos">
-                          <th>{{ pos }}º</th>
-                          <td>{{ (numberQualify >= pos) ? (pointsByEqualsPosition.QUALIFY[pos] || 0) : 0 }}</td>
-                          <td>{{ (numberRace >= pos) ? (pointsByEqualsPosition.RACE[pos] || 0) : 0 }}</td>
-                        </tr>
-                      <template #foot>
-                        <tr>
-                          <th>Posición</th>
-                          <th>Clasificación</th>
-                          <th>Carrera</th>
-                        </tr>
-                      </template>
-                    </PSimpleTable>
+                    <template #head>
+                      <tr>
+                        <th>Posición</th>
+                        <th>Clasificación</th>
+                        <th>Carrera</th>
+                      </tr>
+                    </template>
+                    <tr
+                      v-for="pos in Math.max(numberQualify, numberRace)"
+                      :key="pos"
+                    >
+                      <th>{{ pos }}º</th>
+                      <td>{{ (numberQualify >= pos) ? (pointsByEqualsPosition.QUALIFY[pos] || 0) : 0 }}</td>
+                      <td>{{ (numberRace >= pos) ? (pointsByEqualsPosition.RACE[pos] || 0) : 0 }}</td>
+                    </tr>
+                    <template #foot>
+                      <tr>
+                        <th>Posición</th>
+                        <th>Clasificación</th>
+                        <th>Carrera</th>
+                      </tr>
+                    </template>
+                  </PSimpleTable>
 
-                  <PTitle tag="p" type="subtitle">
+                  <PTitle
+                    tag="p"
+                    type="subtitle"
+                  >
                     Posiciones no acertadas
                   </PTitle>
                   <PSimpleTable>
-                      <template #head>
-                        <tr>
-                          <th />
-                          <th>Clasificación</th>
-                          <th>Carrera</th>
-                        </tr>
-                      </template>
-                        <tr>
-                          <td>Posición siguiente</td>
-                          <td>{{ pointsByNextPosition.QUALIFY }}</td>
-                          <td>{{ pointsByNextPosition.RACE }}</td>
-                        </tr>
-                        <tr>
-                          <td>Posición siguiente de la siguiente</td>
-                          <td>{{ pointsByNextOfFollowingPosition.QUALIFY }}</td>
-                          <td>{{ pointsByNextOfFollowingPosition.RACE }}</td>
-                        </tr>
-                        <tr>
-                          <td>Posición anterior</td>
-                          <td>{{ pointsByPreviousPosition.QUALIFY }}</td>
-                          <td>{{ pointsByPreviousPosition.RACE }}</td>
-                        </tr>
-                        <tr>
-                          <td>Posición anterior de la anterior</td>
-                          <td>{{ pointsByPreviousOfPreviousPosition.QUALIFY }}</td>
-                          <td>{{ pointsByPreviousOfPreviousPosition.RACE }}</td>
-                        </tr>
-                        <tr>
-                          <td>No en el podio</td>
-                          <td>{{ pointsIfIsNotInPodium.QUALIFY }}</td>
-                          <td>{{ pointsIfIsNotInPodium.RACE }}</td>
-                        </tr>
-                        <tr>
-                          <td>No en los resultados</td>
-                          <td>{{ pointsIfIsNotInResults.QUALIFY }}</td>
-                          <td>{{ pointsIfIsNotInResults.RACE }}</td>
-                        </tr>
-                    </PSimpleTable>
+                    <template #head>
+                      <tr>
+                        <th />
+                        <th>Clasificación</th>
+                        <th>Carrera</th>
+                      </tr>
+                    </template>
+                    <tr>
+                      <td>Posición siguiente</td>
+                      <td>{{ pointsByNextPosition.QUALIFY }}</td>
+                      <td>{{ pointsByNextPosition.RACE }}</td>
+                    </tr>
+                    <tr>
+                      <td>Posición siguiente de la siguiente</td>
+                      <td>{{ pointsByNextOfFollowingPosition.QUALIFY }}</td>
+                      <td>{{ pointsByNextOfFollowingPosition.RACE }}</td>
+                    </tr>
+                    <tr>
+                      <td>Posición anterior</td>
+                      <td>{{ pointsByPreviousPosition.QUALIFY }}</td>
+                      <td>{{ pointsByPreviousPosition.RACE }}</td>
+                    </tr>
+                    <tr>
+                      <td>Posición anterior de la anterior</td>
+                      <td>{{ pointsByPreviousOfPreviousPosition.QUALIFY }}</td>
+                      <td>{{ pointsByPreviousOfPreviousPosition.RACE }}</td>
+                    </tr>
+                    <tr>
+                      <td>No en el podio</td>
+                      <td>{{ pointsIfIsNotInPodium.QUALIFY }}</td>
+                      <td>{{ pointsIfIsNotInPodium.RACE }}</td>
+                    </tr>
+                    <tr>
+                      <td>No en los resultados</td>
+                      <td>{{ pointsIfIsNotInResults.QUALIFY }}</td>
+                      <td>{{ pointsIfIsNotInResults.RACE }}</td>
+                    </tr>
+                  </PSimpleTable>
                 </div>
               </PCard>
             </div>
@@ -449,7 +520,7 @@
         </template>
       </PStepper>
     </section>
-  </PCard>
+  </PPage>
 </template>
 
 <script lang="ts">

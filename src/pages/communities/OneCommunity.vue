@@ -1,19 +1,11 @@
 <template>
-  <div id="communityDetails">
-    <PTitle
-      class="mb-5"
-      :name="communityName"
-    />
-    <loading v-if="isLoading" />
-
-    <p
-      v-if="!thereIsCommunity"
-      class="text-gray-700 dark:text-gray-300"
-    >
-      La comunidad con nombre <i>{{ $route.params.community }}</i> no ha sido encontrada
-    </p>
+  <PPage
+    variant="plain"
+    :title="thereIsCommunity ? communityName : undefined"
+    :loading="isLoading"
+    :not-found="!thereIsCommunity && `La comunidad con nombre ${$route.params.community} no ha sido encontrada`"
+  >
     <div
-      v-else
       class="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] xl:grid-cols-[minmax(0,1fr)_minmax(0,3fr)]"
     >
       <aside>
@@ -192,7 +184,7 @@
         </template>
       </PCard>
     </div>
-  </div>
+  </PPage>
 </template>
 
 
@@ -231,7 +223,6 @@ export default defineComponent({
         PRadio,
         RulesAndPointsTable,
         UserInCommunityCard,
-        Loading,
         PTitle
     },
     setup() {

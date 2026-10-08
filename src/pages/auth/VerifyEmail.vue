@@ -9,52 +9,52 @@
       class="my-6"
     >
       <PCard>
-      <p class="text-gray-700 dark:text-gray-300">
-        Hemos enviado un email a tu dirección de correo electrónico. Por favor, introduce el código para verificar tu cuenta.
-      </p>
-      <PInput
-        v-model="verificationCode"
-        label="Introduce el código de verificación de 6 caracteres"
-        class="verification-input"
-        :max-lenght="6"
-      />
-      <PButton
-        class="mr-2"
-        :disabled="isVerifiying"
-        @click="verifyAccount"
-      >
-        Verificar cuenta
-      </PButton>
-      <PButton
-        color="info"
-        type="soft"
-        :disabled="showSendVerificationEmail"
-        @click="showSendVerificationEmail = true"
-      >
-        No he recibido mi email de verificación
-      </PButton>
-
-
-
-      <div v-if="showSendVerificationEmail">
-        <hr>
-
-        <p class="mt-6 text-gray-700 dark:text-gray-300 font-bold text-lg">
-          Si este email no ha llegado a tu bandeja de entrada, por favor, revisa la carpeta de spam.
+        <p class="text-gray-700 dark:text-gray-300">
+          Hemos enviado un email a tu dirección de correo electrónico. Por favor, introduce el código para verificar tu cuenta.
         </p>
-        <p class="mb-2text-gray-700 dark:text-gray-300 font-bold text-lg">
-          Si necesitas que te enviemos un nuevo correo de verificación, haz click en el siguiente botón.
-        </p>
+        <PInput
+          v-model="verificationCode"
+          label="Introduce el código de verificación de 6 caracteres"
+          class="verification-input"
+          :max-lenght="6"
+        />
         <PButton
-          color="danger"
-          class="mt-2"
-          :disabled="sended"
-          @click="sendVerificationEmail"
+          class="mr-2"
+          :disabled="isVerifiying"
+          @click="verifyAccount"
         >
-          Enviar nuevo correo de verificación
+          Verificar cuenta
         </PButton>
-      </div>
-    </PCard>
+        <PButton
+          color="info"
+          type="soft"
+          :disabled="showSendVerificationEmail"
+          @click="showSendVerificationEmail = true"
+        >
+          No he recibido mi email de verificación
+        </PButton>
+
+
+
+        <div v-if="showSendVerificationEmail">
+          <hr>
+
+          <p class="mt-6 text-gray-700 dark:text-gray-300 font-bold text-lg">
+            Si este email no ha llegado a tu bandeja de entrada, por favor, revisa la carpeta de spam.
+          </p>
+          <p class="mb-2text-gray-700 dark:text-gray-300 font-bold text-lg">
+            Si necesitas que te enviemos un nuevo correo de verificación, haz click en el siguiente botón.
+          </p>
+          <PButton
+            color="danger"
+            class="mt-2"
+            :disabled="sended"
+            @click="sendVerificationEmail"
+          >
+            Enviar nuevo correo de verificación
+          </PButton>
+        </div>
+      </PCard>
     </PContainer>
   </div>
 </template>

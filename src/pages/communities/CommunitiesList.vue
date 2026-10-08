@@ -1,10 +1,6 @@
 
 <template>
-  <PCard>
-    <PTitle
-      class="mb-5"
-      name="Lista de Comunidades"
-    />
+  <PPage>
     <div v-if="isLoading">
       <loading />
     </div>
@@ -117,7 +113,7 @@
         </PTabPanel>
       </PTabs>
     </div>
-  </PCard>
+  </PPage>
 </template>
 
 <script setup lang="ts">
@@ -127,8 +123,6 @@ import {useCommunityStore} from "@/store/communityStore";
 import {Community} from "@/types/Community";
 import {computed, onMounted, ref} from "vue";
 import {communityService} from "@/_services";
-import PTitle from "@/components/lib/PTitle.vue";
-import PCard from "@/components/lib/PCard.vue";
 import CommunityListItem from "@/components/communities/CommunityListItem.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";

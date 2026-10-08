@@ -1,130 +1,134 @@
 <template>
-  <div id="grandprix">
-    <loading v-if="isLoadingGrandPrix" />
+  <PPage
+    :title="thereIsGrandPrix ? `${grandPrix.name} de ${grandPrix.season.name}` : undefined"
+    :loading="isLoadingGrandPrix"
+    :not-found="!thereIsGrandPrix && `El Gran Premio ${id} no ha sido encontrado`"
+    variant="plain"
+  >
+    <template #actions>
+      <div
+        v-if="thereIsGrandPrix"
+        class="w-60"
+      >
+        <GrandPrixPagination
+          :is-admin-pag="false"
+          :competition="grandPrix.competition"
+          :grand-prix="grandPrix"
+        />
+      </div>
+    </template>
+
     <PrognoAlert
-      v-else-if="!thereIsGrandPrix"
-      variant="danger"
+      v-if="!grandPrix.sessions || !grandPrix.sessions.length"
+      variant="warning"
     >
-      El Gran Premio buscado con nombre <i>{{ id }}</i> no ha sido encontrado
+      No hay sesiones configuradas en este Gran Premio
     </PrognoAlert>
 
-    <template v-else>
-      <GrandPrixPageHeader
-        :grand-prix="grandPrix"
-        :competition="grandPrix.competition"
-      />
-      <PrognoAlert
-        v-if="!grandPrix.sessions || !grandPrix.sessions.length"
-        variant="warning"
-      >
-        No hay sesiones configuradas en este Gran Premio
-      </PrognoAlert>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <!-- Si hay parrilla de salida, recorto tamaño de los pronósticos -->
-        <div :class="startGrid.size ? 'md:col-span-2' : 'md:col-span-2 lg:col-span-3'">
-          <PCard>
-            <PTabs v-model="activeTab">
-              <template #tabs>
-                <PTabItem
-                  v-for="session in grandPrix.sessions"
-                  :key="session.name"
-                  :name="session.name"
-                  :label="session.humanName()"
-                  :active-tab="activeTab"
-                  :set-active-tab="(tabName: string) => activeTab = tabName"
-                />
-              </template>
-              <PTabPanel
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <!-- Si hay parrilla de salida, recorto tamaño de los pronósticos -->
+      <div :class="startGrid.size ? 'md:col-span-2' : 'md:col-span-2 lg:col-span-3'">
+        <PCard>
+          <PTabs v-model="activeTab">
+            <template #tabs>
+              <PTabItem
                 v-for="session in grandPrix.sessions"
-                :key="`tipps-${session.name}`"
+                :key="session.name"
                 :name="session.name"
+                :label="session.humanName()"
                 :active-tab="activeTab"
-              >
-                <ClouseDateMessage :session="session" />
-                <h6 class="dark:text-gray-300">
-                  Para esta sesión se han de pronosticar {{ ruleSet.cantidadPilotosPronosticados(session) }} pilotos
-                </h6>
-                <SelectTipps
-                  :session="session"
-                  :grand-prix="grandPrix"
-                  :rule-set="ruleSet"
-                  :drivers="drivers"
-                  :start-grids="startGrid"
-                />
-              </PTabPanel>
-            </PTabs>
-          </PCard>
-        </div>
-        <div
-          v-if="startGrid.size"
-          class="md:col-span-1"
-        >
-          <StartGrid :grid="startGrid" />
-        </div>
-        <!-- Si hay parrilla de salida saldrá desplazado y expandido debajo del resto de cajas de la grid -->
-        <div
-          :class="startGrid.size ? 'md:col-span-3' : 'md:col-span-1'"
-          class="lg:col-span-1"
-        >
-          <CircuitCard
-            v-if="grandPrix.circuit && grandPrix.variant"
-            :circuit="grandPrix.circuit!"
-            :variant="grandPrix.variant!"
-            :laps="grandPrix.laps"
-          />
-
-          <PitLaneStartGrid
-            v-if="startGrid.size"
-            :grid="startGrid"
-          />
-
-          <section class="my-2 space-y-2">
-            <p-button
-              v-if="currentUser.isAdmin()"
-              color="info"
-              expanded
-              tag="router-link"
-              :to="{ name: 'adminGpEditInSeason', params: {season: season.name, gp: grandPrix.id} } "
-            >
-              Administración
-            </p-button>
-          </section>
-        </div>
-      </div>
-
-      <PCard class="mt-3">
-        <PTabs v-model="activeTab">
-          <template #tabs>
-            <PTabItem
+                :set-active-tab="(tabName: string) => activeTab = tabName"
+              />
+            </template>
+            <PTabPanel
               v-for="session in grandPrix.sessions"
-              :key="session.name"
+              :key="`tipps-${session.name}`"
               :name="session.name"
-              :label="session.humanName()"
               :active-tab="activeTab"
-              :set-active-tab="(tabName: string) => activeTab = tabName"
-            />
-          </template>
-          <PTabPanel
-            v-for="session in grandPrix.sessions"
-            :key="`score-${session.name}`"
-            :name="session.name"
-            :active-tab="activeTab"
+            >
+              <ClouseDateMessage :session="session" />
+              <h6 class="dark:text-gray-300">
+                Para esta sesión se han de pronosticar {{ ruleSet.cantidadPilotosPronosticados(session) }} pilotos
+              </h6>
+              <SelectTipps
+                :session="session"
+                :grand-prix="grandPrix"
+                :rule-set="ruleSet"
+                :drivers="drivers"
+                :start-grids="startGrid"
+              />
+            </PTabPanel>
+          </PTabs>
+        </PCard>
+      </div>
+      <div
+        v-if="startGrid.size"
+        class="md:col-span-1"
+      >
+        <StartGrid :grid="startGrid" />
+      </div>
+      <!-- Si hay parrilla de salida saldrá desplazado y expandido debajo del resto de cajas de la grid -->
+      <div
+        :class="startGrid.size ? 'md:col-span-3' : 'md:col-span-1'"
+        class="lg:col-span-1"
+      >
+        <CircuitCard
+          v-if="grandPrix.circuit && grandPrix.variant"
+          :circuit="grandPrix.circuit!"
+          :variant="grandPrix.variant!"
+          :laps="grandPrix.laps"
+        />
+
+        <PitLaneStartGrid
+          v-if="startGrid.size"
+          :grid="startGrid"
+        />
+
+        <section class="my-2 space-y-2">
+          <p-button
+            v-if="currentUser.isAdmin()"
+            color="info"
+            expanded
+            tag="router-link"
+            :to="{ name: 'adminGpEditInSeason', params: {season: season.name, gp: grandPrix.id} } "
           >
-            <ClouseDateMessage :session="session" />
-            <ScoreComponents
-              :gp="grandPrix"
-              :rule-set="ruleSet"
-              :session="session"
-              :drivers="drivers"
-              :community-members="communityMembers"
-              :user-points="userPoints"
-            />
-          </PTabPanel>
-        </PTabs>
-      </PCard>
-    </template>
-  </div>
+            Administración
+          </p-button>
+        </section>
+      </div>
+    </div>
+
+    <PCard class="mt-3">
+      <PTabs v-model="activeTab">
+        <template #tabs>
+          <PTabItem
+            v-for="session in grandPrix.sessions"
+            :key="session.name"
+            :name="session.name"
+            :label="session.humanName()"
+            :active-tab="activeTab"
+            :set-active-tab="(tabName: string) => activeTab = tabName"
+          />
+        </template>
+        <PTabPanel
+          v-for="session in grandPrix.sessions"
+          :key="`score-${session.name}`"
+          :name="session.name"
+          :active-tab="activeTab"
+        >
+          <ClouseDateMessage :session="session" />
+          <ScoreComponents
+            :gp="grandPrix"
+            :rule-set="ruleSet"
+            :session="session"
+            :drivers="drivers"
+            :community-members="communityMembers"
+            :user-points="userPoints"
+          />
+        </PTabPanel>
+      </PTabs>
+    </PCard>
+  </PPage>
 </template>
 
 <script lang="ts">
@@ -155,10 +159,9 @@ import {CommunityUser} from "@/types/CommunityUser";
 
 import {defineComponent} from "vue";
 import {useCommunityStore} from "@/store/communityStore";
-import useEmitter from "@/composables/useEmitter";
 import Loading from "@/components/lib/Loading.vue";
 import {useAuthStore} from "@/store/authStore";
-import GrandPrixPageHeader from "@/components/gps/GrandPrixPageHeader.vue";
+import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import ClouseDateMessage from "@/components/gps/ClouseDateMessage.vue";
@@ -174,8 +177,7 @@ export default defineComponent({
     ClouseDateMessage,
     PrognoAlert,
     PButton,
-    GrandPrixPageHeader,
-    Loading,
+    GrandPrixPagination,
     ScoreComponents,
     PitLaneStartGrid,
     SelectTipps,
@@ -186,13 +188,12 @@ export default defineComponent({
     PTabPanel
   },
   setup() {
-    const emitter = useEmitter();
     const authStore = useAuthStore();
     const communityStore = useCommunityStore();
 
     const currentCommunity = communityStore.currentCommunity;
     const currentUser = authStore.loggedUser;
-    return {currentUser, currentCommunity, emitter};
+    return {currentUser, currentCommunity};
   },
   data() {
     return {
@@ -216,8 +217,6 @@ export default defineComponent({
   mounted() {
     grandPrixService.getGrandPrixInSeason(this.season, this.id).then(gp => {
       this.grandPrix = gp;
-
-      this.emitter.emit('breadcrumbLastname', this.grandPrix.name + ' de ' + this.grandPrix.season.name);
 
       Promise.all([
         driversService.getDriversInGrandPrix(this.grandPrix!),
