@@ -1,10 +1,5 @@
 <template>
-  <PCard tag="div" id="adminDrivers">
-    <PTitle
-      class="mb-5"
-      name="Administración de competiciones"
-    />
-
+  <PPage>
     <loading v-if="isLoading" />
     <template v-else>
       <div class="block">
@@ -22,7 +17,10 @@
         La competición {{ competitionId }} no ha sido encontrada
       </p>
       <template v-else>
-        <PTitle tag="h2" type="title">
+        <PTitle
+          tag="h2"
+          type="title"
+        >
           Datos de la competición
         </PTitle>
 
@@ -94,7 +92,7 @@
         />
       </template>
     </template>
-  </PCard>
+  </PPage>
 </template>
 
 <script lang="ts">
@@ -113,19 +111,16 @@ import PSelect from "@/components/lib/forms/PSelect.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PProse from "@/components/lib/PProse.vue";
 import PDivider from "@/components/lib/PDivider.vue";
-import PCard from "@/components/lib/PCard.vue";
 
 export default defineComponent({
     name: "EditCompetition",
     components: {
-    PCard,
     PProse,
     PDivider,
       PInput,
       PSelect,
       PField,
       PButton,
-        AlertNoPermission,
         PTitle,
     },
     setup() {

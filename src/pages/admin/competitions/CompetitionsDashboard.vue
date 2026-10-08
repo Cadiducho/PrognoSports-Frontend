@@ -1,31 +1,15 @@
 <template>
-  <PCard>
-    <PTitle
-      class="mb-5"
-      name="Administración de Competiciones"
-    />
-
-    <nav class="flex mb-4">
-      <section class="flex flex-wrap">
-        <p-button
-          color="info"
-          icon="fa fa-chevron-left"
-          :to="{name: 'admin'}"
-          tag="router-link"
-          class="mr-2"
-        >
-          Volver a Administración
-        </p-button>
-        <p-button
-          color="primary"
-          icon="fa fa-plus"
-          :to="{name: 'competitionCreate'}"
-          tag="router-link"
-        >
-          Nueva Competicion
-        </p-button>
-      </section>
-    </nav>
+  <PPage>
+    <template #actions>
+      <p-button
+        color="primary"
+        icon="fa fa-plus"
+        :to="{name: 'competitionCreate'}"
+        tag="router-link"
+      >
+        Nueva Competición
+      </p-button>
+    </template>
 
     <p-table
       :columns="columns"
@@ -36,7 +20,7 @@
       @edit="goToEdit($event as Competition)"
       @delete="confirmDeleteCompetition($event as Competition)"
     />
-  </PCard>
+  </PPage>
 
   <PrognoModal
     v-model="isDeleteCompetitionModalActive"
@@ -56,8 +40,6 @@
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
-import PCard from "@/components/lib/PCard.vue";
 import PTable from "@/components/lib/table/PTable.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PrognoModal from "@/components/lib/PrognoModal.vue";

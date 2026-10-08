@@ -1,16 +1,12 @@
 <template>
-  <PCard tag="div" id="sessionList">
-    <PTitle
-      class="mb-5"
-      name="Administración de sesiones"
-    />
-
-    <p-button
-      class="mb-4"
-      label="Nueva sesión"
-      color="info"
-      to="/admin/sessions/create"
-    />
+  <PPage>
+    <template #actions>
+      <p-button
+        label="Nueva sesión"
+        color="info"
+        to="/admin/sessions/create"
+      />
+    </template>
 
     <p-table
       :columns="columns"
@@ -45,11 +41,10 @@
         </p-button>
       </template>
     </PrognoModal>
-  </PCard>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import PTable from "@/components/lib/table/PTable.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
@@ -58,7 +53,6 @@ import {onMounted, ref} from "vue";
 import {notificationService, sessionService} from "@/_services";
 import {RaceSession} from "@/types/RaceSession";
 import {Column} from "@/components/lib/table";
-import PCard from "@/components/lib/PCard.vue";
 
 const router = useRouter();
 

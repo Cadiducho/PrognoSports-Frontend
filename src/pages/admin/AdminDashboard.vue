@@ -1,9 +1,5 @@
 <template>
-  <PTitle
-    name="Administración de PrognoSports"
-  />
-
-  <PCard>
+  <PPage>
     <div class="flex flex-wrap justify-between -mx-2 mb-8">
       <article class="w-full md:w-1/2 p-4">
         <router-link
@@ -104,10 +100,8 @@
         </router-link>
       </article>
     </div>
-  </PCard>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
-import PCard from "@/components/lib/PCard.vue";
 </script>

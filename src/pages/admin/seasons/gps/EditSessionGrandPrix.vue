@@ -1,14 +1,22 @@
 <template>
-  <loading v-if="isLoadingData" />
-  <template v-else-if="!dataLoaded">
-    <p>El Gran Premio {{ id }} de {{ season.name }} en {{ session.name }} no ha sido encontrado</p>
-  </template>
-  <template v-else>
-    <GrandPrixPageHeader
-      :grand-prix="grandPrix"
-      :competition="competition"
-      :is-admin="true"
-    />
+  <PPage
+    :title="dataLoaded ? `${session.humanName()} en ${grandPrix.name}` : undefined"
+    :loading="isLoadingData"
+    :not-found="!dataLoaded && `El Gran Premio ${id} de ${season?.name} en ${session?.name} no ha sido encontrado`"
+    variant="plain"
+  >
+    <template #actions>
+      <div
+        v-if="dataLoaded"
+        class="w-60"
+      >
+        <GrandPrixPagination
+          :is-admin-pag="true"
+          :competition="grandPrix.competition"
+          :grand-prix="grandPrix"
+        />
+      </div>
+    </template>
 
     <nav class="flex my-4">
       <p-button
@@ -31,10 +39,7 @@
       </p-button>
     </nav>
 
-    <p v-if="!dataLoaded">
-      El Gran Premio {{ id }} {{ session }} no ha sido encontrado
-    </p>
-    <template v-else>
+    <template v-if="dataLoaded">
       <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
         <div class="md:col-span-1">
           <SessionsInGrandPrix
@@ -130,7 +135,7 @@
         </div>
       </div>
     </template>
-  </template>
+  </PPage>
 </template>
 
 <script lang="ts">
@@ -157,7 +162,7 @@ import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PCheckbox from "@/components/lib/forms/PCheckbox.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PLabel from "@/components/lib/forms/PLabel.vue";
-import GrandPrixPageHeader from "@/components/gps/GrandPrixPageHeader.vue";
+import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
 import PCard from "@/components/lib/PCard.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import CalendarDateTimePicker from "@/components/lib/CalendarDateTimePicker.vue";
@@ -167,7 +172,7 @@ export default defineComponent({
   components: {
     PField,
     PCard,
-    GrandPrixPageHeader,
+    GrandPrixPagination,
     PLabel,
     PButton,
     PCheckbox,

@@ -1,13 +1,14 @@
 <template>
-  <PCard tag="div" id="createCompetition">
-    <PTitle
-      class="mb-5"
-      name="Crear competición"
-    />
-
-    <PStepper v-model="activeStep" :steps="[{ label: 'Datos de la competición' }, { label: 'Finalizar' }]">
+  <PPage>
+    <PStepper
+      v-model="activeStep"
+      :steps="[{ label: 'Datos de la competición' }, { label: 'Finalizar' }]"
+    >
       <template #step-0>
-        <PTitle tag="h2" type="title">
+        <PTitle
+          tag="h2"
+          type="title"
+        >
           Datos de la competición
         </PTitle>
 
@@ -51,7 +52,10 @@
       </template>
 
       <template #step-1>
-        <PTitle tag="h2" type="title">
+        <PTitle
+          tag="h2"
+          type="title"
+        >
           Finalizar
         </PTitle>
 
@@ -103,7 +107,7 @@
         </PButton>
       </template>
     </PStepper>
-  </PCard>
+  </PPage>
 </template>
 
 <script lang="ts">
@@ -122,13 +126,11 @@ import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PStepper from "@/components/lib/PStepper.vue";
 import PProse from "@/components/lib/PProse.vue";
 import PDivider from "@/components/lib/PDivider.vue";
-import PCard from "@/components/lib/PCard.vue";
 
 export default defineComponent({
     name: "CreateCompetition",
 
     components: {
-    PCard,
     PProse,
     PDivider,
       PrognoAlert,

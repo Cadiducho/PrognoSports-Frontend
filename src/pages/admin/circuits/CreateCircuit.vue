@@ -1,10 +1,5 @@
 <template>
-  <PCard tag="div" id="createCircuit">
-    <PTitle
-      class="mb-5"
-      name="Crear circuito"
-    />
-
+  <PPage>
     <PInput
       v-model="rawCircuit.name"
       label="Nombre del circuito"
@@ -41,11 +36,10 @@
       variant="primary"
       @click="createCircuit()"
     />
-  </PCard>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
 import {circuitService, notificationService} from "@/_services";
 
 import {reactive} from "vue";
@@ -53,7 +47,6 @@ import PInput from "@/components/lib/forms/PInput.vue";
 import {useRouter} from "vue-router";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
-import PCard from "@/components/lib/PCard.vue";
 
 const router = useRouter();
 

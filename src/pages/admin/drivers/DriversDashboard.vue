@@ -1,30 +1,17 @@
 <template>
-  <PCard>
-    <PTitle
-      class="mb-5"
-      name="Administración de pilotos"
-    />
+  <PPage>
+    <template #actions>
+      <p-button
+        color="primary"
+        icon="fa fa-plus"
+        :to="{name: 'driverCreate'}"
+        tag="router-link"
+      >
+        Nuevo Piloto
+      </p-button>
+    </template>
 
-    <nav class="flex justify-between mb-4">
-      <section class="flex flex-wrap">
-        <p-button
-          color="info"
-          icon="fa fa-chevron-left"
-          :to="{name: 'admin'}"
-          tag="router-link"
-          class="mr-2"
-        >
-          Volver a Administración
-        </p-button>
-        <p-button
-          color="primary"
-          icon="fa fa-plus"
-          :to="{name: 'driverCreate'}"
-          tag="router-link"
-        >
-          Nuevo Piloto
-        </p-button>
-      </section>
+    <nav class="mb-4 flex justify-end">
       <section class="flex flex-wrap">
         <p-button
           v-if="chosenSeason.id"
@@ -79,12 +66,10 @@
         Borrar Piloto
       </template>
     </PrognoModal>
-  </PCard>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
-import PCard from "@/components/lib/PCard.vue";
 import PTable from "@/components/lib/table/PTable.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";

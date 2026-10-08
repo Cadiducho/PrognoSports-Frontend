@@ -1,24 +1,5 @@
 <template>
-  <PCard tag="div" id="adminUsers">
-    <PTitle
-      class="mb-5"
-      name="Administración de usuarios"
-    />
-
-    <nav class="flex mb-4">
-      <section class="flex flex-wrap">
-        <PButton
-          color="info"
-          icon="fa fa-chevron-left"
-          :to="{ name: 'admin' }"
-          tag="router-link"
-          class="mr-2"
-        >
-          Volver a Administración
-        </PButton>
-      </section>
-    </nav>
-
+  <PPage>
     <div class="block">
       <PSwitch v-model="isPaginated">
         Paginated
@@ -53,11 +34,10 @@
         />-->
       </template>
     </PTable>
-  </PCard>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
 import { User } from "@/types/User";
 import { userService } from "@/_services";
 import { ref, onMounted } from "vue";
@@ -66,7 +46,6 @@ import PSwitch from "@/components/lib/forms/PSwitch.vue";
 import PTable from "@/components/lib/table/PTable.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import {Constructor} from "@/types/Constructor";
-import PCard from "@/components/lib/PCard.vue";
 
 const dayjs = useDayjs();
 const humanDateTime = dayjs.humanDateTime;

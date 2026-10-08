@@ -1,31 +1,17 @@
 <template>
-  <PCard>
-    <PTitle
-      v-if="chosenSeason?.name"
-      class="mb-5"
-      :name="'Administración de Constructores en la temporada ' + chosenSeason.name"
-    />
+  <PPage :subtitle="chosenSeason?.name ? `Temporada ${chosenSeason.name}` : undefined">
+    <template #actions>
+      <p-button
+        color="primary"
+        icon="fa fa-plus"
+        :to="{name: 'adminSeasonAddConstructor'}"
+        tag="router-link"
+      >
+        Añadir Constructor a la temporada
+      </p-button>
+    </template>
 
-    <nav class="flex justify-between mb-4">
-      <section class="flex flex-wrap">
-        <p-button
-          color="info"
-          icon="fa fa-chevron-left"
-          :to="{name: 'adminConstructors'}"
-          tag="router-link"
-          class="mr-2"
-        >
-          Volver a lista de Constructores
-        </p-button>
-        <p-button
-          color="primary"
-          icon="fa fa-plus"
-          :to="{name: 'adminSeasonAddConstructor'}"
-          tag="router-link"
-        >
-          Añadir Constructor a la temporada
-        </p-button>
-      </section>
+    <nav class="mb-4 flex justify-end">
       <section class="flex flex-wrap">
         <p-button
           color="info"
@@ -80,15 +66,13 @@
         Eliminar Constructor
       </template>
     </PrognoModal>
-  </PCard>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
 import PTable from "@/components/lib/table/PTable.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
-import PCard from "@/components/lib/PCard.vue";
 import {constructorService, seasonService} from "@/_services";
 import { Season } from "@/types/Season";
 

@@ -1,10 +1,5 @@
 <template>
-  <PCard tag="div" id="createGrandPrix">
-    <PTitle
-      class="mb-5"
-      name="Crear gran premio"
-    />
-
+  <PPage>
     <nav class="block">
       <PButton
         color="info"
@@ -16,9 +11,15 @@
       </PButton>
     </nav>
 
-    <PStepper v-model="activeStep" :steps="[{ label: 'Datos del gran premio' }, { label: 'Finalizar' }]">
+    <PStepper
+      v-model="activeStep"
+      :steps="[{ label: 'Datos del gran premio' }, { label: 'Finalizar' }]"
+    >
       <template #step-0>
-        <PTitle tag="h2" type="title">
+        <PTitle
+          tag="h2"
+          type="title"
+        >
           Datos del gran premio
         </PTitle>
 
@@ -42,7 +43,10 @@
       </template>
 
       <template #step-1>
-        <PTitle tag="h2" type="title">
+        <PTitle
+          tag="h2"
+          type="title"
+        >
           Finalizar
         </PTitle>
 
@@ -80,7 +84,7 @@
         />
       </template>
     </PStepper>
-  </PCard>
+  </PPage>
 </template>
 
 <script lang="ts">
@@ -100,12 +104,10 @@ import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PStepper from "@/components/lib/PStepper.vue";
 import PProse from "@/components/lib/PProse.vue";
 import PDivider from "@/components/lib/PDivider.vue";
-import PCard from "@/components/lib/PCard.vue";
 
 export default defineComponent({
     name: "CreateGrandPrix",
     components: {
-    PCard,
     PProse,
     PDivider,
       PrognoAlert,

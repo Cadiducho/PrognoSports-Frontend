@@ -1,30 +1,17 @@
 <template>
-  <PCard>
-    <PTitle
-      class="mb-5"
-      name="Administración de Grandes Premios"
-    />
+  <PPage>
+    <template #actions>
+      <p-button
+        color="primary"
+        icon="fa fa-plus"
+        :to="{name: 'gpCreate'}"
+        tag="router-link"
+      >
+        Nuevo Gran Premio
+      </p-button>
+    </template>
 
-    <nav class="flex justify-between mb-4">
-      <section class="flex flex-wrap">
-        <p-button
-          color="info"
-          icon="fa fa-chevron-left"
-          :to="{name: 'admin'}"
-          tag="router-link"
-          class="mr-2"
-        >
-          Volver a Administración
-        </p-button>
-        <p-button
-          color="primary"
-          icon="fa fa-plus"
-          :to="{name: 'gpCreate'}"
-          tag="router-link"
-        >
-          Nuevo Gran Premio
-        </p-button>
-      </section>
+    <nav class="mb-4 flex justify-end">
       <section class="flex flex-wrap">
         <p-button
           v-if="chosenSeason.id"
@@ -63,7 +50,7 @@
       @edit="goToEdit($event as GrandPrix)"
       @delete="confirmDeleteGrandPrix($event as GrandPrix)"
     />
-  </PCard>
+  </PPage>
   <PrognoModal
     v-model="isDeleteGrandPrixModalActive"
     @handle="deleteGrandPrix(grandPrixToDelete)"
@@ -81,8 +68,6 @@
 </template>
 
 <script lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
-import PCard from "@/components/lib/PCard.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import PTable from "@/components/lib/table/PTable.vue";
@@ -99,8 +84,6 @@ export default defineComponent({
     name: "GrandPrixDashboard",
     components: {
         PrognoModal,
-        PTitle,
-        PCard,
         PButton,
         PSelect,
         PTable

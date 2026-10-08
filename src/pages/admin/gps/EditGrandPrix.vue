@@ -1,59 +1,44 @@
 <template>
-  <PCard tag="div" id="adminDrivers">
-    <loading v-if="isLoadingGrandPrix" />
-    <template v-else>
-      <PTitle :name="'Administración de ' + grandPrix.name" />
-
-      <nav class="block">
-        <PButton
-          color="info"
-          :to="{name: 'adminGps'}"
-          tag="router-link"
-          icon="fa fa-chevron-left"
+  <PPage
+    :title="thereIsGrandPrix ? grandPrix.name : undefined"
+    :loading="isLoadingGrandPrix"
+    :not-found="!thereIsGrandPrix && `El Gran Premio ${id} no ha sido encontrado`"
+  >
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div class="min-w-0">
+        <PTitle
+          tag="h2"
+          type="subtitle"
         >
-          Volver a Grandes Premios
-        </PButton>
-      </nav>
+          Datos del {{ grandPrix.name }}
+        </PTitle>
+
+        <PField label="Nombre">
+          <PInput
+            v-model="grandPrix.name"
+            name="name"
+          />
+        </PField>
 
 
-      <p v-if="!thereIsGrandPrix">
-        El Gran Premio {{ id }} no ha sido encontrado
-      </p>
-      <template v-else>
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div class="min-w-0">
-            <PTitle tag="h2" type="title">
-              Datos del {{ grandPrix.name }}
-            </PTitle>
-
-            <PField label="Nombre">
-              <PInput
-                v-model="grandPrix.name"
-                name="name"
-              />
-            </PField>
+        <PField label="Código del Gran Premio">
+          <PInput
+            v-model="grandPrix.code"
+            name="code"
+          />
+        </PField>
 
 
-            <PField label="Código del Gran Premio">
-              <PInput
-                v-model="grandPrix.code"
-                name="code"
-              />
-            </PField>
-
-
-            <PDivider />
-            <PButton
-              :disabled="!isDataOk()"
-              label="Editar Gran Premio"
-              color="primary"
-              @click="editGrandPrix()"
-            />
-          </div>
-        </div>
-      </template>
-    </template>
-  </PCard>
+        <PDivider />
+        <PButton
+          :disabled="!isDataOk()"
+          label="Editar Gran Premio"
+          color="primary"
+          @click="editGrandPrix()"
+        />
+      </div>
+    </div>
+  </PPage>
 </template>
 
 <script lang="ts">
@@ -67,12 +52,10 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PDivider from "@/components/lib/PDivider.vue";
-import PCard from "@/components/lib/PCard.vue";
 
 export default defineComponent({
     name: "EditGrandPrix",
     components: {
-    PCard,
     PDivider,
       PInput,
       PField,

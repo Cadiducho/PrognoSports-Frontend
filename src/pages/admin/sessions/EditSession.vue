@@ -1,21 +1,50 @@
 <template>
-    <PCard tag="div" id="editSession">
-        <PTitle class="mb-5" name="Editar sesión"/>
+  <PPage>
+    <PInput
+      v-model="editedSession.name"
+      label="Nombre de la sesión"
+      name="name"
+    />
+    <PInput
+      v-model="editedSession.code"
+      label="Código corto de la sesión"
+      name="code"
+    />
+    <PSwitch
+      v-model="editedSession.hasGrid"
+      class="mt-4"
+      name="hasGrid"
+    >
+      ¿Tiene parrilla de salida?
+    </PSwitch>
+    <PSwitch
+      v-model="editedSession.hasFastLap"
+      class="mt-4"
+      name="hasFastLap"
+    >
+      ¿Admite vueltas rápidas?
+    </PSwitch>
 
-        <PInput label="Nombre de la sesión" name="name" v-model="editedSession.name" />
-        <PInput label="Código corto de la sesión" name="code" v-model="editedSession.code" />
-        <PSwitch class="mt-4" name="hasGrid" v-model="editedSession.hasGrid">¿Tiene parrilla de salida?</PSwitch>
-        <PSwitch class="mt-4" name="hasFastLap" v-model="editedSession.hasFastLap">¿Admite vueltas rápidas?</PSwitch>
-
-        <div class="flex mt-4">
-            <PButton color="danger" type="soft" class="me-4" @click="router.push({name: 'adminSessions'})">Cancelar</PButton>
-            <PButton :disabled="!isDataOk()" @click="editSession">Editar sesión</PButton>
-        </div>
-    </PCard>
+    <div class="flex mt-4">
+      <PButton
+        color="danger"
+        type="soft"
+        class="me-4"
+        @click="router.push({name: 'adminSessions'})"
+      >
+        Cancelar
+      </PButton>
+      <PButton
+        :disabled="!isDataOk()"
+        @click="editSession"
+      >
+        Editar sesión
+      </PButton>
+    </div>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
 import {notificationService, sessionService} from "@/_services";
 
 import {onMounted, ref} from "vue";
@@ -23,7 +52,6 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import {useRouter} from "vue-router";
 import PSwitch from "@/components/lib/forms/PSwitch.vue";
-import PCard from "@/components/lib/PCard.vue";
 
 const router = useRouter();
 

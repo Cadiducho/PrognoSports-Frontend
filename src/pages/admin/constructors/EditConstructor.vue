@@ -1,27 +1,32 @@
 <template>
-    <loading v-if="isLoading"/>
-    <PCard tag="div" v-if="constructor.id" id="editConstrcutor">
-        <PTitle class="mb-5" name="Editar constructor"/>
+  <PPage
+    :title="constructor.name"
+    :loading="isLoading"
+    :not-found="!constructor.id && 'El constructor no ha sido encontrado'"
+  >
+    <PInput
+      v-model="constructor.name"
+      label="Nombre del constructor"
+      name="name"
+    />
 
-        <PInput label="Nombre del constructor" name="name" v-model="constructor.name" />
-
-        <PButton class="mt-4" @click="editConstructor" type="solid" label="Editar constructor" />
-    </PCard>
-    <div v-else>
-        <p>El constructor no ha sido encontrado</p>
-    </div>
+    <PButton
+      class="mt-4"
+      type="solid"
+      label="Editar constructor"
+      @click="editConstructor"
+    />
+  </PPage>
 </template>
 
 <script setup lang="ts">
 
-import PTitle from "@/components/lib/PTitle.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import {onMounted, ref} from "vue";
 import {constructorService, notificationService} from "@/_services";
 import {useRoute, useRouter} from "vue-router";
 import Loading from "@/components/lib/Loading.vue";
-import PCard from "@/components/lib/PCard.vue";
 
 const router = useRouter();
 const route = useRoute();

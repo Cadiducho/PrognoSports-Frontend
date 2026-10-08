@@ -1,16 +1,12 @@
 <template>
-  <PCard tag="div" id="adminDrivers">
-    <PTitle
-      class="mb-5"
-      name="Administración de circuitos"
-    />
-
-    <p-button
-      class="mb-4"
-      label="Nuevo circuito"
-      color="info"
-      to="/admin/circuits/create"
-    />
+  <PPage>
+    <template #actions>
+      <p-button
+        label="Nuevo circuito"
+        color="info"
+        to="/admin/circuits/create"
+      />
+    </template>
 
     <p-table
       :columns="columns"
@@ -47,11 +43,10 @@
         </p-button>
       </template>
     </PrognoModal>
-  </PCard>
+  </PPage>
 </template>
 
 <script lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {circuitService, notificationService} from "@/_services";
 
@@ -61,17 +56,13 @@ import {Circuit} from "@/types/Circuit";
 import PTable from "@/components/lib/table/PTable.vue";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
-import PCard from "@/components/lib/PCard.vue";
 
 export default defineComponent({
     name: "CompetitionsDashboard",
     components: {
-    PCard,
         PButton,
         PrognoModal,
         PTable,
-        AlertNoPermission,
-        PTitle,
     },
     setup() {
         const authStore = useAuthStore();

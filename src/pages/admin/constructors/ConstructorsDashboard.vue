@@ -1,16 +1,11 @@
 <template>
-  <PCard tag="div" id="adminConstructor">
-    <PTitle
-      class="mb-5"
-      name="Administración de Constructores"
-    />
-
-
-    <p-button
-      class="mb-4"
-      label="Nuevo constructor"
-      to="/admin/constructors/create"
-    />
+  <PPage>
+    <template #actions>
+      <p-button
+        label="Nuevo constructor"
+        to="/admin/constructors/create"
+      />
+    </template>
 
     <p-table
       :columns="columns"
@@ -49,11 +44,10 @@
         </p-button>
       </template>
     </PrognoModal>
-  </PCard>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
 import {constructorService, notificationService} from "@/_services";
 import {Constructor} from "@/types/Constructor";
 import PButton from "@/components/lib/forms/PButton.vue";
@@ -61,7 +55,6 @@ import PTable from "@/components/lib/table/PTable.vue";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
-import PCard from "@/components/lib/PCard.vue";
 
 const router = useRouter();
 
