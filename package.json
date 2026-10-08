@@ -2,8 +2,21 @@
   "name": "prognosports-frontend",
   "version": "2.0.0beta",
   "type": "module",
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^24.0.0",
+      "onFail": "download"
+    },
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^12.0.0",
+      "onFail": "download"
+    }
+  },
   "scripts": {
     "dev": "vite --host",
+    "dev:prod": "vite --host --mode production",
     "build": "vite build",
     "buildBeta": "vite build --mode beta",
     "eslint": "eslint \"src/**\""
