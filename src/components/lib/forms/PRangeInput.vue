@@ -11,8 +11,15 @@
       >
       <output class="min-w-8 rounded bg-brand-100 px-2 py-1 text-center text-sm font-semibold text-brand-800 dark:bg-brand-900/40 dark:text-brand-100">{{ model }}</output>
     </div>
-    <div v-if="ticks" class="flex justify-between px-1 text-xs text-gray-500 dark:text-gray-400" aria-hidden="true">
-      <span v-for="tick in tickValues" :key="tick">{{ tick }}</span>
+    <div
+      v-if="ticks"
+      class="flex justify-between px-1 text-xs text-gray-500 dark:text-gray-400"
+      aria-hidden="true"
+    >
+      <span
+        v-for="tick in tickValues"
+        :key="tick"
+      >{{ tick }}</span>
     </div>
   </div>
 </template>

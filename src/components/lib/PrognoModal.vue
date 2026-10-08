@@ -94,6 +94,9 @@ import { lockBodyScroll, nextModalDomId, unlockBodyScroll } from "@/components/l
 
 type CloseReason = 'overlay' | 'esc' | 'button';
 
+// Si el consumidor no hace binding (sin v-model), el modal se comporta como antes: visible al montar.
+const isOpen = defineModel<boolean>({ default: true });
+
 const props = withDefaults(defineProps<{
   title?: string;
 
@@ -124,9 +127,6 @@ const emit = defineEmits<{
   close: [reason?: CloseReason];
   handle: [];
 }>();
-
-// Si el consumidor no hace binding (sin v-model), el modal se comporta como antes: visible al montar.
-const isOpen = defineModel<boolean>({ default: true });
 
 const titleId = nextModalDomId('progno-modal-title');
 

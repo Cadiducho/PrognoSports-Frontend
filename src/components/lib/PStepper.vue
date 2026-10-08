@@ -1,7 +1,13 @@
 <template>
   <section class="w-full">
-    <ol class="mb-6 grid gap-2 sm:grid-flow-col sm:auto-cols-fr" aria-label="Progreso del formulario">
-      <li v-for="(step, index) in steps" :key="step.label">
+    <ol
+      class="mb-6 grid gap-2 sm:grid-flow-col sm:auto-cols-fr"
+      aria-label="Progreso del formulario"
+    >
+      <li
+        v-for="(step, index) in steps"
+        :key="step.label"
+      >
         <button
           type="button"
           class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-brand-500"
@@ -9,7 +15,10 @@
           :aria-current="index === model ? 'step' : undefined"
           @click="model = index"
         >
-          <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs" :class="index === model ? 'bg-brand-600 text-white' : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200'">{{ index + 1 }}</span>
+          <span
+            class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs"
+            :class="index === model ? 'bg-brand-600 text-white' : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200'"
+          >{{ index + 1 }}</span>
           {{ step.label }}
         </button>
       </li>

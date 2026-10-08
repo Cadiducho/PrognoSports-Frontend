@@ -50,7 +50,7 @@ export const useCommunityStore = defineStore('community', {
         },
 
         communityRequest(payload: { communityId: number }): Promise<Community> {
-            let {communityId} = payload;
+            const {communityId} = payload;
 
             return communityService.getCommunityById(communityId).then(
                 community => {
