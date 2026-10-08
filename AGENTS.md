@@ -58,3 +58,4 @@ Configuration uses Vite modes and `.env` files:
 - Open PRs against `develop`. A PR runs `.github/workflows/requests.yml` (lint + beta build).
 - Push to `develop` deploys to beta; push to `master` deploys to production (`deploy*.yml`). Both reuse `.github/workflows/vite.yml`.
 - Workflow actions are pinned by commit SHA; Dependabot keeps them updated.
+- Deploys upload `dist/` with the local composite action `.github/actions/rsync-deploy` (rsync over SSH, so the server needs `rsync` installed).
