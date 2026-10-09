@@ -143,7 +143,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, markRaw, onBeforeUnmount, onMounted, ref, watch} from "vue";
+import {computed, markRaw, ref, watch} from "vue";
 import {storeToRefs} from "pinia";
 import {grandPrixService, notificationService, scoreService} from "@/_services";
 import {useAuthStore} from "@/store/authStore";
@@ -151,7 +151,7 @@ import {useAppStore} from "@/store/appStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {useDayjs} from "@/composables/useDayjs";
 import {useStyles} from "@/composables/useStyles";
-import useEmitter from "@/composables/useEmitter";
+import { useEmitterListener } from "@/composables/useEmitter";
 import type {GrandPrix} from "@/types/GrandPrix";
 import type {RuleSet} from "@/types/RuleSet";
 import {RaceSession, SessionId} from "@/types/RaceSession";
@@ -208,7 +208,6 @@ const communityStore = useCommunityStore();
 const appStore = useAppStore();
 const dayjs = useDayjs();
 const styles = useStyles();
-const emitter = useEmitter();
 
 const currentUser = authStore.loggedUser;
 const currentCommunity = communityStore.currentCommunity;
@@ -589,13 +588,7 @@ const loadData = async (): Promise<void> => {
   }
 };
 
-onMounted(() => {
-  emitter.on("updatedTipps", onUpdatedTipps);
-});
-
-onBeforeUnmount(() => {
-  emitter.off("updatedTipps", onUpdatedTipps);
-});
+useEmitterListener("updatedTipps", onUpdatedTipps);
 
 watch(
   () => [

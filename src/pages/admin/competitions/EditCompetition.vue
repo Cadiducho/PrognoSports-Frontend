@@ -1,13 +1,5 @@
 <template>
-  <div
-    id="adminDrivers"
-    class="box"
-  >
-    <PTitle
-      class="mb-5"
-      name="Administración de competiciones"
-    />
-
+  <PPage>
     <loading v-if="isLoading" />
     <template v-else>
       <div class="block">
@@ -25,9 +17,12 @@
         La competición {{ competitionId }} no ha sido encontrada
       </p>
       <template v-else>
-        <h2 class="title">
+        <PTitle
+          tag="h2"
+          type="title"
+        >
           Datos de la competición
-        </h2>
+        </PTitle>
 
         <PField label="Nombre de la competición">
           <PInput
@@ -75,20 +70,20 @@
 
         <PField label="Reglas">
           <section class="flex gap-4">
-            <div class="w-1/2">
+            <div class="w-full md:w-1/2">
               <PInput
                 v-model="competition.rules"
                 is-textarea
                 :rows="60"
               />
             </div>
-            <div class="w-1/2 content">
+            <PProse class="w-full md:w-1/2">
               <div v-html="previewRules" />
-            </div>
+            </PProse>
           </section>
         </PField>
 
-        <hr>
+        <PDivider />
         <PButton
           :disabled="!isDataOk()"
           label="Editar competición"
@@ -97,7 +92,7 @@
         />
       </template>
     </template>
-  </div>
+  </PPage>
 </template>
 
 <script lang="ts">
@@ -114,15 +109,18 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
+import PProse from "@/components/lib/PProse.vue";
+import PDivider from "@/components/lib/PDivider.vue";
 
 export default defineComponent({
     name: "EditCompetition",
     components: {
+    PProse,
+    PDivider,
       PInput,
       PSelect,
       PField,
       PButton,
-        AlertNoPermission,
         PTitle,
     },
     setup() {

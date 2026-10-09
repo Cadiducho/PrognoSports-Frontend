@@ -1,31 +1,17 @@
 <template>
-  <PCard>
-    <PTitle
-      v-if="chosenSeason.name"
-      class="mb-5"
-      :name="'Administración de Grandes Premios en la temporada ' + chosenSeason.name"
-    />
+  <PPage :subtitle="chosenSeason?.name ? `Temporada ${chosenSeason.name}` : undefined">
+    <template #actions>
+      <p-button
+        color="primary"
+        icon="fa fa-plus"
+        :to="{name: 'adminSeasonAddGrandPrix'}"
+        tag="router-link"
+      >
+        Añadir Gran Premio a la temporada
+      </p-button>
+    </template>
 
-    <nav class="flex justify-between mb-4">
-      <section class="flex flex-wrap">
-        <p-button
-          color="info"
-          icon="fa fa-chevron-left"
-          :to="{name: 'adminGps'}"
-          tag="router-link"
-          class="mr-2"
-        >
-          Volver a lista de Grandes Premios
-        </p-button>
-        <p-button
-          color="primary"
-          icon="fa fa-plus"
-          :to="{name: 'adminSeasonAddGrandPrix'}"
-          tag="router-link"
-        >
-          Añadir Gran Premio a la temporada
-        </p-button>
-      </section>
+    <nav class="mb-4 flex justify-end">
       <section class="flex flex-wrap">
         <p-button
           color="info"
@@ -73,21 +59,19 @@
         ¿Eliminar Grand Prix de esta competición?
       </template>
       <template #content>
-        ¿Estás seguro de que quieres <b>eliminar</b> el Gran Premio <span class="has-text-weight-semibold">{{ grandPrixToDelete.name }} {{ grandPrixToDelete.season?.name }}</span> de esta competición? <br>Esta acción se puede deshacer.
+        ¿Estás seguro de que quieres <b>eliminar</b> el Gran Premio <span class="font-semibold">{{ grandPrixToDelete.name }} {{ grandPrixToDelete.season?.name }}</span> de esta competición? <br>Esta acción se puede deshacer.
       </template>
       <template #saveText>
         Eliminar Grand Prix
       </template>
     </PrognoModal>
-  </PCard>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
 import PTable from "@/components/lib/table/PTable.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
-import PCard from "@/components/lib/PCard.vue";
 import { grandPrixService, seasonService } from "@/_services";
 import { GrandPrix } from "@/types/GrandPrix";
 import { Season } from "@/types/Season";
@@ -154,24 +138,6 @@ const confirmDeleteGrandPrix = (gp: GrandPrix) => {
 
 const deleteGrandPrixFromSeason = (gp: GrandPrix) => {
   console.log("deleteGrandPrixFromSeason", gp);
-/*
-  grandPrixService.deleteGranPrix(gp).then((ok) => {
-
-    // Elimino de la lista y por lo tanto de la tabla
-    this.gps.splice(this.gps.findIndex(s => s.id === gp.id), 1);
-
-    this.$oruga.notification.open({
-      position: 'top',
-      message: `Se ha eliminado correctamente el gran premio ${gp.name} #${gp.season.name}`,
-      variant: "danger",
-    });
-  }).catch((error) => {
-    this.$oruga.notification.open({
-      position: 'top',
-      message: error.message,
-      variant: "danger",
-    });
-  });*/
 }
 
 

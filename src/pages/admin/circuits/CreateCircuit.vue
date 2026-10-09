@@ -1,13 +1,5 @@
 <template>
-  <div
-    id="createCircuit"
-    class="box"
-  >
-    <PTitle
-      class="mb-5"
-      name="Crear circuito"
-    />
-
+  <PPage>
     <PInput
       v-model="rawCircuit.name"
       label="Nombre del circuito"
@@ -44,11 +36,10 @@
       variant="primary"
       @click="createCircuit()"
     />
-  </div>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
 import {circuitService, notificationService} from "@/_services";
 
 import {reactive} from "vue";

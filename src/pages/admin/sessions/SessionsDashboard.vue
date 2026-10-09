@@ -1,19 +1,12 @@
 <template>
-  <div
-    id="sessionList"
-    class="box"
-  >
-    <PTitle
-      class="mb-5"
-      name="Administración de sesiones"
-    />
-
-    <p-button
-      class="mb-4"
-      label="Nueva sesión"
-      color="info"
-      to="/admin/sessions/create"
-    />
+  <PPage>
+    <template #actions>
+      <p-button
+        label="Nueva sesión"
+        color="info"
+        to="/admin/sessions/create"
+      />
+    </template>
 
     <p-table
       :columns="columns"
@@ -34,25 +27,24 @@
         ¿Está seguro que desea eliminar la sesión <strong>{{ sessionToDelete?.name }}</strong>? Esta acción no se puede deshacer.
       </template>
       <template #footer>
-        <button
-          class="button is-danger"
+        <p-button
+          color="danger"
           @click="deleteSeason(sessionToDelete)"
         >
           Eliminar
-        </button>
-        <button
-          class="button"
+        </p-button>
+        <p-button
+          type="soft"
           @click="showConfirmDeleteModal = false"
         >
           Cancelar
-        </button>
+        </p-button>
       </template>
     </PrognoModal>
-  </div>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import PTable from "@/components/lib/table/PTable.vue";
 import PButton from "@/components/lib/forms/PButton.vue";

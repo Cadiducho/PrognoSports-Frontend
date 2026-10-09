@@ -1,7 +1,8 @@
 <template>
   <form
     v-if="withFilter !== undefined"
-    class="mb-2"
+    class="mb-3"
+    @submit.prevent
   >
     <PField>
       <PInput
@@ -14,16 +15,16 @@
     </PField>
   </form>
 
-  <div class="overflow-x-auto">
-    <table class="table-auto min-w-max w-full border-collapse">
-      <thead class="border-b-2">
+  <div :class="tableWrapperClass">
+    <table :class="tableClass">
+      <thead :class="theadClass">
         <tr>
           <th
             v-for="col in columns"
             :key="col.field"
             :class="[
-              'border-b dark:border-slate-600 font-medium p-2 pl-8 pt-0 pb-3 text-slate-500 dark:text-slate-200 text-left',
-              col.sortable ? 'cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700' : ''
+              thClass,
+              col.sortable ? 'cursor-pointer select-none hover:bg-gray-200 dark:hover:bg-gray-700' : ''
             ]"
             @click="col.sortable && handleSort(col)"
           >
@@ -51,9 +52,9 @@
               </span>
             </div>
           </th>
-          <td
+          <th
             v-if="hasActions"
-            class="empty"
+            :class="thClass"
           />
         </tr>
       </thead>
@@ -157,6 +158,7 @@ import {useDayjs} from "@/composables/useDayjs";
 import {Column, type SortDirection} from "@/components/lib/table/index";
 import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
+import {tableClass, tableWrapperClass, tdClass, theadClass, thClass, trClass, trStripedClass} from "@/components/lib/table/styles";
 
 interface Props<T> {
     columns: Array<Column<T>>;
@@ -276,14 +278,9 @@ const formatFunctionCell = (col: Column<T>, row: T): string => {
   return col.formatter(getRowData(row, col.field), row, col);
 };
 
-const getTdStyle = () => {
-  return ["border-b", "dark:border-slate-600", "p-2", "text-slate-700", "dark:text-slate-200"];
-}
+const getTdStyle = () => tdClass;
 
-const getRowStyle = (index: number): string[] => {
-    if (props.striped && (index % 2 !== 0)) return ["border-b", "dark:bg-gray-800", "dark:border-gray-700", "hover:bg-slate-200", "hover:dark:bg-slate-700"];
-    return ["bg-gray-100", "dark:bg-gray-900", "hover:bg-slate-200", "dark:hover:bg-slate-800"];
-}
+const getRowStyle = (_index: number): string => props.striped ? trStripedClass : trClass;
 
 const getRowData = (row: any, rowName: string): unknown => {
     if (row == null) return undefined;

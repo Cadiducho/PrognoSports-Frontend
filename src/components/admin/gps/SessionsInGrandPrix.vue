@@ -21,36 +21,32 @@
       class="py-2"
     >
       <router-link :to="{ name: 'adminGpEditSession', params: { session: ses.id } }">
-        <article
-          class="card"
-          :class="{
-            '!bg-cyan-200': currentSession?.id === ses.id,
-            'hover:!bg-cyan-100': currentSession?.id !== ses.id
-          }"
+        <PCard
+          tag="article"
+          padding="sm"
+          :class="currentSession?.id === ses.id ? 'ring-2 !ring-brand-500' : 'hover:bg-gray-50 dark:hover:bg-gray-800'"
         >
-          <div class="card-content">
-            <p class="subtitle mb-2">
+            <PTitle tag="p" type="subtitle" class="mb-2">
               {{ ses.humanName() }}
               <span
                 v-if="currentSession?.id === ses.id"
-                class="inline-block px-2 py-1 leading-none bg-orange-200 text-orange-800 rounded-full font-semibold uppercase tracking-wide text-xs"
+                class="inline-block px-2 py-1 leading-none bg-warning-200 text-warning-800 rounded-full font-semibold uppercase tracking-wide text-xs"
               >
                 Editando
               </span>
-            </p>
+            </PTitle>
 
-            <div class="content">
-              <p class="card-text mb-0">
+            <div class="space-y-1 text-sm text-gray-700 dark:text-gray-300">
+              <p class="mb-0">
                 <i class="fa-solid fa-pencil mr-2" />
                 <b>Code: </b> {{ ses.name }}
               </p>
-              <p class="card-text">
+              <p>
                 <i class="fa-solid fa-calendar-days mr-2" />
                 <b>Fecha: </b> {{ humanDateTime(ses.date) }}
               </p>
             </div>
-          </div>
-        </article>
+        </PCard>
       </router-link>
     </div>
     <div class="py-2 flex-1">
@@ -129,7 +125,8 @@ import CalendarDateTimePicker from "@/components/lib/CalendarDateTimePicker.vue"
 
 export default defineComponent({
     name: "SessionsInGrandPrix",
-    components: {CalendarDateTimePicker, PTitle, PButton, PCard, PField, PSelect, PrognoAlert },
+    components: {
+    CalendarDateTimePicker, PTitle, PButton, PCard, PField, PSelect, PrognoAlert },
     props: {
         grandPrix: {
             type: Object as PropType<GrandPrix>,

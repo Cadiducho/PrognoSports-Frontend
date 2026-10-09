@@ -1,225 +1,190 @@
 <template>
-  <div id="communityDetails">
-    <PTitle
-      class="mb-5"
-      :name="communityName"
-    />
-    <loading v-if="isLoading" />
-
-    <p v-if="!thereIsCommunity">
-      La comunidad con nombre <i>{{ $route.params.community }}</i> no ha sido encontrada
-    </p>
+  <PPage
+    variant="plain"
+    :title="thereIsCommunity ? communityName : undefined"
+    :loading="isLoading"
+    :not-found="!thereIsCommunity && `La comunidad con nombre ${$route.params.community} no ha sido encontrada`"
+  >
     <div
-      v-else
-      class="columns"
+      class="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] xl:grid-cols-[minmax(0,1fr)_minmax(0,3fr)]"
     >
-      <div class="column is-3">
-        <PCard>
-          <div class="card-image">
-            <figure class="image">
-              <img
-                :src="community.communityImage()"
-                alt="Community logo"
-              >
-            </figure>
-          </div>
-          <div class="card-content">
-            <div class="media">
-              <div class="media-content">
-                <PTitle>
-                  {{ community.name }}
-                </PTitle>
-                <p class="dark:text-dark-300">
-                  {{ community.description }}
-                </p>
-              </div>
-            </div>
+      <aside>
+        <PCard padding="none">
+          <figure class="aspect-square w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
+            <img
+              class="h-full w-full object-cover"
+              :src="community.communityImage()"
+              alt="Community logo"
+            >
+          </figure>
+          <div class="space-y-3 p-4 sm:p-5">
+            <PTitle
+              type="subtitle"
+              no-margin
+            >
+              {{ community.name }}
+            </PTitle>
+            <p class="text-gray-700 dark:text-gray-300">
+              {{ community.description }}
+            </p>
 
-            <div class="content">
-              <p class="card-text">
-                <b>Fecha de creación: </b>{{ humanDateTime(community.created) }}
-              </p>
-              <p class="card-text">
+            <div class="space-y-1 text-sm text-gray-700 dark:text-gray-300">
+              <p><b>Fecha de creación: </b>{{ humanDateTime(community.created) }}</p>
+              <p>
                 <b>Creador: </b>
-                <router-link :to="{name: 'user', params: { user: community.owner.id }}">
+                <router-link
+                  class="text-brand-600 hover:underline dark:text-brand-300"
+                  :to="{name: 'user', params: { user: community.owner.id }}"
+                >
                   {{ community.owner.username }}
                 </router-link>
               </p>
               <p
                 v-if="community.open"
-                class="card-text has-text-success"
+                class="text-success-600 dark:text-success-400"
               >
                 Comunidad abierta/pública
               </p>
               <p
                 v-else
-                class="card-text has-text-danger"
+                class="text-error-600 dark:text-error-400"
               >
                 Comunidad cerrada/privada
               </p>
+              <p><b>Usuarios apuntados: </b>{{ community.members_amount }}</p>
+            </div>
 
-              <PField
-                v-if="!community.open && isUserInCommunity"
-                grouped
-                label="URL de Invitación:"
-                variant="rounded is-info"
-              >
-                <input
-                  class="input is-rounded is-small"
-                  type="text"
-                  :value="community.invitation"
-                >
-                <PButton
-                  class="button is-primary is-small is-rounded"
+            <PField
+              v-if="!community.open && isUserInCommunity"
+              label="URL de Invitación:"
+            >
+              <div class="flex items-center gap-2">
+                <PInput
+                  class="flex-1"
                   size="small"
+                  no-margin
+                  readonly
+                  :model-value="community.invitation"
+                />
+                <PButton
+                  size="small"
+                  pilled
                   @click="clickInvitation"
                 >
                   Copiar
                 </PButton>
-              </PField>
-
-              <p class="card-text">
-                <b>Usuarios apuntados: </b> {{ community.members_amount }}
-              </p>
-            </div>
+              </div>
+            </PField>
           </div>
         </PCard>
-      </div>
-      <div class="column">
-        <PCard>
-          <div
-            v-if="!community.open && !isUserInCommunity"
-            class="card-content"
+      </aside>
+
+      <PCard class="min-w-0">
+        <template v-if="!community.open && !isUserInCommunity">
+          <PTitle
+            type="header"
+            tag="h2"
           >
-            <div class="media">
-              <div class="media-content">
-                <p class="title is-4">
-                  Comunidad cerrada
-                </p>
-                <p class="subtitle is-6">
-                  Esta comunidad tiene la privacidad cerrada y
-                  por lo tanto no puedes ver su lista de participantes si tú no eres miembro
-                </p>
-              </div>
-            </div>
-          </div>
-          <div
-            v-else-if="!members.length"
-            class="card-content"
-          >
-            <div class="media">
-              <div class="media-content">
-                <PTitle type="title">
-                  Comunidad sin participantes
-                </PTitle>
-                <PTitle type="subtitle">
-                  Esta comunidad no tiene participantes en este momento
-                </PTitle>
-              </div>
-            </div>
-          </div>
-          <div
-            v-else
-            class="card-content"
-          >
-            <section
-              v-if="currentCommunity && currentCommunity.competition"
-              class="content"
+            Comunidad cerrada
+          </PTitle>
+          <p class="text-gray-600 dark:text-gray-300">
+            Esta comunidad tiene la privacidad cerrada y
+            por lo tanto no puedes ver su lista de participantes si tú no eres miembro
+          </p>
+        </template>
+        <template v-else-if="!members.length">
+          <PTitle type="subtitle">
+            Comunidad sin participantes
+          </PTitle>
+          <p class="text-gray-600 dark:text-gray-300">
+            Esta comunidad no tiene participantes en este momento
+          </p>
+        </template>
+        <template v-else>
+          <section v-if="currentCommunity && currentCommunity.competition">
+            <PTitle
+              type="header"
+              tag="h2"
             >
-              <h2>Normas y puntuaciones</h2>
-              <RulesAndPointsTable
-                :competition="currentCommunity.competition"
-                :community="currentCommunity"
-              />
-            </section>
+              Normas y puntuaciones
+            </PTitle>
+            <RulesAndPointsTable
+              :competition="currentCommunity.competition"
+              :community="currentCommunity"
+            />
+          </section>
 
-            <p class="title is-4">
-              Usuarios participando
-            </p>
+          <PTitle
+            class="mt-6"
+            type="header"
+            tag="h2"
+          >
+            Usuarios participando
+          </PTitle>
 
-            <section class="busqueda-ordenada">
-              <p-button
-                color="teal"
-                @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen"
+          <PSearchSortBar
+            v-model="searchInput"
+            v-model:open="opcionesOrdenadoOpen"
+            color="teal"
+            placeholder="Buscar miembro..."
+          >
+            <template #options>
+              <PLabel label="Ordenar lista de usuarios" />
+              <PRadio
+                v-model="orderType"
+                :value="0"
               >
-                Ordenar
-              </p-button>
+                Por nombre de usuario
+              </PRadio>
+              <PRadio
+                v-model="orderType"
+                :value="1"
+              >
+                Por rango
+              </PRadio>
+              <PRadio
+                v-model="orderType"
+                :value="2"
+              >
+                Por conexión reciente
+              </PRadio>
+              <PRadio
+                v-model="orderType"
+                :value="3"
+              >
+                Por fecha de registro
+              </PRadio>
 
-              <PInput
-                v-model="searchInput"
-                placeholder="Buscar miembro..."
-                no-margin
+              <PLabel
+                class="mt-3"
+                label="Dirección del orden"
               />
-            </section>
+              <PRadio
+                v-model="orderAscendent"
+                :value="true"
+              >
+                Orden ascendente
+              </PRadio>
+              <PRadio
+                v-model="orderAscendent"
+                :value="false"
+              >
+                Orden descendente
+              </PRadio>
+            </template>
+          </PSearchSortBar>
 
-            <PCollapse
-              :open="opcionesOrdenadoOpen"
-              class="box-ordenado"
-            >
-              <div class="box mt-1">
-                <label class="label">Orderar lista de usuarios</label>
-                <div class="field mb-0">
-                  <PRadio
-                    v-model="orderType"
-                    :value="0"
-                  >
-                    Por nombre de usuario
-                  </PRadio>
-                </div>
-                <div class="field mb-0">
-                  <PRadio
-                    v-model="orderType"
-                    :value="1"
-                  >
-                    Por rango
-                  </PRadio>
-                </div>
-                <div class="field mb-0">
-                  <PRadio
-                    v-model="orderType"
-                    :value="2"
-                  >
-                    Por conexión reciente
-                  </PRadio>
-                </div>
-                <div class="field mb-1">
-                  <PRadio
-                    v-model="orderType"
-                    :value="3"
-                  >
-                    Por fecha de registro
-                  </PRadio>
-                </div>
-                <label class="label mt-2">Dirección del orden</label>
-                <div class="field">
-                  <PRadio
-                    v-model="orderAscendent"
-                    :value="true"
-                  >
-                    Orden ascendente
-                  </PRadio>
-                  <PRadio
-                    v-model="orderAscendent"
-                    :value="false"
-                  >
-                    Orden descendente
-                  </PRadio>
-                </div>
-              </div>
-            </PCollapse>
-
-            <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-rows-1 sm:grid-rows-2 lg:grid-rows-3 xl:grid-rows-4 gap-2">
-              <UserInCommunityCard
-                v-for="member in filteredMembers"
-                :key="member.user.id"
-                :member="member"
-              />
-            </div>
+          <div class="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <UserInCommunityCard
+              v-for="member in filteredMembers"
+              :key="member.user.id"
+              :member="member"
+            />
           </div>
-        </PCard>
-      </div>
+        </template>
+      </PCard>
     </div>
-  </div>
+  </PPage>
 </template>
 
 
@@ -240,9 +205,9 @@ import Loading from "@/components/lib/Loading.vue";
 import UserInCommunityCard from "@/components/communities/UserInCommunityCard.vue";
 import RulesAndPointsTable from "@/components/communities/RulesAndPointsTable.vue";
 import PRadio from "@/components/lib/forms/PRadio.vue";
-import PSwitch from "@/components/lib/forms/PSwitch.vue";
 import PCard from "@/components/lib/PCard.vue";
-import PCollapse from "@/components/lib/PCollapse.vue";
+import PSearchSortBar from "@/components/lib/PSearchSortBar.vue";
+import PLabel from "@/components/lib/forms/PLabel.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PField from "@/components/lib/forms/PField.vue";
@@ -252,12 +217,12 @@ export default defineComponent({
     components: {
       PField,
       PInput, PButton,
-      PCollapse,
+      PSearchSortBar,
+      PLabel,
       PCard,
         PRadio,
         RulesAndPointsTable,
         UserInCommunityCard,
-        Loading,
         PTitle
     },
     setup() {
@@ -314,7 +279,7 @@ export default defineComponent({
                 case 3: pickedSort = sortRegisterDate; break;
                 default: pickedSort = sortUsername;
             }
-            let listaOrdenada = this.members.sort(pickedSort);
+            let listaOrdenada = [...this.members].sort(pickedSort);
 
             if (this.orderAscendent) {
                 listaOrdenada = listaOrdenada.reverse();
@@ -352,7 +317,7 @@ export default defineComponent({
             communityService.getMembers(community).then(list => {
                 this.members.push(...list);
             }).catch(() => {}); // Ignorar si no tiene permisos, simplemente no se rellena
-        }).catch((reason) => {
+        }).catch(() => {
             this.thereIsCommunity = false;
         }).finally(() => {
             this.isLoading = false;

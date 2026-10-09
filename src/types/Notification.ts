@@ -78,32 +78,33 @@ export class Notification implements INotification {
                     return "No has recibido puntos";
                 }
                 let mensaje = "";
-                for (let communityName in this.data.points) {
+                for (const communityName in this.data.points) {
                     mensaje += communityName;
-                    let points = this.data.points[communityName];
+                    const points = this.data.points[communityName];
                     if (points) {
-                        mensaje += `<strong class='has-text-info'>${communityName}</strong>: ${points.pointsBySession["QUALIFY"]}  puntos. <br/>Acumulados un total de ${points.accumulatedPoints} puntos esta temporada`;
+                        mensaje += `<strong class='text-info-600 dark:text-info-400'>${communityName}</strong>: ${points.pointsBySession["QUALIFY"]}  puntos. <br/>Acumulados un total de ${points.accumulatedPoints} puntos esta temporada`;
                     } else {
                         mensaje += "No has recibido puntos";
                     }
                 }
                 return mensaje;
             }
-            case 'RACE_POINTS':
+            case 'RACE_POINTS': {
                 if (Object.keys(this.data.points).length == 0) {
                     return "No has recibido puntos";
                 }
                 let mensaje = "";
-                for (let communityName in this.data.points) {
+                for (const communityName in this.data.points) {
                     mensaje += communityName;
-                    let points = this.data.points[communityName];
+                    const points = this.data.points[communityName];
                     if (points) {
-                        mensaje += `<strong class='has-text-info'>${communityName}</strong>: ${points.pointsBySession["RACE"]} puntos. <br/>Acumulados un total de ${points.accumulatedPoints} puntos esta temporada`;
+                        mensaje += `<strong class='text-info-600 dark:text-info-400'>${communityName}</strong>: ${points.pointsBySession["RACE"]} puntos. <br/>Acumulados un total de ${points.accumulatedPoints} puntos esta temporada`;
                     } else {
                         mensaje += "No has recibido puntos";
                     }
                 }
                 return mensaje;
+            }
             default:
                 return "Notificación deconocida";
         }

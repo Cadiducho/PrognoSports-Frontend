@@ -1,19 +1,11 @@
 <template>
-  <div
-    id="adminConstructor"
-    class="box"
-  >
-    <PTitle
-      class="mb-5"
-      name="Administración de Constructores"
-    />
-
-
-    <p-button
-      class="mb-4"
-      label="Nuevo constructor"
-      to="/admin/constructors/create"
-    />
+  <PPage>
+    <template #actions>
+      <p-button
+        label="Nuevo constructor"
+        to="/admin/constructors/create"
+      />
+    </template>
 
     <p-table
       :columns="columns"
@@ -38,25 +30,24 @@
         ¿Está seguro que desea eliminar el constructor <strong>{{ constructorToDelete?.name }}</strong>? Esta acción no se puede deshacer.
       </template>
       <template #footer>
-        <button
-          class="button is-danger"
+        <p-button
+          color="danger"
           @click="deleteConstructor(constructorToDelete)"
         >
           Eliminar
-        </button>
-        <button
-          class="button"
+        </p-button>
+        <p-button
+          type="soft"
           @click="showConfirmDeleteModal = false"
         >
           Cancelar
-        </button>
+        </p-button>
       </template>
     </PrognoModal>
-  </div>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
 import {constructorService, notificationService} from "@/_services";
 import {Constructor} from "@/types/Constructor";
 import PButton from "@/components/lib/forms/PButton.vue";

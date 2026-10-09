@@ -1,31 +1,10 @@
 <template>
-  <PCard>
-    <PTitle
-      v-if="season?.name && driver?.firstname"
-      class="mb-5"
-      :name="'Editar Piloto ' + driver.firstname + ' ' + driver.lastname + ' en la temporada ' + season.name"
-    />
-
-    <nav class="flex justify-between mb-4">
-      <p-button
-        color="info"
-        icon="fa fa-chevron-left"
-        :to="{name: 'adminDriversInSeason', params: {season: season.id}}"
-        tag="router-link"
-      >
-        Volver a lista de Pilotos
-      </p-button>
-    </nav>
-
-    <div
-      v-if="isLoading"
-      class="text-center py-8"
-    >
-      <i class="fas fa-spinner fa-spin text-4xl text-brand-accent-500" />
-    </div>
-
+  <PPage
+    :title="driver?.firstname ? `Editar piloto ${driver.firstname} ${driver.lastname}` : undefined"
+    :subtitle="season?.name ? `Temporada ${season.name}` : undefined"
+    :loading="isLoading"
+  >
     <form
-      v-else
       @submit.prevent="updateDriver"
     >
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -89,12 +68,10 @@
         </PButton>
       </div>
     </form>
-  </PCard>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
-import PCard from "@/components/lib/PCard.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";

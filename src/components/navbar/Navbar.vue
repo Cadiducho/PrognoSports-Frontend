@@ -9,7 +9,7 @@
         <div class="md:flex md:h-14 md:items-center">
           <div class="flex h-14 items-center justify-between md:h-auto md:flex-shrink-0">
             <router-link
-              class="inline-flex items-center rounded-md px-2 py-1 text-base font-semibold text-gray-800 transition-colors hover:text-primary dark:text-gray-100"
+              class="inline-flex items-center rounded-md px-2 py-1 text-base font-semibold text-gray-800 transition-colors hover:text-brand-600 dark:hover:text-brand-300 dark:text-gray-100"
               to="/"
               @click="clickEasterEgg()"
             >
@@ -23,7 +23,7 @@
 
             <button
               type="button"
-              class="inline-flex h-9 w-9 items-center justify-center rounded-md text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary md:hidden dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-white"
+              class="inline-flex h-9 w-9 items-center justify-center rounded-md text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 md:hidden dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-white"
               aria-label="menu"
               :aria-expanded="isOpen"
               @click="isOpen = !isOpen"

@@ -2,9 +2,11 @@
   <transition name="collapse">
     <div
       v-show="isOpen"
-      class="mt-2 overflow-hidden"
+      class="overflow-hidden"
     >
-      <slot />
+      <div class="p-1 pb-3">
+        <slot />
+      </div>
     </div>
   </transition>
 </template>

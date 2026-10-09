@@ -1,31 +1,17 @@
 <template>
-  <PCard>
-    <PTitle
-      v-if="chosenSeason?.name"
-      class="mb-5"
-      :name="'Administración de Pilotos en la temporada ' + chosenSeason.name"
-    />
+  <PPage :subtitle="chosenSeason?.name ? `Temporada ${chosenSeason.name}` : undefined">
+    <template #actions>
+      <p-button
+        color="primary"
+        icon="fa fa-plus"
+        :to="{name: 'adminSeasonAddDriver'}"
+        tag="router-link"
+      >
+        Añadir Piloto a la temporada
+      </p-button>
+    </template>
 
-    <nav class="flex justify-between mb-4">
-      <section class="flex flex-wrap">
-        <p-button
-          color="info"
-          icon="fa fa-chevron-left"
-          :to="{name: 'adminDrivers'}"
-          tag="router-link"
-          class="mr-2"
-        >
-          Volver a lista de Pilotos
-        </p-button>
-        <p-button
-          color="primary"
-          icon="fa fa-plus"
-          :to="{name: 'adminSeasonAddDriver'}"
-          tag="router-link"
-        >
-          Añadir Piloto a la temporada
-        </p-button>
-      </section>
+    <nav class="mb-4 flex justify-end">
       <section class="flex flex-wrap">
         <p-button
           color="info"
@@ -72,22 +58,20 @@
       </template>
       <template #content>
         ¿Estás seguro de que quieres <b>eliminar</b> el Piloto
-        <span class="has-text-weight-semibold">{{ driverToDelete.firstname }} {{ driverToDelete.lastname }}</span>
+        <span class="font-semibold">{{ driverToDelete.firstname }} {{ driverToDelete.lastname }}</span>
         de esta temporada? <br>Esta acción no se puede deshacer.
       </template>
       <template #saveText>
         Eliminar Piloto
       </template>
     </PrognoModal>
-  </PCard>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
 import PTable from "@/components/lib/table/PTable.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
-import PCard from "@/components/lib/PCard.vue";
 import ColorBadge from "@/components/lib/table/formatters/ColorBadge.vue";
 import {driversService, notificationService, seasonService} from "@/_services";
 import { Season } from "@/types/Season";

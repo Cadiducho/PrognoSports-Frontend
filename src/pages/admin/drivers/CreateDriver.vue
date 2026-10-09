@@ -1,13 +1,5 @@
 <template>
-  <div
-    id="createDriver"
-    class="box"
-  >
-    <PTitle
-      class="mb-5"
-      name="Crear piloto"
-    />
-
+  <PPage>
     <nav class="block">
       <PButton
         color="info"
@@ -19,14 +11,17 @@
       </PButton>
     </nav>
 
-    <o-steps v-model="activeStep">
-      <o-step-item
-        step="1"
-        label="Datos del piloto"
-      >
-        <h2 class="title">
+    <PStepper
+      v-model="activeStep"
+      :steps="[{ label: 'Datos del piloto' }, { label: 'Finalizar' }]"
+    >
+      <template #step-0>
+        <PTitle
+          tag="h2"
+          type="title"
+        >
           Datos del piloto
-        </h2>
+        </PTitle>
 
         <PField label="Nombre del piloto">
           <PInput
@@ -64,16 +59,16 @@
           />
         </PField>
 
-        <hr>
-      </o-step-item>
+        <PDivider />
+      </template>
 
-      <o-step-item
-        step="2"
-        label="Finalizar"
-      >
-        <h2 class="title">
+      <template #step-1>
+        <PTitle
+          tag="h2"
+          type="title"
+        >
           Finalizar
-        </h2>
+        </PTitle>
 
         <AlertInvalidData
           :object="createdDriver.id"
@@ -100,34 +95,34 @@
           Revisa los datos, se va a crear el siguiente piloto
         </PrognoAlert>
 
-        <div class="content">
-          <p class="card-text">
+        <PProse>
+          <p>
             <b>ID del piloto: </b>{{ createdDriver.id }}
           </p>
-          <p class="card-text">
+          <p>
             <b>Nombre del piloto: </b>{{ createdDriver.firstname }} {{ createdDriver.lastname }}
           </p>
-          <p class="card-text">
+          <p>
             <b>Código del piloto: </b>{{ createdDriver.code }}
           </p>
-          <p class="card-text">
+          <p>
             <b>Nacionalidad del piloto: </b>{{ createdDriver.nationality }}
           </p>
-          <p class="card-text">
+          <p>
             <b>Fecha de nacimiento: </b>{{ humanDate(createdDriver.birth) }}
           </p>
-        </div>
+        </PProse>
 
-        <hr>
+        <PDivider />
         <PButton
           :disabled="!isDataOk()"
           label="Crear piloto"
           color="primary"
           @click="registerDriver()"
         />
-      </o-step-item>
-    </o-steps>
-  </div>
+      </template>
+    </PStepper>
+  </PPage>
 </template>
 
 <script lang="ts">
@@ -144,11 +139,17 @@ import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import CalendarDateTimePicker from "@/components/lib/CalendarDateTimePicker.vue";
+import PStepper from "@/components/lib/PStepper.vue";
+import PProse from "@/components/lib/PProse.vue";
+import PDivider from "@/components/lib/PDivider.vue";
 
 export default defineComponent({
     name: "CreateDriver",
     components: {
+    PProse,
+    PDivider,
       CalendarDateTimePicker,
+      PStepper,
       PrognoAlert,
       PInput,
       PField,

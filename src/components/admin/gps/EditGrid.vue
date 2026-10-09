@@ -7,7 +7,7 @@
       Parrilla de salida para {{ session.humanName() }}
     </PTitle>
 
-    <label class="label">Parrilla</label>
+    <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300">Parrilla</label>
     <PrognoAlert
       v-if="!hasSavedGrid"
       variant="warning"

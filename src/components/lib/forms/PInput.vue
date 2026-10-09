@@ -14,7 +14,7 @@
     <div class="relative">
       <span
         v-if="icon && !isTextarea"
-        class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-300"
+        class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-300"
       >
         <i :class="icon" />
       </span>
@@ -60,6 +60,8 @@ const props = withDefaults(defineProps<{
   noMargin?: boolean;
   isTextarea?: boolean;
   rows?: number;
+  size?: 'small' | 'medium' | 'large';
+  error?: boolean;
 }>(), {
   label: '',
   message: '',
@@ -70,13 +72,23 @@ const props = withDefaults(defineProps<{
   icon: undefined,
   noMargin: false,
   isTextarea: false,
-  rows: 3
+  rows: 3,
+  size: 'medium',
+  error: false
 });
 
 const id = useId();
 
+const sizeClasses = {
+  small: "py-1 text-sm",
+  medium: "py-2 text-base",
+  large: "py-3 text-lg"
+};
+
 const inputClasses = computed(() => [
-  "appearance-none block w-full text-gray-700 dark:text-gray-200 border border-gray-200 rounded py-3 pr-4 dark:bg-gray-700 dark:border-gray-600 leading-tight focus:ring-blue-500 focus:outline-none focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500",
-  props.icon && !props.isTextarea ? "pl-12" : "pl-4"
+  "block w-full appearance-none rounded-md border border-gray-300 bg-white pr-4 leading-normal text-gray-700 placeholder:text-gray-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder:text-gray-400",
+  sizeClasses[props.size],
+  props.error ? "!border-error-500 focus:!ring-error-500 dark:!border-error-400" : "",
+  props.icon && !props.isTextarea ? "pl-10" : "pl-3"
 ]);
 </script>

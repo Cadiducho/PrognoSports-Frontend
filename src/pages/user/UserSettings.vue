@@ -1,189 +1,191 @@
 <template>
-  <PCard>
-    <UserProfileCard
-      :profile="currentUser"
-      :show-settings-button="false"
-    />
-
-    <hr>
-
-    <UserLevelResume :user="currentUser" />
-  </PCard>
-
-  <PCard class="mt-1">
-    <PTitle type="subtitle">
-      Cuenta
-    </PTitle>
-
-    <div class="flex flex-wrap items-center justify-start gap-2">
-      <PButton
-        color="info"
-        icon="fas fa-lock"
-        @click="showChangePassword"
-      >
-        Cambiar contraseña
-      </PButton>
-      <PButton
-        color="info"
-        icon="fas fa-envelope"
-        @click="showChangeMail()"
-      >
-        Cambiar Email
-      </PButton>
-      <PButton
-        color="primary"
-        icon="fab fa-telegram"
-        @click="showLinkTelegram()"
-      >
-        Enlazar cuenta a Telegram
-      </PButton>
-    </div>
-  </PCard>
-
-  <PCard class="mt-1">
-    <form @submit.prevent="save()">
-      <div class="columns">
-        <div class="column">
-          <PTitle type="subtitle">
-            Datos
-          </PTitle>
-
-          <PField label="Nombre">
-            <PInput
-              v-model="editedUser.username"
-              name="name"
-              expanded
-              lazy
-            />
-          </PField>
-
-          <PField label="Biografía">
-            <PInput
-              v-model="editedUser.bio"
-              name="bio"
-              expanded
-              lazy
-            />
-          </PField>
-
-          <PField label="Localización">
-            <PInput
-              v-model="editedUser.location"
-              name="location"
-              expanded
-              lazy
-            />
-          </PField>
-
-          <PField label="Cumpleaños">
-            <CalendarDateTimePicker
-              v-model="editedUser.birthdate"
-              label="Fecha de nacimiento"
-              placeholder="Selecciona tu fecha de nacimiento"
-              :show-time="false"
-            />
-          </PField>
-        </div>
-
-        <div class="column">
-          <PTitle type="subtitle">
-            Preferencias
-          </PTitle>
-
-          <label class="label">Nombres de los equipos</label>
-          <div class="field">
-            <PRadio
-              v-model="editedUser.preferences['use-long-team-names']"
-              :value="false"
-            >
-              Mostrar nombres cortos
-            </PRadio>
-          </div>
-          <div class="field">
-            <PRadio
-              v-model="editedUser.preferences['use-long-team-names']"
-              :value="true"
-            >
-              Mostrar nombres largos y con empresas patrocinadoras
-            </PRadio>
-          </div>
-
-          <label class="label">Privacidad</label>
-          <div class="field">
-            <PRadio
-              v-model="editedUser.preferences['hide-tipps-until-start']"
-              :value="false"
-            >
-              No ocultar mis pronósticos
-            </PRadio>
-          </div>
-          <div class="field">
-            <PRadio
-              v-model="editedUser.preferences['hide-tipps-until-start']"
-              :value="true"
-            >
-              Ocultar mis pronósticos hasta la hora de cierre
-            </PRadio>
-          </div>
-
-          <p-select
-            v-model="editedUser.preferences['time-zone-id']"
-            label="Zona horaria para las notificaciones"
-            placeholder="Selecciona una zona horaria para tus notificaciones"
-            class="mb-3"
-          >
-            <option
-              v-for="(value, tz) in timezones"
-              :key="tz"
-              :value="tz"
-            >
-              {{ tz }} (UTC {{ value }})
-            </option>
-          </p-select>
-        </div>
-      </div>
-
-      <hr>
-
-      <PInput
-        v-model="editedUser.password"
-        label="Contraseña actual"
-        message="Debes introducir tu contraseña actual para confirmar cambios en tus ajustes"
-        name="password"
-        type="password"
-        expanded
+  <PPage variant="plain">
+    <PCard>
+      <UserProfileCard
+        :profile="currentUser"
+        :show-settings-button="false"
       />
-      <PButton
-        native-type="submit"
-        :disabled="submiting"
-      >
-        Guardar cambios
-      </PButton>
-    </form>
-  </PCard>
 
-  <PCard
-    v-if="!isLoading"
-    class="mt-1"
-  >
-    <div class="columns">
-      <div class="column">
-        <PTitle type="subtitle">
-          Notificaciones
-        </PTitle>
+      <PDivider />
 
-        <PrognoAlert
-          variant="info"
-          message="Pulsa sobre los iconos para ajustar tus preferencias de notificaciones."
+      <UserLevelResume :user="currentUser" />
+    </PCard>
+
+    <PCard>
+      <PTitle type="subtitle">
+        Cuenta
+      </PTitle>
+
+      <div class="flex flex-wrap items-center justify-start gap-2">
+        <PButton
+          color="info"
+          icon="fas fa-lock"
+          @click="showChangePassword"
+        >
+          Cambiar contraseña
+        </PButton>
+        <PButton
+          color="info"
+          icon="fas fa-envelope"
+          @click="showChangeMail()"
+        >
+          Cambiar Email
+        </PButton>
+        <PButton
+          color="primary"
+          icon="fab fa-telegram"
+          @click="showLinkTelegram()"
+        >
+          Enlazar cuenta a Telegram
+        </PButton>
+      </div>
+    </PCard>
+
+    <PCard>
+      <form @submit.prevent="save()">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div class="min-w-0">
+            <PTitle type="subtitle">
+              Datos
+            </PTitle>
+
+            <PField label="Nombre">
+              <PInput
+                v-model="editedUser.username"
+                name="name"
+                expanded
+                lazy
+              />
+            </PField>
+
+            <PField label="Biografía">
+              <PInput
+                v-model="editedUser.bio"
+                name="bio"
+                expanded
+                lazy
+              />
+            </PField>
+
+            <PField label="Localización">
+              <PInput
+                v-model="editedUser.location"
+                name="location"
+                expanded
+                lazy
+              />
+            </PField>
+
+            <PField label="Cumpleaños">
+              <CalendarDateTimePicker
+                v-model="editedUser.birthdate"
+                label="Fecha de nacimiento"
+                placeholder="Selecciona tu fecha de nacimiento"
+                :show-time="false"
+              />
+            </PField>
+          </div>
+
+          <div class="min-w-0">
+            <PTitle type="subtitle">
+              Preferencias
+            </PTitle>
+
+            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300">Nombres de los equipos</label>
+            <div class="mb-4">
+              <PRadio
+                v-model="editedUser.preferences['use-long-team-names']"
+                :value="false"
+              >
+                Mostrar nombres cortos
+              </PRadio>
+            </div>
+            <div class="mb-4">
+              <PRadio
+                v-model="editedUser.preferences['use-long-team-names']"
+                :value="true"
+              >
+                Mostrar nombres largos y con empresas patrocinadoras
+              </PRadio>
+            </div>
+
+            <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300">Privacidad</label>
+            <div class="mb-4">
+              <PRadio
+                v-model="editedUser.preferences['hide-tipps-until-start']"
+                :value="false"
+              >
+                No ocultar mis pronósticos
+              </PRadio>
+            </div>
+            <div class="mb-4">
+              <PRadio
+                v-model="editedUser.preferences['hide-tipps-until-start']"
+                :value="true"
+              >
+                Ocultar mis pronósticos hasta la hora de cierre
+              </PRadio>
+            </div>
+
+            <p-select
+              v-model="editedUser.preferences['time-zone-id']"
+              label="Zona horaria para las notificaciones"
+              placeholder="Selecciona una zona horaria para tus notificaciones"
+              class="mb-3"
+            >
+              <option
+                v-for="(value, tz) in timezones"
+                :key="tz"
+                :value="tz"
+              >
+                {{ tz }} (UTC {{ value }})
+              </option>
+            </p-select>
+          </div>
+        </div>
+
+        <PDivider />
+
+        <PInput
+          v-model="editedUser.password"
+          label="Contraseña actual"
+          message="Debes introducir tu contraseña actual para confirmar cambios en tus ajustes"
+          name="password"
+          type="password"
+          expanded
         />
+        <PButton
+          native-type="submit"
+          :disabled="submiting"
+        >
+          Guardar cambios
+        </PButton>
+      </form>
+    </PCard>
 
-        <NotificationSettingsTable />
+    <PCard
+      v-if="!isLoading"
+      class="mt-1"
+    >
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="min-w-0">
+          <PTitle type="subtitle">
+            Notificaciones
+          </PTitle>
+
+          <PrognoAlert
+            variant="info"
+            message="Pulsa sobre los iconos para ajustar tus preferencias de notificaciones."
+          />
+
+          <NotificationSettingsTable />
+        </div>
+        <div class="min-w-0">
+          <AuthTokenList />
+        </div>
       </div>
-      <div class="column">
-        <AuthTokenList />
-      </div>
-    </div>
-  </PCard>
+    </PCard>
+  </PPage>
 
   <PrognoModal
     v-model="changePasswordModal.show"
@@ -301,10 +303,12 @@ import PCard from "@/components/lib/PCard.vue";
 import PTitle from "@/components/lib/PTitle.vue";
 import NotificationSettingsTable from "@/components/user/settings/NotificationSettingsTable.vue";
 import CalendarDateTimePicker from "@/components/lib/CalendarDateTimePicker.vue";
+import PDivider from "@/components/lib/PDivider.vue";
 
 export default defineComponent({
   name: "UserSettings",
   components: {
+    PDivider,
     CalendarDateTimePicker,
     NotificationSettingsTable,
     PTitle,

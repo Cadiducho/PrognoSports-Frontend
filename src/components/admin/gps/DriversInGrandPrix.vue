@@ -4,7 +4,7 @@
   </PTitle>
 
   <div class="flex flex-col md:flex-row gap-6">
-    <div class="basis-1/5">
+    <div class="md:basis-1/5">
       <PSelect
         v-model="clonedGrandPrix"
         label="Clonar del Gran Premio..."
@@ -20,7 +20,10 @@
       </PSelect>
 
       <PLabel>
-        Pilotos de <router-link :to="{name: 'adminDriversInSeason', params: {season: grandPrix.season.id}}">
+        Pilotos de <router-link
+          class="text-brand-600 hover:underline dark:text-brand-300"
+          :to="{name: 'adminDriversInSeason', params: {season: grandPrix.season.id}}"
+        >
           {{ grandPrix.season.name }}
         </router-link>
       </PLabel>
@@ -32,51 +35,41 @@
         group="drivers"
         item-key="id"
       >
-        <template #item="{ element, index }">
-          <div class="p-1 cursor-move rounded-lg flex items-center justify-center bg-cyan-400 hover:bg-cyan-600 shadow-lg">
+        <template #item="{ element }">
+          <div class="flex cursor-move items-center justify-center rounded-lg bg-brand-accent-500 p-1 text-sm shadow-lg hover:bg-brand-accent-600">
             {{ element.firstname }} {{ element.lastname }} #{{ element.number }}
           </div>
         </template>
       </draggable>
     </div>
-    <div class="basis-4/5">
-      <label class="label">Pilotos en el Gran Premio</label>
-      <div class="flex flex-wrap">
-        <div
+    <div class="min-w-0 md:basis-4/5">
+      <PLabel>Pilotos en el Gran Premio</PLabel>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
+        <PCard
           v-for="constructor in constructorList"
           :key="constructor.id"
-          class="w-1/5 p-2"
+          tag="div"
+          padding="sm"
+          :title="constructor.name"
+          :header-style="teamCarColor(constructor)"
         >
-          <!-- ToDo: Adaptar PCard para soportar headers de colorines -->
-          <div class="card">
-            <header class="card-header">
-              <p
-                class="card-header-title"
-                :style="teamCarColor(constructor)"
-              >
-                {{ constructor.name }}
-              </p>
-            </header>
-
-            <div class="card-content">
-              <draggable
-                :id="`driversByConstructor-${constructor.id}`"
-                class="w-full h-full select-none space-y-2"
-                :list="driversByConstructor[constructor.id]"
-                group="drivers"
-                item-key="id"
-              >
-                <template #item="{ element, index }">
-                  <div class="cursor-move flex items-center justify-center">
-                    {{ element.firstname }} {{ element.lastname }} #{{ element.number }}
-                  </div>
-                </template>
-              </draggable>
-            </div>
-          </div>
-        </div>
+          <draggable
+            :id="`driversByConstructor-${constructor.id}`"
+            class="h-full min-h-12 w-full select-none space-y-2"
+            :list="driversByConstructor[constructor.id]"
+            group="drivers"
+            item-key="id"
+          >
+            <template #item="{ element }">
+              <div class="flex cursor-move items-center justify-center rounded-md bg-gray-100 px-2 py-1 text-center text-sm hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700">
+                {{ element.firstname }} {{ element.lastname }} #{{ element.number }}
+              </div>
+            </template>
+          </draggable>
+        </PCard>
       </div>
       <PButton
+        class="mt-3"
         @click="saveDrivers()"
       >
         Guardar pilotos
@@ -94,17 +87,17 @@ import {Driver} from "@/types/Driver";
 import {Constructor} from "@/types/Constructor";
 import {constructorService, driversService, grandPrixService, notificationService} from "@/_services";
 import {useStyles} from "@/composables/useStyles";
-import DraggableDriverCard from "@/components/gps/DraggableDriverCard.vue";
 import draggable from "vuedraggable";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
-import PCard from "@/components/lib/PCard.vue";
 import PLabel from "@/components/lib/forms/PLabel.vue";
 import PTitle from "@/components/lib/PTitle.vue";
+import PCard from "@/components/lib/PCard.vue";
 
 export default defineComponent({
     name: "DriversInGrandPrix",
     components: {
+      PCard,
       PTitle,
       PLabel,
       PButton,
@@ -182,7 +175,7 @@ export default defineComponent({
             if (this.driversByConstructor) {
                 driversService.setDriversInGrandPrix(this.grandPrix, this.driversByConstructor).then(() => {
                     notificationService.showNotification( "Lista de pilotos guardada correctamente.");
-                }).catch((error) => {
+            }).catch(() => {
                     notificationService.showNotification( "Ha ocurrido un error.", "error");
                 });
             }
@@ -198,6 +191,3 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-
-</style>

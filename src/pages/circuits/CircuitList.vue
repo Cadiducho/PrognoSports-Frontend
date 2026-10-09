@@ -1,10 +1,5 @@
 <template>
-  <PTitle
-    name="Lista de Circuitos"
-  />
-  <PCard
-    id="circuitlist"
-  >
+  <PPage>
     <div v-if="isLoading">
       <loading />
     </div>
@@ -31,7 +26,7 @@
         />
       </div>
     </div>
-  </PCard>
+  </PPage>
 </template>
 
 <script setup lang="ts">
@@ -42,8 +37,6 @@ import ViewCircuitItem from "@/components/circuits/ViewCircuitItem.vue";
 import Loading from "@/components/lib/Loading.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
-import PCard from "@/components/lib/PCard.vue";
-import PTitle from "@/components/lib/PTitle.vue";
 import { Circuit } from "@/types/Circuit";
 
 defineOptions({ name: "CircuitList" });

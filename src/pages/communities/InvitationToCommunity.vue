@@ -1,30 +1,22 @@
 <template>
-  <PCard>
-    <PTitle
-      class="mb-5"
-      :name="communityName"
-    />
-
-    <loading v-if="isLoading" />
-
-    <p v-if="!thereIsCommunity">
-      La comunidad con nombre <i>{{ communityId }}</i> no ha sido encontrada
-    </p>
-    <template v-else>
+  <PPage
+    :title="thereIsCommunity ? communityName : undefined"
+    :loading="isLoading"
+    :not-found="!thereIsCommunity && `La comunidad con nombre ${communityId} no ha sido encontrada`"
+  >
+    <template v-if="thereIsCommunity">
       Validando invitación a la comunidad {{ community.name }}...
       <loading />
     </template>
-  </PCard>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
 import { communityService, notificationService } from "@/_services";
 import { Community } from "@/types/Community";
 import { useCommunityStore } from "@/store/communityStore";
 import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import PCard from "@/components/lib/PCard.vue";
 
 const communityStore = useCommunityStore();
 const setCommunity = communityStore.setCommunity;

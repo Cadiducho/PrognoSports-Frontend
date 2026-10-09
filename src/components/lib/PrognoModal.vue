@@ -14,7 +14,7 @@
         <!-- dialog -->
         <div
           ref="dialogEl"
-          class="relative w-full rounded-lg bg-white shadow-sm dark:dark:bg-gray-900 md:w-1/2"
+          class="relative mx-4 my-4 max-h-[90vh] w-full overflow-y-auto rounded-lg bg-white shadow-sm dark:bg-gray-900 md:w-1/2"
           role="dialog"
           aria-modal="true"
           :aria-labelledby="ariaLabelledby"
@@ -94,6 +94,9 @@ import { lockBodyScroll, nextModalDomId, unlockBodyScroll } from "@/components/l
 
 type CloseReason = 'overlay' | 'esc' | 'button';
 
+// Si el consumidor no hace binding (sin v-model), el modal se comporta como antes: visible al montar.
+const isOpen = defineModel<boolean>({ default: true });
+
 const props = withDefaults(defineProps<{
   title?: string;
 
@@ -124,9 +127,6 @@ const emit = defineEmits<{
   close: [reason?: CloseReason];
   handle: [];
 }>();
-
-// Si el consumidor no hace binding (sin v-model), el modal se comporta como antes: visible al montar.
-const isOpen = defineModel<boolean>({ default: true });
 
 const titleId = nextModalDomId('progno-modal-title');
 
