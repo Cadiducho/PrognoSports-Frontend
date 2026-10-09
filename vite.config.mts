@@ -5,7 +5,9 @@ import { execSync } from "child_process";
 
 export default defineConfig(({ command, mode }) => {
     const commitDate = execSync('git log -1 --format=%cI').toString().trimEnd();
-    const branchName = execSync('git rev-parse --abbrev-ref HEAD').toString().trimEnd();
+    // In CI checkouts HEAD is detached, so prefer the branch name GitHub provides
+    const branchName = process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME
+        || execSync('git rev-parse --abbrev-ref HEAD').toString().trimEnd();
     const commitHash = execSync('git rev-parse --short HEAD').toString().trimEnd();
 
     process.env.VITE_GIT_COMMIT_DATE = commitDate;
