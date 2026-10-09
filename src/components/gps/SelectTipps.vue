@@ -2,8 +2,8 @@
   <div class="mt-5">
     <PrognoAlert message="Arrastra las tarjetas para completar tu pronóstico." />
 
-    <div class="mb-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <section>
+    <div class="mb-4 grid grid-cols-2 gap-2 sm:gap-4 lg:gap-6">
+      <section class="min-w-0">
         <PTitle
           tag="h3"
           type="section"
@@ -81,7 +81,7 @@
         </draggable>
       </section>
 
-      <section>
+      <section class="min-w-0">
         <PTitle
           tag="h3"
           type="section"

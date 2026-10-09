@@ -1,6 +1,7 @@
 <template>
   <PPage
     :title="thereIsGrandPrix ? `${grandPrix.name} de ${grandPrix.season.name}` : undefined"
+    :subtitle="thereIsGrandPrix && grandPrix.circuit ? `${grandPrix.circuit.name}, ${grandPrix.circuit.locality} (${grandPrix.circuit.country})` : undefined"
     :loading="isLoadingGrandPrix"
     :not-found="!thereIsGrandPrix && `El Gran Premio ${id} no ha sido encontrado`"
     variant="plain"
@@ -77,6 +78,7 @@
           :circuit="grandPrix.circuit!"
           :variant="grandPrix.variant!"
           :laps="grandPrix.laps"
+          :wide="startGrid.size > 0"
         />
 
         <PitLaneStartGrid

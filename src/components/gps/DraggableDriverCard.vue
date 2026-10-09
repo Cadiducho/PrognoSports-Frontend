@@ -1,9 +1,9 @@
 <template>
   <div
-    class="flex cursor-move justify-start rounded-md bg-white p-3 font-semibold text-gray-800 opacity-90 shadow-sm hover:bg-sky-50 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
+    class="flex cursor-move justify-start rounded-md bg-white p-2 font-semibold lg:p-3 text-gray-800 opacity-90 shadow-sm hover:bg-sky-50 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
     :style="styleDriverCard(driver)"
   >
-    <span class="max-lg:text-[0.8rem]">
+    <span class="min-w-0 break-words max-lg:text-[0.8rem]">
       <b v-if="showPosition">{{ index + 1 }}º.</b> {{ driver.firstname }} {{ driver.lastname }}
       <PTag
         variant="rounded"
