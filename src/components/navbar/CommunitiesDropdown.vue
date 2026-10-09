@@ -87,9 +87,7 @@
             }
         },
         mounted() {
-            this.emitter.on('reloadCommunitiesDropdown', () => {
-                this.getCommunityList();
-            });
+            this.emitter.on('reloadCommunitiesDropdown', this.getCommunityList);
 
             document.addEventListener('click', this.handleClickOutside);
 
@@ -98,6 +96,7 @@
             }
         },
         beforeUnmount() {
+            this.emitter.off('reloadCommunitiesDropdown', this.getCommunityList);
             document.removeEventListener('click', this.handleClickOutside);
         },
         methods: {
