@@ -7,8 +7,23 @@ import {ref} from "vue";
  */
 export const usePageStore = defineStore('page', () => {
   const title = ref<string | undefined>(undefined);
+  // Quién fijó el título, para que una página que se desmonta no borre el de otra
+  const owner = ref<symbol | undefined>(undefined);
+
+  function setTitle(newOwner: symbol, newTitle: string | undefined) {
+    owner.value = newOwner;
+    title.value = newTitle;
+  }
+
+  function clearTitle(fromOwner: symbol) {
+    if (owner.value !== fromOwner) return;
+    owner.value = undefined;
+    title.value = undefined;
+  }
 
   return {
-    title
+    title,
+    setTitle,
+    clearTitle
   }
 });

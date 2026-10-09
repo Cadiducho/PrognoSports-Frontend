@@ -91,10 +91,11 @@ const heading = computed(() => props.title ?? route.meta.title);
 const notFoundText = computed(() => typeof props.notFound === 'string' ? props.notFound : 'No se ha encontrado lo que buscabas');
 
 // Sincroniza el título dinámico con el breadcrumb y document.title
+const titleOwner = Symbol('PPage');
 watchEffect(() => {
-  pageStore.title = props.title;
+  pageStore.setTitle(titleOwner, props.title);
 });
 onBeforeUnmount(() => {
-  pageStore.title = undefined;
+  pageStore.clearTitle(titleOwner);
 });
 </script>

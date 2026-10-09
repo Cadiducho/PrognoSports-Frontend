@@ -40,7 +40,10 @@ withDefaults(defineProps<{
 const emit = defineEmits<{ select: [file: File] }>();
 
 const onChange = (e: Event) => {
-  const file = (e.target as HTMLInputElement).files?.[0];
+  const input = e.target as HTMLInputElement;
+  const file = input.files?.[0];
   if (file) emit('select', file);
+  // Permite volver a elegir el mismo archivo
+  input.value = '';
 };
 </script>

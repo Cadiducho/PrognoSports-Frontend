@@ -7,6 +7,7 @@
     :max="max"
     :step="step"
     @input="updateValue"
+    @change="restoreIfEmpty"
   >
 </template>
 
@@ -17,5 +18,11 @@ withDefaults(defineProps<{ min?: number; max?: number; step?: number }>(), { ste
 const updateValue = (event: Event) => {
   const input = event.target as HTMLInputElement;
   if (!Number.isNaN(input.valueAsNumber)) model.value = input.valueAsNumber;
+};
+
+// Si se deja vacío, vuelve a mostrar el valor que realmente tiene el modelo
+const restoreIfEmpty = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  if (Number.isNaN(input.valueAsNumber)) input.value = String(model.value);
 };
 </script>
