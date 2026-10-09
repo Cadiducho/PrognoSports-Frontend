@@ -176,8 +176,8 @@ importers:
         specifier: 15.0.0
         version: 15.0.0(vue@3.5.42(typescript@6.0.3))
       apexcharts:
-        specifier: 5.10.5
-        version: 5.10.5
+        specifier: 7.8.0
+        version: 7.8.0
       axios:
         specifier: 1.20.0
         version: 1.20.0(debug@4.4.3)
@@ -210,7 +210,7 @@ importers:
         version: 2.0.9
       vue3-apexcharts:
         specifier: 1.11.1
-        version: 1.11.1(apexcharts@5.10.5)(vue@3.5.42(typescript@6.0.3))
+        version: 1.11.1(apexcharts@7.8.0)(vue@3.5.42(typescript@6.0.3))
       vuedraggable:
         specifier: 4.1.0
         version: 4.1.0(vue@3.5.42(typescript@6.0.3))
@@ -841,8 +841,12 @@ packages:
     resolution: {integrity: sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==}
     engines: {node: '>= 8'}
 
-  apexcharts@5.10.5:
-    resolution: {integrity: sha512-RirosfLQLqYpWBdn4Pdv9B1M0M2FepzVxPRpcuXQPTilvuZvKt02vgVlEexhCVu2p4fApDIV/3yC9voAIK+qjw==}
+  apex-commons@0.8.1:
+    resolution: {integrity: sha512-F7fqJVh0smeTu1d86uuRSNNZvaM/l11GNQMbu6oAiSvuXp+K8KCufg0oZTy2VQBEEipRLAdFqkHnphlVpTG0Gw==}
+
+  apexcharts@7.8.0:
+    resolution: {integrity: sha512-UxzR7IDXs3HDaOoxTsdn7L2dw9TdYp347uiU7WvjKuzCQqODmO7l63rxMmLwtbYrZPd+0Vd7v5VINzJgPyqmIw==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
 
   arg@5.0.2:
     resolution: {integrity: sha512-PYjyFOLKQ9y57JvQ6QLo8dAgNqswh8M1RMJYdQduT6xbWSgK36P/Z/v+p888pM69jMMfS8Xd8F6I1kQ/I9HUGg==}
@@ -2498,7 +2502,11 @@ snapshots:
       normalize-path: 3.0.0
       picomatch: 2.3.2
 
-  apexcharts@5.10.5: {}
+  apex-commons@0.8.1: {}
+
+  apexcharts@7.8.0:
+    dependencies:
+      apex-commons: 0.8.1
 
   arg@5.0.2: {}
 
@@ -3420,9 +3428,9 @@ snapshots:
 
   vue-sonner@2.0.9: {}
 
-  vue3-apexcharts@1.11.1(apexcharts@5.10.5)(vue@3.5.42(typescript@6.0.3)):
+  vue3-apexcharts@1.11.1(apexcharts@7.8.0)(vue@3.5.42(typescript@6.0.3)):
     dependencies:
-      apexcharts: 5.10.5
+      apexcharts: 7.8.0
       vue: 3.5.42(typescript@6.0.3)
 
   vue@3.5.42(typescript@6.0.3):
