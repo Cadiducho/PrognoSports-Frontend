@@ -44,12 +44,23 @@
     </template>
 
     <template #chart>
-      <VueApexCharts
-        :ref="accumulatedPointsChartRef"
-        height="400"
-        type="line"
-        :options="accumulatedPointsChartOptions"
-        :series="accumulatedPointsSeries"
+      <PSegmentedControl
+        v-model="mode"
+        :options="modeOptions"
+        aria-label="Cómo mostrar los puntos acumulados"
+      />
+      <p class="mb-2 mt-2 text-sm leading-6 text-gray-700 dark:text-gray-300">
+        {{ modeHelp[mode] }}
+      </p>
+      <PChart
+        :definition="accumulatedPointsChart"
+        aria-label="Puntos acumulados de cada usuario tras cada Gran Premio"
+        :height="LINE_CHART_HEIGHT"
+      />
+      <PChartLegend
+        v-model="visibleUsers"
+        :items="legendItems"
+        aria-label="Usuarios visibles en la gráfica"
       />
     </template>
   </RankingTabTemplate>
@@ -58,11 +69,17 @@
 <script setup lang="ts">
 import PTag from "@/components/lib/PTag.vue";
 import { GrandPrix } from "@/types/GrandPrix";
-import { RankingChartOptions, RankingLineSeries, TableEntry } from "@/pages/ranking/types/ranking";
+import type { ChartDefinition } from "@tanstack/charts";
+import { TableEntry } from "@/pages/ranking/types/ranking";
 import { User } from "@/types/User";
 import RankingTabTemplate from "@/pages/ranking/components/RankingTabTemplate.vue";
 import RankingGrandPrixHeader from "@/pages/ranking/components/RankingGrandPrixHeader.vue";
-import VueApexCharts from "vue3-apexcharts";
+import PChart from "@/components/lib/charts/PChart.vue";
+import { LINE_CHART_HEIGHT } from "@/composables/charts/userLinesChart";
+import PChartLegend from "@/components/lib/charts/PChartLegend.vue";
+import PSegmentedControl from "@/components/lib/forms/PSegmentedControl.vue";
+import type { ChartLegendItem } from "@/components/lib/charts/types";
+import type { AccumulatedMode } from "@/composables/charts/accumulatedView";
 import PTable from "@/components/lib/table/PTable.vue";
 import { computed, markRaw } from "vue";
 import type { Column } from "@/components/lib/table";
@@ -71,16 +88,32 @@ import RankingPositionFormatter from "@/pages/ranking/components/formatters/Rank
 import RankingUserFormatter from "@/pages/ranking/components/formatters/RankingUserFormatter.vue";
 import RankingGpAccumulatedFormatter from "@/pages/ranking/components/formatters/RankingGpAccumulatedFormatter.vue";
 
+const visibleUsers = defineModel<string[]>("visibleUsers", { required: true });
+const mode = defineModel<AccumulatedMode>("mode", { required: true });
+
 const props = defineProps<{
+  /** Si el usuario actual aparece en el ranking, se puede comparar contra él */
+  canCompareWithMe: boolean;
   rows: TableEntry[];
   communityMembers: Map<string, User>;
   grandPrixes: GrandPrix[];
   rowClass: (row: TableEntry, index: number) => string;
   checkAccumulatedWinner: (gpId: number, score: number) => boolean;
-  accumulatedPointsSeries: RankingLineSeries;
-  accumulatedPointsChartOptions: RankingChartOptions;
-  accumulatedPointsChartRef: (el: unknown) => void;
+  accumulatedPointsChart: ChartDefinition;
+  legendItems: ChartLegendItem[];
 }>();
+
+const modeOptions = computed<{ value: AccumulatedMode; label: string }[]>(() => [
+  { value: "leader", label: "Diferencia con el líder" },
+  ...(props.canCompareWithMe ? [{ value: "me" as const, label: "Diferencia contigo" }] : []),
+  { value: "total", label: "Acumulado" },
+]);
+
+const modeHelp: Record<AccumulatedMode, string> = {
+  leader: "Puntos que le faltan a cada usuario para igualar al líder en cada Gran Premio. El líder queda siempre en 0.",
+  me: "Puntos que cada usuario lleva de más (+) o de menos (−) respecto a ti en cada Gran Premio.",
+  total: "Puntos acumulados por cada usuario tras cada Gran Premio.",
+};
 
 const rowsForTable = computed(() => {
   return props.rows.map((r: TableEntry, idx: number) => {

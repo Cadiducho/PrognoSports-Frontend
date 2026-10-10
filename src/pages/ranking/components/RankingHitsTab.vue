@@ -17,12 +17,10 @@
     </template>
 
     <template #chart>
-      <VueApexCharts
-        :ref="hitsHeatmapChartRef"
-        height="400"
-        type="heatmap"
-        :options="hitsHeatmapOptions"
-        :series="hitsHeatmapSeries"
+      <PChart
+        :definition="hitsHeatmapChart"
+        aria-label="Aciertos de cada usuario en cada Gran Premio"
+        :height="hitsHeatmapChartHeight"
       />
     </template>
   </RankingTabTemplate>
@@ -30,11 +28,12 @@
 
 <script setup lang="ts">
 import { GrandPrix } from "@/types/GrandPrix";
-import { RankingChartOptions, RankingHeatmapSeries, TableEntry } from "@/pages/ranking/types/ranking";
+import type { ChartDefinition } from "@tanstack/charts";
+import { TableEntry } from "@/pages/ranking/types/ranking";
 import { User } from "@/types/User";
 import RankingTabTemplate from "@/pages/ranking/components/RankingTabTemplate.vue";
 import RankingGrandPrixHeader from "@/pages/ranking/components/RankingGrandPrixHeader.vue";
-import VueApexCharts from "vue3-apexcharts";
+import PChart from "@/components/lib/charts/PChart.vue";
 import PTable from "@/components/lib/table/PTable.vue";
 import { computed, markRaw } from "vue";
 import type { Column } from "@/components/lib/table";
@@ -47,9 +46,8 @@ const props = defineProps<{
   grandPrixes: GrandPrix[];
   rowClass: (row: TableEntry, index: number) => string;
   checkMaxHits: (gpId: number, hits: number) => boolean;
-  hitsHeatmapSeries: RankingHeatmapSeries;
-  hitsHeatmapOptions: RankingChartOptions;
-  hitsHeatmapChartRef: (el: unknown) => void;
+  hitsHeatmapChart: ChartDefinition;
+  hitsHeatmapChartHeight: number;
 }>();
 
 const rowsForTable = computed(() => {

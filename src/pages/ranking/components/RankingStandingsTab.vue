@@ -17,12 +17,15 @@
     </template>
 
     <template #chart>
-      <VueApexCharts
-        :ref="standingsChartRef"
-        height="400"
-        type="line"
-        :options="standingsChartOptions"
-        :series="standingsSeries"
+      <PChart
+        :definition="standingsChart"
+        aria-label="Posición de cada usuario en la clasificación tras cada Gran Premio"
+        :height="LINE_CHART_HEIGHT"
+      />
+      <PChartLegend
+        v-model="visibleUsers"
+        :items="legendItems"
+        aria-label="Usuarios visibles en la gráfica"
       />
     </template>
   </RankingTabTemplate>
@@ -30,25 +33,30 @@
 
 <script setup lang="ts">
 import { GrandPrix } from "@/types/GrandPrix";
-import { RankingChartOptions, RankingLineSeries, TableEntry } from "@/pages/ranking/types/ranking";
+import type { ChartDefinition } from "@tanstack/charts";
+import { TableEntry } from "@/pages/ranking/types/ranking";
 import { User } from "@/types/User";
 import RankingTabTemplate from "@/pages/ranking/components/RankingTabTemplate.vue";
 import RankingGrandPrixHeader from "@/pages/ranking/components/RankingGrandPrixHeader.vue";
-import VueApexCharts from "vue3-apexcharts";
+import PChart from "@/components/lib/charts/PChart.vue";
+import { LINE_CHART_HEIGHT } from "@/composables/charts/userLinesChart";
+import PChartLegend from "@/components/lib/charts/PChartLegend.vue";
+import type { ChartLegendItem } from "@/components/lib/charts/types";
 import PTable from "@/components/lib/table/PTable.vue";
 import { computed, markRaw } from "vue";
 import type { Column } from "@/components/lib/table";
 import RankingUserFormatter from "@/pages/ranking/components/formatters/RankingUserFormatter.vue";
 import RankingGpStandingsFormatter from "@/pages/ranking/components/formatters/RankingGpStandingsFormatter.vue";
 
+const visibleUsers = defineModel<string[]>("visibleUsers", { required: true });
+
 const props = defineProps<{
   rows: TableEntry[];
   communityMembers: Map<string, User>;
   grandPrixes: GrandPrix[];
   rowClass: (row: TableEntry, index: number) => string;
-  standingsSeries: RankingLineSeries;
-  standingsChartOptions: RankingChartOptions;
-  standingsChartRef: (el: unknown) => void;
+  standingsChart: ChartDefinition;
+  legendItems: ChartLegendItem[];
 }>();
 
 const rowsForTable = computed(() => {
