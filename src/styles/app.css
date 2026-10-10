@@ -15,4 +15,28 @@
   }
 }
 
+/* Gráficas (TanStack Charts): paleta de marca y tooltip. El texto y la rejilla heredan currentColor. */
+.p-chart {
+  --ts-chart-1: #693ba7;
+  --ts-chart-2: #22c55e;
+  --ts-chart-3: #f59e0b;
+  --ts-chart-4: #0ea5e9;
+  --ts-chart-5: #ec4899;
+  --ts-chart-6: #14b8a6;
+  --ts-chart-tooltip-background: #ffffff;
+  --ts-chart-tooltip-color: #1f2937;
+  --ts-chart-tooltip-border: 1px solid rgb(0 0 0 / 12%);
+  --ts-chart-tooltip-border-radius: 0.625rem;
+  --ts-chart-tooltip-shadow: 0 12px 34px rgb(0 0 0 / 14%);
+  font-family: Inter, sans-serif;
+}
+
+.dark .p-chart {
+  --ts-chart-1: #a18acc;
+  --ts-chart-tooltip-background: #1f2937;
+  --ts-chart-tooltip-color: #e5e7eb;
+  --ts-chart-tooltip-border: 1px solid rgb(255 255 255 / 14%);
+  --ts-chart-tooltip-shadow: 0 12px 34px rgb(0 0 0 / 50%);
+}
+
 .leaflet-pane { z-index: 10; }
