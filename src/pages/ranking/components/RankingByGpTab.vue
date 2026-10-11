@@ -23,12 +23,15 @@
     </template>
 
     <template #chart>
-      <VueApexCharts
-        :ref="gpPointsChartRef"
-        height="400"
-        type="line"
-        :options="gpPointsChartOptions"
-        :series="gpPointsSeries"
+      <PChart
+        :definition="gpPointsChart"
+        aria-label="Puntos de cada usuario en cada Gran Premio"
+        :height="LINE_CHART_HEIGHT"
+      />
+      <PChartLegend
+        v-model="visibleUsers"
+        :items="legendItems"
+        aria-label="Usuarios visibles en la gráfica"
       />
     </template>
   </RankingTabTemplate>
@@ -37,11 +40,15 @@
 <script setup lang="ts">
 import PIcon from "@/components/lib/PIcon.vue";
 import { GrandPrix } from "@/types/GrandPrix";
-import { RankingChartOptions, RankingLineSeries, TableEntry } from "@/pages/ranking/types/ranking";
+import type { ChartDefinition } from "@tanstack/charts";
+import { TableEntry } from "@/pages/ranking/types/ranking";
 import { User } from "@/types/User";
 import RankingTabTemplate from "@/pages/ranking/components/RankingTabTemplate.vue";
 import RankingGrandPrixHeader from "@/pages/ranking/components/RankingGrandPrixHeader.vue";
-import VueApexCharts from "vue3-apexcharts";
+import PChart from "@/components/lib/charts/PChart.vue";
+import { LINE_CHART_HEIGHT } from "@/composables/charts/userLinesChart";
+import PChartLegend from "@/components/lib/charts/PChartLegend.vue";
+import type { ChartLegendItem } from "@/components/lib/charts/types";
 import PTable from "@/components/lib/table/PTable.vue";
 import { computed, markRaw } from "vue";
 import type { Column } from "@/components/lib/table";
@@ -50,15 +57,16 @@ import RankingPositionFormatter from "@/pages/ranking/components/formatters/Rank
 import RankingUserFormatter from "@/pages/ranking/components/formatters/RankingUserFormatter.vue";
 import RankingGpPointsFormatter from "@/pages/ranking/components/formatters/RankingGpPointsFormatter.vue";
 
+const visibleUsers = defineModel<string[]>("visibleUsers", { required: true });
+
 const props = defineProps<{
   rows: TableEntry[];
   communityMembers: Map<string, User>;
   grandPrixes: GrandPrix[];
   rowClass: (row: TableEntry, index: number) => string;
   checkGpWinner: (gpId: number, score: number) => boolean;
-  gpPointsSeries: RankingLineSeries;
-  gpPointsChartOptions: RankingChartOptions;
-  gpPointsChartRef: (el: unknown) => void;
+  gpPointsChart: ChartDefinition;
+  legendItems: ChartLegendItem[];
 }>();
 
 // Transform rows to a shape convenient for PTable: we keep the original entry in `entry`

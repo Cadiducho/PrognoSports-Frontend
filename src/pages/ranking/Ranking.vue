@@ -52,26 +52,28 @@
         </template>
         <PTabPanel name="byGp">
           <RankingByGpTab
+            v-model:visible-users="visibleUsers"
             :rows="byGpRows"
             :community-members="communityMembers"
             :grand-prixes="grandPrixesWithPoints"
             :row-class="checkRowClass"
             :check-gp-winner="checkGpWinner"
-            :gp-points-series="gpPointsSeries"
-            :gp-points-chart-options="gpPointsChartOptions"
-            :gp-points-chart-ref="setGpPointsChartRef"
+            :gp-points-chart="gpPointsChart"
+            :legend-items="legendItems"
           />
         </PTabPanel>
         <PTabPanel name="accumulated">
           <RankingAccumulatedTab
+            v-model:visible-users="visibleUsers"
+            v-model:mode="accumulatedMode"
+            :can-compare-with-me="canCompareWithMe"
             :rows="accumulatedRows"
             :community-members="communityMembers"
             :grand-prixes="grandPrixesWithPoints"
             :row-class="checkRowClass"
             :check-accumulated-winner="checkAccumulatedWinner"
-            :accumulated-points-series="accumulatedPointsSeries"
-            :accumulated-points-chart-options="accumulatedPointsChartOptions"
-            :accumulated-points-chart-ref="setAccumulatedPointsChartRef"
+            :accumulated-points-chart="accumulatedPointsChart"
+            :legend-items="legendItems"
           />
         </PTabPanel>
         <PTabPanel name="byHits">
@@ -81,20 +83,19 @@
             :grand-prixes="grandPrixesWithPoints"
             :row-class="checkRowClass"
             :check-max-hits="checkMaxHits"
-            :hits-heatmap-series="hitsHeatmapSeries"
-            :hits-heatmap-options="hitsHeatmapOptions"
-            :hits-heatmap-chart-ref="setHitsHeatmapChartRef"
+            :hits-heatmap-chart="hitsHeatmapChart"
+            :hits-heatmap-chart-height="hitsHeatmapChartHeight"
           />
         </PTabPanel>
         <PTabPanel name="byRanking">
           <RankingStandingsTab
+            v-model:visible-users="visibleUsers"
             :rows="accumulatedRows"
             :community-members="communityMembers"
             :grand-prixes="grandPrixesWithPoints"
             :row-class="checkRowClass"
-            :standings-series="standingsSeries"
-            :standings-chart-options="standingsChartOptions"
-            :standings-chart-ref="setStandingsChartRef"
+            :standings-chart="standingsChart"
+            :legend-items="legendItems"
           />
         </PTabPanel>
       </PTabs>
@@ -103,10 +104,10 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/store/authStore";
 import { useCommunityStore } from "@/store/communityStore";
-import { useThemeStore } from "@/store/themeStore";
 import PField from "@/components/lib/forms/PField.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
@@ -116,19 +117,17 @@ import RankingHitsTab from "@/pages/ranking/components/RankingHitsTab.vue";
 import RankingStandingsTab from "@/pages/ranking/components/RankingStandingsTab.vue";
 import PTabPanel from "@/components/lib/PTabPanel.vue";
 import { TableEntry } from "@/pages/ranking/types/ranking";
+import type { AccumulatedMode } from "@/composables/charts/accumulatedView";
 import { useRankingData } from "@/pages/ranking/composables/useRankingData";
 import { useRankingCharts } from "@/pages/ranking/composables/useRankingCharts";
-import { isApexChartInstance } from "@/composables/useApexChart";
 import PTabs from "@/components/lib/PTabs.vue";
 import PTabItem from "@/components/lib/PTabItem.vue";
 
 const authStore = useAuthStore();
 const communityStore = useCommunityStore();
-const themeStore = useThemeStore();
 
 const currentUser = authStore.loggedUser;
 const { currentCommunity } = storeToRefs(communityStore);
-const { darkMode } = storeToRefs(themeStore);
 
 const {
   activeTab,
@@ -141,42 +140,53 @@ const {
   accumulatedRows,
   hitsRows,
   grandPrixesWithPoints,
-  gpPointsSeries,
-  accumulatedPointsSeries,
-  standingsSeries,
-  hitsHeatmapSeries,
+  rankedUsernames,
+  topScorerUsers,
+  gpPointsData,
+  accumulatedPointsData,
+  standingsData,
+  hitsCells,
   loadRanking,
   checkGpWinner,
   checkAccumulatedWinner,
   checkMaxHits,
 } = useRankingData(currentCommunity);
 
+// Usuarios visibles en las gráficas de líneas: se comparten entre pestañas y arrancan con el top 8
+const visibleUsers = ref<string[]>([]);
+watch(topScorerUsers, (topScorers) => {
+  visibleUsers.value = [...topScorers];
+}, { immediate: true });
+
+// Los puntos acumulados solo suben y apelotonan las líneas: por defecto se dibuja la diferencia con el líder
+const accumulatedMode = ref<AccumulatedMode>("leader");
+
 const {
-  gpPointsChartRef,
-  accumulatedPointsChartRef,
-  hitsHeatmapChartRef,
-  standingsChartRef,
-  gpPointsChartOptions,
-  accumulatedPointsChartOptions,
-  standingsChartOptions,
-  hitsHeatmapOptions,
-} = useRankingCharts(darkMode, grandPrixesWithPoints);
+  legendItems,
+  canCompareWithMe,
+  gpPointsChart,
+  accumulatedPointsChart,
+  standingsChart,
+  hitsHeatmapChart,
+  hitsHeatmapChartHeight,
+} = useRankingCharts({
+  grandPrixes: grandPrixesWithPoints,
+  rankedUsernames,
+  visibleUsers,
+  accumulatedMode,
+  currentUsername: currentUser.username,
+  gpPointsData,
+  accumulatedPointsData,
+  standingsData,
+  hitsCells,
+});
 
-const setGpPointsChartRef = (chart: unknown) => {
-  gpPointsChartRef.value = isApexChartInstance(chart) ? chart : null;
-};
-
-const setAccumulatedPointsChartRef = (chart: unknown) => {
-  accumulatedPointsChartRef.value = isApexChartInstance(chart) ? chart : null;
-};
-
-const setHitsHeatmapChartRef = (chart: unknown) => {
-  hitsHeatmapChartRef.value = isApexChartInstance(chart) ? chart : null;
-};
-
-const setStandingsChartRef = (chart: unknown) => {
-  standingsChartRef.value = isApexChartInstance(chart) ? chart : null;
-};
+// Si en otra temporada no apareces en el ranking, no hay con qué compararte
+watch(canCompareWithMe, (canCompare) => {
+  if (!canCompare && accumulatedMode.value === "me") {
+    accumulatedMode.value = "leader";
+  }
+});
 
 const checkRowClass = (row: TableEntry, _index: number) => {
   if (row.user.username === currentUser.username) {
