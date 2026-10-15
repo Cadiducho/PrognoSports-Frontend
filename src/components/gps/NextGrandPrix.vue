@@ -17,7 +17,7 @@
         <p class="text-lg font-semibold">{{ nextGp.circuit?.locality }} ({{ nextGp.circuit?.country }})</p>
         <ul class="list-disc list-inside " v-for="session in nextGp.sessions">
             <li>
-                <b class="-ml-2">{{ session.humanName() }}:</b> {{ humanDateTime(session.date) }} ({{ dateDiff(session.date) }})
+                <b class="-ml-2">{{ sessionHumanName(session) }}:</b> {{ humanDateTime(session.date) }} ({{ dateDiff(session.date) }})
             </li>
         </ul>
 
@@ -32,6 +32,7 @@
     import {useCommunityStore} from "@/store/communityStore";
     import {grandPrixService} from "@/_services";
     import {useDayjs} from "@/composables/useDayjs";
+    import {sessionHumanName} from "@/utils/raceSession";
     import PCard from "@/components/lib/PCard.vue";
     import PTitle from "@/components/lib/PTitle.vue";
     import PButton from "@/components/lib/forms/PButton.vue";
@@ -47,7 +48,7 @@
             const dateDiff = dayjs.dateDiff;
             const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
             const currentCommunity = communityStore.currentCommunity;
-            return { currentCommunity, thereIsCurrentCommunity, humanDateTime, dateDiff };
+            return { currentCommunity, thereIsCurrentCommunity, humanDateTime, dateDiff, sessionHumanName };
         },
         data() {
             return {

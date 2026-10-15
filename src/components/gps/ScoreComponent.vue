@@ -4,7 +4,7 @@
     <template v-else>
       <header class="mt-2 flex flex-col md:flex-row itens-start md:items-center t md:justify-between gap-3">
         <h5 class="text-lg font-semibold dark:text-gray-300 flex-1">
-          Puntuaciones de {{ session.humanName() }}
+          Puntuaciones de {{ sessionHumanName(session) }}
         </h5>
 
         <PButton
@@ -50,7 +50,7 @@
         :icon="false"
         aria-close-label="Close notification"
       >
-        Tus pronósticos están ocultos al resto de usuarios hasta {{ humanDateTime(session.closureDate()) }} ({{ dateDiff(session.closureDate()) }})
+        Tus pronósticos están ocultos al resto de usuarios hasta {{ humanDateTime(sessionClosureDate(session)) }} ({{ dateDiff(sessionClosureDate(session)) }})
       </PrognoAlert>
       <PrognoAlert
         v-if="!thereAreFinishResults"
@@ -191,6 +191,7 @@ import TotalHitsFormatter from "@/components/gps/score/formatters/TotalHitsForma
 import GpPointsFormatter from "@/components/gps/score/formatters/GpPointsFormatter.vue";
 import PercentageFormatter from "@/components/gps/score/formatters/PercentageFormatter.vue";
 import BoldValueFormatter from "@/components/gps/score/formatters/BoldValueFormatter.vue";
+import {isBeforeSessionClosure, sessionClosureDate, sessionHumanName, sessionHumanNameById} from "@/utils/raceSession";
 
 interface TableRow {
   user: User;
@@ -273,8 +274,8 @@ const topScorerUsers = computed<UserId[]>(() => {
   return topScorers;
 });
 
-const sessionHumanName = (id: number): string => {
-  return RaceSession.findById(id)?.humanName() ?? "Desconocida";
+const sessionNameById = (id: number): string => {
+  return sessionHumanNameById(id) ?? "Desconocida";
 };
 
 const driverTooltip = (driver: Driver): string => {
@@ -314,7 +315,7 @@ const scoreChartRows = computed<GpScoreRow[]>(() => {
       .map((ses) => ({
         username: row.user.username,
         sessionCode: ses.code,
-        sessionName: sessionHumanName(ses.id),
+        sessionName: sessionNameById(ses.id),
         points: row.score.bySession[ses.id] ?? 0,
       }))
       .filter((segment) => segment.points !== 0);
@@ -327,7 +328,7 @@ const scoreChartHeight = computed(() => gpScoreChartHeight(scoreChartUsers.value
 const scoreChart = computed(() => buildGpScoreChart({
   rows: scoreChartRows.value,
   usernames: scoreChartUsers.value.map((row) => row.user.username),
-  sessionNames: props.gp.sessions.map((ses) => sessionHumanName(ses.id)),
+  sessionNames: props.gp.sessions.map((ses) => sessionNameById(ses.id)),
   totalsByUser: new Map(scoreChartUsers.value.map((row) => [row.user.username, row.score.gp])),
   winners: winnersOfGrandPrix.value,
   currentUsername: currentUser.username,
@@ -401,7 +402,7 @@ const buildColumns = (): Column[] => {
       pointsByTopScorer: props.ruleSet.data.pointsByTopScorer || 0,
       sessions: props.gp.sessions,
       hitsBySession: hitsBySession.value,
-      sessionHumanName,
+      sessionHumanName: sessionNameById,
     },
   });
 
@@ -534,7 +535,7 @@ const loadData = async (): Promise<void> => {
         };
       });
 
-      if (!props.session.isBeforeClosureDate()) {
+      if (!isBeforeSessionClosure(props.session)) {
         try {
           // Obtenemos el cálculo de puntos con los resultados guardados
           const score: ScoreCalculations = await scoreService.getPointsByPositionInGrandPrix(

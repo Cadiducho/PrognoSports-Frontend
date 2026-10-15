@@ -1,4 +1,4 @@
-import {Competition} from "@/types/Competition";
+import {Competition, CompetitionDto, mapCompetition} from "@/types/Competition";
 import {IRuleSet, RuleSet} from "@/types/RuleSet";
 import {mapUser, User, UserDto} from "@/types/User";
 
@@ -7,7 +7,7 @@ export interface CommunityDto {
     id: number;
     name: string;
     description: string;
-    competition: Competition;
+    competition: CompetitionDto;
     hasImage: boolean;
     open: boolean;
     owner: UserDto;
@@ -40,7 +40,7 @@ export function mapCommunity(dto: CommunityDto): Community {
         id: dto.id,
         name: dto.name,
         description: dto.description,
-        competition: dto.competition,
+        competition: dto.competition && mapCompetition(dto.competition),
         hasImage: dto.hasImage,
         open: dto.open,
         owner: dto.owner && mapUser(dto.owner),
