@@ -60,7 +60,7 @@
 
         <img
           v-if="circuit?.hasLogoImage"
-          :src="circuit?.logoImage()"
+          :src="logoPreviewUrl ?? circuitLogoImageUrl(circuit)"
           class="h-48"
           alt="Variant layout"
         >
@@ -76,6 +76,7 @@
             :variant="variant"
             class="last:border-b-0"
             @remove-variant="removeVariant($event)"
+            @layout-selected="onVariantLayoutSelected"
           />
 
           <PButton
@@ -107,6 +108,7 @@ import PTitle from "@/components/lib/PTitle.vue";
 import {circuitService, notificationService} from "@/_services";
 
 import {onMounted, ref} from "vue";
+import {useObjectUrl} from "@vueuse/core";
 import {Circuit} from "@/types/Circuit";
 import PButton from "@/components/lib/forms/PButton.vue";
 import EditCircuitVariant from "@/pages/admin/circuits/EditCircuitVariant.vue";
@@ -114,6 +116,7 @@ import PInput from "@/components/lib/forms/PInput.vue";
 
 import {useRoute, useRouter} from "vue-router";
 import {CircuitVariant} from "@/types/CircuitVariant";
+import {circuitLogoImageUrl} from "@/utils/circuit";
 
 const route = useRoute();
 const router = useRouter();
@@ -122,6 +125,13 @@ const isLoading = ref(true);
 const thereIsCircuit = ref(false);
 const circuit = ref<Circuit>();
 const circuitId = route.params.circuit;
+
+// Estado de la edición que no forma parte de los datos del circuito: imágenes elegidas aún sin subir
+// y variantes creadas en esta edición, que hay que crear en la API en vez de editar
+const logoFile = ref<File>();
+const logoPreviewUrl = useObjectUrl(logoFile);
+const variantLayoutFiles = new Map<number, File>();
+const newVariantIds = new Set<number>();
 
 onMounted(() => {
     circuitService.getCircuit(circuitId.toString()).then(response => {
@@ -144,12 +154,16 @@ const createNewVariant = () => {
         newVariantId = Math.max(...circuit.value!.variants.map(value => value.id));
     }
     newVariantId++;
-    const variant = new CircuitVariant({
+    const variant: CircuitVariant = {
         id: newVariantId, circuitId: circuitId.toString(), hasLayoutImage: false,
         name: "Nueva variante", turns: 0, distance: 0
-    });
-    variant.isNew = true;
+    };
+    newVariantIds.add(variant.id);
     circuit.value!.variants.push(variant);
+}
+
+const onVariantLayoutSelected = (variant: CircuitVariant, file: File) => {
+    variantLayoutFiles.set(variant.id, file);
 }
 
 const isDataOk = (): boolean => {
@@ -203,13 +217,13 @@ const editCircuit = async () => {
         return;
     }
 
-    if (circuit.value?.temporalLogoImage) {
-        circuitService.changeCircuitLogo(circuit.value!, circuit.value?.temporalLogoImage)
+    if (logoFile.value) {
+        circuitService.changeCircuitLogo(circuit.value!, logoFile.value)
     }
 
     for (const variant of circuit.value?.variants!) {
         try {
-            if (variant.isNew) {
+            if (newVariantIds.has(variant.id)) {
                 await circuitService.createCircuitVariant(circuit.value!, variant);
             } else {
                 await circuitService.editCircuitVariant(circuit.value!, variant, variant)
@@ -219,8 +233,9 @@ const editCircuit = async () => {
             return;
         }
 
-        if (variant.temporalLayoutImage) {
-            circuitService.changeVariantLayout(circuit.value!, variant, variant.temporalLayoutImage)
+        const layoutFile = variantLayoutFiles.get(variant.id);
+        if (layoutFile) {
+            circuitService.changeVariantLayout(circuit.value!, variant, layoutFile)
         }
     }
 
@@ -245,7 +260,7 @@ const editCircuit = async () => {
 const onFileChange = (e: any) => {
     let file = e.target.files[0];
     if (file) {
-        circuit.value!.temporalLogoImage = file;
+        logoFile.value = file;
     }
 }
 

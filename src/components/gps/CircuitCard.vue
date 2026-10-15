@@ -11,7 +11,7 @@
       >
         <figure v-if="circuit.hasLogoImage">
           <img
-            :src="circuit.logoImage()"
+            :src="circuitLogoImageUrl(circuit)"
             alt="Logo image"
             class="mx-auto h-auto max-h-10 max-w-full object-contain lg:max-h-none"
             :class="wide ? 'md:max-h-12' : 'md:max-h-none'"
@@ -19,7 +19,7 @@
         </figure>
         <figure>
           <img
-            :src="variant.layoutImage(true)"
+            :src="circuitVariantLayoutImageUrl(variant, true)"
             alt="Circuit layout image"
             class="mx-auto h-auto max-h-40 max-w-full object-contain lg:max-h-none"
             :class="wide ? 'md:max-h-52' : 'md:max-h-none'"
@@ -32,10 +32,10 @@
           <div class="basis-auto grow shrink">
             <p class="font-semibold text-base lg:text-xl">
               <router-link
-                :to="circuit.circuitLink()"
+                :to="circuitLink(circuit)"
                 class="text-black dark:text-gray-200"
               >
-                {{ circuit.name }} {{ variant.isDefault() ? "" : ('- ' + variant.name) }}
+                {{ circuit.name }} {{ isDefaultCircuitVariant(variant) ? "" : ('- ' + variant.name) }}
               </router-link>
             </p>
             <p class="font-normal text-sm lg:text-base mb-2 lg:mb-3">
@@ -45,7 +45,7 @@
         </div>
 
         <div class="mb-3">
-          <p v-if="!variant.isDefault()">
+          <p v-if="!isDefaultCircuitVariant(variant)">
             <b>Variante: </b>{{ variant.name }}
           </p>
           <p class="mt-2">
@@ -67,7 +67,7 @@
         <PButton
           expanded
           tag="router-link"
-          :to="circuit.circuitLink()"
+          :to="circuitLink(circuit)"
           color="info"
           type="soft"
         >
@@ -80,6 +80,7 @@
 
 <script setup lang="ts">
 import {computed} from "vue";
+import {circuitLink, circuitLogoImageUrl, circuitVariantLayoutImageUrl, isDefaultCircuitVariant} from "@/utils/circuit";
 import {Circuit} from "@/types/Circuit";
 import {CircuitVariant} from "@/types/CircuitVariant";
 import PCard from "@/components/lib/PCard.vue";

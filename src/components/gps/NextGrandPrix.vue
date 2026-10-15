@@ -74,7 +74,6 @@
     import {grandPrixService} from "@/_services";
     import {useDayjs} from "@/composables/useDayjs";
     import {sessionHumanName} from "@/utils/raceSession";
-    import {grandPrixLink, grandPrixPromoImageUrl} from "@/utils/grandPrix";
     import PCard from "@/components/lib/PCard.vue";
     import PTitle from "@/components/lib/PTitle.vue";
     import PButton from "@/components/lib/forms/PButton.vue";

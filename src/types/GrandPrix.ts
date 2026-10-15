@@ -1,8 +1,8 @@
-import {Circuit, ICircuit} from "@/types/Circuit";
+import {Circuit, CircuitDto, mapCircuit} from "@/types/Circuit";
 import {Season} from "@/types/Season";
 import {Competition, CompetitionDto, mapCompetition} from "@/types/Competition";
 import {mapRaceSession, RaceSession, RaceSessionDto} from "@/types/RaceSession";
-import {CircuitVariant, ICircuitVariant} from "@/types/CircuitVariant";
+import {CircuitVariant, CircuitVariantDto, mapCircuitVariant} from "@/types/CircuitVariant";
 
 /** Referencia al Gran Premio anterior o siguiente: la API solo garantiza su id */
 export interface GrandPrixRef {
@@ -19,8 +19,8 @@ export interface GrandPrixDto {
     round: number;
     nextGrandPrix?: GrandPrixRef;
     previousGrandPrix?: GrandPrixRef;
-    circuit?: ICircuit;
-    variant?: ICircuitVariant;
+    circuit?: CircuitDto;
+    variant?: CircuitVariantDto;
     sessions: Array<RaceSessionDto>
     laps: number;
     suspended: boolean;
@@ -52,8 +52,8 @@ export function mapGrandPrix(dto: GrandPrixDto): GrandPrix {
         name: dto.name,
         competition: dto.competition && mapCompetition(dto.competition),
         laps: dto.laps,
-        circuit: hasCircuit ? new Circuit(dto.circuit!) : undefined,
-        variant: hasCircuit ? new CircuitVariant(dto.variant!) : undefined,
+        circuit: hasCircuit ? mapCircuit(dto.circuit!) : undefined,
+        variant: hasCircuit ? mapCircuitVariant(dto.variant!) : undefined,
         round: dto.round,
         previousGrandPrix: dto.previousGrandPrix,
         nextGrandPrix: dto.nextGrandPrix,

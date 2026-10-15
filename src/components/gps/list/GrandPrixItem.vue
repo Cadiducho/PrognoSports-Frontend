@@ -7,7 +7,7 @@
       <div class="relative h-48 overflow-hidden bg-slate-50 dark:bg-slate-900/40">
         <img
           class="absolute inset-0 h-full w-full object-contain p-3"
-          :src="gp.circuit?.layoutImage()"
+          :src="gp.circuit ? circuitLayoutImageUrl(gp.circuit) : undefined"
           alt=""
         >
       </div>
@@ -47,6 +47,7 @@
 
 <script setup lang="ts">
 import { GrandPrix } from "@/types/GrandPrix";
+import {circuitLayoutImageUrl} from "@/utils/circuit";
 import {grandPrixLink} from "@/utils/grandPrix";
 import { useDayjs } from "@/composables/useDayjs";
 import {sessionHumanName} from "@/utils/raceSession";
