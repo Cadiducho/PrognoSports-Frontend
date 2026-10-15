@@ -4,7 +4,7 @@
       tag="h3"
       type="subtitle"
     >
-      Resultados en {{ session.humanName() }}
+      Resultados en {{ sessionHumanName(session) }}
     </PTitle>
 
     <section
@@ -91,6 +91,7 @@ import PCard from "@/components/lib/PCard.vue";
 import PCheckbox from "@/components/lib/forms/PCheckbox.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import PDivider from "@/components/lib/PDivider.vue";
+import {sessionHumanName} from "@/utils/raceSession";
 
 const hasSavedResults = defineModel<boolean>("hasSavedResults", {default: false});
 

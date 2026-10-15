@@ -36,7 +36,7 @@
                 v-for="session in grandPrix.sessions"
                 :key="session.name"
                 :name="session.name"
-                :label="session.humanName()"
+                :label="sessionHumanName(session)"
                 :active-tab="activeTab"
                 :set-active-tab="(tabName: string) => activeTab = tabName"
               />
@@ -107,7 +107,7 @@
             v-for="session in grandPrix.sessions"
             :key="session.name"
             :name="session.name"
-            :label="session.humanName()"
+            :label="sessionHumanName(session)"
             :active-tab="activeTab"
             :set-active-tab="(tabName: string) => activeTab = tabName"
           />
@@ -164,6 +164,7 @@ import {useCommunityStore} from "@/store/communityStore";
 import Loading from "@/components/lib/Loading.vue";
 import {useAuthStore} from "@/store/authStore";
 import {isUserAdmin} from "@/utils/user";
+import {sessionHumanName} from "@/utils/raceSession";
 import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
@@ -196,7 +197,7 @@ export default defineComponent({
 
     const currentCommunity = communityStore.currentCommunity;
     const currentUser = authStore.loggedUser;
-    return {currentUser, currentCommunity, isUserAdmin};
+    return {currentUser, currentCommunity, isUserAdmin, sessionHumanName};
   },
   data() {
     return {

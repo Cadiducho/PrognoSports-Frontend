@@ -4,7 +4,7 @@
   </span>
   <PTooltip
     v-if="isWinner()"
-    :label="`Ganador de la sesión de ${session.humanName()}`"
+    :label="`Ganador de la sesión de ${sessionHumanName(session)}`"
   >
     <span class="text-brand-accent-600 dark:text-brand-accent-400"><i class="fas fa-trophy" /></span>
   </PTooltip>
@@ -15,6 +15,7 @@ import { computed } from "vue";
 import PTooltip from "@/components/lib/PTooltip.vue";
 import type {Column} from "@/components/lib/table";
 import type {RaceSession} from "@/types/RaceSession";
+import {sessionHumanName} from "@/utils/raceSession";
 
 const props = defineProps<{
   row: any;

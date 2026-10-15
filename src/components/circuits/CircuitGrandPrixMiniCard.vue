@@ -26,7 +26,7 @@
             :key="session.id ?? key"
             class="mb-1 flex items-start justify-between gap-2 last:mb-0"
           >
-            <b class="shrink-0">{{ session.humanName() }}:</b>
+            <b class="shrink-0">{{ sessionHumanName(session) }}:</b>
             <span class="text-right">
               {{ humanDateTime(session.date) }} ({{ dateDiff(session.date) }})
             </span>
@@ -40,6 +40,7 @@
 <script setup lang="ts">
 import { useDayjs } from "@/composables/useDayjs";
 import { GrandPrix } from "@/types/GrandPrix";
+import {sessionHumanName} from "@/utils/raceSession";
 
 defineOptions({ name: "CircuitGrandPrixMiniCard" });
 

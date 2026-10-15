@@ -1,6 +1,6 @@
 <template>
   <PPage
-    :title="dataLoaded ? `${session.humanName()} en ${grandPrix.name}` : undefined"
+    :title="dataLoaded ? `${sessionHumanName(session)} en ${grandPrix.name}` : undefined"
     :loading="isLoadingData"
     :not-found="!dataLoaded && `El Gran Premio ${id} de ${season?.name} en ${session?.name} no ha sido encontrado`"
     variant="plain"
@@ -51,7 +51,7 @@
 
         <div class="md:col-span-4">
           <PTitle tag="h2">
-            {{ session.humanName() }} en {{ grandPrix.name }}
+            {{ sessionHumanName(session) }} en {{ grandPrix.name }}
           </PTitle>
 
           <PCard class="mb-2">
@@ -60,7 +60,7 @@
               variant="info"
             >
               Esta sesión define la parrilla de la sesión: {{
-                session.defineGridOf.map(ses => ses.humanName()).join(', ')
+                session.defineGridOf.map(ses => sessionHumanName(ses)).join(', ')
               }}
             </PrognoAlert>
             <PrognoAlert
@@ -91,7 +91,7 @@
                   :checked="session.defineGridOf.map(dfg => dfg.id).includes(ses.id)"
                   @change="toggleDefiningGridSelection(ses, $event.target.checked)"
                 >
-                  {{ ses.humanName() }}
+                  {{ sessionHumanName(ses) }}
                 </p-checkbox>
               </div>
 
@@ -160,6 +160,7 @@ import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
 import PCard from "@/components/lib/PCard.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import CalendarDateTimePicker from "@/components/lib/CalendarDateTimePicker.vue";
+import {sessionHumanName} from "@/utils/raceSession";
 
 const route = useRoute();
 

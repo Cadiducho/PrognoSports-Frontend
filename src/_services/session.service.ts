@@ -1,12 +1,12 @@
 import {PrognoService} from "@/_services/progno.service";
-import {IRaceSession, RaceSession} from "@/types/RaceSession";
+import {mapRaceSession, RaceSession, RaceSessionDto} from "@/types/RaceSession";
 import axios from "axios";
 import {GrandPrix} from "@/types/GrandPrix";
 
-export class SessionService extends PrognoService<IRaceSession, RaceSession> {
+export class SessionService extends PrognoService<RaceSessionDto, RaceSession> {
 
-    factory(data: IRaceSession): RaceSession {
-        return new RaceSession(data);
+    factory(data: RaceSessionDto): RaceSession {
+        return mapRaceSession(data);
     }
 
     /**

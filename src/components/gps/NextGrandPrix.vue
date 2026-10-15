@@ -27,7 +27,7 @@
     >
       <img
         class="h-auto max-w-full rounded-lg"
-        :src="nextGp.promoImage()"
+        :src="grandPrixPromoImageUrl(nextGp)"
         alt="Next grand prix promo image"
       >
     </figure>
@@ -49,14 +49,14 @@
       class="list-disc list-inside "
     >
       <li>
-        <b class="-ml-2">{{ session.humanName() }}:</b> {{ humanDateTime(session.date) }} ({{ dateDiff(session.date) }})
+        <b class="-ml-2">{{ sessionHumanName(session) }}:</b> {{ humanDateTime(session.date) }} ({{ dateDiff(session.date) }})
       </li>
     </ul>
 
     <PButton
       expanded
       tag="router-link"
-      :to="nextGp.gpLink()"
+      :to="grandPrixLink(nextGp)"
       color="primary"
       class="mt-5"
     >
@@ -72,6 +72,8 @@
     import {useCommunityStore} from "@/store/communityStore";
     import {grandPrixService} from "@/_services";
     import {useDayjs} from "@/composables/useDayjs";
+    import {sessionHumanName} from "@/utils/raceSession";
+    import {grandPrixLink, grandPrixPromoImageUrl} from "@/utils/grandPrix";
     import PCard from "@/components/lib/PCard.vue";
     import PTitle from "@/components/lib/PTitle.vue";
     import PButton from "@/components/lib/forms/PButton.vue";
@@ -87,7 +89,7 @@
             const dateDiff = dayjs.dateDiff;
             const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
             const currentCommunity = communityStore.currentCommunity;
-            return { currentCommunity, thereIsCurrentCommunity, humanDateTime, dateDiff };
+            return { currentCommunity, thereIsCurrentCommunity, humanDateTime, dateDiff, sessionHumanName, grandPrixLink, grandPrixPromoImageUrl };
         },
         data() {
             return {

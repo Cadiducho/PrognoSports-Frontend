@@ -1,7 +1,7 @@
 import {UserRank} from "@/types/UserRank";
 import {Community, CommunityDto, mapCommunity} from "@/types/Community";
 import {Dictionary} from "@/types/Dictionary";
-import {RaceSession} from "@/types/RaceSession";
+import {sessionHumanNameById} from "@/utils/raceSession";
 
 export type UserId = number;
 
@@ -97,9 +97,9 @@ export class UserResume implements IUserResume {
     this.wonGrandPrixes = data.wonGrandPrixes;
     this.wonSessions = new Map();
     Object.entries(data.wonSessions).forEach(([sessionId, list]) => {
-      const session = RaceSession.findById(Number(sessionId));
-      if (session) {
-        this.wonSessions.set(session.humanName(), list as Array<string>);
+      const sessionName = sessionHumanNameById(sessionId);
+      if (sessionName) {
+        this.wonSessions.set(sessionName, list as Array<string>);
       }
     });
   }

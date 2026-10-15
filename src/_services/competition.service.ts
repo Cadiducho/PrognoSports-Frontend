@@ -1,12 +1,12 @@
-import {Competition, ICompetition} from "@/types/Competition";
+import {Competition, CompetitionDto, mapCompetition} from "@/types/Competition";
 import axios from "axios";
 import {Season} from "@/types/Season";
 import {PrognoService} from "@/_services/progno.service";
 
-export class CompetitionService extends PrognoService<ICompetition, Competition> {
+export class CompetitionService extends PrognoService<CompetitionDto, Competition> {
 
-    factory(data: ICompetition): Competition {
-        return new Competition(data);
+    factory(data: CompetitionDto): Competition {
+        return mapCompetition(data);
     }
 
     public async getCompetition(competitionId: string | number): Promise<Competition> {

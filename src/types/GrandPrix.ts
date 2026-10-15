@@ -1,7 +1,7 @@
 import {Circuit, ICircuit} from "@/types/Circuit";
 import {Season} from "@/types/Season";
 import {Competition} from "@/types/Competition";
-import {IRaceSession, RaceSession} from "@/types/RaceSession";
+import {mapRaceSession, RaceSession, RaceSessionDto} from "@/types/RaceSession";
 import {BASE_URL} from "@/config";
 import {CircuitVariant, ICircuitVariant} from "@/types/CircuitVariant";
 
@@ -16,13 +16,13 @@ export interface IGrandPrix {
     previousGrandPrix: IGrandPrix;
     circuit?: ICircuit;
     variant?: ICircuitVariant;
-    sessions: Array<IRaceSession>
+    sessions: Array<RaceSessionDto>
     laps: number;
     suspended: boolean;
     hasPromoImage: boolean;
 }
 
-export class GrandPrix implements IGrandPrix {
+export class GrandPrix {
     circuit?: Circuit;
     variant?: CircuitVariant;
     code: string;
@@ -58,7 +58,7 @@ export class GrandPrix implements IGrandPrix {
 
         this.sessions = [];
         data.sessions?.forEach(session => {
-            this.sessions.push(new RaceSession(session));
+            this.sessions.push(mapRaceSession(session));
         })
     }
 

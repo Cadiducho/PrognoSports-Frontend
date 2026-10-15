@@ -5,7 +5,7 @@
     @handle="handleSimulate"
   >
     <template #title>
-      Simular resultados de {{ session.humanName() }}
+      Simular resultados de {{ sessionHumanName(session) }}
     </template>
 
     <template #content>
@@ -60,6 +60,7 @@ import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import SmallDriverCard from "@/components/gps/SmallDriverCard.vue";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import {RaceResult} from "@/types/RaceResult";
+import {sessionHumanName} from "@/utils/raceSession";
 
 const visible = defineModel<boolean>();
 const props = defineProps<{

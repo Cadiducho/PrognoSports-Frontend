@@ -1,36 +1,35 @@
 import {Season} from "@/types/Season";
-import {IRaceSession, RaceSession} from "@/types/RaceSession";
+import {mapRaceSession, RaceSession, RaceSessionDto} from "@/types/RaceSession";
 
-export interface ICompetition {
+/** Forma de la competición tal y como la devuelve la API */
+export interface CompetitionDto {
     id: number;
     code: string;
     name: string;
     fullname: string;
     currentSeason: Season;
     rules: string;
-    availableSessions: Array<IRaceSession>;
+    availableSessions: Array<RaceSessionDto>;
 }
 
-export class Competition implements ICompetition {
-
-    availableSessions: Array<RaceSession>;
-    code: string;
-    currentSeason: Season;
-    fullname: string;
+export interface Competition {
     id: number;
+    code: string;
     name: string;
+    fullname: string;
+    currentSeason: Season;
     rules: string;
+    availableSessions: Array<RaceSession>;
+}
 
-    constructor(data: ICompetition) {
-        this.availableSessions = [];
-        data.availableSessions?.forEach(ses => {
-            this.availableSessions.push(new RaceSession(ses));
-        })
-        this.code = data.code;
-        this.currentSeason = data.currentSeason;
-        this.fullname = data.fullname;
-        this.id = data.id;
-        this.name = data.name;
-        this.rules = data.rules;
-    }
+export function mapCompetition(dto: CompetitionDto): Competition {
+    return {
+        id: dto.id,
+        code: dto.code,
+        name: dto.name,
+        fullname: dto.fullname,
+        currentSeason: dto.currentSeason,
+        rules: dto.rules,
+        availableSessions: (dto.availableSessions ?? []).map(mapRaceSession),
+    };
 }

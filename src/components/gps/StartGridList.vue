@@ -22,7 +22,7 @@
               :key="session.id"
               :value="session"
             >
-              {{ session.humanName() }}
+              {{ sessionHumanName(session) }}
             </option>
           </PSelect>
         </PField>
@@ -66,6 +66,7 @@ import PTitle from "@/components/lib/PTitle.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import PCard from "@/components/lib/PCard.vue";
+import {sessionHumanName} from "@/utils/raceSession";
 
 defineOptions({ name: "StartGridList" });
 
