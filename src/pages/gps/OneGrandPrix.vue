@@ -88,7 +88,7 @@
 
         <section class="my-2 space-y-2">
           <p-button
-            v-if="currentUser.isAdmin()"
+            v-if="isUserAdmin(currentUser)"
             color="info"
             expanded
             tag="router-link"
@@ -163,6 +163,7 @@ import {defineComponent} from "vue";
 import {useCommunityStore} from "@/store/communityStore";
 import Loading from "@/components/lib/Loading.vue";
 import {useAuthStore} from "@/store/authStore";
+import {isUserAdmin} from "@/utils/user";
 import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
@@ -195,7 +196,7 @@ export default defineComponent({
 
     const currentCommunity = communityStore.currentCommunity;
     const currentUser = authStore.loggedUser;
-    return {currentUser, currentCommunity};
+    return {currentUser, currentCommunity, isUserAdmin};
   },
   data() {
     return {

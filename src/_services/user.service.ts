@@ -1,14 +1,14 @@
 import axios from 'axios';
-import {IUser, IUserResume, User, UserResume} from "@/types/User";
+import {IUserResume, mapUser, User, UserDto, UserResume} from "@/types/User";
 import {Community} from "@/types/Community";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
 import {PrognoService} from "@/_services/progno.service";
 
-export class UserService extends PrognoService<IUser, User> {
+export class UserService extends PrognoService<UserDto, User> {
 
-    factory(data: IUser): User {
-        return new User(data);
+    factory(data: UserDto): User {
+        return mapUser(data);
     }
 
     public async getMe(): Promise<User> {

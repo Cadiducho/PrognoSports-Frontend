@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export abstract class PrognoService<In, T extends In> {
+export abstract class PrognoService<In, T> {
 
     /**
      * Método para fabricar la instancia del tipo T a partir de una interface In

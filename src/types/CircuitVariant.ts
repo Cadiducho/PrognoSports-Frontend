@@ -1,4 +1,4 @@
-import {BASE_URL} from "@/_services";
+import {BASE_URL} from "@/config";
 
 export interface ICircuitVariant {
     id: number;

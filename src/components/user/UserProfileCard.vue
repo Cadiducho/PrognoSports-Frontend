@@ -5,7 +5,7 @@
         <PEditableImage
           v-if="!showSettingsButton"
           class="mx-auto w-full max-w-sm"
-          :src="profile.profileImage()"
+          :src="changedImageUrl ?? userProfileImageUrl(profile)"
           alt="Profile image"
           label="Cambiar imagen de perfil"
           @select="onFileSelected"
@@ -16,7 +16,7 @@
         >
           <img
             class="h-full w-full object-cover"
-            :src="profile.profileImage()"
+            :src="userProfileImageUrl(profile)"
             alt="Profile image"
           >
         </figure>
@@ -31,7 +31,7 @@
                 {{ profile.username }}
 
                 <PTag
-                  :style="profile.styleRankTag()"
+                  :style="userRankTagStyle(profile)"
                 >
                   {{ profile.rank.name }}
                 </PTag>
@@ -121,6 +121,7 @@ import {useDayjs} from "@/composables/useDayjs";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {User} from "@/types/User";
+import {userProfileImageUrl, userRankTagStyle} from "@/utils/user";
 import PTag from "@/components/lib/PTag.vue";
 import UploadFileModal from "@/components/lib/UploadFileModal.vue";
 import {notificationService, userService} from "@/_services";
@@ -160,13 +161,17 @@ export default defineComponent({
         const currentUser = authStore.loggedUser;
 
         const currentCommunity = communityStore.currentCommunity;
-        return {currentUser, currentCommunity, dateDiff, humanDateTime, humanDate};
+        return {currentUser, currentCommunity, dateDiff, humanDateTime, humanDate, userProfileImageUrl, userRankTagStyle};
     },
     data() {
         return {
             showEditImageModal: false,
             selectedFile: null as File | null,
+            changedImageUrl: null as string | null,
         }
+    },
+    beforeUnmount() {
+        if (this.changedImageUrl) URL.revokeObjectURL(this.changedImageUrl);
     },
     methods: {
         onFileSelected(file: File) {
@@ -181,7 +186,8 @@ export default defineComponent({
 
             userService.changeProfileImage(this.currentUser, blob).then(() => {
                 notificationService.showNotification("¡Has cambiado tu imagen de perfil!");
-                this.currentUser.changedProfileImage = blob;
+                if (this.changedImageUrl) URL.revokeObjectURL(this.changedImageUrl);
+                this.changedImageUrl = URL.createObjectURL(blob);
             }).catch(() => {
                 notificationService.showNotification("Ha ocurrido un error cambiado tu imagen de perfil", "error");
             });

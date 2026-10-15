@@ -1,9 +1,9 @@
-import {IUser, User} from "@/types/User";
-import {Community, ICommunity} from "@/types/Community";
+import {Community, CommunityDto, mapCommunity} from "@/types/Community";
+import {mapUser, User, UserDto} from "@/types/User";
 
-export interface ICommunityUser {
-    community?: ICommunity;
-    user: IUser;
+export interface CommunityUserDto {
+    community?: CommunityDto;
+    user: UserDto;
 
     isUserInCommunity: boolean;
     can_modify_permissions: boolean;
@@ -11,7 +11,7 @@ export interface ICommunityUser {
     can_kick_users: boolean;
 }
 
-export class CommunityUser implements ICommunityUser {
+export interface CommunityUser {
     community?: Community;
     user: User;
 
@@ -19,13 +19,15 @@ export class CommunityUser implements ICommunityUser {
     can_modify_permissions: boolean;
     can_recreate_invitation: boolean;
     can_kick_users: boolean;
+}
 
-    constructor(data: ICommunityUser) {
-        this.can_kick_users = data.can_kick_users;
-        this.can_modify_permissions = data.can_modify_permissions;
-        this.can_recreate_invitation = data.can_recreate_invitation;
-        if (data.community) this.community = new Community(data.community);
-        this.isUserInCommunity = data.isUserInCommunity;
-        this.user = new User(data.user);
-    }
+export function mapCommunityUser(dto: CommunityUserDto): CommunityUser {
+    return {
+        community: dto.community ? mapCommunity(dto.community) : undefined,
+        user: mapUser(dto.user),
+        isUserInCommunity: dto.isUserInCommunity,
+        can_modify_permissions: dto.can_modify_permissions,
+        can_recreate_invitation: dto.can_recreate_invitation,
+        can_kick_users: dto.can_kick_users,
+    };
 }
