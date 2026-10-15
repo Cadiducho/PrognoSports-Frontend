@@ -69,7 +69,7 @@ export default defineComponent({
     setup() {
         const dayjs = useDayjs();
         const dateDiff = dayjs.dateDiff;
-        return { dateDiff, userProfileImageUrl };
+        return { dateDiff, userProfileImageUrl, userRankTagStyle };
     }
 });
 </script>

@@ -67,6 +67,7 @@
 
 <script lang="ts">
     import {GrandPrix} from "@/types/GrandPrix";
+    import {grandPrixLink, grandPrixPromoImageUrl} from "@/utils/grandPrix";
 
     import {defineComponent} from "vue";
     import {useCommunityStore} from "@/store/communityStore";

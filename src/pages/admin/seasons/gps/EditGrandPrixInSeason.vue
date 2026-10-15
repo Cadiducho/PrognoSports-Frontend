@@ -153,7 +153,7 @@
           <div class="flex-1">
             <PLabel label="Imagen promocional del Gran Premio" />
             <PEditableImage
-              :src="grandPrix.promoImage()"
+              :src="grandPrixPromoImageUrl(grandPrix)"
               alt="Promo image"
               label="Cambiar imagen promocional"
               aspect="video"
@@ -194,6 +194,7 @@
 
 <script lang="ts">
 import {circuitService, grandPrixService, notificationService, seasonService} from "@/_services";
+import {grandPrixPromoImageUrl} from "@/utils/grandPrix";
 import {Season} from "@/types/Season";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Circuit} from "@/types/Circuit";
@@ -235,7 +236,7 @@ export default defineComponent({
   setup() {
     const authStore = useAuthStore();
     const currentUser = authStore.loggedUser;
-    return {currentUser};
+    return {currentUser, grandPrixPromoImageUrl};
   },
   data() {
     return {

@@ -1,5 +1,5 @@
 import {Competition, CompetitionDto, mapCompetition} from "@/types/Competition";
-import {GrandPrix, IGrandPrix} from "@/types/GrandPrix";
+import {GrandPrix, GrandPrixDto, mapGrandPrix} from "@/types/GrandPrix";
 
 export type SessionId = number;
 
@@ -11,7 +11,7 @@ export interface RaceSessionDto {
     hasGrid: boolean;
     hasFastLap: boolean;
     competition?: CompetitionDto;
-    grandPrix?: IGrandPrix;
+    grandPrix?: GrandPrixDto;
     date: string;
     uses: number;
     defineGridOf?: Array<RaceSessionDto>;
@@ -38,7 +38,7 @@ export function mapRaceSession(dto: RaceSessionDto): RaceSession {
         hasGrid: dto.hasGrid,
         hasFastLap: dto.hasFastLap,
         competition: dto.competition ? mapCompetition(dto.competition) : undefined,
-        grandPrix: dto.grandPrix ? new GrandPrix(dto.grandPrix) : undefined,
+        grandPrix: dto.grandPrix ? mapGrandPrix(dto.grandPrix) : undefined,
         date: new Date(dto.date),
         uses: dto.uses,
         defineGridOf: (dto.defineGridOf ?? []).map(mapRaceSession),
