@@ -2,7 +2,7 @@ import {Circuit, ICircuit} from "@/types/Circuit";
 import {Season} from "@/types/Season";
 import {Competition} from "@/types/Competition";
 import {IRaceSession, RaceSession} from "@/types/RaceSession";
-import {BASE_URL} from "@/_services";
+import {BASE_URL} from "@/config";
 import {CircuitVariant, ICircuitVariant} from "@/types/CircuitVariant";
 
 export interface IGrandPrix {

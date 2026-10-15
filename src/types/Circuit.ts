@@ -1,5 +1,5 @@
 import {CircuitVariant, ICircuitVariant} from "@/types/CircuitVariant";
-import {BASE_URL} from "@/_services";
+import {BASE_URL} from "@/config";
 import {RouteLocationRaw} from "vue-router";
 
 export interface ICircuit {

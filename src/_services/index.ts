@@ -12,13 +12,12 @@ import {CompetitionService} from "@/_services/competition.service";
 import {ConstructorService} from "@/_services/constructor.service";
 import {RuleSetService} from "@/_services/ruleset.service";
 import {SessionService} from "@/_services/session.service";
+import {BASE_URL} from "@/config";
 
 function authHeader() {
   return localStorage.getItem('token') || '';
 }
 
-// Configured per mode through .env files (override locally with .env.local)
-export const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 axios.defaults.baseURL = BASE_URL;
 
 axios.interceptors.request.use(function (config) {

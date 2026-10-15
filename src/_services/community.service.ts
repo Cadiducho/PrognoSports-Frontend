@@ -1,13 +1,13 @@
 import axios from 'axios';
-import {Community, ICommunity} from "@/types/Community";
+import {Community, CommunityDto, mapCommunity} from "@/types/Community";
 import {User} from "@/types/User";
-import {CommunityUser, ICommunityUser} from "@/types/CommunityUser";
+import {CommunityUser, CommunityUserDto, mapCommunityUser} from "@/types/CommunityUser";
 import {PrognoService} from "@/_services/progno.service";
 
-export class CommunityService extends PrognoService<ICommunity, Community> {
+export class CommunityService extends PrognoService<CommunityDto, Community> {
 
-    factory(data: ICommunity): Community {
-        return new Community(data);
+    factory(data: CommunityDto): Community {
+        return mapCommunity(data);
     }
 
     public async getCommunityById(communityId: string | number): Promise<Community> {
@@ -32,8 +32,8 @@ export class CommunityService extends PrognoService<ICommunity, Community> {
     }
 
     public async getMembers(community: Community): Promise<Array<CommunityUser>> {
-        const userData = await axios.get(`/communities/${community.id}/members`) as ICommunityUser[];
-        return userData.map(data => new CommunityUser(data));
+        const userData = await axios.get(`/communities/${community.id}/members`) as CommunityUserDto[];
+        return userData.map(mapCommunityUser);
     }
 
     public async createCommunity(data: any): Promise<Community> {

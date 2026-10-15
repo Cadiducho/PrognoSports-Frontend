@@ -1,16 +1,36 @@
 import {UserRank} from "@/types/UserRank";
-import {Community} from "@/types/Community";
+import {Community, CommunityDto, mapCommunity} from "@/types/Community";
 import {Dictionary} from "@/types/Dictionary";
-import {BASE_URL} from "@/_services";
 import {RaceSession} from "@/types/RaceSession";
 
 export type UserId = number;
-export interface IUser {
+
+/** Forma del usuario tal y como la devuelve la API (las fechas llegan como texto) */
+export interface UserDto {
   id: UserId;
   username: string;
   email: string;
   bio?: string;
   password?: string;
+  rank: UserRank;
+  created?: string,
+  updated?: string,
+  last_activity?: string,
+  verified_at?: string,
+  birthdate?: string,
+  gender: string;
+  location: string;
+  currentCommunity: CommunityDto;
+  preferences: Dictionary<string, any>;
+  hasProfileImage: boolean;
+}
+
+export interface User {
+  id: UserId;
+  username: string;
+  email: string;
+  bio: string;
+  password: string;
   rank: UserRank;
   created?: Date,
   updated?: Date,
@@ -24,76 +44,25 @@ export interface IUser {
   hasProfileImage: boolean;
 }
 
-export class User implements IUser {
-  id: UserId;
-  bio: string;
-  birthdate?: Date;
-  created?: Date;
-  currentCommunity: Community;
-  email: string;
-  gender: string;
-  last_activity?: Date;
-  verified_at?: Date;
-  location: string;
-  password: string;
-  preferences: Dictionary<string, any>;
-  rank: UserRank;
-  updated?: Date;
-  username: string;
-  hasProfileImage: boolean;
-  changedProfileImage?: Blob;
-
-  constructor(data: IUser) {
-    this.bio = data.bio ?? '';
-    this.currentCommunity = data.currentCommunity;
-    this.email = data.email;
-    this.gender = data.gender;
-    this.id = data.id;
-    this.location = data.location;
-    this.password = data.password ?? '';
-    this.preferences = data.preferences;
-    this.rank = data.rank;
-    this.username = data.username;
-    this.hasProfileImage = data.hasProfileImage;
-
-    if (data.birthdate) this.birthdate = new Date(data.birthdate);
-    if (data.created) this.created = new Date(data.created);
-    if (data.updated) this.updated = new Date(data.updated);
-    if (data.last_activity) this.last_activity = new Date(data.last_activity);
-    if (data.verified_at) this.verified_at = new Date(data.verified_at);
-  }
-
-  /**
-   * Compara el {@link UserRank} del usuario para determinar si es administrador o no
-   * @return True si es administrador
-   */
-  public isAdmin(): boolean {
-    return this.rank.name.toLowerCase() === "admin";
-  }
-
-  public profileImage(): string {
-    if (this.changedProfileImage) {
-      return URL.createObjectURL(this.changedProfileImage);
-    }
-
-    if (this.hasProfileImage) {
-      return BASE_URL + `/user/${this.id}/image`;
-    }
-
-    // ToDo: coger la imagen por defecto de los assets
-    return 'https://github.com/Cadiducho/PrognoSports-Frontend/blob/develop/src/assets/default_profile_image.jpg?raw=true';
-  }
-
-  public styleRankTag() {
-    return {
-      backgroundColor: '#' + this.rank.color,
-      color: 'white',
-    }
-  }
-
-  public isVerified(): boolean {
-    return !!this.verified_at && this.verified_at.getTime() < new Date().getTime();
-  }
+export function mapUser(dto: UserDto): User {
+  return {
+    id: dto.id,
+    username: dto.username,
+    email: dto.email,
+    bio: dto.bio ?? '',
+    password: dto.password ?? '',
+    rank: dto.rank,
+    gender: dto.gender,
+    location: dto.location,
+    currentCommunity: dto.currentCommunity && mapCommunity(dto.currentCommunity),
+    preferences: dto.preferences,
+    hasProfileImage: dto.hasProfileImage,
+    created: dto.created ? new Date(dto.created) : undefined,
+    updated: dto.updated ? new Date(dto.updated) : undefined,
+    last_activity: dto.last_activity ? new Date(dto.last_activity) : undefined,
+    verified_at: dto.verified_at ? new Date(dto.verified_at) : undefined,
+    birthdate: dto.birthdate ? new Date(dto.birthdate) : undefined,
+  };
 }
 
 export interface IUserResume {
