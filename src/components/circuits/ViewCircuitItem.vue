@@ -1,13 +1,13 @@
 <template>
   <article class="h-full">
     <router-link
-      :to="circuit.circuitLink()"
+      :to="circuitLink(circuit)"
       class="c-card group flex h-full min-h-[24rem] flex-col overflow-hidden rounded-lg border border-slate-200 bg-white text-slate-700 shadow-md transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
     >
       <div class="relative h-48 overflow-hidden bg-slate-50 dark:bg-slate-900/40">
         <img
           class="absolute inset-0 h-full w-full object-contain p-3"
-          :src="circuit.layoutImage()"
+          :src="circuitLayoutImageUrl(circuit)"
           alt=""
         >
       </div>
@@ -37,6 +37,7 @@
 
 <script setup lang="ts">
 import { Circuit } from "@/types/Circuit";
+import {circuitLayoutImageUrl, circuitLink} from "@/utils/circuit";
 
 defineOptions({ name: "ViewCircuitItem" });
 

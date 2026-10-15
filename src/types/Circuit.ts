@@ -1,8 +1,7 @@
-import {CircuitVariant, ICircuitVariant} from "@/types/CircuitVariant";
-import {BASE_URL} from "@/config";
-import {RouteLocationRaw} from "vue-router";
+import {CircuitVariant, CircuitVariantDto, mapCircuitVariant} from "@/types/CircuitVariant";
 
-export interface ICircuit {
+/** Forma del circuito tal y como lo devuelve la API */
+export interface CircuitDto {
     id: number;
     name: string;
     country: string;
@@ -10,10 +9,10 @@ export interface ICircuit {
     latitude: number;
     longitude: number;
     hasLogoImage: boolean;
-    variants: Array<ICircuitVariant>;
+    variants: Array<CircuitVariantDto>;
 }
 
-export class Circuit implements ICircuit {
+export interface Circuit {
     id: number;
     name: string;
     country: string;
@@ -22,49 +21,17 @@ export class Circuit implements ICircuit {
     longitude: number;
     hasLogoImage: boolean;
     variants: Array<CircuitVariant>;
-    temporalLogoImage?: Blob;
+}
 
-    constructor(data: ICircuit) {
-        this.country = data.country;
-        this.id = data.id;
-        this.latitude = data.latitude;
-        this.locality = data.locality;
-        this.longitude = data.longitude;
-        this.name = data.name;
-        this.hasLogoImage = data.hasLogoImage;
-        this.variants = [];
-        data.variants?.forEach(variant => {
-            this.variants.push(new CircuitVariant(variant));
-        })
-    }
-
-    public circuitLink(): RouteLocationRaw {
-        return {
-            name: 'circuitDetails',
-            params: {circuit: this.id}
-        };
-    }
-
-    public logoImage(): string {
-        if (this.temporalLogoImage) {
-            return URL.createObjectURL(this.temporalLogoImage);
-        }
-        if (this.hasLogoImage) {
-            return BASE_URL + `/circuits/${this.id}/logo`;
-        }
-
-        return this.layoutImage();
-    }
-
-    public layoutImage(variantId?: number): string {
-        if (variantId) {
-            return this.variants[variantId].layoutImage();
-        }
-        if (this.variants.length > 0) {
-            return this.variants[0].layoutImage();
-        }
-
-        // ToDo: coger la imagen por defecto de los assets
-        return 'https://github.com/Cadiducho/PrognoSports-Frontend/blob/develop/src/assets/default_profile_image.jpg?raw=true';
-    }
+export function mapCircuit(dto: CircuitDto): Circuit {
+    return {
+        id: dto.id,
+        name: dto.name,
+        country: dto.country,
+        locality: dto.locality,
+        latitude: dto.latitude,
+        longitude: dto.longitude,
+        hasLogoImage: dto.hasLogoImage,
+        variants: (dto.variants ?? []).map(mapCircuitVariant),
+    };
 }
