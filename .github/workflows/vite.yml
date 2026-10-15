@@ -34,6 +34,10 @@ jobs:
         if: ${{ inputs.lint }}
         continue-on-error: true
         run: pnpm run eslint
+      - name: Typecheck
+        if: ${{ inputs.lint }}
+        continue-on-error: true
+        run: pnpm run typecheck
       - name: 🏭 Vue Build
         env:
           BUILD_COMMAND: ${{ inputs.build_command }}
