@@ -1,7 +1,7 @@
 <template>
   <article class="h-full">
     <router-link
-      :to="gp.gpLink()"
+      :to="grandPrixLink(gp)"
       class="c-card group flex h-full min-h-[30rem] flex-col overflow-hidden rounded-lg border border-slate-200 bg-white text-slate-700 shadow-md transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
     >
       <div class="relative h-48 overflow-hidden bg-slate-50 dark:bg-slate-900/40">
@@ -47,6 +47,7 @@
 
 <script setup lang="ts">
 import { GrandPrix } from "@/types/GrandPrix";
+import {grandPrixLink} from "@/utils/grandPrix";
 import { useDayjs } from "@/composables/useDayjs";
 import {sessionHumanName} from "@/utils/raceSession";
 

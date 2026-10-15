@@ -44,15 +44,15 @@
             :key="gp.name + index"
             class="!pb-0"
             :variant="timelineVariant(gp)"
-            :icon="isThisWeek(gp.lastDate()) ? 'fa fa-flag' : undefined"
+            :icon="isThisWeek(grandPrixLastDate(gp)) ? 'fa fa-flag' : undefined"
           >
-            <router-link :to="gp.gpLink()">
+            <router-link :to="grandPrixLink(gp)">
               <div class="text-gray-700 dark:text-white">
                 <p>
-                  <span v-if="Number.isNaN(gp.firstDate().getDate())">Sin fecha</span>
-                  <span v-else>{{ gp.firstDate().getDate() }} - {{ humanDayMonth(gp.lastDate()) }}</span>
+                  <span v-if="Number.isNaN(grandPrixFirstDate(gp).getDate())">Sin fecha</span>
+                  <span v-else>{{ grandPrixFirstDate(gp).getDate() }} - {{ humanDayMonth(grandPrixLastDate(gp)) }}</span>
                   <PTag
-                    v-if="isThisWeek(gp.lastDate())"
+                    v-if="isThisWeek(grandPrixLastDate(gp))"
                     color="primary"
                     class="ml-2"
                   >
@@ -76,6 +76,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import {grandPrixFirstDate, grandPrixLastDate, grandPrixLink} from "@/utils/grandPrix";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
 
@@ -118,8 +119,8 @@ const allGps = ref<Array<GrandPrix>>([]);
 const firstEventYear = ref("");
 const lastEventYear = ref("");
 
-const nextEvents = computed(() => allGps.value.filter(gp => isBefore(gp.firstDate())));
-const pastEvents = computed(() => allGps.value.filter(gp => isAfter(gp.lastDate())));
+const nextEvents = computed(() => allGps.value.filter(gp => isBefore(grandPrixFirstDate(gp))));
+const pastEvents = computed(() => allGps.value.filter(gp => isAfter(grandPrixLastDate(gp))));
 
 function searchDefaultCompetition(): void {
   if (shouldSearchDefaultCompetition.value) {
@@ -148,11 +149,11 @@ watch(seasonReady, (ready) => {
   if (ready) {
     grandPrixService.getGrandPrixesList(season.value).then((list) => {
       const activeGps = list.filter(gp => !gp.suspended);
-      const gpsWithDates = activeGps.filter(gp => !Number.isNaN(gp.lastDate().getTime()));
+      const gpsWithDates = activeGps.filter(gp => !Number.isNaN(grandPrixLastDate(gp).getTime()));
       allGps.value.push(...activeGps);
 
-      const firstDate = gpsWithDates.at(0)!.firstDate();
-      const lastDate = gpsWithDates.at(gpsWithDates.length - 1)!.lastDate();
+      const firstDate = grandPrixFirstDate(gpsWithDates.at(0)!);
+      const lastDate = grandPrixLastDate(gpsWithDates.at(gpsWithDates.length - 1)!);
 
       firstEventYear.value = humanMonth(firstDate).toUpperCase() + " " + lastDate.getFullYear();
       lastEventYear.value = humanMonth(lastDate).toUpperCase() + " " + lastDate.getFullYear();
@@ -179,8 +180,8 @@ searchDefaultCompetition();
 searchDefaultSeason();
 
 const timelineVariant = (gp: GrandPrix) => {
-  if (isThisWeek(gp.lastDate())) return 'danger';
-  if (isBefore(gp.lastDate()) || Number.isNaN(gp.lastDate().getTime())) return 'warning';
+  if (isThisWeek(grandPrixLastDate(gp))) return 'danger';
+  if (isBefore(grandPrixLastDate(gp)) || Number.isNaN(grandPrixLastDate(gp).getTime())) return 'warning';
   return 'primary';
 };
 

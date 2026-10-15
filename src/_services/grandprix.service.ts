@@ -1,5 +1,5 @@
 import axios from "axios";
-import {GrandPrix, IGrandPrix} from "@/types/GrandPrix";
+import {GrandPrix, GrandPrixDto, mapGrandPrix} from "@/types/GrandPrix";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
 import {StartGridPosition} from "@/types/StartGridPosition";
@@ -12,10 +12,10 @@ import {PrognoService} from "@/_services/progno.service";
 import {Circuit} from "@/types/Circuit";
 import {CircuitVariant} from "@/types/CircuitVariant";
 
-export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
+export class GrandprixService extends PrognoService<GrandPrixDto, GrandPrix> {
 
-    factory(data: IGrandPrix): GrandPrix {
-        return new GrandPrix(data);
+    factory(data: GrandPrixDto): GrandPrix {
+        return mapGrandPrix(data);
     }
 
     public async getNextGrandPrix(competition: Competition): Promise<GrandPrix> {

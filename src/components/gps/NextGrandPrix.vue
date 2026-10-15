@@ -8,7 +8,7 @@
         <PTitle type="subtitle" tag="h2">Próximo Gran Premio</PTitle>
         <PTitle tag="h1">{{ nextGp.name }}</PTitle>
         <figure v-if="nextGp.hasPromoImage" class="max-w-lg">
-            <img class="h-auto max-w-full rounded-lg" :src="nextGp.promoImage()" alt="Next grand prix promo image">
+            <img class="h-auto max-w-full rounded-lg" :src="grandPrixPromoImageUrl(nextGp)" alt="Next grand prix promo image">
         </figure>
         <hr v-else>
 
@@ -21,12 +21,13 @@
             </li>
         </ul>
 
-        <PButton expanded tag="router-link" :to="nextGp.gpLink()" color="primary" class="mt-5">Pronosticar</PButton>
+        <PButton expanded tag="router-link" :to="grandPrixLink(nextGp)" color="primary" class="mt-5">Pronosticar</PButton>
     </PCard>
 </template>
 
 <script lang="ts">
     import {GrandPrix} from "@/types/GrandPrix";
+    import {grandPrixLink, grandPrixPromoImageUrl} from "@/utils/grandPrix";
 
     import {defineComponent} from "vue";
     import {useCommunityStore} from "@/store/communityStore";
@@ -48,7 +49,7 @@
             const dateDiff = dayjs.dateDiff;
             const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
             const currentCommunity = communityStore.currentCommunity;
-            return { currentCommunity, thereIsCurrentCommunity, humanDateTime, dateDiff, sessionHumanName };
+            return { currentCommunity, thereIsCurrentCommunity, humanDateTime, dateDiff, sessionHumanName, grandPrixLink, grandPrixPromoImageUrl };
         },
         data() {
             return {

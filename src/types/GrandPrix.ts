@@ -1,19 +1,24 @@
 import {Circuit, ICircuit} from "@/types/Circuit";
 import {Season} from "@/types/Season";
-import {Competition} from "@/types/Competition";
+import {Competition, CompetitionDto, mapCompetition} from "@/types/Competition";
 import {mapRaceSession, RaceSession, RaceSessionDto} from "@/types/RaceSession";
-import {BASE_URL} from "@/config";
 import {CircuitVariant, ICircuitVariant} from "@/types/CircuitVariant";
 
-export interface IGrandPrix {
+/** Referencia al Gran Premio anterior o siguiente: la API solo garantiza su id */
+export interface GrandPrixRef {
+    id: number;
+}
+
+/** Forma del Gran Premio tal y como lo devuelve la API */
+export interface GrandPrixDto {
     id: number;
     name: string;
     code: string;
-    competition: Competition;
+    competition: CompetitionDto;
     season: Season;
     round: number;
-    nextGrandPrix: IGrandPrix;
-    previousGrandPrix: IGrandPrix;
+    nextGrandPrix?: GrandPrixRef;
+    previousGrandPrix?: GrandPrixRef;
     circuit?: ICircuit;
     variant?: ICircuitVariant;
     sessions: Array<RaceSessionDto>
@@ -22,71 +27,39 @@ export interface IGrandPrix {
     hasPromoImage: boolean;
 }
 
-export class GrandPrix {
-    circuit?: Circuit;
-    variant?: CircuitVariant;
+export interface GrandPrix {
+    id: number;
+    name: string;
     code: string;
     competition: Competition;
-    id: number;
-    laps: number;
-    name: string;
-    sessions: Array<RaceSession>;
-    round: number;
-    nextGrandPrix: IGrandPrix;
-    previousGrandPrix: IGrandPrix;
     season: Season;
+    round: number;
+    nextGrandPrix?: GrandPrixRef;
+    previousGrandPrix?: GrandPrixRef;
+    circuit?: Circuit;
+    variant?: CircuitVariant;
+    sessions: Array<RaceSession>;
+    laps: number;
     suspended: boolean;
     hasPromoImage: boolean;
+}
 
-    constructor(data: IGrandPrix) {
-        this.id = data.id;
-        this.code = data.code;
-        this.name = data.name;
-
-        this.competition = data.competition;
-        this.laps = data.laps;
-        if (data.circuit && data.variant) {
-            this.circuit = new Circuit(data.circuit);
-            this.variant = new CircuitVariant(data.variant);
-        }
-        this.round = data.round;
-        this.previousGrandPrix = data.previousGrandPrix;
-        this.nextGrandPrix = data.nextGrandPrix;
-        this.season = data.season;
-        this.suspended = data.suspended;
-        this.hasPromoImage = data.hasPromoImage;
-
-        this.sessions = [];
-        data.sessions?.forEach(session => {
-            this.sessions.push(mapRaceSession(session));
-        })
-    }
-
-    firstDate(): Date {
-        return new Date(Math.min(...this.sessions.map(ses => ses.date.getTime())));
-    }
-
-    lastDate(): Date {
-        return new Date(Math.max(...this.sessions.map(ses => ses.date.getTime())));
-    }
-
-    gpLink(): Object {
-        return {
-            name: "gpdetails",
-            params: {
-                competition: this.competition.code,
-                season: this.season.name,
-                gp: this.id,
-            }
-        };
-    }
-
-    public promoImage(): string {
-        if (this.hasPromoImage) {
-            return BASE_URL + `/gps/${this.competition.code}/${this.season.name}/${this.id}/image`;
-        }
-
-        // ToDo: coger la imagen por defecto de los assets
-        return 'https://github.com/Cadiducho/PrognoSports-Frontend/blob/develop/src/assets/default_profile_image.jpg?raw=true';
-    }
+export function mapGrandPrix(dto: GrandPrixDto): GrandPrix {
+    const hasCircuit = dto.circuit && dto.variant;
+    return {
+        id: dto.id,
+        code: dto.code,
+        name: dto.name,
+        competition: dto.competition && mapCompetition(dto.competition),
+        laps: dto.laps,
+        circuit: hasCircuit ? new Circuit(dto.circuit!) : undefined,
+        variant: hasCircuit ? new CircuitVariant(dto.variant!) : undefined,
+        round: dto.round,
+        previousGrandPrix: dto.previousGrandPrix,
+        nextGrandPrix: dto.nextGrandPrix,
+        season: dto.season,
+        suspended: dto.suspended,
+        hasPromoImage: dto.hasPromoImage,
+        sessions: (dto.sessions ?? []).map(mapRaceSession),
+    };
 }
