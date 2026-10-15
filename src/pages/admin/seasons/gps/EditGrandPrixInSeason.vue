@@ -1,189 +1,175 @@
 <template>
-  <nav
-    id="adminDrivers"
-    class="box"
+  <PPage
+    :title="thereIsGrandPrix ? `${grandPrix.name} de ${grandPrix.season.name}` : undefined"
+    :loading="isLoadingGrandPrix"
+    :not-found="!thereIsGrandPrix && `El Gran Premio ${id} no ha sido encontrado`"
   >
-    <loading v-if="isLoadingGrandPrix" />
-    <template v-else-if="!thereIsGrandPrix">
-      <p>El Gran Premio {{ id }} no ha sido encontrado</p>
+    <template #actions>
+      <div
+        v-if="thereIsGrandPrix"
+        class="w-60"
+      >
+        <GrandPrixPagination
+          :is-admin-pag="true"
+          :competition="grandPrix.competition"
+          :grand-prix="grandPrix"
+        />
+      </div>
     </template>
-    <template v-else>
-      <GrandPrixPageHeader
-        :grand-prix="grandPrix"
-        :competition="grandPrix.competition"
-        :is-admin="true"
-      />
 
-      <nav class="flex my-4">
-        <p-button
-          tag="router-link"
-          color="success"
-          icon="fa fa-eye"
-          class="mr-2"
-          :to="{ name: 'gpdetails', params: {gp: grandPrix.id, season: grandPrix.season.name, competition: grandPrix.competition.code} }"
-        >
-          Ir al Gran Premio
-        </p-button>
-        <p-button
-          tag="router-link"
-          color="blue"
-          icon="fa fa-list"
-          class="mr-2"
-          :to="{ name: 'adminGps' }"
-        >
-          Lista de grandes premios
-        </p-button>
-        <p-button
-          tag="router-link"
-          color="purple"
-          icon="fa fa-cogs"
-          class="mr-2"
-          :to="{ name: 'adminSeasonEdit', params: {season: grandPrix.season.name} }"
-        >
-          Admin de temporada
-        </p-button>
-      </nav>
+    <nav class="my-4 flex flex-wrap gap-2">
+      <p-button
+        tag="router-link"
+        color="success"
+        icon="fa fa-eye"
+        class="mr-2"
+        :to="{ name: 'gpdetails', params: {gp: grandPrix.id, season: grandPrix.season.name, competition: grandPrix.competition.code} }"
+      >
+        Ir al Gran Premio
+      </p-button>
+      <p-button
+        tag="router-link"
+        color="purple"
+        icon="fa fa-cogs"
+        class="mr-2"
+        :to="{ name: 'adminSeasonEdit', params: {season: grandPrix.season.name} }"
+      >
+        Admin de temporada
+      </p-button>
+    </nav>
 
-      <div class="flex flex-col md:flex-row gap-4">
-        <div class="basis-1/5">
-          <SessionsInGrandPrix
-            :grand-prix="grandPrix"
-            :sessions="grandPrix.sessions"
-          />
-        </div>
-        <div class="basis-4/5">
-          <h2 class="title">
-            Datos del {{ grandPrix.name }}
-          </h2>
+    <div class="flex flex-col md:flex-row gap-4">
+      <div class="md:basis-1/5">
+        <SessionsInGrandPrix
+          :grand-prix="grandPrix"
+          :sessions="grandPrix.sessions"
+        />
+      </div>
+      <div class="min-w-0 md:basis-4/5">
+        <PTitle
+          tag="h2"
+          type="subtitle"
+        >
+          Datos del {{ grandPrix.name }}
+        </PTitle>
 
-          <div class="flex flex-col md:flex-row gap-4">
-            <div class="w-4/5">
-              <PField label="Nombre">
-                <PInput
-                  v-model="grandPrix.name"
-                  name="name"
-                  expanded
-                  lazy
-                />
-              </PField>
-            </div>
-            <div class="flex-1">
-              <PField label="Estado">
-                <PSwitch
-                  v-model="grandPrix.suspended"
-                  class="mt-2"
-                  variant="danger"
-                  passive-variant="primary"
-                >
-                  {{ grandPrix.suspended ? "Suspendido" : "Activo" }}
-                </PSwitch>
-              </PField>
-            </div>
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="md:w-4/5">
+            <PField label="Nombre">
+              <PInput
+                v-model="grandPrix.name"
+                name="name"
+                expanded
+                lazy
+              />
+            </PField>
           </div>
-
-          <div class="flex flex-col md:flex-row gap-4">
-            <div class="flex-1">
-              <PField label="Código del Gran Premio">
-                <PInput
-                  v-model="grandPrix.code"
-                  name="code"
-                />
-              </PField>
-
-              <PField label="Ronda del Gran Premio">
-                <PInput
-                  v-model="grandPrix.round"
-                  name="round"
-                  :min="0"
-                  type="number"
-                />
-              </PField>
-
-              <PButton
+          <div class="flex-1">
+            <PField label="Estado">
+              <PSwitch
+                v-model="grandPrix.suspended"
                 class="mt-2"
-                :disabled="!isDataOk()"
-                @click="editGrandPrix()"
+                variant="danger"
+                passive-variant="primary"
               >
-                Editar datos del gran premio
-              </PButton>
-            </div>
-            <div class="flex-1">
-              <PField label="Circuito del Gran Premio">
-                <PSelect
-                  v-model="grandPrix.circuit"
-                  placeholder="Selecciona un circuito"
-                  expanded
-                  @update:model-value="onCircuitChange"
-                >
-                  <option
-                    v-for="circuit in circuitList"
-                    :key="circuit.id"
-                    :value="circuit"
-                  >
-                    {{ circuit.name }}
-                  </option>
-                </PSelect>
-              </PField>
-
-              <PField label="Variante del circuito">
-                <PSelect
-                  v-model="grandPrix.variant"
-                  placeholder="Selecciona un circuito"
-                  expanded
-                >
-                  <option
-                    v-for="variant in variantsList"
-                    :key="variant.name"
-                    :value="variant"
-                  >
-                    {{ variant.name }}
-                  </option>
-                </PSelect>
-              </PField>
-
-              <PField label="Vueltas del Gran Premio">
-                <PInput
-                  v-model="grandPrix.laps"
-                  name="laps"
-                  :min="0"
-                  type="number"
-                />
-              </PField>
-            </div>
+                {{ grandPrix.suspended ? "Suspendido" : "Activo" }}
+              </PSwitch>
+            </PField>
           </div>
+        </div>
 
-          <div class="flex flex-col md:flex-row gap-4">
-            <div class="flex-1">
-              <label class="label mt-2">Imagen promocional del Gran Premio</label>
-              <figure class="image is-16by9">
-                <img
-                  :src="grandPrix.promoImage()"
-                  alt="Promo image"
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex-1">
+            <PField label="Código del Gran Premio">
+              <PInput
+                v-model="grandPrix.code"
+                name="code"
+              />
+            </PField>
+
+            <PField label="Ronda del Gran Premio">
+              <PInput
+                v-model="grandPrix.round"
+                name="round"
+                :min="0"
+                type="number"
+              />
+            </PField>
+
+            <PButton
+              class="mt-2"
+              :disabled="!isDataOk()"
+              @click="editGrandPrix()"
+            >
+              Editar datos del gran premio
+            </PButton>
+          </div>
+          <div class="flex-1">
+            <PField label="Circuito del Gran Premio">
+              <PSelect
+                v-model="grandPrix.circuit"
+                placeholder="Selecciona un circuito"
+                expanded
+                @update:model-value="onCircuitChange"
+              >
+                <option
+                  v-for="circuit in circuitList"
+                  :key="circuit.id"
+                  :value="circuit"
                 >
+                  {{ circuit.name }}
+                </option>
+              </PSelect>
+            </PField>
 
-                <label class="icon edit-icon">
-                  <i class="fa fa-camera" />
-                  <input
-                    accept="image/*"
-                    tabindex="-1"
-                    type="file"
-                    hidden
-                    @change="onFileChange"
-                  >
-                </label>
-              </figure>
-            </div>
+            <PField label="Variante del circuito">
+              <PSelect
+                v-model="grandPrix.variant"
+                placeholder="Selecciona un circuito"
+                expanded
+              >
+                <option
+                  v-for="variant in variantsList"
+                  :key="variant.name"
+                  :value="variant"
+                >
+                  {{ variant.name }}
+                </option>
+              </PSelect>
+            </PField>
+
+            <PField label="Vueltas del Gran Premio">
+              <PInput
+                v-model="grandPrix.laps"
+                name="laps"
+                :min="0"
+                type="number"
+              />
+            </PField>
+          </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex-1">
+            <PLabel label="Imagen promocional del Gran Premio" />
+            <PEditableImage
+              :src="grandPrix.promoImage()"
+              alt="Promo image"
+              label="Cambiar imagen promocional"
+              aspect="video"
+              @select="onFileSelected"
+            />
           </div>
         </div>
       </div>
+    </div>
 
-      <hr>
+    <PDivider />
 
-      <DriversInGrandPrix
-        v-if="thereIsGrandPrix"
-        :grand-prix="grandPrix"
-      />
-    </template>
+    <DriversInGrandPrix
+      v-if="thereIsGrandPrix"
+      :grand-prix="grandPrix"
+    />
 
     <UploadFileModal
       v-model="showEditImageModal"
@@ -203,7 +189,7 @@
         Cambiar imagen de promoción del Gran Premio
       </template>
     </UploadFileModal>
-  </nav>
+  </PPage>
 </template>
 
 <script lang="ts">
@@ -219,20 +205,28 @@ import DriversInGrandPrix from "@/components/admin/gps/DriversInGrandPrix.vue";
 import UploadFileModal from "@/components/lib/UploadFileModal.vue";
 import {CircuitVariant} from "@/types/CircuitVariant";
 import PButton from "@/components/lib/forms/PButton.vue";
-import GrandPrixPageHeader from "@/components/gps/GrandPrixPageHeader.vue";
+import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PSwitch from "@/components/lib/forms/PSwitch.vue";
+import PLabel from "@/components/lib/forms/PLabel.vue";
+import PTitle from "@/components/lib/PTitle.vue";
+import PDivider from "@/components/lib/PDivider.vue";
+import PEditableImage from "@/components/lib/PEditableImage.vue";
 
 export default defineComponent({
   name: "EditGrandPrixInSeason",
   components: {
+    PLabel,
+    PTitle,
+    PDivider,
+    PEditableImage,
     PSwitch,
     PInput,
     PSelect,
     PField,
-    GrandPrixPageHeader,
+    GrandPrixPagination,
     PButton,
     DriversInGrandPrix,
     SessionsInGrandPrix,
@@ -253,7 +247,7 @@ export default defineComponent({
       isLoadingGrandPrix: true,
 
       showEditImageModal: false,
-      selectedFile: null,
+      selectedFile: null as File | null,
 
       circuitList: new Array<Circuit>(),
       seasonList: new Array<Season>(),
@@ -353,15 +347,9 @@ export default defineComponent({
         notificationService.showNotification(error.message, "error");
       });
     },
-    onFileChange(e: any) {
-      this.showEditImageModal = false;
-      this.selectedFile = null;
-
-      let file = e.target.files[0];
-      if (file) {
-        this.selectedFile = file;
-        this.showEditImageModal = true;
-      }
+    onFileSelected(file: File) {
+      this.selectedFile = file;
+      this.showEditImageModal = true;
     },
     uploadPromoImage(blob: Blob) {
       grandPrixService.changePromoImage(this.grandPrix, blob).then(() => {
@@ -373,10 +361,3 @@ export default defineComponent({
   }
 });
 </script>
-
-<style>
-.image.is-256x256 {
-  height: 256px;
-  width: 256px;
-}
-</style>

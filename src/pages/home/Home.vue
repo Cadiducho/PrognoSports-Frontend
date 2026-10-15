@@ -1,7 +1,5 @@
 <template>
-  <div id="homeComponent">
-    <PTitle name="Dashboard" />
-
+  <PPage variant="plain">
     <div class="flex flex-wrap -mx-4">
       <div class="w-full md:w-1/3 p-4">
         <NextGrandPrix />
@@ -12,17 +10,17 @@
             Resumen
           </PTitle>
           <UserLevelResume :user="currentUser" />
-          <PointsAccumulated :user="currentUser" />
+          <HomeSeasonCharts :user="currentUser" />
         </PCard>
       </div>
     </div>
-  </div>
+  </PPage>
 </template>
 
 <script lang="ts">
 import PTitle from "@/components/lib/PTitle.vue";
 import NextGrandPrix from "@/components/gps/NextGrandPrix.vue";
-import PointsAccumulated from "@/components/home/PointsAccumulated.vue";
+import HomeSeasonCharts from "@/components/home/HomeSeasonCharts.vue";
 import UserLevelResume from "@/components/user/UserLevelResume.vue";
 
 import {defineComponent} from "vue";
@@ -36,7 +34,7 @@ export default defineComponent({
         PCard,
         PTitle,
         UserLevelResume,
-        PointsAccumulated,
+        HomeSeasonCharts,
         NextGrandPrix,
     },
     setup() {

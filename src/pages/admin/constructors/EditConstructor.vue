@@ -1,20 +1,26 @@
 <template>
-    <loading v-if="isLoading"/>
-    <div v-if="constructor.id" id="editConstrcutor" class="box">
-        <PTitle class="mb-5" name="Editar constructor"/>
+  <PPage
+    :title="constructor.name"
+    :loading="isLoading"
+    :not-found="!constructor.id && 'El constructor no ha sido encontrado'"
+  >
+    <PInput
+      v-model="constructor.name"
+      label="Nombre del constructor"
+      name="name"
+    />
 
-        <PInput label="Nombre del constructor" name="name" v-model="constructor.name" />
-
-        <PButton class="mt-4" @click="editConstructor" type="solid" label="Editar constructor" />
-    </div>
-    <div v-else>
-        <p>El constructor no ha sido encontrado</p>
-    </div>
+    <PButton
+      class="mt-4"
+      type="solid"
+      label="Editar constructor"
+      @click="editConstructor"
+    />
+  </PPage>
 </template>
 
 <script setup lang="ts">
 
-import PTitle from "@/components/lib/PTitle.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import {onMounted, ref} from "vue";

@@ -234,6 +234,7 @@ export const routes = [
                                 path: '',
                                 name: 'adminGpEdit',
                                 component: () => import('@/pages/admin/gps/EditGrandPrix.vue'),
+                                meta: { title: "Editar Gran Premio" },
                             }
                         ],
                     },
@@ -268,6 +269,7 @@ export const routes = [
                             {
                               path: 'constructors',
                               component: EmptyRoutedLayout,
+                              meta: { title: "Constructores" },
                               children: [
                                 {
                                   path: '',
@@ -291,6 +293,7 @@ export const routes = [
                             {
                               path: 'drivers',
                               component: EmptyRoutedLayout,
+                              meta: { title: "Pilotos" },
                               children: [
                                 {
                                   path: '',
@@ -314,6 +317,7 @@ export const routes = [
                             {
                                 path: 'gps',
                                 component: EmptyRoutedLayout,
+                                meta: { title: "Grandes Premios" },
                                 children: [
                                     {
                                         path: '',
@@ -485,12 +489,10 @@ export const routes = [
                 path: ':competition?/:season?',
                 alias: ['', ':competition?'],
                 component: EmptyRoutedLayout,
-                meta: {title: "Lista de Grandes Premios"},
                 children: [
                     {
                         path: '',
                         component: () => import('@/pages/gps/GrandPrixList.vue'),
-                        meta: {title: "Temporada"}
                     },
                     {
                         path: ':gp',

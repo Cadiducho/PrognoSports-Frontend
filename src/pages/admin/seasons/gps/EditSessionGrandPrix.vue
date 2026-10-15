@@ -1,14 +1,22 @@
 <template>
-  <loading v-if="isLoadingData" />
-  <template v-else-if="!dataLoaded">
-    <p>El Gran Premio {{ id }} de {{ season.name }} en {{ session.name }} no ha sido encontrado</p>
-  </template>
-  <template v-else>
-    <GrandPrixPageHeader
-      :grand-prix="grandPrix"
-      :competition="competition"
-      :is-admin="true"
-    />
+  <PPage
+    :title="dataLoaded ? `${session.humanName()} en ${grandPrix.name}` : undefined"
+    :loading="isLoadingData"
+    :not-found="!dataLoaded && `El Gran Premio ${id} de ${season?.name} en ${session?.name} no ha sido encontrado`"
+    variant="plain"
+  >
+    <template #actions>
+      <div
+        v-if="dataLoaded"
+        class="w-60"
+      >
+        <GrandPrixPagination
+          :is-admin-pag="true"
+          :competition="grandPrix.competition"
+          :grand-prix="grandPrix"
+        />
+      </div>
+    </template>
 
     <nav class="flex my-4">
       <p-button
@@ -31,10 +39,7 @@
       </p-button>
     </nav>
 
-    <p v-if="!dataLoaded">
-      El Gran Premio {{ id }} {{ session }} no ha sido encontrado
-    </p>
-    <template v-else>
+    <template v-if="dataLoaded">
       <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
         <div class="md:col-span-1">
           <SessionsInGrandPrix
@@ -104,18 +109,18 @@
           >
             <section class="md:col-span-1">
               <EditGrid
+                v-model:has-saved-grid="hasSavedGrid"
                 :grand-prix="grandPrix"
                 :session="session"
                 :grid="startGrid"
-                :has-saved-grid="hasSavedGrid"
               />
             </section>
             <section class="md:col-span-1">
               <EditResults
+                v-model:has-saved-results="hasSavedResults"
                 :grand-prix="grandPrix"
                 :session="session"
                 :results-in-session="resultsInSession"
-                :has-saved-results="hasSavedResults"
               />
             </section>
           </div>
@@ -123,6 +128,7 @@
           <!-- En caso contrario mostrar solo selector de resultados -->
           <EditResults
             v-else
+            v-model:has-saved-results="hasSavedResults"
             :grand-prix="grandPrix"
             :session="session"
             :results-in-session="resultsInSession"
@@ -130,26 +136,19 @@
         </div>
       </div>
     </template>
-  </template>
+  </PPage>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import {onMounted, ref} from "vue";
+import {useRoute} from "vue-router";
 import PTitle from "@/components/lib/PTitle.vue";
-import {
-  driversService,
-  grandPrixService, notificationService,
-  sessionService
-} from "@/_services";
-import {Competition} from "@/types/Competition";
+import {driversService, grandPrixService, notificationService, sessionService} from "@/_services";
 import {Season} from "@/types/Season";
 import {GrandPrix} from "@/types/GrandPrix";
-
-import {defineComponent} from "vue";
-import {useAuthStore} from "@/store/authStore";
 import SessionsInGrandPrix from "@/components/admin/gps/SessionsInGrandPrix.vue";
 import {RaceSession} from "@/types/RaceSession";
 import {Driver} from "@/types/Driver";
-import {useStyles} from "@/composables/useStyles";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import EditResults from "@/components/admin/gps/EditResults.vue";
 import EditGrid from "@/components/admin/gps/EditGrid.vue";
@@ -157,157 +156,100 @@ import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PCheckbox from "@/components/lib/forms/PCheckbox.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PLabel from "@/components/lib/forms/PLabel.vue";
-import GrandPrixPageHeader from "@/components/gps/GrandPrixPageHeader.vue";
+import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
 import PCard from "@/components/lib/PCard.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import CalendarDateTimePicker from "@/components/lib/CalendarDateTimePicker.vue";
 
-export default defineComponent({
-  name: "EditSessionGrandPrix",
-  components: {
-    PField,
-    PCard,
-    GrandPrixPageHeader,
-    PLabel,
-    PButton,
-    PCheckbox,
-    PrognoAlert,
-    EditGrid,
-    EditResults,
-    PTitle,
-    SessionsInGrandPrix,
-    CalendarDateTimePicker
-  },
-  setup() {
-    const authStore = useAuthStore();
-    const styles = useStyles();
+const route = useRoute();
 
-    const currentUser = authStore.loggedUser;
-    const styleDriverCard = styles.styleDriverCard;
-    const styleDorsal = styles.styleDorsal;
+const season = ref<Season>({name: route.params.season} as Season);
+const id = route.params.gp as string;
+const session = ref<RaceSession>({id: parseInt(route.params.session.toString())} as RaceSession);
 
-    return {currentUser, styleDriverCard, styleDorsal};
-  },
-  data() {
-    return {
-      competition: {code: this.$route.params.competition} as Competition,
-      season: {name: this.$route.params.season} as Season,
-      id: this.$route.params.gp as string,
-      session: {id: parseInt(this.$route.params.session.toString())} as RaceSession,
+const resultsInSession = ref<Array<Driver>>([]);
+const hasSavedResults = ref(false);
+const startGrid = ref<Array<StartGridPosition>>([]);
+const hasSavedGrid = ref(false);
 
-      notSendNotification: false,
-      notOverrideGrid: false,
-      fastLap: {} as Driver,
-      resultsInSession: new Array<Driver>(),
-      hasSavedResults: false,
-      startGrid: new Array<StartGridPosition>(),
-      hasSavedGrid: false,
+const grandPrix = ref<GrandPrix>({} as GrandPrix);
+const sessionsToDefineGrid = ref<Array<RaceSession>>([]);
+const dataLoaded = ref(false);
+const isLoadingData = ref(true);
 
-      grandPrix: {} as GrandPrix,
-      sessionsToDefineGrid: [] as Array<RaceSession>,
-      dataLoaded: false,
-      isLoadingData: true,
+onMounted(async () => {
+  try {
+    const gp = await grandPrixService.getGrandPrixInSeason(season.value, id);
+    grandPrix.value = gp;
+    season.value = gp.season;
 
-      calendarOptions: {
-        dateFormat: 'dd/MM/yyyy',
-        lang: 'es',
-        showTodayButton: false,
-        showClearButton: false,
-        weekStart: 1,
-        validateLabel: 'Confirmar',
-        minuteSteps: 1,
-      }
-    }
-  },
-  async mounted() {
-    try {
-      const gp = await grandPrixService.getGrandPrixInSeason(this.season, this.id);
-      this.grandPrix = gp;
-      this.competition = gp.competition;
-      this.season = gp.season;
+    const [ses, driversInGP, startGridRes, rawResultsInSession] = await Promise.all([
+      sessionService.getOneSessionInGrandPrix(gp, session.value.id),
+      driversService.getDriversInGrandPrix(gp),
+      grandPrixService.getGrandPrixGrid(gp, session.value),
+      grandPrixService.getResults(gp, session.value)
+    ]);
 
-      const result = await Promise.all([
-        sessionService.getOneSessionInGrandPrix(this.grandPrix, this.session.id),
-        driversService.getDriversInGrandPrix(gp),
-        grandPrixService.getGrandPrixGrid(this.grandPrix, this.session),
-        grandPrixService.getResults(this.grandPrix, this.session)
-      ])
-      const ses = result[0];
-      const driversInGP = result[1];
-      const startGridRes = result[2];
-      const rawResultsInSession = result[3];
+    session.value = ses;
 
-      this.session = ses;
+    startGrid.value = [...startGridRes];
+    hasSavedGrid.value = startGrid.value.length != 0;
+    sessionsToDefineGrid.value = [...session.value.defineGridOf];
 
-      this.startGrid = [];
-      this.startGrid.push(...startGridRes);
-      this.hasSavedGrid = this.startGrid.length != 0;
-      this.sessionsToDefineGrid = [...this.session.defineGridOf];
-
-      // Si hay resultados, agregarlos a la lista de resultados
-      this.resultsInSession = [];
-      if (rawResultsInSession && rawResultsInSession.length) {
-        this.hasSavedResults = true;
-        rawResultsInSession.forEach((rs) => {
-          this.resultsInSession.push(rs.driver);
+    // Si hay resultados, agregarlos a la lista de resultados
+    resultsInSession.value = [];
+    if (rawResultsInSession && rawResultsInSession.length) {
+      hasSavedResults.value = true;
+      rawResultsInSession.forEach((rs) => {
+        resultsInSession.value.push(rs.driver);
+      });
+    } else {
+      // Si hay una grid para esa sesión, ordeno los pilotos en base a eso
+      // Facilita posteriormente ordenar los resultados de la sesión
+      if (startGrid.value.length) {
+        startGrid.value.forEach((gridPos) => {
+          resultsInSession.value.push(gridPos.driver);
         });
       } else {
-        // Si hay una grid para esa sesión, ordeno los pilotos en base a eso
-        // Facilita posteriormente ordenar los resultados de la sesión
-        if (this.startGrid && this.startGrid.length) {
-          this.startGrid.forEach((gridPos) => {
-            this.resultsInSession.push(gridPos.driver);
-          });
-        } else {
-          this.resultsInSession.push(...driversInGP);
+        resultsInSession.value.push(...driversInGP);
 
-          // Si no hay grid, relleno esta por defecto con la lista de pilotos para poder ordenarla después
-          driversInGP.forEach((driver, index) => {
-            this.startGrid.push({
-              gp: gp,
-              driver: driver,
-              position: index + 1,
-              isFromPit: false,
-              note: ''
-            });
+        // Si no hay grid, relleno esta por defecto con la lista de pilotos para poder ordenarla después
+        driversInGP.forEach((driver, index) => {
+          startGrid.value.push({
+            gp: gp,
+            driver: driver,
+            position: index + 1,
+            isFromPit: false,
+            note: ''
           });
-        }
+        });
       }
+    }
 
-      this.dataLoaded = true;
-    } catch (error: any) {
-      notificationService.showNotification("No se ha encontrado el gran premio", "error");
-      console.log(error);
-    } finally {
-      this.isLoadingData = false;
-    }
-  },
-  methods: {
-    toggleDefiningGridSelection(session: RaceSession, checked: boolean) {
-      if (checked) {
-        this.sessionsToDefineGrid.push(session)
-      } else {
-        this.sessionsToDefineGrid = this.sessionsToDefineGrid.filter((i: RaceSession) => i.id !== session.id)
-      }
-    },
-    changeSessionData() {
-      const data = {
-        date: this.session.date,
-        defineGridOf: this.sessionsToDefineGrid.map((session: RaceSession) => session.id)
-      }
-      sessionService.updateSessionInGrandPrix(this.grandPrix, this.session, data).then(() => {
-        notificationService.showNotification("Datos de la sesión actualizados.");
-      });
-    },
-    saveResults() {
-      const payload = {
-        results: new Map(this.resultsInSession.map((driver, index, array) => [index + 1, driver.id])),
-        notSendNotification: this.notSendNotification,
-      };
-      grandPrixService.saveResults(this.grandPrix, this.session, payload).then(() => {
-        notificationService.showNotification("¡Has guardado los resultados!");
-      });
-    }
+    dataLoaded.value = true;
+  } catch (error: any) {
+    notificationService.showNotification("No se ha encontrado el gran premio", "error");
+    console.log(error);
+  } finally {
+    isLoadingData.value = false;
   }
 });
+
+function toggleDefiningGridSelection(ses: RaceSession, checked: boolean) {
+  if (checked) {
+    sessionsToDefineGrid.value.push(ses);
+  } else {
+    sessionsToDefineGrid.value = sessionsToDefineGrid.value.filter((i: RaceSession) => i.id !== ses.id);
+  }
+}
+
+function changeSessionData() {
+  const data = {
+    date: session.value.date,
+    defineGridOf: sessionsToDefineGrid.value.map((ses: RaceSession) => ses.id)
+  };
+  sessionService.updateSessionInGrandPrix(grandPrix.value, session.value, data).then(() => {
+    notificationService.showNotification("Datos de la sesión actualizados.");
+  });
+}
 </script>

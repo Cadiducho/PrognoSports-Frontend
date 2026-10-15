@@ -59,7 +59,7 @@ import {
 const props = withDefaults(defineProps<{
   label?: string;
   placement?: Placement;
-  variant?: 'default' | 'danger' | 'success' | 'warning' | 'info';
+  variant?: 'default' | 'light' | 'danger' | 'success' | 'warning' | 'info';
 }>(), {
   label: '',
   placement: 'top',
@@ -107,6 +107,7 @@ const tooltipClasses = computed(() => {
 
   const variants = {
     default: 'bg-gray-900 text-white dark:bg-white dark:text-gray-900 dark:shadow-gray-800',
+    light: 'bg-white text-gray-900 ring-1 ring-gray-200 dark:bg-gray-800 dark:text-white dark:ring-gray-700',
     danger: 'bg-red-600 text-white shadow-red-800',
     success: 'bg-green-500 text-white shadow-green-700',
     warning: 'bg-yellow-500 text-gray-900 shadow-yellow-700',
@@ -121,6 +122,7 @@ const arrowClasses = computed(() => {
 
   const variants = {
     default: 'bg-gray-900 dark:bg-white',
+    light: 'bg-white ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700',
     danger: 'bg-red-600',
     success: 'bg-green-500',
     warning: 'bg-yellow-500',

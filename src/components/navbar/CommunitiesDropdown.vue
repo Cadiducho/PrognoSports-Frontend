@@ -7,7 +7,7 @@
     <template v-if="currentCommunity.id !== 0">
       <button
         type="button"
-        class="inline-flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary md:w-auto dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-white"
+        class="inline-flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 md:w-auto dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-white"
         :aria-expanded="isOpen"
         @click="isOpen = !isOpen"
       >
@@ -20,7 +20,7 @@
         class="left-0 z-30 mt-2 w-full min-w-60 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg md:absolute md:w-60 dark:border-gray-700 dark:bg-gray-900"
       >
         <router-link
-          class="block bg-primary/10 px-4 py-2 text-sm font-medium text-primary dark:bg-primary/20"
+          class="block bg-brand-50 px-4 py-2 text-sm font-medium text-brand-700 dark:bg-brand-900/30 dark:text-brand-200"
           :to="{name: 'communitiesDetails', params: { community: currentCommunity.name}}"
           @click="closeDropdown"
         >
@@ -87,9 +87,7 @@
             }
         },
         mounted() {
-            this.emitter.on('reloadCommunitiesDropdown', () => {
-                this.getCommunityList();
-            });
+            this.emitter.on('reloadCommunitiesDropdown', this.getCommunityList);
 
             document.addEventListener('click', this.handleClickOutside);
 
@@ -98,6 +96,7 @@
             }
         },
         beforeUnmount() {
+            this.emitter.off('reloadCommunitiesDropdown', this.getCommunityList);
             document.removeEventListener('click', this.handleClickOutside);
         },
         methods: {

@@ -47,13 +47,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 import {StartGridPosition} from "@/types/StartGridPosition";
 import StartGridCard from "@/components/gps/StartGridCard.vue";
 import {RaceSession} from "@/types/RaceSession";
 
-import useEmitter from "@/composables/useEmitter";
+import { useEmitterListener } from "@/composables/useEmitter";
 
 defineOptions({ name: "PitLaneStartGrid" });
 
@@ -61,7 +61,6 @@ const props = defineProps<{
   grid: Map<RaceSession, Array<StartGridPosition>>;
 }>();
 
-const emitter = useEmitter();
 const chosenSession = ref<RaceSession | undefined>(undefined);
 
 const parrillaSession = computed((): Array<StartGridPosition> | undefined => {
@@ -88,12 +87,9 @@ const onChangeGridSession = (session: RaceSession) => {
 
 onMounted(() => {
   chosenSession.value = props.grid.keys().next().value;
-  emitter.on("changeGridSession", onChangeGridSession);
 });
 
-onUnmounted(() => {
-  emitter.off("changeGridSession", onChangeGridSession);
-});
+useEmitterListener("changeGridSession", onChangeGridSession);
 
 defineExpose({
   chosenSession,

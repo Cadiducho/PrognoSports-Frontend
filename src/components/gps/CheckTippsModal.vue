@@ -9,10 +9,10 @@
     </template>
 
     <template #content>
-      <div class="simulate-container">
+      <div class="py-2">
         <!-- Listado único draggable -->
-        <section class="results-section">
-          <h4 class="section-title dark:text-gray-300 mb-3">
+        <section class="flex flex-col">
+          <h4 class="mb-3 text-sm font-semibold text-gray-800 dark:text-gray-200">
             Ordena los pilotos ({{ pilotosOrdenados.length }} total)
           </h4>
           <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
@@ -21,13 +21,13 @@
 
           <draggable
             :id="`simulated-drivers-${session.id}`"
-            class="drivers-list"
+            class="flex min-h-[200px] flex-wrap content-start gap-3 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50/50 p-4 transition hover:border-gray-400 md:min-h-[250px] dark:border-gray-600 dark:bg-gray-800/40 dark:hover:border-gray-500"
             :list="pilotosOrdenados"
             group="simulated-drivers"
             item-key="id"
           >
             <template #item="{ element, index }">
-              <div class="driver-item">
+              <div class="flex items-center">
                 <SmallDriverCard
                   :driver="element"
                   :position="index + 1"
@@ -103,60 +103,3 @@ onMounted(() => {
   }
 });
 </script>
-
-<style scoped>
-.simulate-container {
-  padding: 0.5rem 0;
-}
-
-.results-section {
-  display: flex;
-  flex-direction: column;
-}
-
-.section-title {
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
-.drivers-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  padding: 1.25rem;
-  border: 2px dashed rgba(100, 100, 100, 0.3);
-  border-radius: 0.5rem;
-  min-height: 250px;
-  align-content: flex-start;
-  background: rgba(50, 50, 50, 0.02);
-  transition: all 0.2s ease;
-
-  &:hover {
-    border-color: rgba(100, 100, 100, 0.5);
-    background: rgba(50, 50, 50, 0.05);
-  }
-}
-
-.driver-item {
-  display: flex;
-  align-items: center;
-}
-
-@media (max-width: 768px) {
-  .drivers-list {
-    min-height: 200px;
-  }
-}
-</style>
-
-
-
-
-
-
-
-
-
-
-
-

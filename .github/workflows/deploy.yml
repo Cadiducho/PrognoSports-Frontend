@@ -3,30 +3,44 @@ name: Deploy to Production
 on:
   push:
     branches: [ master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
 
 jobs:
   build:
     name: Build
-    uses: Cadiducho/PrognoSports-Frontend/.github/workflows/vite.yml@master
+    uses: $/.github/workflows/vite.yml
     with:
-      node_version: '24.x'
       build_command: 'build'
   deploy:
     name: Deploy
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: production
+      url: https://prognosports.com
     steps:
-      - uses: actions/download-artifact@v8
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: .github/actions
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: frontend
           path: ./dist
       - name: Upload to server
-        uses: appleboy/scp-action@v1
+        uses: ./.github/actions/rsync-deploy
         with:
           host: ${{ secrets.SECRET_FRONTEND_HOST }}
           username: ${{ secrets.SECRET_FRONTEND_USER }}
           key: ${{ secrets.SECRET_FRONTEND_RSA }}
           port: ${{ secrets.SECRET_FRONTEND_PORT }}
-          source: "dist/"
+          source: dist/
           target: ${{ secrets.SECRET_FRONTEND_PATH }}
-          strip_components: 1

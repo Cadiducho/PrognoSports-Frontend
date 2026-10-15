@@ -18,11 +18,11 @@
 <script setup lang="ts">
 import { provide, watch } from "vue";
 
+const model = defineModel<string>({ required: true });
+
 const props = defineProps<{
   variant?: 'default' | 'boxed';
 }>();
-
-const model = defineModel<string>({ required: true });
 
 const setActiveTab = (tabName: string): void => {
   model.value = tabName;

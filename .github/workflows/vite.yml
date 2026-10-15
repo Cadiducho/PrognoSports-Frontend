@@ -3,35 +3,43 @@ name: Vite CLI
 on:
   workflow_call:
     inputs:
-      node_version:
-        description: "Node version to build."
-        type: string
-        required: false
-        default: '24.x'
       build_command:
-        description: "Build command."
+        description: "Build command (package.json script)."
         type: string
         required: false
         default: 'build'
+      lint:
+        description: "Run ESLint (non-blocking until existing errors are fixed)."
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    steps :
-      - uses : actions/checkout@v7
-      - uses : pnpm/action-setup@v6
-        with :
-          version : 11
-      - uses : actions/setup-node@v7
-        with :
-          node-version : ${{ inputs.node_version }}
-          cache: 'pnpm'
-      - name : Install dependencies
-        run : pnpm install --frozen-lockfile
-      - name : 🏭 Vue Build
-        run : pnpm run ${{ inputs.build_command }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # pnpm and Node versions come from devEngines in package.json
+      - name: Setup pnpm and Node.js
+        uses: pnpm/setup@fbda4c85fc2e1e08721cd8763afea8f48d60f024 # v3.0.0
+        with:
+          cache: true
+      - name: Lint
+        if: ${{ inputs.lint }}
+        continue-on-error: true
+        run: pnpm run eslint
+      - name: 🏭 Vue Build
+        env:
+          BUILD_COMMAND: ${{ inputs.build_command }}
+        run: pnpm run "$BUILD_COMMAND"
       - name: Archive production artifacts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: 'frontend'
           path: ./dist

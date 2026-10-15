@@ -3,8 +3,20 @@ import { communityService, grandPrixService, scoreService, seasonService } from 
 import { GrandPrix } from "@/types/GrandPrix";
 import { Season } from "@/types/Season";
 import { User } from "@/types/User";
-import { RankingHeatmapSeries, RankingLineSeries, TableEntry } from "@/pages/ranking/types/ranking";
+import { HitsLevel, RankingHitsCell, RankingLinePoint, TableEntry } from "@/pages/ranking/types/ranking";
 import { Community } from "@/types/Community";
+
+/** Tramo de aciertos según el porcentaje respecto al máximo del Gran Premio */
+function hitsLevel(hits: number, maxHits: number): HitsLevel {
+  if (hits <= 0) {
+    return "zero";
+  }
+  const percentage = (hits / maxHits) * 100;
+  if (percentage > 99) return "max";
+  if (percentage > 66) return "high";
+  if (percentage > 33) return "mid";
+  return "low";
+}
 
 export function useRankingData(currentCommunity: Ref<Community>) {
   const isLoading = ref(true);
@@ -28,10 +40,13 @@ export function useRankingData(currentCommunity: Ref<Community>) {
 
   const topScorerUsers = ref<string[]>([]);
 
-  const gpPointsSeries = ref<RankingLineSeries>([]);
-  const accumulatedPointsSeries = ref<RankingLineSeries>([]);
-  const standingsSeries = ref<RankingLineSeries>([]);
-  const hitsHeatmapSeries = ref<RankingHeatmapSeries>([]);
+  // Usuarios con puntos ordenados por clasificación total (dominio de color y orden del heatmap)
+  const rankedUsernames = ref<string[]>([]);
+
+  const gpPointsData = ref<RankingLinePoint[]>([]);
+  const accumulatedPointsData = ref<RankingLinePoint[]>([]);
+  const standingsData = ref<RankingLinePoint[]>([]);
+  const hitsCells = ref<RankingHitsCell[]>([]);
 
   const orderedSeasonList = computed(() => {
     return [...seasonList.value].sort((a, b) => b.id - a.id);
@@ -58,10 +73,11 @@ export function useRankingData(currentCommunity: Ref<Community>) {
     accumulatedRows.value = [];
     hitsRows.value = [];
 
-    gpPointsSeries.value = [];
-    accumulatedPointsSeries.value = [];
-    standingsSeries.value = [];
-    hitsHeatmapSeries.value = [];
+    gpPointsData.value = [];
+    accumulatedPointsData.value = [];
+    standingsData.value = [];
+    hitsCells.value = [];
+    rankedUsernames.value = [];
     topScorerUsers.value = [];
 
     grandPrixesWithPointsIds.value = [];
@@ -148,6 +164,13 @@ export function useRankingData(currentCommunity: Ref<Community>) {
         .slice(0, 8)
         .map(([username]) => username);
 
+      rankedUsernames.value = Object.entries(totalPointsMap)
+        .filter(([, totalScore]) => Number(totalScore ?? 0) !== 0)
+        .sort((a, b) => Number(b[1] ?? 0) - Number(a[1] ?? 0))
+        .map(([username]) => username);
+
+      const gpsWithPoints = grandPrixes.value.filter((gp) => grandPrixesWithPointsIds.value.includes(Number(gp.id)));
+
       Object.entries(totalPointsMap).forEach(([username, totalScore]) => {
       if (totalScore !== 0) {
         const entry = entriesByUser.get(username);
@@ -162,86 +185,41 @@ export function useRankingData(currentCommunity: Ref<Community>) {
         accumulatedRows.value.push(accumulatedEntry);
         hitsRows.value.push(accumulatedEntry);
 
-        const gpPointsData: number[] = [];
-        const accumulatedRaw: { gpId: number; points: number }[] = [];
-        const standingsRaw: { gpId: number; standing: number | null }[] = [];
+        const gpPointsRows: RankingLinePoint[] = [];
+        const accumulatedPointsRows: RankingLinePoint[] = [];
+        const standingsRows: RankingLinePoint[] = [];
+        const hitsRowsForUser: RankingHitsCell[] = [];
 
-        for (const [gpId, userPoints] of entry.gps) {
-          gpPointsData.push(userPoints.pointsInGP);
-          standingsRaw.push({
-            gpId,
-            standing: userPoints.standings > 0 ? userPoints.standings : null,
+        // Siempre se recorren los GPs en orden para que todas las gráficas compartan el eje X
+        gpsWithPoints.forEach((gp) => {
+          const userPoints = entry.gps.get(gp.id);
+          const base = { gpCode: gp.code, gpName: gp.name, username };
+
+          gpPointsRows.push({ ...base, value: userPoints ? userPoints.pointsInGP : null });
+          accumulatedPointsRows.push({ ...base, value: userPoints ? userPoints.accumulatedPoints : null });
+          standingsRows.push({
+            ...base,
+            value: userPoints && userPoints.standings > 0 ? userPoints.standings : null,
           });
-        }
 
-        for (const [gpId, userPoints] of accumulatedEntry.gps) {
-          accumulatedRaw.push({ gpId, points: userPoints.accumulatedPoints });
-        }
+          const rawMaxHits = maxGpHits.value.get(gp.id);
+          const maxHits = rawMaxHits !== undefined && Number.isFinite(rawMaxHits) && rawMaxHits > 0 ? rawMaxHits : 0;
+          const participated = userPoints !== undefined && userPoints.hitsInGP >= 0;
+          const hits = participated ? userPoints.hitsInGP : 0;
 
-        accumulatedRaw.sort((a, b) => {
-          return grandPrixes.value.findIndex((gp) => gp.id === a.gpId)
-            - grandPrixes.value.findIndex((gp) => gp.id === b.gpId);
-        });
-        standingsRaw.sort((a, b) => {
-          return grandPrixes.value.findIndex((gp) => gp.id === a.gpId)
-            - grandPrixes.value.findIndex((gp) => gp.id === b.gpId);
-        });
-
-        const accumulatedChartData = accumulatedRaw.map((data) => data.points);
-        const standingsChartData = standingsRaw.map((data) => data.standing);
-
-        gpPointsSeries.value = [
-          ...gpPointsSeries.value,
-          {
-            name: username,
-            data: gpPointsData,
-            hidden: !topScorerUsers.value.includes(username),
-          },
-        ];
-
-        accumulatedPointsSeries.value = [
-          ...accumulatedPointsSeries.value,
-          {
-            name: username,
-            data: accumulatedChartData,
-            hidden: !topScorerUsers.value.includes(username),
-          },
-        ];
-
-        standingsSeries.value = [
-          ...standingsSeries.value,
-          {
-            name: username,
-            data: standingsChartData,
-            hidden: !topScorerUsers.value.includes(username),
-          },
-        ];
-
-        const maxHitsByGP = new Map<number, number>();
-        grandPrixes.value.forEach((gp) => {
-          maxHitsByGP.set(gp.id, maxGpHits.value.get(gp.id) || 0);
+          hitsRowsForUser.push({
+            ...base,
+            hits,
+            maxHits,
+            participated,
+            level: participated ? hitsLevel(hits, maxHits) : "none",
+          });
         });
 
-        hitsHeatmapSeries.value = [
-          {
-            name: username,
-            data: grandPrixes.value.map((gp) => {
-              const userPoints = entry.gps.get(gp.id);
-              const hits = userPoints?.hitsInGP !== undefined && userPoints.hitsInGP >= 0 ? userPoints.hitsInGP : 0;
-              const maxHits = maxHitsByGP.get(gp.id) || 1;
-              const normalizedValue = maxHits > 0 ? (hits / maxHits) * 100 : 0;
-
-              return {
-                x: gp.code,
-                y: normalizedValue,
-                hits,
-                maxHits,
-                username,
-              };
-            }),
-          },
-          ...hitsHeatmapSeries.value,
-        ];
+        gpPointsData.value = [...gpPointsData.value, ...gpPointsRows];
+        accumulatedPointsData.value = [...accumulatedPointsData.value, ...accumulatedPointsRows];
+        standingsData.value = [...standingsData.value, ...standingsRows];
+        hitsCells.value = [...hitsCells.value, ...hitsRowsForUser];
       }
       });
 
@@ -273,10 +251,12 @@ export function useRankingData(currentCommunity: Ref<Community>) {
     hitsRows,
     grandPrixes,
     grandPrixesWithPoints,
-    gpPointsSeries,
-    accumulatedPointsSeries,
-    standingsSeries,
-    hitsHeatmapSeries,
+    rankedUsernames,
+    topScorerUsers,
+    gpPointsData,
+    accumulatedPointsData,
+    standingsData,
+    hitsCells,
     loadRanking,
     checkGpWinner,
     checkAccumulatedWinner,

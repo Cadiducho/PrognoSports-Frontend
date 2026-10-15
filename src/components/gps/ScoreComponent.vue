@@ -104,6 +104,17 @@
         default-sort-direction="DESC"
       />
 
+      <template v-if="showScoreChart">
+        <h6 class="text-base font-medium dark:text-gray-300 mt-6 mb-2">
+          Puntos por sesión
+        </h6>
+        <PChart
+          :definition="scoreChart"
+          :aria-label="`Puntos de cada usuario en ${gp.name}, desglosados por sesión`"
+          :height="scoreChartHeight"
+        />
+      </template>
+
       <hr class="my-4 border-gray-300 dark:border-gray-700">
       <h6 class="text-base font-medium dark:text-gray-300">
         Opciones de la tabla
@@ -143,7 +154,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, markRaw, onBeforeUnmount, onMounted, ref, watch} from "vue";
+import {computed, markRaw, ref, watch} from "vue";
 import {storeToRefs} from "pinia";
 import {grandPrixService, notificationService, scoreService} from "@/_services";
 import {useAuthStore} from "@/store/authStore";
@@ -151,7 +162,7 @@ import {useAppStore} from "@/store/appStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {useDayjs} from "@/composables/useDayjs";
 import {useStyles} from "@/composables/useStyles";
-import useEmitter from "@/composables/useEmitter";
+import { useEmitterListener } from "@/composables/useEmitter";
 import type {GrandPrix} from "@/types/GrandPrix";
 import type {RuleSet} from "@/types/RuleSet";
 import {RaceSession, SessionId} from "@/types/RaceSession";
@@ -168,6 +179,8 @@ import PCheckbox from "@/components/lib/forms/PCheckbox.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PTag from "@/components/lib/PTag.vue";
 import PTable from "@/components/lib/table/PTable.vue";
+import PChart from "@/components/lib/charts/PChart.vue";
+import {buildGpScoreChart, gpScoreChartHeight, type GpScoreRow} from "@/composables/charts/gpScoreChart";
 import PButton from "@/components/lib/forms/PButton.vue";
 import CheckTippsModal from "@/components/gps/CheckTippsModal.vue";
 import StandingsFormatter from "@/components/gps/score/formatters/StandingsFormatter.vue";
@@ -208,7 +221,6 @@ const communityStore = useCommunityStore();
 const appStore = useAppStore();
 const dayjs = useDayjs();
 const styles = useStyles();
-const emitter = useEmitter();
 
 const currentUser = authStore.loggedUser;
 const currentCommunity = communityStore.currentCommunity;
@@ -288,6 +300,38 @@ const findWinnerUserOfSession = (session?: RaceSession): string[] => {
 
   return winners;
 };
+
+// Usuarios con puntos en el GP, de mayor a menor. Se recalcula con la simulación porque parte de tableData.
+const scoreChartUsers = computed(() => {
+  return tableData.value
+    .filter((row) => row.score.gp !== 0)
+    .sort((a, b) => b.score.gp - a.score.gp);
+});
+
+const scoreChartRows = computed<GpScoreRow[]>(() => {
+  return scoreChartUsers.value.flatMap((row) => {
+    return props.gp.sessions
+      .map((ses) => ({
+        username: row.user.username,
+        sessionCode: ses.code,
+        sessionName: sessionHumanName(ses.id),
+        points: row.score.bySession[ses.id] ?? 0,
+      }))
+      .filter((segment) => segment.points !== 0);
+  });
+});
+
+const showScoreChart = computed(() => thereAreFinishResults.value && scoreChartRows.value.length > 0);
+const scoreChartHeight = computed(() => gpScoreChartHeight(scoreChartUsers.value.length));
+
+const scoreChart = computed(() => buildGpScoreChart({
+  rows: scoreChartRows.value,
+  usernames: scoreChartUsers.value.map((row) => row.user.username),
+  sessionNames: props.gp.sessions.map((ses) => sessionHumanName(ses.id)),
+  totalsByUser: new Map(scoreChartUsers.value.map((row) => [row.user.username, row.score.gp])),
+  winners: winnersOfGrandPrix.value,
+  currentUsername: currentUser.username,
+}));
 
 const getRowClass = (row: TableRow): string => {
   if (winnersOfGrandPrix.value.includes(row.user.username) && showWinnerColor.value) {
@@ -589,13 +633,7 @@ const loadData = async (): Promise<void> => {
   }
 };
 
-onMounted(() => {
-  emitter.on("updatedTipps", onUpdatedTipps);
-});
-
-onBeforeUnmount(() => {
-  emitter.off("updatedTipps", onUpdatedTipps);
-});
+useEmitterListener("updatedTipps", onUpdatedTipps);
 
 watch(
   () => [

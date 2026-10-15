@@ -3,7 +3,7 @@
     <input
       class="sr-only peer"
       type="checkbox"
-      :checked="modelValue"
+      :checked="model"
       @change="handleChange"
     >
     <div
@@ -26,12 +26,14 @@
 import {computed} from "vue";
 
 export interface Props {
-    color?: 'primary' | 'secondary' | 'warning' | 'danger' | 'gray';
+    color?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'gray';
+    inactiveColor?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'gray';
 }
 const model = defineModel<boolean>({type: Boolean});
 
 const props = withDefaults(defineProps<Props>(), {
-    color: 'primary'
+    color: 'primary',
+    inactiveColor: 'gray'
 });
 
 const emit = defineEmits<{
@@ -43,28 +45,23 @@ const handleChange = (event: Event) => {
     emit('onSwitch', (event.target as HTMLInputElement).checked);
 }
 
-const switchClasses = computed(() => ({
-    'switch': true, // Estilos base
-    [props.color]: true // Colores tienen el mismo nombre que las clases de css
-}));
+const switchClasses = computed(() => {
+    const activeClasses = {
+        primary: 'peer-focus:ring-brand-500 dark:peer-focus:ring-brand-600 peer-checked:bg-brand-500',
+        secondary: 'peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 peer-checked:bg-blue-600',
+        success: 'peer-focus:ring-success-500 dark:peer-focus:ring-success-600 peer-checked:bg-success-500',
+        warning: 'peer-focus:ring-warning-500 dark:peer-focus:ring-warning-600 peer-checked:bg-warning-500',
+        danger: 'peer-focus:ring-error-500 dark:peer-focus:ring-error-600 peer-checked:bg-error-500',
+        gray: 'peer-focus:ring-gray-500 dark:peer-focus:ring-gray-600 peer-checked:bg-gray-500'
+    };
+    const inactiveClasses = {
+        primary: 'bg-brand-100 dark:bg-brand-900/40',
+        secondary: 'bg-blue-100 dark:bg-blue-900/40',
+        success: 'bg-success-100 dark:bg-success-900/40',
+        warning: 'bg-warning-100 dark:bg-warning-900/40',
+        danger: 'bg-error-100 dark:bg-error-900/40',
+        gray: 'bg-gray-200 dark:bg-gray-700'
+    };
+    return `${activeClasses[props.color]} ${inactiveClasses[props.inactiveColor]}`;
+});
 </script>
-
-<style lang="scss" scoped>
-.switch {
-    &.primary {
-        @apply peer-focus:ring-brand-500 dark:peer-focus:ring-brand-600 peer-checked:bg-brand-500
-    }
-    &.secondary {
-        @apply peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 peer-checked:bg-blue-600
-    }
-    &.warning {
-        @apply peer-focus:ring-warning-500 dark:peer-focus:ring-warning-600 peer-checked:bg-warning-500
-    }
-    &.danger {
-        @apply peer-focus:ring-error-500 dark:peer-focus:ring-error-600 peer-checked:bg-error-500
-    }
-    &.gray {
-        @apply peer-focus:ring-gray-500 dark:peer-focus:ring-gray-600 peer-checked:bg-gray-500
-    }
-}
-</style>
