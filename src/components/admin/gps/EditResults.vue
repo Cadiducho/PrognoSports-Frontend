@@ -76,9 +76,8 @@
   </PCard>
 </template>
 
-<script lang="ts">
-import {defineComponent, PropType} from "vue";
-import {useAuthStore} from "@/store/authStore";
+<script setup lang="ts">
+import {ref} from "vue";
 import {RaceSession} from "@/types/RaceSession";
 import {Driver} from "@/types/Driver";
 import {grandPrixService, notificationService} from "@/_services";
@@ -93,63 +92,32 @@ import PCheckbox from "@/components/lib/forms/PCheckbox.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import PDivider from "@/components/lib/PDivider.vue";
 
-export default defineComponent({
-    name: "EditResults",
-    components: {
-    PDivider,
-      PSelect,
-      PCheckbox,
-      PCard,
-        PButton,
-        PTitle,
-        PrognoAlert,
-        draggable,
-        DraggableDriverCard,
-    },
-    props: {
-        grandPrix: {
-            type: Object as PropType<GrandPrix>,
-            required: true,
-        },
-        session: {
-            type: Object as PropType<RaceSession>,
-            required: true,
-        },
-        resultsInSession: {
-            type: Object as PropType<Array<Driver>>,
-            required: true,
-        },
-        hasSavedResults: {
-            type: Boolean,
-            default: false,
-        }
-    },
-    setup() {
-        const authStore = useAuthStore();
-        const currentUser = authStore.loggedUser;
+const hasSavedResults = defineModel<boolean>("hasSavedResults", {default: false});
 
-        return {currentUser};
-    },
-    data() {
-        return {
-            notSendNotification: false,
-            notOverrideGrid: false,
-            fastLap: {} as Driver,
-            sessionResults: [...this.resultsInSession],
-        }
-    },
-    methods: {
-        saveResults() {
-            const payload = {
-                results: new Map(this.sessionResults.map((driver, index, array) => [index + 1, driver.id])),
-                notSendNotification: this.notSendNotification,
-            };
-            grandPrixService.saveResults(this.grandPrix, this.session, payload).then(() => {
-                notificationService.showNotification( "¡Has guardado los resultados!");
-            });
-        }
-    }
-});
+const props = defineProps<{
+  grandPrix: GrandPrix;
+  session: RaceSession;
+  resultsInSession: Array<Driver>;
+}>();
+
+const notSendNotification = ref(false);
+const notOverrideGrid = ref(false);
+const fastLap = ref<Driver>({} as Driver);
+const sessionResults = ref<Array<Driver>>([...props.resultsInSession]);
+
+async function saveResults() {
+  const payload = {
+    results: new Map(sessionResults.value.map((driver, index) => [index + 1, driver.id])),
+    notSendNotification: notSendNotification.value,
+  };
+  try {
+    await grandPrixService.saveResults(props.grandPrix, props.session, payload);
+    notificationService.showNotification("¡Has guardado los resultados!");
+    hasSavedResults.value = true;
+  } catch (error: any) {
+    notificationService.showNotification(error.message, "error");
+  }
+}
 </script>
 
 <style scoped>
