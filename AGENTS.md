@@ -19,11 +19,12 @@ pnpm dev:prod                    # dev server with --mode production (.env.produ
 pnpm build                       # production build -> dist/
 pnpm buildBeta                   # build with --mode beta (beta banner, .env.beta)
 pnpm eslint                      # lint src/**
+pnpm typecheck                   # vue-tsc --noEmit (Vite does not check types)
 ```
 
 Corepack does not work with pnpm 12 (its shim fails or pins an older pnpm and `devEngines` is ignored). If `pnpm` complains about the version, run `corepack disable pnpm` and use a pnpm >= 11 installed outside Corepack (see https://pnpm.io/installation).
 
-There is no test suite. ESLint currently reports pre-existing errors, so do not add new ones; check that the count does not grow. CI runs lint as a non-blocking step.
+There is no test suite. ESLint currently reports pre-existing errors, so do not add new ones; check that the count does not grow. `pnpm typecheck` also has pre-existing errors (69 when it was introduced); do not add new ones. CI runs lint and typecheck as non-blocking steps.
 
 `pnpm-workspace.yaml` only holds `allowBuilds` (postinstall scripts are denied unless listed, currently `esbuild`). pnpm 12 rejects unknown keys in that file.
 
