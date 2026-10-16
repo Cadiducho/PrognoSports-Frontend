@@ -193,13 +193,15 @@
 </template>
 
 <script lang="ts">
-import {circuitService, grandPrixService, notificationService, seasonService} from "@/_services";
+import {circuitService, grandPrixService, notificationService} from "@/_services";
+import {useQuery} from "@pinia/colada";
+import {seasonListQuery} from "@/queries/seasons";
 import {grandPrixPromoImageUrl} from "@/utils/grandPrix";
 import {Season} from "@/types/Season";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Circuit} from "@/types/Circuit";
 
-import {defineComponent} from "vue";
+import {computed, defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import SessionsInGrandPrix from "@/components/admin/gps/SessionsInGrandPrix.vue";
 import DriversInGrandPrix from "@/components/admin/gps/DriversInGrandPrix.vue";
@@ -236,7 +238,10 @@ export default defineComponent({
   setup() {
     const authStore = useAuthStore();
     const currentUser = authStore.requireUser();
-    return {currentUser, grandPrixPromoImageUrl};
+    // La lista de temporadas sale de la caché de consultas
+    const {data: seasonData} = useQuery(seasonListQuery);
+    const seasonList = computed(() => seasonData.value ?? []);
+    return {currentUser, grandPrixPromoImageUrl, seasonList};
   },
   data() {
     return {
@@ -251,7 +256,6 @@ export default defineComponent({
       selectedFile: null as File | null,
 
       circuitList: new Array<Circuit>(),
-      seasonList: new Array<Season>(),
     }
   },
   computed: {
@@ -275,10 +279,6 @@ export default defineComponent({
             await this.loadCircuitVariants(selectedCircuit);
             this.syncGrandPrixVariant();
           }
-        });
-        seasonService.getSeasonList().then((list) => {
-          this.seasonList = [];
-          this.seasonList.push(...list);
         });
 
         this.season = gp.season;

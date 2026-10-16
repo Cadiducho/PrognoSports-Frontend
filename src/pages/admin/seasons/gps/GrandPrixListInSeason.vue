@@ -72,7 +72,8 @@
 import PTable from "@/components/lib/table/PTable.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
-import { grandPrixService, seasonService } from "@/_services";
+import { grandPrixService } from "@/_services";
+import {useSeasonSelection} from "@/composables/useSeasonSelection";
 import { GrandPrix } from "@/types/GrandPrix";
 import { Season } from "@/types/Season";
 
@@ -85,8 +86,8 @@ const router = useRouter();
 
 const season = ref({ id: Number(route.params.season) } as Season);
 const gps = ref(new Array<GrandPrix>());
-const seasonList = ref(new Array<Season>());
-const chosenSeason = ref({} as Season);
+// La temporada elegida en el selector parte de la que indica la ruta
+const {seasonList, chosenSeason} = useSeasonSelection(season.value.id);
 const isDeleteGPModalActive = ref(false);
 const grandPrixToDelete = ref({} as GrandPrix);
 
@@ -104,12 +105,6 @@ const columns = [
 
 onMounted(() => {
   loadGrandPrixes(season.value);
-
-  seasonService.getSeasonList().then((seasons) => {
-    seasonList.value = [];
-    seasonList.value.push(...seasons);
-    chosenSeason.value = seasonList.value.find((s) => s.id === season.value.id)!;
-  });
 });
 
 const loadGrandPrixes = (season: Season) => {
