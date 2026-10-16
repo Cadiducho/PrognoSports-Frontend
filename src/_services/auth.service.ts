@@ -1,5 +1,5 @@
 import axios from "axios";
-import {AuthToken, IAuthToken} from "@/types/AuthToken";
+import {AuthToken, AuthTokenDto, mapAuthToken} from "@/types/AuthToken";
 
 export class AuthService {
 
@@ -21,8 +21,8 @@ export class AuthService {
   }
 
   public async getAuthTokens(): Promise<Array<AuthToken>> {
-    const tokenData = await axios.get(`/auth/tokens`) as IAuthToken[];
-    return tokenData.map(data => new AuthToken(data));
+    const tokenData = await axios.get(`/auth/tokens`) as AuthTokenDto[];
+    return tokenData.map(mapAuthToken);
   }
 
   public async deleteOneAuthToken(token: AuthToken): Promise<Array<AuthToken>> {

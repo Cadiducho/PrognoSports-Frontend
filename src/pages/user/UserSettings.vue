@@ -337,7 +337,7 @@ export default defineComponent({
     const currentUser = authStore.loggedUser;
     const currentCommunity = communityStore.currentCommunity;
 
-    const editedUser = reactive(currentUser as Partial<User>);
+    const editedUser = reactive<Partial<User>>({...currentUser});
     delete editedUser.currentCommunity;
 
     return {currentUser, editedUser, currentCommunity, emitter, dateDiff, humanDateTime, humanDate, formatDate};

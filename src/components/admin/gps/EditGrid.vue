@@ -4,7 +4,7 @@
       tag="h3"
       type="subtitle"
     >
-      Parrilla de salida para {{ session.humanName() }}
+      Parrilla de salida para {{ sessionHumanName(session) }}
     </PTitle>
 
     <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300">Parrilla</label>
@@ -52,6 +52,7 @@ import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PCard from "@/components/lib/PCard.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PTitle from "@/components/lib/PTitle.vue";
+import {sessionHumanName} from "@/utils/raceSession";
 
 const hasSavedGrid = defineModel<boolean>("hasSavedGrid", {default: false});
 

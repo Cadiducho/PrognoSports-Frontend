@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {IUser, User} from "@/types/User";
+import {User} from "@/types/User";
 import {Community} from "@/types/Community";
 import {authService, userService} from "@/_services";
 import {useCommunityStore} from "@/store/communityStore";
@@ -7,7 +7,7 @@ import {useCommunityStore} from "@/store/communityStore";
 export const useAuthStore = defineStore('auth', {
 
     state: () => ({
-        user: {id: 0} as IUser,
+        user: {id: 0} as User,
         mail: "",
         token: localStorage.getItem('token') ?? null
     }),
@@ -16,7 +16,7 @@ export const useAuthStore = defineStore('auth', {
             return this.user.id !== 0;
         },
         loggedUser(): User {
-            return new User(this.user);
+            return this.user;
         }
     },
     actions: {

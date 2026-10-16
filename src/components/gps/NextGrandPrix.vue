@@ -8,7 +8,7 @@
         <PTitle type="subtitle" tag="h2">Próximo Gran Premio</PTitle>
         <PTitle tag="h1">{{ nextGp.name }}</PTitle>
         <figure v-if="nextGp.hasPromoImage" class="max-w-lg">
-            <img class="h-auto max-w-full rounded-lg" :src="nextGp.promoImage()" alt="Next grand prix promo image">
+            <img class="h-auto max-w-full rounded-lg" :src="grandPrixPromoImageUrl(nextGp)" alt="Next grand prix promo image">
         </figure>
         <hr v-else>
 
@@ -17,21 +17,23 @@
         <p class="text-lg font-semibold">{{ nextGp.circuit?.locality }} ({{ nextGp.circuit?.country }})</p>
         <ul class="list-disc list-inside " v-for="session in nextGp.sessions">
             <li>
-                <b class="-ml-2">{{ session.humanName() }}:</b> {{ humanDateTime(session.date) }} ({{ dateDiff(session.date) }})
+                <b class="-ml-2">{{ sessionHumanName(session) }}:</b> {{ humanDateTime(session.date) }} ({{ dateDiff(session.date) }})
             </li>
         </ul>
 
-        <PButton expanded tag="router-link" :to="nextGp.gpLink()" color="primary" class="mt-5">Pronosticar</PButton>
+        <PButton expanded tag="router-link" :to="grandPrixLink(nextGp)" color="primary" class="mt-5">Pronosticar</PButton>
     </PCard>
 </template>
 
 <script lang="ts">
     import {GrandPrix} from "@/types/GrandPrix";
+    import {grandPrixLink, grandPrixPromoImageUrl} from "@/utils/grandPrix";
 
     import {defineComponent} from "vue";
     import {useCommunityStore} from "@/store/communityStore";
     import {grandPrixService} from "@/_services";
     import {useDayjs} from "@/composables/useDayjs";
+    import {sessionHumanName} from "@/utils/raceSession";
     import PCard from "@/components/lib/PCard.vue";
     import PTitle from "@/components/lib/PTitle.vue";
     import PButton from "@/components/lib/forms/PButton.vue";
@@ -47,7 +49,7 @@
             const dateDiff = dayjs.dateDiff;
             const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
             const currentCommunity = communityStore.currentCommunity;
-            return { currentCommunity, thereIsCurrentCommunity, humanDateTime, dateDiff };
+            return { currentCommunity, thereIsCurrentCommunity, humanDateTime, dateDiff, sessionHumanName, grandPrixLink, grandPrixPromoImageUrl };
         },
         data() {
             return {

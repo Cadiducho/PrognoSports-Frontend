@@ -1,30 +1,25 @@
-import {PrognoService} from "@/_services/progno.service";
-import {IRuleSet, RuleSet} from "@/types/RuleSet";
+import {getObject, getObjectList} from "@/_services/api";
+import {mapRuleSet, RuleSet} from "@/types/RuleSet";
 import axios from "axios";
 import {Community} from "@/types/Community";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Season} from "@/types/Season";
 
-export class RuleSetService extends PrognoService<IRuleSet, RuleSet> {
-
-    factory(data: IRuleSet): RuleSet {
-        return new RuleSet(data);
-    }
-
+export class RuleSetService {
     public async getRuleSetFromId(id: number): Promise<RuleSet> {
-        return this.getObjectFromAPI(`/rulesets/${id}`);
+        return getObject(`/rulesets/${id}`, mapRuleSet);
     }
 
     public async getRuleSetList(): Promise<Array<RuleSet>> {
-        return this.getObjectListFromAPI(`/rulesets`);
+        return getObjectList(`/rulesets`, mapRuleSet);
     }
 
     public async getRuleSetInSeason(community: Community, season: Season): Promise<RuleSet> {
-        return this.getObjectFromAPI(`/rulesets/communities/${community.id}/${season.id}`);
+        return getObject(`/rulesets/communities/${community.id}/${season.id}`, mapRuleSet);
     }
 
     public async getRuleSetInGrandPrix(community: Community, grandPrix: GrandPrix): Promise<RuleSet> {
-        return this.getObjectFromAPI(`/rulesets/communities/${community.id}/${grandPrix.competition.id}/${grandPrix.season.id}/${grandPrix.id}`);
+        return getObject(`/rulesets/communities/${community.id}/${grandPrix.competition.id}/${grandPrix.season.id}/${grandPrix.id}`, mapRuleSet);
     }
 
     public async createRuleSet(data: any): Promise<RuleSet> {

@@ -22,8 +22,8 @@
 
 <script setup lang="ts">
 import { UserPoints } from "@/types/UserPoints";
-import { RaceSession } from "@/types/RaceSession";
 import PTooltip from "@/components/lib/PTooltip.vue";
+import {sessionHumanNameById} from "@/utils/raceSession";
 
 defineProps<{
   gpName: string;
@@ -31,7 +31,7 @@ defineProps<{
 }>();
 
 function sessionHumanName(id: number) {
-  return RaceSession.findById(id)?.humanName() ?? "Desconocida";
+  return sessionHumanNameById(id) ?? "Desconocida";
 }
 </script>
 

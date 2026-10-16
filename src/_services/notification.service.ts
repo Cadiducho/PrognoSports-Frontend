@@ -1,17 +1,10 @@
 import axios from 'axios';
-import {INotification, Notification} from "@/types/Notification";
-import {PrognoService} from "@/_services/progno.service";
 import {toast} from 'vue-sonner'
 import {Position, ToastTypes} from "vue-sonner/lib/types";
 import {useToastStore} from "@/store/toastStore";
 import {Dictionary} from "@/types/Dictionary";
 
-export class NotificationService extends PrognoService<INotification, Notification> {
-
-  factory(data: INotification): Notification {
-    return new Notification(data);
-  }
-
+export class NotificationService {
   /**
    * Obtener un diccionario con los métodos de notificaciones disponibles. La clave es el nombre del método y el valor es la descripción.
    */

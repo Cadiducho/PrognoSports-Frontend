@@ -9,7 +9,7 @@
         <div class="relative pb-96 overflow-hidden">
           <img
             class="absolute inset-0 h-full w-full object-contain"
-            :src="circuit.layoutImage(selectedVariant)"
+            :src="circuitLayoutImageUrl(circuit, selectedVariant)"
             alt="Circuit layout"
           >
         </div>
@@ -128,6 +128,7 @@
 
 <script setup lang="ts">
 import {computed, onMounted, ref} from "vue";
+import {circuitLayoutImageUrl} from "@/utils/circuit";
 import { useRoute } from "vue-router";
 
 import { circuitService, grandPrixService, notificationService } from "@/_services";

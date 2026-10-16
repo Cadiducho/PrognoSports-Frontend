@@ -1,9 +1,25 @@
-import {User} from "@/types/User";
-import {Competition} from "@/types/Competition";
-import {RuleSet} from "@/types/RuleSet";
-import {BASE_URL} from "@/_services";
+import {Competition, CompetitionDto, mapCompetition} from "@/types/Competition";
+import {mapRuleSet, RuleSet, RuleSetDto} from "@/types/RuleSet";
+import {mapUser, User, UserDto} from "@/types/User";
 
-export interface ICommunity {
+/** Forma de la comunidad tal y como la devuelve la API */
+export interface CommunityDto {
+    id: number;
+    name: string;
+    description: string;
+    competition: CompetitionDto;
+    hasImage: boolean;
+    open: boolean;
+    owner: UserDto;
+    created: string;
+    members_amount: number;
+    user_is_member: boolean;
+    invitation: string;
+
+    defaultRuleSet?: RuleSetDto;
+}
+
+export interface Community {
     id: number;
     name: string;
     description: string;
@@ -11,7 +27,7 @@ export interface ICommunity {
     hasImage: boolean;
     open: boolean;
     owner: User;
-    created: Date | string,
+    created: Date;
     members_amount: number;
     user_is_member: boolean;
     invitation: string;
@@ -19,46 +35,19 @@ export interface ICommunity {
     defaultRuleSet: RuleSet;
 }
 
-export class Community implements ICommunity {
-    competition: Competition;
-    created: Date;
-    defaultRuleSet: RuleSet;
-    description: string;
-    id: number;
-    hasImage: boolean;
-    invitation: string;
-    members_amount: number;
-    user_is_member: boolean;
-    name: string;
-    open: boolean;
-    owner: User;
-    changedImage?: Blob;
-
-    constructor(data: ICommunity) {
-        this.competition = data.competition;
-        this.created = new Date(data.created);
-        this.defaultRuleSet = data.defaultRuleSet ? new RuleSet(data.defaultRuleSet) : {id: 0} as RuleSet;
-        this.description = data.description;
-        this.id = data.id;
-        this.hasImage = data.hasImage;
-        this.invitation = data.invitation;
-        this.members_amount = data.members_amount;
-        this.user_is_member = data.user_is_member;
-        this.name = data.name;
-        this.open = data.open;
-        this.owner = data.owner;
-    }
-
-    public communityImage(): string {
-        if (this.changedImage) {
-            return URL.createObjectURL(this.changedImage);
-        }
-
-        if (this.hasImage) {
-            return BASE_URL + `/communities/${this.id}/image`;
-        }
-
-        // ToDo: coger la imagen por defecto de los assets
-        return 'https://github.com/Cadiducho/PrognoSports-Frontend/blob/develop/src/assets/default_profile_image.jpg?raw=true';
-    }
+export function mapCommunity(dto: CommunityDto): Community {
+    return {
+        id: dto.id,
+        name: dto.name,
+        description: dto.description,
+        competition: dto.competition && mapCompetition(dto.competition),
+        hasImage: dto.hasImage,
+        open: dto.open,
+        owner: dto.owner && mapUser(dto.owner),
+        created: new Date(dto.created),
+        members_amount: dto.members_amount,
+        user_is_member: dto.user_is_member,
+        invitation: dto.invitation,
+        defaultRuleSet: dto.defaultRuleSet?.data ? mapRuleSet(dto.defaultRuleSet) : {id: 0} as RuleSet,
+    };
 }

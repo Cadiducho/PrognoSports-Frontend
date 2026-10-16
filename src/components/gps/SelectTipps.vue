@@ -115,9 +115,9 @@
       </section>
     </div>
 
-    <template v-if="session.isBeforeClosureDate()">
+    <template v-if="isBeforeSessionClosure(session)">
       <p-button
-        v-if="pilotosPronosticados.length === ruleSet.cantidadPilotosPronosticados(session)"
+        v-if="pilotosPronosticados.length === ruleSetPredictedPositions(ruleSet, session)"
         color="primary"
         expanded
         :disabled="sendingPronostico"
@@ -130,7 +130,7 @@
         v-else
         variant="warning"
       >
-        El pronóstico debe tener {{ ruleSet.cantidadPilotosPronosticados(session) }} pilotos escogidos y ordenados (Has
+        El pronóstico debe tener {{ ruleSetPredictedPositions(ruleSet, session) }} pilotos escogidos y ordenados (Has
         escogido {{ pilotosPronosticados.length }}).
       </PrognoAlert>
     </template>
@@ -145,9 +145,9 @@
       Ya no se puede pronosticar
     </p-button>
 
-    <PDivider v-if="(pilotosPronosticados.length > 0) && session.isBeforeClosureDate()" />
+    <PDivider v-if="(pilotosPronosticados.length > 0) && isBeforeSessionClosure(session)" />
     <p-button
-      v-if="(pilotosPronosticados.length > 0) && session.isBeforeClosureDate()"
+      v-if="(pilotosPronosticados.length > 0) && isBeforeSessionClosure(session)"
       color="danger"
       type="soft"
       expanded
@@ -160,6 +160,7 @@
 
 <script setup lang="ts">
 import {RaceSession} from "@/types/RaceSession";
+import {ruleSetPredictedPositions} from "@/utils/ruleSet";
 import {grandPrixService, notificationService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Driver} from "@/types/Driver";
@@ -181,6 +182,7 @@ import PTitle from "@/components/lib/PTitle.vue";
 import PDivider from "@/components/lib/PDivider.vue";
 import useEmitter from "@/composables/useEmitter";
 import PTag from "@/components/lib/PTag.vue";
+import {isBeforeSessionClosure} from "@/utils/raceSession";
 
 const props = defineProps<{
   session: RaceSession,

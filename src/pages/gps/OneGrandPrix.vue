@@ -36,7 +36,7 @@
                 v-for="session in grandPrix.sessions"
                 :key="session.name"
                 :name="session.name"
-                :label="session.humanName()"
+                :label="sessionHumanName(session)"
                 :active-tab="activeTab"
                 :set-active-tab="(tabName: string) => activeTab = tabName"
               />
@@ -49,7 +49,7 @@
             >
               <ClouseDateMessage :session="session" />
               <h6 class="dark:text-gray-300">
-                Para esta sesión se han de pronosticar {{ ruleSet.cantidadPilotosPronosticados(session) }} pilotos
+                Para esta sesión se han de pronosticar {{ ruleSetPredictedPositions(ruleSet, session) }} pilotos
               </h6>
               <SelectTipps
                 :session="session"
@@ -88,7 +88,7 @@
 
         <section class="my-2 space-y-2">
           <p-button
-            v-if="currentUser.isAdmin()"
+            v-if="isUserAdmin(currentUser)"
             color="info"
             expanded
             tag="router-link"
@@ -107,7 +107,7 @@
             v-for="session in grandPrix.sessions"
             :key="session.name"
             :name="session.name"
-            :label="session.humanName()"
+            :label="sessionHumanName(session)"
             :active-tab="activeTab"
             :set-active-tab="(tabName: string) => activeTab = tabName"
           />
@@ -135,6 +135,7 @@
 
 <script lang="ts">
 import CircuitCard from "@/components/gps/CircuitCard.vue";
+import {ruleSetPredictedPositions} from "@/utils/ruleSet";
 import StartGrid from "@/components/gps/StartGridList.vue";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
@@ -163,6 +164,8 @@ import {defineComponent} from "vue";
 import {useCommunityStore} from "@/store/communityStore";
 import Loading from "@/components/lib/Loading.vue";
 import {useAuthStore} from "@/store/authStore";
+import {isUserAdmin} from "@/utils/user";
+import {sessionHumanName} from "@/utils/raceSession";
 import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
@@ -195,7 +198,7 @@ export default defineComponent({
 
     const currentCommunity = communityStore.currentCommunity;
     const currentUser = authStore.loggedUser;
-    return {currentUser, currentCommunity};
+    return {currentUser, currentCommunity, isUserAdmin, sessionHumanName, ruleSetPredictedPositions};
   },
   data() {
     return {

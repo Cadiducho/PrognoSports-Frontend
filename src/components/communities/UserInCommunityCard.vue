@@ -3,7 +3,7 @@
         :to="{name: 'user', params: { user: member.user.id }}"
         class="bg-white dark:bg-gray-900 dark:ring-1 dark:ring-white/10 shadow-lg rounded-lg overflow-hidden my-4 w-full hover:shadow-xl hover:scale-105 transition ease-in-out delay-150 duration-300"
         >
-        <img class="w-full h-48 object-cover object-center" :src="member.user.profileImage()" alt="User image">
+        <img class="w-full h-48 object-cover object-center" :src="userProfileImageUrl(member.user)" alt="User image">
         <div class="px-6 py-2 bg-gray-200 dark:bg-gray-800">
             <h1 class="mx-3 text-white font-semibold text-lg text-center" :style="{ color : '#' + member.user.rank.color }">{{ member.user.rank.name }}</h1>
         </div>
@@ -63,6 +63,7 @@ import {useDayjs} from "@/composables/useDayjs";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {CommunityUser} from "@/types/CommunityUser";
+import {userProfileImageUrl} from "@/utils/user";
 
 export default defineComponent({
     name: "UserInCommunityCard",
@@ -82,7 +83,7 @@ export default defineComponent({
         const humanDateTime = dayjs.humanDateTime;
         const currentUser = authStore.loggedUser;
         const currentCommunity = communityStore.currentCommunity;
-        return { currentUser, currentCommunity, dateDiff, humanDate, humanDateTime };
+        return { currentUser, currentCommunity, dateDiff, humanDate, humanDateTime, userProfileImageUrl };
     },
 })
 </script>

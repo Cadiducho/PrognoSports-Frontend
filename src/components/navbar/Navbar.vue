@@ -72,7 +72,7 @@
                 Ranking
               </router-link>
               <router-link
-                v-if="currentUser.isAdmin()"
+                v-if="isUserAdmin(currentUser)"
                 class="rounded-md px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-white"
                 to="/admin"
                 @click="closeMobileMenu"
@@ -124,6 +124,7 @@
 import AvatarComponent from "@/components/navbar/AvatarComponent.vue";
 import CommunitiesDropdown from "@/components/navbar/CommunitiesDropdown.vue";
 import {ref} from "vue";
+import {isUserAdmin} from "@/utils/user";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import SwitchTheme from "@/components/navbar/SwitchTheme.vue";

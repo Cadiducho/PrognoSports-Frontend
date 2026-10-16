@@ -33,7 +33,7 @@
           v-for="session in competition.availableSessions"
           :key="session.id"
         >
-          <b>{{ session.humanName() }}:</b> {{ ruleSet.data.predictedPositions[session.id] || 4 }} posiciones.
+          <b>{{ sessionHumanName(session) }}:</b> {{ ruleSet.data.predictedPositions[session.id] || 4 }} posiciones.
         </li>
       </ul>
     </PProse>
@@ -61,7 +61,7 @@
               v-for="session in competition.availableSessions"
               :key="session.id"
             >
-              {{ session.humanName() }}
+              {{ sessionHumanName(session) }}
             </th>
           </tr>
         </template>
@@ -113,7 +113,7 @@
               v-for="session in competition.availableSessions"
               :key="session.id"
             >
-              {{ session.humanName() }}
+              {{ sessionHumanName(session) }}
             </th>
           </tr>
         </template>
@@ -182,6 +182,7 @@ import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
 import {competitionService, rulesetService, seasonService} from "@/_services";
 import {RuleSet} from "@/types/RuleSet";
+import {sessionHumanName} from "@/utils/raceSession";
 import PField from "@/components/lib/forms/PField.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import PTitle from "@/components/lib/PTitle.vue";
@@ -197,6 +198,9 @@ export default defineComponent({
             type: Object as PropType<Community>,
             required: true
         },
+    },
+    setup() {
+        return {sessionHumanName};
     },
     data() {
         return {

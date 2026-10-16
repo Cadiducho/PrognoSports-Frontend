@@ -114,7 +114,7 @@
 import PTitle from "@/components/lib/PTitle.vue";
 import {competitionService, notificationService} from "@/_services";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
-import {ICompetition} from "@/types/Competition";
+import {Competition} from "@/types/Competition";
 import {marked} from "marked";
 
 import {defineComponent} from "vue";
@@ -158,7 +158,7 @@ export default defineComponent({
                 currentSeason: undefined!,
                 rules: undefined!,
                 availableSessions: []
-            } as ICompetition,
+            } as Competition,
         }
     },
     computed: {

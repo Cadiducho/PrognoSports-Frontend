@@ -14,7 +14,7 @@
         <span class="inline-flex items-center gap-2">
           <img
             class="h-8 w-8 rounded-full object-cover"
-            :src="currentUser.profileImage()"
+            :src="userProfileImageUrl(currentUser)"
             alt="Profile image"
           >
           <span class="truncate">{{ currentUser.username }}</span>
@@ -62,6 +62,7 @@
 
 import { useAuth } from "@/composables/useAuth";
 import { useAuthStore } from "@/store/authStore";
+import { userProfileImageUrl } from "@/utils/user";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 const auth = useAuth();
 const authStore = useAuthStore();

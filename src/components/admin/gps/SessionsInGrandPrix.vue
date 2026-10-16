@@ -27,7 +27,7 @@
           :class="currentSession?.id === ses.id ? 'ring-2 !ring-brand-500' : 'hover:bg-gray-50 dark:hover:bg-gray-800'"
         >
             <PTitle tag="p" type="subtitle" class="mb-2">
-              {{ ses.humanName() }}
+              {{ sessionHumanName(ses) }}
               <span
                 v-if="currentSession?.id === ses.id"
                 class="inline-block px-2 py-1 leading-none bg-warning-200 text-warning-800 rounded-full font-semibold uppercase tracking-wide text-xs"
@@ -72,7 +72,7 @@
             :key="ses.id"
             :value="ses"
           >
-            {{ ses.humanName() }}
+            {{ sessionHumanName(ses) }}
           </option>
         </PSelect>
         <PSelect
@@ -85,7 +85,7 @@
             :key="ses.id"
             :value="ses"
           >
-            {{ ses.humanName() }} del {{ humanDate(ses.date) }}
+            {{ sessionHumanName(ses) }} del {{ humanDate(ses.date) }}
           </option>
         </PSelect>
 
@@ -113,6 +113,7 @@
 import {defineComponent, PropType} from "vue";
 import {GrandPrix} from "@/types/GrandPrix";
 import {useDayjs} from "@/composables/useDayjs";
+import {sessionHumanName} from "@/utils/raceSession";
 import {RaceSession} from "@/types/RaceSession";
 import {notificationService, sessionService} from "@/_services";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
@@ -146,7 +147,7 @@ export default defineComponent({
 
         const humanDateTime = dayjs.humanDateTime;
         const humanDate = dayjs.humanDate;
-        return { humanDateTime, humanDate };
+        return { humanDateTime, humanDate, sessionHumanName };
     },
     data() {
         return {

@@ -1,27 +1,29 @@
-export interface IAuthToken {
+/** Forma del token de sesión tal y como lo devuelve la API */
+export interface AuthTokenDto {
     current: boolean;
     ipAddress: string;
-    createdAt: Date | string;
-    lastActivityAt:  Date | string;
+    createdAt: string;
+    lastActivityAt: string;
     lifetime: number;
     token: string;
 }
 
-export class AuthToken implements IAuthToken {
+export interface AuthToken {
     current: boolean;
     ipAddress: string;
     createdAt: Date;
-    lastActivityAt:  Date;
+    lastActivityAt: Date;
     lifetime: number;
     token: string;
+}
 
-    constructor(token: IAuthToken) {
-        this.current = token.current;
-        this.ipAddress = token.ipAddress;
-        this.createdAt = new Date(token.createdAt);
-        this.lastActivityAt = new Date(token.lastActivityAt);
-        this.lifetime = token.lifetime;
-        this.token = token.token;
-    }
-
+export function mapAuthToken(dto: AuthTokenDto): AuthToken {
+    return {
+        current: dto.current,
+        ipAddress: dto.ipAddress,
+        createdAt: new Date(dto.createdAt),
+        lastActivityAt: new Date(dto.lastActivityAt),
+        lifetime: dto.lifetime,
+        token: dto.token,
+    };
 }
