@@ -101,6 +101,8 @@ const verifyAccount = async () => {
 
     isVerifiying.value = true;
     await authService.verifyEmail(verificationCode.value);
+    // El usuario ya no se pide en cada navegación: hay que recargarlo para que el guard de verificación lo deje pasar
+    await authStore.loadUser(true);
     if (redirectTo) {
       await router.push(redirectTo as string);
     } else {
