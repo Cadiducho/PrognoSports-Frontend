@@ -53,7 +53,8 @@
 </template>
 
 <script setup lang="ts">
-import {competitionService, notificationService, seasonService} from "@/_services";
+import {competitionService, notificationService} from "@/_services";
+import {useCreateSeason} from "@/queries/seasons";
 import {Competition} from "@/types/Competition";
 
 import {onMounted, reactive, ref} from "vue";
@@ -70,6 +71,8 @@ const createdSeason = reactive({
   competitionId: 0
 });
 const competitions = ref<Competition[]>([]);
+// Al terminar invalida la lista de temporadas, que se actualiza sola en las pantallas que la usan
+const {mutateAsync: createSeason} = useCreateSeason();
 
 onMounted(() => {
   competitionService.getCompetitionList().then((list) => {
@@ -89,7 +92,7 @@ const registerSeason = async () => {
   }
 
   try {
-    const result = await seasonService.createSeason(rawSeason);
+    const result = await createSeason(rawSeason);
     notificationService.showNotification("Se ha registrado correctamente la temporada `" + result.name + "`");
 
     router.push({

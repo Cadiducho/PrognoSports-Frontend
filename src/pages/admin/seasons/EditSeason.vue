@@ -82,6 +82,7 @@
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from "vue-router";
 import { competitionService, notificationService, seasonService } from "@/_services";
+import { useEditSeason } from "@/queries/seasons";
 import { Season } from "@/types/Season";
 import { Competition } from "@/types/Competition";
 import PButton from "@/components/lib/forms/PButton.vue";
@@ -95,6 +96,8 @@ const seasonId = route.params.season;
 const isLoading = ref(true);
 const season = ref<Season>();
 const competitions = ref<Competition[]>([]);
+// Al terminar invalida la lista de temporadas, que se actualiza sola en las pantallas que la usan
+const { mutateAsync: editSeasonMutation } = useEditSeason();
 
 onMounted(() => {
   seasonService.getSeason(seasonId.toString()).then((fetchedSeason) => {
@@ -118,7 +121,7 @@ const editSeason = () => {
     name: season.value!.name,
     totalEvents: season.value!.totalEvents
   }
-  seasonService.editSeason(season.value!, data).then((result) => {
+  editSeasonMutation({ season: season.value!, data }).then((result) => {
     notificationService.showNotification("Se ha editado correctamente la temporada `" + result.name + "`");
 
     router.push({

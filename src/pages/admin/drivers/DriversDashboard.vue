@@ -75,9 +75,9 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import {Driver} from "@/types/Driver";
-import {Season} from "@/types/Season";
 import {Column} from "@/components/lib/table";
-import {driversService, seasonService, notificationService} from "@/_services";
+import {driversService, notificationService} from "@/_services";
+import {useSeasonSelection} from "@/composables/useSeasonSelection";
 
 import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
@@ -85,8 +85,7 @@ import {useRouter} from "vue-router";
 const router = useRouter();
 
 const drivers = ref(new Array<Driver>());
-const seasonList = ref(new Array<Season>());
-const chosenSeason = ref<Season>({} as Season);
+const {seasonList, chosenSeason} = useSeasonSelection();
 const driverToDelete = ref<Driver>({} as Driver);
 const isDeleteDriverModalActive = ref(false);
 
@@ -158,10 +157,5 @@ onMounted(() => {
     drivers.value = [];
     drivers.value.push(...response);
   })
-  seasonService.getSeasonList().then((response) => {
-    seasonList.value = [];
-    seasonList.value.push(...response);
-    chosenSeason.value = seasonList.value[seasonList.value.length - 1];
-  });
 });
 </script>

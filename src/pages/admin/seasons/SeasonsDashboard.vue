@@ -56,8 +56,10 @@ import PrognoModal from "@/components/lib/PrognoModal.vue";
 import PTable from "@/components/lib/table/PTable.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import {useRouter} from "vue-router";
-import {onMounted, ref} from "vue";
-import {notificationService, seasonService} from "@/_services";
+import {computed, ref} from "vue";
+import {useQuery} from "@pinia/colada";
+import {notificationService} from "@/_services";
+import {seasonListQuery, useDeleteSeason} from "@/queries/seasons";
 import {Season} from "@/types/Season";
 
 const router = useRouter();
@@ -68,7 +70,10 @@ const columns = ref([
   { label: 'Competición', field: 'competition.name' },
   { label: 'Eventos Totales', field: 'totalEvents' },
 ]);
-const seasons = ref(new Array<Season>())
+// La lista sale de la caché de consultas: se actualiza sola al crear, editar o eliminar una temporada
+const {data: seasonData} = useQuery(seasonListQuery);
+const seasons = computed(() => seasonData.value ?? []);
+const {mutateAsync: deleteSeasonMutation} = useDeleteSeason();
 const showConfirmDeleteModal = ref(false);
 const seasonToDelete = ref(undefined as Season | undefined);
 
@@ -91,11 +96,6 @@ const filteredSeasons = ((original: Season[], filter: string): Season[] => {
     });
 });
 
-onMounted(async () => {
-    const response = await seasonService.getSeasonList();
-    seasons.value.push(...response);
-});
-
 const goToView = (season: Season) => {
     router.push({name: 'adminGpsInSeason', params: {season: season.id}});
 }
@@ -114,9 +114,8 @@ const deleteSeason = async (season?: Season) => {
         return;
     }
     try {
-        await seasonService.deleteSeason(season);
+        await deleteSeasonMutation(season);
         notificationService.showNotification("Se ha eliminado correctamente la temporada `" + season.name + "`", "success");
-        seasons.value.splice(seasons.value.findIndex(s => s.id === season.id),1);
         showConfirmDeleteModal.value = false;
     } catch (e: any) {
         notificationService.showNotification(e.response.data.message, "error");

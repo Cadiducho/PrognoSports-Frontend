@@ -73,7 +73,8 @@ import PTable from "@/components/lib/table/PTable.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import ColorBadge from "@/components/lib/table/formatters/ColorBadge.vue";
-import {driversService, notificationService, seasonService} from "@/_services";
+import {driversService, notificationService} from "@/_services";
+import {useSeasonSelection} from "@/composables/useSeasonSelection";
 import { Season } from "@/types/Season";
 
 import { ref, onMounted } from "vue";
@@ -86,8 +87,8 @@ const router = useRouter();
 
 const season = ref({ id: Number(route.params.season) } as Season);
 const drivers = ref(new Array<Driver>());
-const seasonList = ref(new Array<Season>());
-const chosenSeason = ref({} as Season);
+// La temporada elegida en el selector parte de la que indica la ruta
+const {seasonList, chosenSeason} = useSeasonSelection(season.value.id);
 const isDeleteModalActive = ref(false);
 const driverToDelete = ref({} as Driver);
 
@@ -101,12 +102,6 @@ const columns = [
 
 onMounted(() => {
   loadDrivers(season.value);
-
-  seasonService.getSeasonList().then((seasons) => {
-    seasonList.value = [];
-    seasonList.value.push(...seasons);
-    chosenSeason.value = seasonList.value.find((s) => s.id === season.value.id)!;
-  });
 });
 
 const loadDrivers = async (season: Season) => {
