@@ -108,9 +108,9 @@ import {communityImageUrl} from "@/utils/community";
 import {defineComponent, PropType} from "vue";
 import {useDayjs} from "@/composables/useDayjs";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
-import {communityService, notificationService} from "@/_services";
+import {notificationService} from "@/_services";
 import {useCommunityStore} from "@/store/communityStore";
-import useEmitter from "@/composables/useEmitter";
+import {useJoinCommunity, useQuitCommunity} from "@/queries/communities";
 import PCard from "@/components/lib/PCard.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PTitle from "@/components/lib/PTitle.vue";
@@ -131,15 +131,17 @@ export default defineComponent({
     },
     setup() {
         const dayjs = useDayjs();
-        const emitter = useEmitter();
         const communityStore = useCommunityStore();
+        // Al terminar invalidan las listas de comunidades, que se actualizan solas
+        const { mutateAsync: joinCommunityMutation } = useJoinCommunity();
+        const { mutateAsync: quitCommunityMutation } = useQuitCommunity();
 
         const humanDateTime = dayjs.humanDateTime;
 
         const currentCommunity = communityStore.currentCommunity;
         const setCommunity = communityStore.setCommunity;
         const removeCommunity = communityStore.removeCommunity;
-        return { humanDateTime, emitter, currentCommunity, setCommunity, removeCommunity, communityImageUrl }
+        return { humanDateTime, currentCommunity, setCommunity, removeCommunity, communityImageUrl, joinCommunityMutation, quitCommunityMutation }
     },
     data() {
         return {
@@ -149,7 +151,7 @@ export default defineComponent({
     },
     methods: {
         joinCommunity() {
-            communityService.joinCommunity(this.community).then(communityRes => {
+            this.joinCommunityMutation({community: this.community}).then(communityRes => {
                 notificationService.showNotification("¡Te has unido correctamente a " + communityRes.name + "!");
 
                 this.setCommunity(communityRes);
@@ -157,8 +159,6 @@ export default defineComponent({
             }).catch((error) => {
                 notificationService.showNotification("Ha ocurrido un error: " + error.message, "error");
             }).finally(() => {
-                this.emitter.emit('reloadCommunitiesList');
-                this.emitter.emit('reloadCommunitiesDropdown');
                 this.isJoinModalActive = false;
             });
         },
@@ -167,13 +167,11 @@ export default defineComponent({
                 notificationService.showNotification("No puedes dejar la comunidad en la que estás en este momento", "error");
                 this.$emit('close');
             } else {
-                communityService.quitCommunity(this.community).then(() => {
+                this.quitCommunityMutation(this.community).then(() => {
                     notificationService.showNotification("¡Has dejado la comunidad " + this.community.name + "!");
                 }).catch((error) => {
                     notificationService.showNotification("Ha ocurrido un error: " + error.message, "error");
                 }).finally(() => {
-                    this.emitter.emit('reloadCommunitiesList');
-                    this.emitter.emit('reloadCommunitiesDropdown');
                     this.isLeaveModalActive = false;
                 });
             }
