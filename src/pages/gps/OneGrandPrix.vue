@@ -141,13 +141,13 @@ import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
 import {GrandPrix} from "@/types/GrandPrix";
 import {
-  communityService,
   driversService,
   grandPrixService,
   notificationService,
   rulesetService,
   scoreService
 } from "@/_services";
+import {fetchCommunityMembers} from "@/queries/communities";
 import {StartGridPosition} from "@/types/StartGridPosition";
 import SelectTipps from "@/components/gps/SelectTipps.vue";
 import PitLaneStartGrid from "@/components/gps/PitLaneStartGrid.vue";
@@ -227,7 +227,7 @@ export default defineComponent({
         driversService.getDriversInGrandPrix(this.grandPrix!),
         rulesetService.getRuleSetInGrandPrix(this.currentCommunity, this.grandPrix),
         scoreService.getPointsInGrandPrix(this.currentCommunity, this.grandPrix!),
-        communityService.getMembers(this.currentCommunity),
+        fetchCommunityMembers(this.currentUser.id, this.currentCommunity.id),
         this.getStartGrids(this.grandPrix)
       ]).then(result => {
         this.drivers = result[0];

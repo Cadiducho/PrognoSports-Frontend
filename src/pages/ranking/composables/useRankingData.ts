@@ -1,7 +1,9 @@
 import { computed, onMounted, ref, watch, type Ref } from "vue";
 import { useQuery } from "@pinia/colada";
-import { communityService, grandPrixService, scoreService } from "@/_services";
+import { grandPrixService, scoreService } from "@/_services";
+import { fetchCommunityMembers } from "@/queries/communities";
 import { seasonListQuery } from "@/queries/seasons";
+import { useAuthStore } from "@/store/authStore";
 import { GrandPrix } from "@/types/GrandPrix";
 import { Season } from "@/types/Season";
 import { User } from "@/types/User";
@@ -21,6 +23,7 @@ function hitsLevel(hits: number, maxHits: number): HitsLevel {
 }
 
 export function useRankingData(currentCommunity: Ref<Community>) {
+  const currentUser = useAuthStore().requireUser();
   const isLoading = ref(true);
   const tableHasData = ref(false);
   // La lista de temporadas sale de la caché de consultas; la elegida parte de la última
@@ -101,7 +104,7 @@ export function useRankingData(currentCommunity: Ref<Community>) {
 
     return Promise.all([
       grandPrixService.getGrandPrixesList(season),
-      communityService.getMembers(currentCommunity.value),
+      fetchCommunityMembers(currentUser.id, currentCommunity.value.id),
       scoreService.getUserPointsByGP(currentCommunity.value, season),
       scoreService.getTotalUserPoints(currentCommunity.value, season),
     ]).then(([gpList, members, grandPrixPoints, totalPointsByUser]) => {
