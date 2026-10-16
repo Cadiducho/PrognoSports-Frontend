@@ -73,7 +73,8 @@
 import PTable from "@/components/lib/table/PTable.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
-import {constructorService, seasonService} from "@/_services";
+import {constructorService} from "@/_services";
+import {useSeasonSelection} from "@/composables/useSeasonSelection";
 import { Season } from "@/types/Season";
 
 import { ref, onMounted } from "vue";
@@ -87,8 +88,8 @@ const router = useRouter();
 
 const season = ref({ id: Number(route.params.season) } as Season);
 const constructors = ref(new Array<Constructor>());
-const seasonList = ref(new Array<Season>());
-const chosenSeason = ref({} as Season);
+// La temporada elegida en el selector parte de la que indica la ruta
+const {seasonList, chosenSeason} = useSeasonSelection(season.value.id);
 const isDeleteGPModalActive = ref(false);
 const constructorToDelete = ref({} as Constructor);
 
@@ -101,12 +102,6 @@ const columns = [
 
 onMounted(() => {
   loadConstructors(season.value);
-
-  seasonService.getSeasonList().then((seasons) => {
-    seasonList.value = [];
-    seasonList.value.push(...seasons);
-    chosenSeason.value = seasonList.value.find((s) => s.id === season.value.id)!;
-  });
 });
 
 const loadConstructors = (season: Season) => {
