@@ -20,14 +20,33 @@ export interface ApiError {
   status?: number;
 }
 
-function authHeader() {
-  return localStorage.getItem('token') || '';
+// El token y la reacción a un 401 los aporta la sesión (ver src/session.ts): los servicios no conocen los stores
+let tokenProvider: () => string | null = () => null;
+let unauthorizedHandler: (() => void) | undefined;
+
+export function setTokenProvider(provider: () => string | null) {
+  tokenProvider = provider;
+}
+
+export function setUnauthorizedHandler(handler: () => void) {
+  unauthorizedHandler = handler;
+}
+
+/**
+ * Avisa de un 401. El login queda fuera porque responde 401 con credenciales inválidas.
+ * Cambiar el email o la contraseña también responden 401 si la contraseña es incorrecta, así que un 401 no implica
+ * que la sesión haya caducado: el manejador lo comprueba.
+ */
+function notifyUnauthorized(status: number | undefined, url: string | undefined) {
+  if (status === 401 && !url?.includes('/auth/login')) {
+    unauthorizedHandler?.();
+  }
 }
 
 axios.defaults.baseURL = BASE_URL;
 
 axios.interceptors.request.use(function (config) {
-  config.headers!.Authorization = authHeader();
+  config.headers!.Authorization = tokenProvider() ?? '';
 
   return config;
 });
@@ -38,14 +57,18 @@ axios.interceptors.response.use((response) => {
     if (data.success) {
       return data.result;
     } else {
+      // La API responde con success=false y el estado en el cuerpo, a veces con un HTTP 200 (p.ej. un token inválido)
+      notifyUnauthorized(data.status, response.config?.url);
       return Promise.reject(data);
     }
   }
   return response;
 }, error => {
+  const status: number | undefined = error.response?.status ?? error.response?.data?.status;
+  notifyUnauthorized(status, error.config?.url);
   const payload: ApiError = {
     message: error.response?.data?.message,
-    status: error.response?.status ?? error.response?.data?.status,
+    status,
   };
   return Promise.reject(payload);
 });
