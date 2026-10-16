@@ -51,6 +51,7 @@
 
 <script setup lang="ts">
 import { RaceSession } from "@/types/RaceSession";
+import {ruleSetPredictedPositions} from "@/utils/ruleSet";
 import { GrandPrix } from "@/types/GrandPrix";
 import { Driver } from "@/types/Driver";
 import { RuleSet } from "@/types/RuleSet";
@@ -78,7 +79,7 @@ const emit = defineEmits<{
 
 const pilotosOrdenados = ref(new Array<Driver>());
 
-const cantidadPronosticados = computed(() => props.ruleSet.cantidadPilotosPronosticados(props.session));
+const cantidadPronosticados = computed(() => ruleSetPredictedPositions(props.ruleSet, props.session));
 
 const handleSimulate = () => {
   // Se emite la lista completa de piltos

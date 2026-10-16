@@ -1,28 +1,23 @@
+import {getObject, getObjectList} from "@/_services/api";
 import axios from "axios";
-import {Constructor, IConstructor} from "@/types/Constructor";
-import {PrognoService} from "@/_services/progno.service";
+import {Constructor} from "@/types/Constructor";
 import {Season} from "@/types/Season";
 import {Driver} from "@/types/Driver";
 
-export class ConstructorService extends PrognoService<IConstructor, Constructor> {
-
-  factory(data: IConstructor): Constructor {
-    return new Constructor(data);
-  }
-
+export class ConstructorService {
   /**
    * Devuelve un constructor
    * @param constructorId el id del constructor
    */
   public async getConstructor(constructorId: string): Promise<Constructor> {
-    return this.getObjectFromAPI(`/constructors/${constructorId}`)
+    return getObject<Constructor>(`/constructors/${constructorId}`)
   }
 
   /**
    * Devuelve la lista total de constructores
    */
   public async getAllConstructors(): Promise<Array<Constructor>> {
-    return this.getObjectListFromAPI(`/constructors`)
+    return getObjectList<Constructor>(`/constructors`)
   }
 
   public async createConstructor(data: { name: string }): Promise<Constructor> {
@@ -42,7 +37,7 @@ export class ConstructorService extends PrognoService<IConstructor, Constructor>
    * @param season la temporada
    */
   public async getConstructorsInSeason(season: Season): Promise<Array<Constructor>> {
-    return this.getObjectListFromAPI(`/seasons/${season.id}/constructors`);
+    return getObjectList<Constructor>(`/seasons/${season.id}/constructors`);
   }
 
   /**
@@ -50,7 +45,7 @@ export class ConstructorService extends PrognoService<IConstructor, Constructor>
    * @param constructorId el id del constructor
    */
   public async getConstructorInSeason(seasonId: string, constructorId: string): Promise<Constructor> {
-    return this.getObjectFromAPI(`/seasons/${seasonId}/constructors/${constructorId}`)
+    return getObject<Constructor>(`/seasons/${seasonId}/constructors/${constructorId}`)
   }
 
   /**

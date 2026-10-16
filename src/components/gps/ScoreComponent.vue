@@ -155,6 +155,7 @@
 
 <script setup lang="ts">
 import {computed, markRaw, ref, watch} from "vue";
+import {ruleSetPredictedPositions} from "@/utils/ruleSet";
 import {storeToRefs} from "pinia";
 import {grandPrixService, notificationService, scoreService} from "@/_services";
 import {useAuthStore} from "@/store/authStore";
@@ -503,7 +504,7 @@ const loadData = async (): Promise<void> => {
   winnersOfGrandPrix.value = [];
 
   try {
-    const pronosticados = props.ruleSet.cantidadPilotosPronosticados(props.session);
+    const pronosticados = ruleSetPredictedPositions(props.ruleSet, props.session);
 
     if (simulationActive.value) {
       // Modo simulación: usamos el orden de pilotos seleccionado por el usuario.

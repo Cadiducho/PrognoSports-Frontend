@@ -117,7 +117,7 @@
 
     <template v-if="isBeforeSessionClosure(session)">
       <p-button
-        v-if="pilotosPronosticados.length === ruleSet.cantidadPilotosPronosticados(session)"
+        v-if="pilotosPronosticados.length === ruleSetPredictedPositions(ruleSet, session)"
         color="primary"
         expanded
         :disabled="sendingPronostico"
@@ -130,7 +130,7 @@
         v-else
         variant="warning"
       >
-        El pronóstico debe tener {{ ruleSet.cantidadPilotosPronosticados(session) }} pilotos escogidos y ordenados (Has
+        El pronóstico debe tener {{ ruleSetPredictedPositions(ruleSet, session) }} pilotos escogidos y ordenados (Has
         escogido {{ pilotosPronosticados.length }}).
       </PrognoAlert>
     </template>
@@ -160,6 +160,7 @@
 
 <script setup lang="ts">
 import {RaceSession} from "@/types/RaceSession";
+import {ruleSetPredictedPositions} from "@/utils/ruleSet";
 import {grandPrixService, notificationService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Driver} from "@/types/Driver";

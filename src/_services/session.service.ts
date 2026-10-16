@@ -1,27 +1,22 @@
-import {PrognoService} from "@/_services/progno.service";
-import {mapRaceSession, RaceSession, RaceSessionDto} from "@/types/RaceSession";
+import {getObject, getObjectList, postObject} from "@/_services/api";
+import {mapRaceSession, RaceSession} from "@/types/RaceSession";
 import axios from "axios";
 import {GrandPrix} from "@/types/GrandPrix";
 
-export class SessionService extends PrognoService<RaceSessionDto, RaceSession> {
-
-    factory(data: RaceSessionDto): RaceSession {
-        return mapRaceSession(data);
-    }
-
+export class SessionService {
     /**
      * Devuelve una sesión
      * @param sessionId
      */
     public async getSession(sessionId: number): Promise<RaceSession> {
-        return this.getObjectFromAPI(`/sessions/${sessionId}`)
+        return getObject(`/sessions/${sessionId}`, mapRaceSession)
     }
 
     /**
      * Devuelve la lista total de RaceSessions
      */
     public async getSessionList(): Promise<Array<RaceSession>> {
-        return this.getObjectListFromAPI(`/sessions`)
+        return getObjectList(`/sessions`, mapRaceSession)
     }
 
     /**
@@ -49,15 +44,15 @@ export class SessionService extends PrognoService<RaceSessionDto, RaceSession> {
     }
 
     public async listSessionsInGrandPrix(gp: GrandPrix): Promise<Array<RaceSession>> {
-        return this.getObjectListFromAPI(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions`);
+        return getObjectList(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions`, mapRaceSession);
     }
 
     public async getOneSessionInGrandPrix(gp: GrandPrix, sessionId: number): Promise<RaceSession> {
-        return this.getObjectFromAPI(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${sessionId}`);
+        return getObject(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${sessionId}`, mapRaceSession);
     }
 
     public async addSessionInGrandPrix(gp: GrandPrix, data: { session: number, date: Date }): Promise<RaceSession> {
-        return this.postObjectToAPI(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions`, data);
+        return postObject(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions`, data, mapRaceSession);
     }
 
     public async updateSessionInGrandPrix(gp: GrandPrix, session: RaceSession, data: {

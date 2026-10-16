@@ -139,8 +139,8 @@ const userResume = ref({
     standings: 0,
     totalPoints: 0,
     average: 0,
-    totalPointsBySession: new Map<string, number>(),
-    averagePointsBySession: new Map<string, number>(),
+    totalPointsBySession: {},
+    averagePointsBySession: {},
     wonSessions: new Map<string, string[]>(),
     wonGrandPrixes: new Array<string>(),
 } as UserResume);

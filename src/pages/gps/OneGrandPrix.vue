@@ -49,7 +49,7 @@
             >
               <ClouseDateMessage :session="session" />
               <h6 class="dark:text-gray-300">
-                Para esta sesión se han de pronosticar {{ ruleSet.cantidadPilotosPronosticados(session) }} pilotos
+                Para esta sesión se han de pronosticar {{ ruleSetPredictedPositions(ruleSet, session) }} pilotos
               </h6>
               <SelectTipps
                 :session="session"
@@ -135,6 +135,7 @@
 
 <script lang="ts">
 import CircuitCard from "@/components/gps/CircuitCard.vue";
+import {ruleSetPredictedPositions} from "@/utils/ruleSet";
 import StartGrid from "@/components/gps/StartGridList.vue";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
@@ -197,7 +198,7 @@ export default defineComponent({
 
     const currentCommunity = communityStore.currentCommunity;
     const currentUser = authStore.loggedUser;
-    return {currentUser, currentCommunity, isUserAdmin, sessionHumanName};
+    return {currentUser, currentCommunity, isUserAdmin, sessionHumanName, ruleSetPredictedPositions};
   },
   data() {
     return {

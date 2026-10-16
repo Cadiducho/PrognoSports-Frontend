@@ -65,42 +65,48 @@ export function mapUser(dto: UserDto): User {
   };
 }
 
-export interface IUserResume {
+/** Forma del resumen del usuario tal y como lo devuelve la API */
+export interface UserResumeDto {
   totalPoints: number;
   standings: number;
   average: number;
 
-  totalPointsBySession: Map<string, number>;
-  averagePointsBySession: Map<string, number>;
-  participationsBySession: Map<string, number>;
-  wonSessions: Map<number | string, Array<string>>;
+  totalPointsBySession: Record<string, number>;
+  averagePointsBySession: Record<string, number>;
+  participationsBySession: Record<string, number>;
+  wonSessions: Record<string, Array<string>>; // Session ID -> nombres de los Grandes Premios ganados
   wonGrandPrixes: Array<string>;
 }
 
-export class UserResume implements IUserResume {
-  average: number;
-  averagePointsBySession: Map<string, number>;
-  participationsBySession: Map<string, number>;
-  standings: number;
+export interface UserResume {
   totalPoints: number;
-  totalPointsBySession: Map<string, number>;
-  wonGrandPrixes: Array<string>;
-  wonSessions: Map<string, Array<string>>;
+  standings: number;
+  average: number;
 
-  constructor(data: IUserResume) {
-    this.average = data.average;
-    this.averagePointsBySession = data.averagePointsBySession;
-    this.participationsBySession = data.participationsBySession;
-    this.standings = data.standings;
-    this.totalPoints = data.totalPoints;
-    this.totalPointsBySession = data.totalPointsBySession;
-    this.wonGrandPrixes = data.wonGrandPrixes;
-    this.wonSessions = new Map();
-    Object.entries(data.wonSessions).forEach(([sessionId, list]) => {
-      const sessionName = sessionHumanNameById(sessionId);
-      if (sessionName) {
-        this.wonSessions.set(sessionName, list as Array<string>);
-      }
-    });
-  }
+  totalPointsBySession: Record<string, number>;
+  averagePointsBySession: Record<string, number>;
+  participationsBySession: Record<string, number>;
+  wonSessions: Map<string, Array<string>>; // Nombre de la sesión -> nombres de los Grandes Premios ganados
+  wonGrandPrixes: Array<string>;
+}
+
+export function mapUserResume(dto: UserResumeDto): UserResume {
+  const wonSessions = new Map<string, Array<string>>();
+  Object.entries(dto.wonSessions).forEach(([sessionId, list]) => {
+    const sessionName = sessionHumanNameById(sessionId);
+    if (sessionName) {
+      wonSessions.set(sessionName, list);
+    }
+  });
+
+  return {
+    totalPoints: dto.totalPoints,
+    standings: dto.standings,
+    average: dto.average,
+    totalPointsBySession: dto.totalPointsBySession,
+    averagePointsBySession: dto.averagePointsBySession,
+    participationsBySession: dto.participationsBySession,
+    wonSessions,
+    wonGrandPrixes: dto.wonGrandPrixes,
+  };
 }
