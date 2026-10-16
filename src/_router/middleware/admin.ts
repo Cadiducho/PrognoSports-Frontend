@@ -10,7 +10,7 @@ export default function checkIsAdmin(to: RouteLocationNormalized) {
     // Si no es admin mostrar un 404
     const user = authStore.loggedUser;
 
-    if (!isUserAdmin(user)) {
+    if (!user || !isUserAdmin(user)) {
       return {
         path: '/404'
       };

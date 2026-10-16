@@ -36,7 +36,7 @@ defineProps<{
 const authStore = useAuthStore();
 const styles = useStyles();
 
-const currentUser = authStore.loggedUser;
+const currentUser = authStore.requireUser();
 const styleDriverCard = styles.styleDriverCard;
 const styleDorsal = styles.styleDorsal;
 </script>

@@ -14,6 +14,12 @@ import {RuleSetService} from "@/_services/ruleset.service";
 import {SessionService} from "@/_services/session.service";
 import {BASE_URL} from "@/config";
 
+/** Error con el que se rechazan las peticiones: el mensaje de la API y el estado (HTTP o el del cuerpo de la respuesta) */
+export interface ApiError {
+  message?: string;
+  status?: number;
+}
+
 function authHeader() {
   return localStorage.getItem('token') || '';
 }
@@ -37,9 +43,10 @@ axios.interceptors.response.use((response) => {
   }
   return response;
 }, error => {
-  const payload = {
-    message: error.response?.data?.message
-  }
+  const payload: ApiError = {
+    message: error.response?.data?.message,
+    status: error.response?.status ?? error.response?.data?.status,
+  };
   return Promise.reject(payload);
 });
 

@@ -197,7 +197,7 @@ export default defineComponent({
     const communityStore = useCommunityStore();
 
     const currentCommunity = communityStore.currentCommunity;
-    const currentUser = authStore.loggedUser;
+    const currentUser = authStore.requireUser();
     return {currentUser, currentCommunity, isUserAdmin, sessionHumanName, ruleSetPredictedPositions};
   },
   data() {
