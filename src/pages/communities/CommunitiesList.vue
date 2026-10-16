@@ -134,7 +134,7 @@ import PTabItem from "@/components/lib/PTabItem.vue";
 const authStore = useAuthStore();
 const communityStore = useCommunityStore();
 
-const currentUser = authStore.loggedUser;
+const currentUser = authStore.requireUser();
 const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
 
 const activeTab = ref('1');

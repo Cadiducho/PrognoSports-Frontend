@@ -15,7 +15,7 @@ import PTable from "@/components/lib/table/PTable.vue";
 import {Column} from "@/components/lib/table";
 import ClickableSettingIcon from "@/components/user/settings/ClickableSettingIcon.vue";
 
-const currentUser = useAuthStore().loggedUser;
+const currentUser = useAuthStore().requireUser();
 
 const isLoading = ref(false);
 const notificationMethods = ref({} as Dictionary<string, string>)

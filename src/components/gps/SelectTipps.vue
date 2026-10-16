@@ -196,7 +196,7 @@ const authStore = useAuthStore();
 const communityStore = useCommunityStore();
 const emitter = useEmitter();
 
-const currentUser = authStore.loggedUser;
+const currentUser = authStore.requireUser();
 const currentCommunity = communityStore.currentCommunity;
 
 const pilotosPronosticados = reactive(new Array<Driver>());

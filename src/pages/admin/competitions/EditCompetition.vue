@@ -126,7 +126,7 @@ export default defineComponent({
     setup() {
         const authStore = useAuthStore();
 
-        const currentUser = authStore.loggedUser;
+        const currentUser = authStore.requireUser();
         return { currentUser };
     },
     data() {

@@ -568,7 +568,7 @@ export default defineComponent({
         const authStore = useAuthStore();
         const communityStore = useCommunityStore();
 
-        const currentUser = authStore.loggedUser;
+        const currentUser = authStore.requireUser();
         const setCommunity = communityStore.setCommunity;
         return { currentUser, setCommunity, emitter };
     },

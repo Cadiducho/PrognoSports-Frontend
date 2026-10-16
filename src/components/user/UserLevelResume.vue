@@ -131,7 +131,7 @@ const props = defineProps<{
 const authStore = useAuthStore();
 const communityStore = useCommunityStore();
 
-const currentUser = authStore.loggedUser;
+const currentUser = authStore.requireUser();
 const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
 const currentCommunity = communityStore.currentCommunity;
 
@@ -155,9 +155,9 @@ onMounted(async () => {
             const resumeResponse = await userService.getUserResume(user, currentCommunity, competition, season);
             userResume.value = resumeResponse;
         } catch (error: any) {
-          // Mostrar el error por consola si no es un Unauthorized.
+          // Mostrar el error por consola si no es un 403 (sin permiso).
           // Esto es porque el usuario puede no tener permisos para ver el ranking de la comunidad
-          if (!error.message.includes("Unauthorized")) {
+          if (error.status !== 403) {
             console.error(error);
           }
         }
