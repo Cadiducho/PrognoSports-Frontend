@@ -13,6 +13,7 @@
 
 <script setup lang="ts">
 import { communityService, notificationService } from "@/_services";
+import { useJoinCommunity } from "@/queries/communities";
 import { Community } from "@/types/Community";
 import { useCommunityStore } from "@/store/communityStore";
 import { ref, computed, onMounted } from "vue";
@@ -20,6 +21,7 @@ import { useRoute, useRouter } from "vue-router";
 
 const communityStore = useCommunityStore();
 const setCommunity = communityStore.setCommunity;
+const { mutateAsync: joinCommunity } = useJoinCommunity();
 
 const community = ref<Community>({} as Community);
 const isLoading = ref(true);
@@ -40,7 +42,7 @@ onMounted(() => {
     community.value = communityRes;
     thereIsCommunity.value = true;
 
-    communityService.joinCommunity(communityRes, code).then((communityRes) => {
+    joinCommunity({community: communityRes, code}).then((communityRes) => {
       setTimeout(() => {
         notificationService.showNotification("¡Te has unido correctamente a " + communityRes.name + "!");
         setCommunity(communityRes);

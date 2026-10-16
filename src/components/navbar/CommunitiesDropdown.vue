@@ -54,49 +54,42 @@
 
 <script lang="ts">
     import {Community} from "@/types/Community";
-    import {communityService, notificationService} from "@/_services";
-    import {defineComponent} from "vue";
+    import {notificationService} from "@/_services";
+    import {computed, defineComponent} from "vue";
+    import {storeToRefs} from "pinia";
+    import {useQuery} from "@pinia/colada";
     import {useAuthStore} from "@/store/authStore";
     import {useCommunityStore} from "@/store/communityStore";
-    import useEmitter from "@/composables/useEmitter";
+    import {userCommunitiesQuery} from "@/queries/communities";
 
     export default defineComponent({
         name: "CommunitiesDropdown",
         setup() {
-            const emitter = useEmitter();
-
             const authStore = useAuthStore();
             const communityStore = useCommunityStore();
 
-            const currentUser = authStore.loggedUser;
-            const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
-            const currentCommunity = communityStore.currentCommunity;
+            const { currentCommunity, thereIsCurrentCommunity } = storeToRefs(communityStore);
             const setCommunity = communityStore.setCommunity;
 
-            return { currentUser, currentCommunity, thereIsCurrentCommunity, setCommunity, emitter };
+            // La lista sale de la caché de consultas: se actualiza sola al unirse, salir o crear una comunidad
+            const { data: userCommunities } = useQuery(() => userCommunitiesQuery(authStore.loggedUser?.id ?? 0));
+
+            // Todas menos la activa, que ya saldrá en la primera
+            const communitiesList = computed<Array<Community>>(() =>
+                (userCommunities.value ?? []).filter(comm => comm.name !== currentCommunity.value.name)
+            );
+
+            return { currentCommunity, thereIsCurrentCommunity, setCommunity, communitiesList };
         },
         data() {
             return {
-                communitiesList: [] as Array<Community>,
                 isOpen: false
             }
         },
-        watch: {
-            currentCommunity() {
-                this.getCommunityList();
-            }
-        },
         mounted() {
-            this.emitter.on('reloadCommunitiesDropdown', this.getCommunityList);
-
             document.addEventListener('click', this.handleClickOutside);
-
-            if (this.thereIsCurrentCommunity) {
-                this.getCommunityList();
-            }
         },
         beforeUnmount() {
-            this.emitter.off('reloadCommunitiesDropdown', this.getCommunityList);
             document.removeEventListener('click', this.handleClickOutside);
         },
         methods: {
@@ -107,20 +100,6 @@
                 if (this.$refs.dropdownRef && !(this.$refs.dropdownRef as HTMLElement).contains(event.target as Node)) {
                     this.closeDropdown();
                 }
-            },
-            getCommunityList(): void {
-                if (!this.currentUser) {
-                    return;
-                }
-                communityService.getUserCommunities(this.currentUser).then(list => {
-                    this.communitiesList = [];
-                    list.forEach(comm => {
-                        // Agregar todas menos la activa, que ya saldrá en la primera
-                        if (comm.name !== this.currentCommunity.name) {
-                            this.communitiesList.push(comm);
-                        }
-                    })
-                });
             },
             switchToCommunity(targetCommunity: Community) {
                 this.closeDropdown();
@@ -133,7 +112,6 @@
                     }
                 }).then(() => {
                     notificationService.showNotification("Has cambiado a la comunidad " + targetCommunity.name, "success");
-                    this.emitter.emit('reloadCommunitiesDropdown'); // Recargar la lista, que previsiblemente quitará la target y añadirá la que estaba originalmente
                 })
             }
         }
