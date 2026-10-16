@@ -117,12 +117,12 @@
 </template>
 
 <script setup lang="ts">
-import { useEmitterListener } from "@/composables/useEmitter";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {Community} from "@/types/Community";
-import {computed, onMounted, ref} from "vue";
-import {communityService} from "@/_services";
+import {computed, ref} from "vue";
+import {useQuery} from "@pinia/colada";
+import {allCommunitiesQuery, userCommunitiesQuery} from "@/queries/communities";
 import CommunityListItem from "@/components/communities/CommunityListItem.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
@@ -139,9 +139,13 @@ const thereIsCurrentCommunity = communityStore.thereIsCurrentCommunity;
 
 const activeTab = ref('1');
 const filtroComunidad = ref('');
-const isLoading = ref(true);
-const communityList = ref<Array<Community>>([]);
-const myCommunityList = ref<Array<Community>>([]);
+// Las listas salen de la caché de consultas: se actualizan solas al unirse, salir o crear una comunidad
+const { data: allCommunities, isPending: isLoadingAll } = useQuery(() => allCommunitiesQuery(currentUser.id));
+const { data: userCommunities, isPending: isLoadingMine } = useQuery(() => userCommunitiesQuery(currentUser.id));
+
+const isLoading = computed(() => isLoadingAll.value || isLoadingMine.value);
+const communityList = computed(() => allCommunities.value ?? []);
+const myCommunityList = computed(() => userCommunities.value ?? []);
 
 const openCommunities = computed(() => {
   return filteredCommunities(communityList.value).filter(({open}) => (open));
@@ -150,30 +154,6 @@ const openCommunities = computed(() => {
 const closedCommunities = computed(() => {
   return filteredCommunities(communityList.value).filter(({open}) => (!open));
 });
-
-onMounted(() => {
-  loadCommunities();
-});
-
-useEmitterListener('reloadCommunitiesList', () => {
-  isLoading.value = true;
-  loadCommunities();
-});
-
-const loadCommunities = async () => {
-  try {
-    const [communities, userCommunities] = await Promise.all([
-      communityService.getAllCommunities(),
-      communityService.getUserCommunities(currentUser)
-    ]);
-    communityList.value = communities;
-    myCommunityList.value = userCommunities;
-  } catch (error) {
-    console.error("Error loading communities:", error);
-  } finally {
-    isLoading.value = false;
-  }
-};
 
 const filteredCommunities = (originalList: Array<Community>): Array<Community> => {
   if (!filtroComunidad.value.trim()) {

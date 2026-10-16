@@ -525,12 +525,12 @@
 
 <script lang="ts">
 import PTitle from "@/components/lib/PTitle.vue";
-import {communityService, notificationService, rulesetService} from "@/_services";
+import {notificationService, rulesetService} from "@/_services";
 
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
-import useEmitter from "@/composables/useEmitter";
+import {useCreateCommunity} from "@/queries/communities";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PField from "@/components/lib/forms/PField.vue";
@@ -564,13 +564,14 @@ export default defineComponent({
         PTitle
     },
     setup() {
-        const emitter = useEmitter();
+        // Al terminar invalida las listas de comunidades, que se actualizan solas
+        const { mutateAsync: createCommunity } = useCreateCommunity();
         const authStore = useAuthStore();
         const communityStore = useCommunityStore();
 
         const currentUser = authStore.requireUser();
         const setCommunity = communityStore.setCommunity;
-        return { currentUser, setCommunity, emitter };
+        return { currentUser, setCommunity, createCommunity };
     },
     data() {
         return {
@@ -672,7 +673,7 @@ export default defineComponent({
             rulesetService.createRuleSet(rulesetData).then((ruleset) => {
                 communityData.default_rule_set = ruleset.id; // y se asigna este rule set por defecto a la nueva comunidad
 
-                communityService.createCommunity(communityData).then((community) => {
+                this.createCommunity(communityData).then((community) => {
                     notificationService.showNotification("Se ha registrado correctamente la comunidad `" + community.name + "`");
 
                     this.$router.push({
@@ -683,7 +684,6 @@ export default defineComponent({
                     })
 
                     this.setCommunity(community); // Establecer en Pinia la comunidad actual
-                    this.emitter.emit('reloadCommunitiesDropdown'); // Recargar dropdown del navbar
                 }).catch((error) => {
                     notificationService.showNotification(error.message, "error");
                     rulesetService.removeRuleSet(ruleset);
