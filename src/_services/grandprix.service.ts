@@ -1,5 +1,6 @@
+import {getObject, getObjectList} from "@/_services/api";
 import axios from "axios";
-import {GrandPrix, GrandPrixDto, mapGrandPrix} from "@/types/GrandPrix";
+import {GrandPrix, mapGrandPrix} from "@/types/GrandPrix";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
 import {StartGridPosition} from "@/types/StartGridPosition";
@@ -8,48 +9,42 @@ import {RaceResult} from "@/types/RaceResult";
 import {User} from "@/types/User";
 import {Community} from "@/types/Community";
 import {Dictionary} from "@/types/Dictionary";
-import {PrognoService} from "@/_services/progno.service";
 import {Circuit} from "@/types/Circuit";
 import {CircuitVariant} from "@/types/CircuitVariant";
 
-export class GrandprixService extends PrognoService<GrandPrixDto, GrandPrix> {
-
-    factory(data: GrandPrixDto): GrandPrix {
-        return mapGrandPrix(data);
-    }
-
+export class GrandprixService {
     public async getNextGrandPrix(competition: Competition): Promise<GrandPrix> {
-        return this.getObjectFromAPI(`/gps/${competition.code}/next`);
+        return getObject(`/gps/${competition.code}/next`, mapGrandPrix);
     }
 
     public async getAllGrandPrixes(): Promise<Array<GrandPrix>> {
-        return this.getObjectListFromAPI(`/gps`);
+        return getObjectList(`/gps`, mapGrandPrix);
     }
 
     public async getGrandPrixesList(season: Season): Promise<Array<GrandPrix>> {
         let comp = 1; // ToDo: Remove from API
         let seas = season.id ?? season.name;
 
-        return this.getObjectListFromAPI(`/gps/${comp}/${seas}`);
+        return getObjectList(`/gps/${comp}/${seas}`, mapGrandPrix);
     }
 
     public async getGPThatUsesCircuit(circuit: Circuit): Promise<Array<GrandPrix>> {
-        return this.getObjectListFromAPI(`/circuits/${circuit.id}/gps`);
+        return getObjectList(`/circuits/${circuit.id}/gps`, mapGrandPrix);
     }
 
     public async getGPThatUsesCircuitVariant(circuit: Circuit, variant: CircuitVariant): Promise<Array<GrandPrix>> {
-        return this.getObjectListFromAPI(`/circuits/${circuit.id}/${variant.name}/gps`);
+        return getObjectList(`/circuits/${circuit.id}/${variant.name}/gps`, mapGrandPrix);
     }
 
     public async getGrandPrix(grandPrixId: string): Promise<GrandPrix> {
-        return this.getObjectFromAPI(`/gps/${grandPrixId}`);
+        return getObject(`/gps/${grandPrixId}`, mapGrandPrix);
     }
 
     public async getGrandPrixInSeason(season: Season, id: string): Promise<GrandPrix> {
         let comp = 1;  // ToDo: Remove from API
         let seas = season.id ?? season.name;
 
-        return this.getObjectFromAPI(`/gps/${comp}/${seas}/${id}`);
+        return getObject(`/gps/${comp}/${seas}/${id}`, mapGrandPrix);
     }
 
     public async linkGrandPrixToSeason(seasonId: string, data: {gp: number, circuit: number, variant: number, laps: number, round: number}) {

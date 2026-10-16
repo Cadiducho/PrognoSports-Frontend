@@ -1,5 +1,5 @@
 import {Competition, CompetitionDto, mapCompetition} from "@/types/Competition";
-import {IRuleSet, RuleSet} from "@/types/RuleSet";
+import {mapRuleSet, RuleSet, RuleSetDto} from "@/types/RuleSet";
 import {mapUser, User, UserDto} from "@/types/User";
 
 /** Forma de la comunidad tal y como la devuelve la API */
@@ -16,7 +16,7 @@ export interface CommunityDto {
     user_is_member: boolean;
     invitation: string;
 
-    defaultRuleSet?: IRuleSet;
+    defaultRuleSet?: RuleSetDto;
 }
 
 export interface Community {
@@ -48,6 +48,6 @@ export function mapCommunity(dto: CommunityDto): Community {
         members_amount: dto.members_amount,
         user_is_member: dto.user_is_member,
         invitation: dto.invitation,
-        defaultRuleSet: dto.defaultRuleSet?.data ? new RuleSet(dto.defaultRuleSet) : {id: 0} as RuleSet,
+        defaultRuleSet: dto.defaultRuleSet?.data ? mapRuleSet(dto.defaultRuleSet) : {id: 0} as RuleSet,
     };
 }

@@ -1,30 +1,25 @@
+import {getObject, getObjectList} from "@/_services/api";
 import axios from 'axios';
-import {IUserResume, mapUser, User, UserDto, UserResume} from "@/types/User";
+import {mapUser, mapUserResume, User, UserResume, UserResumeDto} from "@/types/User";
 import {Community} from "@/types/Community";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
-import {PrognoService} from "@/_services/progno.service";
 
-export class UserService extends PrognoService<UserDto, User> {
-
-    factory(data: UserDto): User {
-        return mapUser(data);
-    }
-
+export class UserService {
     public async getMe(): Promise<User> {
-        return this.getObjectFromAPI('/user/me');
+        return getObject('/user/me', mapUser);
     }
 
     public async getUser(user: string): Promise<User> {
-        return this.getObjectFromAPI(`/user/${user}`);
+        return getObject(`/user/${user}`, mapUser);
     }
 
     public async getUsersInCommunity(communityId: number): Promise<Array<User>> {
-        return this.getObjectListFromAPI(`/communities/${communityId}/members`);
+        return getObjectList(`/communities/${communityId}/members`, mapUser);
     }
 
     public async getAllUsers(): Promise<Array<User>> {
-        return this.getObjectListFromAPI(`/user`);
+        return getObjectList(`/user`, mapUser);
     }
 
     public async sendForgotPassword(email: string) {
@@ -44,8 +39,8 @@ export class UserService extends PrognoService<UserDto, User> {
     }
 
     public async getUserResume(user: User, community: Community, competition: Competition, season: Season): Promise<UserResume> {
-        const resumeData = await axios.get(`/user/${user.id}/communities/${community.id}/${competition.id}/${season.id}/resume`) as IUserResume;
-        return new UserResume(resumeData);
+        const resumeData = await axios.get(`/user/${user.id}/communities/${community.id}/${competition.id}/${season.id}/resume`) as UserResumeDto;
+        return mapUserResume(resumeData);
     }
 
     public async updateUser(user: Partial<User>): Promise<string> {

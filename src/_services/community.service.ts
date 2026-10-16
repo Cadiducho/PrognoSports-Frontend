@@ -1,25 +1,20 @@
+import {getObject, getObjectList} from "@/_services/api";
 import axios from 'axios';
-import {Community, CommunityDto, mapCommunity} from "@/types/Community";
+import {Community, mapCommunity} from "@/types/Community";
 import {User} from "@/types/User";
 import {CommunityUser, CommunityUserDto, mapCommunityUser} from "@/types/CommunityUser";
-import {PrognoService} from "@/_services/progno.service";
 
-export class CommunityService extends PrognoService<CommunityDto, Community> {
-
-    factory(data: CommunityDto): Community {
-        return mapCommunity(data);
-    }
-
+export class CommunityService {
     public async getCommunityById(communityId: string | number): Promise<Community> {
-        return this.getObjectFromAPI(`/communities/${communityId}`);
+        return getObject(`/communities/${communityId}`, mapCommunity);
     }
 
     public async getAllCommunities(): Promise<Array<Community>> {
-        return this.getObjectListFromAPI("/communities");
+        return getObjectList("/communities", mapCommunity);
     }
 
     public async getUserCommunities(user: User): Promise<Array<Community>> {
-        return this.getObjectListFromAPI(`/user/${user.id}/communities`);
+        return getObjectList(`/user/${user.id}/communities`, mapCommunity);
     }
 
     public async joinCommunity(community: Community, code?: string): Promise<Community> {
