@@ -119,6 +119,7 @@
 import {defineComponent, PropType} from "vue";
 import {useDayjs} from "@/composables/useDayjs";
 import {useAuthStore} from "@/store/authStore";
+import {useInvalidateCommunities} from "@/queries/communities";
 import {useCommunityStore} from "@/store/communityStore";
 import {User} from "@/types/User";
 import {userProfileImageUrl, userRankTagStyle} from "@/utils/user";
@@ -161,7 +162,12 @@ export default defineComponent({
         const currentUser = authStore.requireUser();
 
         const currentCommunity = communityStore.currentCommunity;
-        const refreshUser = () => authStore.loadUser(true);
+        // Los miembros de las comunidades muestran estos datos (nombre, imagen...), así que también se refrescan
+        const invalidateCommunities = useInvalidateCommunities();
+        const refreshUser = () => {
+            invalidateCommunities();
+            return authStore.loadUser(true);
+        };
         return {currentUser, currentCommunity, dateDiff, humanDateTime, humanDate, userProfileImageUrl, userRankTagStyle, refreshUser};
     },
     data() {

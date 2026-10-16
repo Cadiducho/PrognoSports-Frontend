@@ -285,6 +285,7 @@ import UserProfileCard from "@/components/user/UserProfileCard.vue";
 
 import {defineComponent, reactive, ref} from "vue";
 import {useAuthStore} from "@/store/authStore";
+import {useInvalidateCommunities} from "@/queries/communities";
 import {useCommunityStore} from "@/store/communityStore";
 import useEmitter from "@/composables/useEmitter";
 import {useDayjs} from "@/composables/useDayjs";
@@ -341,7 +342,12 @@ export default defineComponent({
     delete editedUser.currentCommunity;
 
     // El usuario ya no se pide en cada navegación: se recarga tras cambiar sus datos
-    const refreshUser = () => authStore.loadUser(true).catch(() => undefined);
+    // Los miembros de las comunidades muestran estos datos (nombre, imagen...), así que también se refrescan
+    const invalidateCommunities = useInvalidateCommunities();
+    const refreshUser = () => {
+      invalidateCommunities();
+      return authStore.loadUser(true).catch(() => undefined);
+    };
 
     return {currentUser, editedUser, currentCommunity, emitter, dateDiff, humanDateTime, humanDate, formatDate, refreshUser};
   },

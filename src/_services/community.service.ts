@@ -34,8 +34,8 @@ export class CommunityService {
         return await axios.post(`/communities/${community.id}/quit`)
     }
 
-    public async getMembers(community: Community): Promise<Array<CommunityUser>> {
-        const userData = await axios.get(`/communities/${community.id}/members`) as CommunityUserDto[];
+    public async getMembers(communityId: number): Promise<Array<CommunityUser>> {
+        const userData = await axios.get(`/communities/${communityId}/members`) as CommunityUserDto[];
         return userData.map(mapCommunityUser);
     }
 
