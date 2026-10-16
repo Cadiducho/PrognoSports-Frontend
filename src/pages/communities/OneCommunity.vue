@@ -190,14 +190,17 @@
 
 <script lang="ts">
 import PTitle from "@/components/lib/PTitle.vue";
-import {communityService, notificationService} from "@/_services";
+import {notificationService} from "@/_services";
+import {useQuery} from "@pinia/colada";
+import {communityMembersQuery, communityQuery} from "@/queries/communities";
 
 import {Community} from "@/types/Community";
 import {communityImageUrl} from "@/utils/community";
 import {CommunityUser} from "@/types/CommunityUser";
 import dayjs from "dayjs";
 
-import {defineComponent} from "vue";
+import {computed, defineComponent} from "vue";
+import {useRoute} from "vue-router";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {useDayjs} from "@/composables/useDayjs";
@@ -236,16 +239,22 @@ export default defineComponent({
         const humanDateTime = dayjs.humanDateTime;
         const currentUser = authStore.requireUser();
         const currentCommunity = communityStore.currentCommunity;
-        return { currentUser, currentCommunity, dateDiff, humanDateTime, clipboard, communityImageUrl };
+
+        // La comunidad y sus miembros salen de la caché de consultas: se actualizan solos al unirse o salir de ella
+        const route = useRoute();
+        const { data: communityData, isPending: isLoading } = useQuery(() => communityQuery({ userId: currentUser.id, idOrName: route.params.community as string }));
+        const { data: membersData } = useQuery(() => communityMembersQuery({ userId: currentUser.id, communityId: communityData.value?.id ?? 0 }));
+
+        const community = computed(() => communityData.value ?? ({} as Community));
+        const thereIsCommunity = computed(() => communityData.value !== undefined);
+        const isUserInCommunity = computed(() => communityData.value?.user_is_member ?? false);
+        // Si no tiene permisos para ver los miembros, la consulta falla y la lista queda vacía
+        const members = computed<Array<CommunityUser>>(() => membersData.value ?? []);
+
+        return { currentUser, currentCommunity, dateDiff, humanDateTime, clipboard, communityImageUrl, community, isLoading, thereIsCommunity, isUserInCommunity, members };
     },
     data() {
         return {
-            community: {} as Community,
-            isLoading: true,
-            thereIsCommunity: false,
-            members: new Array<CommunityUser>(),
-            isUserInCommunity: false,
-
             searchInput: '',
             orderType: 2,
             orderAscendent: false,
@@ -306,23 +315,6 @@ export default defineComponent({
                 );
             });
         }
-    },
-    created() {
-        let communityId = this.$route.params.community;
-
-        communityService.getCommunityById(communityId).then((community) => {
-            this.community = community;
-            this.thereIsCommunity = true;
-
-            this.isUserInCommunity = community.user_is_member;
-            communityService.getMembers(community).then(list => {
-                this.members.push(...list);
-            }).catch(() => {}); // Ignorar si no tiene permisos, simplemente no se rellena
-        }).catch(() => {
-            this.thereIsCommunity = false;
-        }).finally(() => {
-            this.isLoading = false;
-        })
     },
     methods: {
         clickInvitation() {
