@@ -14,7 +14,7 @@ Use **pnpm** only (no npm, yarn or Corepack). The pnpm and Node.js versions are 
 
 ```sh
 pnpm install --frozen-lockfile   # install exactly what pnpm-lock.yaml says
-pnpm dev                         # vite --host, dev server (uses .env.local if present)
+pnpm dev                         # vite --host, dev server against the LOCAL backend (.env, overridable in .env.local)
 pnpm dev:prod                    # dev server with --mode production (.env.production)
 pnpm build                       # production build -> dist/
 pnpm buildBeta                   # build with --mode beta (beta banner, .env.beta)
@@ -31,10 +31,10 @@ There is no test suite. ESLint currently reports pre-existing errors, so do not 
 
 Configuration uses Vite modes and `.env` files:
 
-- `.env`: defaults for every mode, pointing at the public API (committed).
-- `.env.production`: values for `build` and `dev:prod` (committed).
+- `.env`: defaults for every mode, pointing at the **local** backend (`http://localhost:8001/v2`) so `pnpm dev` never hits production by accident (committed).
+- `.env.production`: values for `build` and `dev:prod`, i.e. the production API (committed).
 - `.env.beta`: values for `buildBeta` (committed). beta.prognosports.com is a frontend-only beta and **always uses the production API**; do not point it elsewhere.
-- `.env.local`: personal, git-ignored. Copy `.env.local.example` to run `pnpm dev` against a local backend (`VITE_API_BASE_URL=http://localhost:8001/v2`). Vite gives mode files priority over it, so `build`, `buildBeta` and `dev:prod` ignore it.
+- `.env.local`: personal, git-ignored, optional. Overrides `.env` for `pnpm dev` (copy `.env.local.example`). Vite gives mode files priority over it, so `build`, `buildBeta` and `dev:prod` ignore it. Note it is not present in fresh clones/worktrees, which is why `.env` must be the safe default.
 
 `VITE_*` variables are inlined into the public bundle: **never put secrets in them**. Types for them live in `src/env.d.ts`; add new variables there. `vite.config.mts` also injects `VITE_GIT_*` build info (shown in the landing footer). The beta banner is driven by `import.meta.env.MODE == 'beta'`.
 
