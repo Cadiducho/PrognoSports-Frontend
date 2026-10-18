@@ -57,11 +57,11 @@ export class Notification implements INotification {
         switch (this.type.toString().toLowerCase()) {
             case NotificationType.INFO:
                 return this.data.href
-                    ? `${this.data.info} <a href='${this.data.href}'>${this.data.gpName}</a>`
+                    ? `${this.data.info} ${this.gpLink()}`
                     : this.data.info;
             case NotificationType.SESSION_PRE_ALERT:
             case NotificationType.SESSION_ALERT:
-                return `Realiza tus pronósticos para <a href='/gps/${this.data.competition}/${this.data.gpSeason}/${this.data.gpRound}'>${this.data.gpName}</a> antes del ${dayjs.tz(this.data.time).format('D/M/YY [a las] H:mm')}`;
+                return `Realiza tus pronósticos para ${this.gpLink()} antes del ${dayjs.tz(this.data.time).format('D/M/YY [a las] H:mm')}`;
             case NotificationType.GRID_CHANGES:
                 return "Se han producido cambios en la parrilla de salida de " + this.data.gpName;
             case NotificationType.POINTS_DISPATCHED: {
@@ -82,6 +82,18 @@ export class Notification implements INotification {
             default:
                 return "Notificación deconocida";
         }
+    }
+
+    /**
+     * Enlace al Gran Premio a partir del href que envía el backend (que ya usa el id del GP, como la ruta).
+     * Se usa solo la ruta para no salir de la aplicación (ni ir a producción desde local)
+     */
+    private gpLink(): string {
+        if (!this.data.href) {
+            return this.data.gpName;
+        }
+        const url = new URL(this.data.href, window.location.origin);
+        return `<a href='${url.pathname}'>${this.data.gpName}</a>`;
     }
 
     private sessionName(): string {
