@@ -3,11 +3,18 @@
     Pilotos y equipos del Gran Premio
   </PTitle>
 
+  <PrognoAlert
+    v-if="entryListClosed"
+    variant="warning"
+    message="Este Gran Premio ya se ha disputado: su lista de pilotos no se puede modificar."
+  />
+
   <div class="flex flex-col md:flex-row gap-6">
     <div class="md:basis-1/5">
       <PSelect
         v-model="clonedGrandPrix"
         label="Clonar del Gran Premio..."
+        :disabled="entryListClosed"
         @change="cloneDriversFromGrandPrix()"
       >
         <option
@@ -70,6 +77,7 @@
       </div>
       <PButton
         class="mt-3"
+        :disabled="entryListClosed"
         @click="saveDrivers()"
       >
         Guardar pilotos
@@ -78,10 +86,9 @@
   </div>
 </template>
 
-<script lang="ts">
-import {defineComponent, PropType} from "vue";
+<script setup lang="ts">
+import {computed, onMounted, ref} from "vue";
 import {GrandPrix} from "@/types/GrandPrix";
-import {useDayjs} from "@/composables/useDayjs";
 import {Dictionary} from "@/types/Dictionary";
 import {Driver} from "@/types/Driver";
 import {Constructor} from "@/types/Constructor";
@@ -93,102 +100,83 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import PLabel from "@/components/lib/forms/PLabel.vue";
 import PTitle from "@/components/lib/PTitle.vue";
 import PCard from "@/components/lib/PCard.vue";
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 
-export default defineComponent({
-    name: "DriversInGrandPrix",
-    components: {
-      PCard,
-      PTitle,
-      PLabel,
-      PButton,
-      PSelect,
-      draggable,
-    },
-    props: {
-        grandPrix: {
-            type: Object as PropType<GrandPrix>,
-            required: true,
-        },
-    },
-    setup() {
-        const dayjs = useDayjs();
-        const colorUtils = useStyles();
+const props = defineProps<{
+  grandPrix: GrandPrix;
+}>();
 
-        const humanDateTime = dayjs.humanDateTime;
-        const invertColor = colorUtils.invertColor;
-        return { humanDateTime, invertColor };
-    },
-    data() {
-        return {
-            driversInSeason: new Array<Driver>(),
-            driversInGrandPrix: new Array<Driver>(),
+const {invertColor} = useStyles();
 
-            constructorList: new Array<Constructor>(),
-            driversByConstructor: {} as Dictionary<string, Array<Driver>>,
+const driversInSeason = ref<Array<Driver>>([]);
+const constructorList = ref<Array<Constructor>>([]);
+const driversByConstructor = ref<Dictionary<string, Array<Driver>>>({});
+const otherGPList = ref<Array<GrandPrix>>([]);
+const clonedGrandPrix = ref<GrandPrix>({} as GrandPrix);
 
-            otherGPList: new Array<GrandPrix>(),
-            clonedGrandPrix: {} as GrandPrix,
-        }
-    },
-    mounted() {
-        driversService.getDriversInSeason(this.grandPrix.season).then((listDrivers) => {
+// Si ya ha empezado la última sesión, la lista de pilotos queda cerrada (el backend también lo bloquea)
+const entryListClosed = computed(() => props.grandPrix.hasStartedLastSession());
 
-            this.driversInSeason = [];
-            this.driversInSeason.push(...listDrivers);
-            this.driversInSeason.sort((a, b) => a.lastname.localeCompare(b.lastname))
+async function loadDriversInGrandPrix(gp: GrandPrix) {
+  const [driversInGrandPrix, constructors] = await Promise.all([
+    driversService.getDriversInGrandPrix(gp),
+    constructorService.getConstructorsInSeason(gp.season),
+  ]);
 
-            this.loadDriversInGrandPrix(this.grandPrix);
-        });
+  const byConstructor: Dictionary<string, Array<Driver>> = {};
+  constructors.forEach((c) => {
+    byConstructor[c.id] = [];
+  });
+  driversInGrandPrix.forEach((d) => {
+    byConstructor[d.team.id] = [...byConstructor[d.team.id] ?? [], d];
+  });
 
-        grandPrixService.getGrandPrixesList(this.grandPrix.season).then((list) => {
-            this.otherGPList = [];
-            this.otherGPList.push(...list);
-        });
-    },
-    methods: {
-        cloneDriversFromGrandPrix() {
-            console.log("Clonando de " + JSON.stringify(this.clonedGrandPrix));
-            this.clonedGrandPrix.competition = this.grandPrix.competition;
-            this.clonedGrandPrix.season = this.grandPrix.season;
-            this.loadDriversInGrandPrix(this.clonedGrandPrix);
-        },
-        loadDriversInGrandPrix(gp: GrandPrix) {
-            driversService.getDriversInGrandPrix(gp).then((listGP) => {
-                this.driversInGrandPrix = [];
-                this.driversInGrandPrix.push(...listGP);
+  constructorList.value = [...constructors];
+  driversByConstructor.value = byConstructor;
+}
 
-                constructorService.getConstructorsInSeason(gp.season).then((listC) => {
-                    this.constructorList = [];
-                    this.constructorList.push(...listC);
+async function cloneDriversFromGrandPrix() {
+  clonedGrandPrix.value.competition = props.grandPrix.competition;
+  clonedGrandPrix.value.season = props.grandPrix.season;
 
-                    this.constructorList.forEach((c) => {
-                        this.driversByConstructor[c.id] = [];
-                    })
+  try {
+    await loadDriversInGrandPrix(clonedGrandPrix.value);
+  } catch (error: any) {
+    notificationService.showNotification(error.message ?? "Ha ocurrido un error.", "error");
+  }
+}
 
-                    this.driversInGrandPrix.forEach((d) => {
-                        this.driversByConstructor[d.team.id] = [...this.driversByConstructor[d.team.id]??[], d];
-                    });
-                })
-            });
-        },
-        saveDrivers() {
-            if (this.driversByConstructor) {
-                driversService.setDriversInGrandPrix(this.grandPrix, this.driversByConstructor).then(() => {
-                  this.loadDriversInGrandPrix(this.grandPrix);
-                    notificationService.showNotification( "Lista de pilotos guardada correctamente.");
-            }).catch(() => {
-                    notificationService.showNotification( "Ha ocurrido un error.", "error");
-                });
-            }
-        },
-        teamCarColor(constructor: Constructor) {
-            return {
-                color: this.invertColor(constructor.teamcolor),
-                fontWeight: 'bold',
-                backgroundColor: '#' + constructor.teamcolor,
-            }
-        },
-    }
+async function saveDrivers() {
+  try {
+    await driversService.setDriversInGrandPrix(props.grandPrix, driversByConstructor.value);
+    notificationService.showNotification("Lista de pilotos guardada correctamente.");
+    await loadDriversInGrandPrix(props.grandPrix);
+  } catch (error: any) {
+    notificationService.showNotification(error.message ?? "Ha ocurrido un error.", "error");
+  }
+}
+
+function teamCarColor(constructor: Constructor) {
+  return {
+    color: invertColor(constructor.teamcolor),
+    fontWeight: 'bold',
+    backgroundColor: '#' + constructor.teamcolor,
+  };
+}
+
+onMounted(async () => {
+  try {
+    const [listDrivers, listGPs] = await Promise.all([
+      driversService.getDriversInSeason(props.grandPrix.season),
+      grandPrixService.getGrandPrixesList(props.grandPrix.season),
+    ]);
+
+    driversInSeason.value = [...listDrivers].sort((a, b) => a.lastname.localeCompare(b.lastname));
+    otherGPList.value = [...listGPs];
+
+    await loadDriversInGrandPrix(props.grandPrix);
+  } catch (error: any) {
+    notificationService.showNotification(error.message ?? "Ha ocurrido un error.", "error");
+  }
 });
 </script>
-
