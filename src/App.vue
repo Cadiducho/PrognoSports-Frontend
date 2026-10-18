@@ -15,6 +15,14 @@
     <router-view :key="$route.fullPath" />
 
     <ToTop :scroll-y="200" />
+
+    <!-- Solo en `pnpm dev:prod`: servidor de desarrollo contra la API de producción -->
+    <div
+      v-if="isDevAgainstProd"
+      class="fixed bottom-0 inset-x-0 z-[9999] bg-red-600 text-white text-center text-xs font-bold py-1 pointer-events-none"
+    >
+      ⚠ MODO DESARROLLO CONTRA PRODUCCIÓN: los cambios afectan a datos reales ({{ apiUrl }})
+    </div>
   </div>
 </template>
 
@@ -34,7 +42,10 @@ const styleStore = useThemeStore();
 
 const isBeta = import.meta.env.MODE == 'beta';
 console.log("isBeta", isBeta);
-const appName = isBeta ? 'PrognoSports (Beta)' : 'PrognoSports';
+// `pnpm dev:prod`: servidor de desarrollo (DEV) con --mode production
+const isDevAgainstProd = import.meta.env.DEV && import.meta.env.MODE == 'production';
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+const appName = isBeta ? 'PrognoSports (Beta)' : isDevAgainstProd ? '[PROD] PrognoSports' : 'PrognoSports';
 const route = useRoute();
 const pageStore = usePageStore();
 const title = useTitle();

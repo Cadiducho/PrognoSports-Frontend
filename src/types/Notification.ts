@@ -4,13 +4,10 @@ import dayjs from "dayjs";
 
 enum NotificationType {
     INFO = 'info',
-    QUALI_PRE_ALERT = 'quali-pre-alert',
-    QUALI_ALERT = 'quali-alert',
-    RACE_PRE_ALERT = 'race-pre-alert',
-    RACE_ALERT = 'race-alert',
-    QUALI_POINTS = 'quali-points',
+    SESSION_PRE_ALERT = 'session-pre-alert',
+    SESSION_ALERT = 'session-alert',
     GRID_CHANGES = 'grid-changes',
-    RACE_POINTS = 'race-points'
+    POINTS_DISPATCHED = 'points-dispatched'
 }
 
 export interface INotification {
@@ -40,67 +37,44 @@ export class Notification implements INotification {
     }
 
     public title(): string {
-        switch (this.type.toString()) {
-            case 'INFO':
+        switch (this.type.toString().toLowerCase()) {
+            case NotificationType.INFO:
                 return "Info #" + this.id;
-            case 'QUALI_PRE_ALERT':
-                return "Clasificación mañana";
-            case 'QUALI_ALERT':
-                return "Clasificación hoy";
-            case 'RACE_PRE_ALERT':
-                return "Carrera mañana";
-            case 'RACE_ALERT':
-                return "Carrera hoy";
-            case 'QUALI_POINTS':
-                return "Puntos de clasificación";
-            case 'GRID_CHANGES':
+            case NotificationType.SESSION_PRE_ALERT:
+                return this.sessionName() + " mañana";
+            case NotificationType.SESSION_ALERT:
+                return this.sessionName() + " hoy";
+            case NotificationType.GRID_CHANGES:
                 return "Cambios en la parrila";
-            case 'RACE_POINTS':
-                return "Puntos del Gran Premio";
+            case NotificationType.POINTS_DISPATCHED:
+                return "Puntos de " + this.sessionName();
             default:
                 return "Notificación " + this.id;
         }
     }
 
     public body(): string {
-        switch (this.type.toString()) {
-            case 'INFO':
-                return this.data.info;
-            case 'QUALI_PRE_ALERT':
-            case 'QUALI_ALERT':
-            case 'RACE_PRE_ALERT':
-            case 'RACE_ALERT':
-                return `Realiza tus pronósticos para <a href='/gps/${this.data.competition}/${this.data.gpSeason}/${this.data.gpRound}'>${this.data.gpName}</a> antes del ${dayjs.tz(this.data.time).format('D/M/YY [a las] H:mm')}`;
-            case 'GRID_CHANGES':
+        switch (this.type.toString().toLowerCase()) {
+            case NotificationType.INFO:
+                return this.data.href
+                    ? `${this.data.info} ${this.gpLink()}`
+                    : this.data.info;
+            case NotificationType.SESSION_PRE_ALERT:
+            case NotificationType.SESSION_ALERT:
+                return `Realiza tus pronósticos para ${this.gpLink()} antes del ${dayjs.tz(this.data.time).format('D/M/YY [a las] H:mm')}`;
+            case NotificationType.GRID_CHANGES:
                 return "Se han producido cambios en la parrilla de salida de " + this.data.gpName;
-            case 'QUALI_POINTS': {
-                if (Object.keys(this.data.points).length == 0) {
+            case NotificationType.POINTS_DISPATCHED: {
+                if (!this.data.points || Object.keys(this.data.points).length == 0) {
                     return "No has recibido puntos";
                 }
                 let mensaje = "";
                 for (const communityName in this.data.points) {
-                    mensaje += communityName;
                     const points = this.data.points[communityName];
-                    if (points) {
-                        mensaje += `<strong class='text-info-600 dark:text-info-400'>${communityName}</strong>: ${points.pointsBySession["QUALIFY"]}  puntos. <br/>Acumulados un total de ${points.accumulatedPoints} puntos esta temporada`;
+                    if (points && this.data.session) {
+                        mensaje += `<strong class='text-info-600 dark:text-info-400'>${communityName}</strong>: ${points.pointsBySession[this.data.session.id]} puntos. <br/>Acumulados un total de ${points.accumulatedPoints} puntos esta temporada<br/>`;
                     } else {
-                        mensaje += "No has recibido puntos";
-                    }
-                }
-                return mensaje;
-            }
-            case 'RACE_POINTS': {
-                if (Object.keys(this.data.points).length == 0) {
-                    return "No has recibido puntos";
-                }
-                let mensaje = "";
-                for (const communityName in this.data.points) {
-                    mensaje += communityName;
-                    const points = this.data.points[communityName];
-                    if (points) {
-                        mensaje += `<strong class='text-info-600 dark:text-info-400'>${communityName}</strong>: ${points.pointsBySession["RACE"]} puntos. <br/>Acumulados un total de ${points.accumulatedPoints} puntos esta temporada`;
-                    } else {
-                        mensaje += "No has recibido puntos";
+                        mensaje += `<strong class='text-info-600 dark:text-info-400'>${communityName}</strong>: No has recibido puntos<br/>`;
                     }
                 }
                 return mensaje;
@@ -108,5 +82,21 @@ export class Notification implements INotification {
             default:
                 return "Notificación deconocida";
         }
+    }
+
+    /**
+     * Enlace al Gran Premio a partir del href que envía el backend (que ya usa el id del GP, como la ruta).
+     * Se usa solo la ruta para no salir de la aplicación (ni ir a producción desde local)
+     */
+    private gpLink(): string {
+        if (!this.data.href) {
+            return this.data.gpName;
+        }
+        const url = new URL(this.data.href, window.location.origin);
+        return `<a href='${url.pathname}'>${this.data.gpName}</a>`;
+    }
+
+    private sessionName(): string {
+        return this.data.session?.name ?? "Sesión";
     }
 }
