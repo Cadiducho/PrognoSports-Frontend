@@ -1,78 +1,62 @@
 <template>
   <PCard>
-    <div
-      class="flex items-center gap-3 lg:block"
-      :class="wide ? 'md:flex' : 'md:block'"
-    >
-      <!-- Imagen: columna lateral acotada en móvil/tablet ancho; a todo el ancho de la columna en escritorio -->
-      <div
-        class="w-2/5 shrink-0 space-y-2 lg:w-auto"
-        :class="wide ? 'md:w-1/3' : 'md:w-auto'"
-      >
+    <div class="flex flex-col gap-4 sm:flex-row">
+      <!-- Imágenes: al menos 1/4 del ancho de la fila -->
+      <div class="w-full shrink-0 space-y-2 sm:w-1/4">
         <figure v-if="circuit.hasLogoImage">
           <img
             :src="circuit.logoImage()"
             alt="Logo image"
-            class="mx-auto h-auto max-h-10 max-w-full object-contain lg:max-h-none"
-            :class="wide ? 'md:max-h-12' : 'md:max-h-none'"
+            class="mx-auto h-auto max-h-12 max-w-full object-contain"
           >
         </figure>
         <figure>
           <img
             :src="variant.layoutImage(true)"
             alt="Circuit layout image"
-            class="mx-auto h-auto max-h-40 max-w-full object-contain lg:max-h-none"
-            :class="wide ? 'md:max-h-52' : 'md:max-h-none'"
+            class="mx-auto h-auto max-h-48 max-w-full object-contain"
           >
         </figure>
       </div>
 
-      <main class="min-w-0 flex-1 lg:flex-none">
-        <div class="flex items-start">
-          <div class="basis-auto grow shrink">
-            <p class="font-semibold text-base lg:text-xl">
-              <router-link
-                :to="circuit.circuitLink()"
-                class="text-black dark:text-gray-200"
-              >
-                {{ circuit.name }} {{ variant.isDefault() ? "" : ('- ' + variant.name) }}
-              </router-link>
-            </p>
-            <p class="font-normal text-sm lg:text-base mb-2 lg:mb-3">
-              {{ circuit.locality }}, {{ circuit.country }}
-            </p>
-          </div>
-        </div>
+      <main class="flex min-w-0 flex-1 flex-col">
+        <p class="text-base font-semibold lg:text-xl">
+          <router-link
+            :to="circuit.circuitLink()"
+            class="text-black dark:text-gray-200"
+          >
+            {{ circuit.name }} {{ variant.isDefault() ? "" : ('- ' + variant.name) }}
+          </router-link>
+        </p>
+        <p class="mb-3 text-sm font-normal lg:text-base">
+          {{ circuit.locality }}, {{ circuit.country }}
+        </p>
 
-        <div class="mb-3">
+        <div class="mb-3 grid grid-cols-2 gap-2 md:grid-cols-4">
           <p v-if="!variant.isDefault()">
             <b>Variante: </b>{{ variant.name }}
           </p>
-          <p class="mt-2">
+          <p>
             <b>Distancia por vuelta: </b>{{ variant.distance }}km
           </p>
-          <p
-            v-if="hasLaps"
-            class="mt-2"
-          >
+          <p v-if="hasLaps">
             <b>Vueltas: </b>{{ laps }}
           </p>
-          <p
-            v-if="hasLaps"
-            class="mt-2"
-          >
+          <p v-if="hasLaps">
             <b>Distancia total: </b>{{ (laps * variant.distance).toFixed(2) }}km
           </p>
         </div>
-        <PButton
-          expanded
-          tag="router-link"
-          :to="circuit.circuitLink()"
-          color="info"
-          type="soft"
-        >
-          Más datos del circuito
-        </PButton>
+
+        <div class="mt-auto">
+          <PButton
+            tag="router-link"
+            :to="circuit.circuitLink()"
+            color="info"
+            type="soft"
+          >
+            Más datos del circuito
+          </PButton>
+        </div>
       </main>
     </div>
   </PCard>
@@ -91,11 +75,8 @@ const props = withDefaults(defineProps<{
   circuit: Circuit;
   variant: CircuitVariant;
   laps?: number;
-  // La card ocupa todo el ancho en tablet (md): usa la disposición horizontal también ahí
-  wide?: boolean;
 }>(), {
   laps: 0,
-  wide: false,
 });
 
 const hasLaps = computed(() => props.laps > 0);
