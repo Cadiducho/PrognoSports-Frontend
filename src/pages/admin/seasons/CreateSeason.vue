@@ -1,9 +1,5 @@
 <template>
-  <PCard id="createSeason">
-    <PTitle
-      class="mb-5"
-      name="Crear temporada"
-    />
+  <PPage>
     <nav class="flex justify-between mb-4">
       <section class="flex flex-wrap">
         <p-button
@@ -53,11 +49,10 @@
       label="Crear temporada"
       @click="registerSeason"
     />
-  </PCard>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
 import {competitionService, notificationService, seasonService} from "@/_services";
 import {Competition} from "@/types/Competition";
 
@@ -65,7 +60,6 @@ import {onMounted, reactive, ref} from "vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import {useRouter} from "vue-router";
-import PCard from "@/components/lib/PCard.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 
 const router = useRouter();

@@ -1,6 +1,6 @@
 <template>
   <article class="w-full p-4">
-    <div class="block bg-white overflow-hidden text-gray-700">
+    <div class="block overflow-hidden bg-white text-gray-700 dark:bg-gray-900 dark:text-gray-200">
       <div class="flex justify-between">
         <h3 class="mt-2 mb-2 font-bold text-xl">
           {{ variant.name }} # ID: {{ variant.id }}

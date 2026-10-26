@@ -1,17 +1,22 @@
 <template>
-    <div id="createConstructor" class="box">
-        <PTitle class="mb-5" name="Crear constructor"/>
+  <PPage>
+    <PInput
+      v-model="name"
+      label="Nombre del constructor"
+      name="name"
+    />
 
-        <PInput label="Nombre del constructor" name="name" v-model="name" />
-
-        <PButton class="mt-4" @click="createConstructor" type="solid" label="Crear constructor" />
-
-    </div>
+    <PButton
+      class="mt-4"
+      type="solid"
+      label="Crear constructor"
+      @click="createConstructor"
+    />
+  </PPage>
 </template>
 
 <script setup lang="ts">
 
-import PTitle from "@/components/lib/PTitle.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import {ref} from "vue";

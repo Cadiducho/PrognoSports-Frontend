@@ -27,7 +27,6 @@ export function useStyles() {
         const border = teamcolor ? '1px solid #' + teamcolor : '1px solid rgba(0,0,0,0.08)';
         const borderLeft = teamcolor ? '10px #' + teamcolor + ' solid' : undefined;
         return {
-            color: 'black',
             border,
             ...(borderLeft ? { 'border-left': borderLeft } : {}),
             opacity: 0.9,

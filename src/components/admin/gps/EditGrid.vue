@@ -7,7 +7,7 @@
       Parrilla de salida para {{ session.humanName() }}
     </PTitle>
 
-    <label class="label">Parrilla</label>
+    <label class="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-300">Parrilla</label>
     <PrognoAlert
       v-if="!hasSavedGrid"
       variant="warning"
@@ -40,11 +40,9 @@
   </PCard>
 </template>
 
-<script lang="ts">
-import {defineComponent, PropType} from "vue";
-import {useAuthStore} from "@/store/authStore";
+<script setup lang="ts">
+import {ref} from "vue";
 import {RaceSession} from "@/types/RaceSession";
-import {Driver} from "@/types/Driver";
 import {GrandPrix} from "@/types/GrandPrix";
 import DraggableDriverCard from "@/components/gps/DraggableDriverCard.vue";
 import draggable from "vuedraggable";
@@ -55,66 +53,32 @@ import PCard from "@/components/lib/PCard.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PTitle from "@/components/lib/PTitle.vue";
 
-export default defineComponent({
-  name: "EditGrid",
-  components: {
-    PTitle,
-    PButton,
-    PCard,
-    PrognoAlert,
-    draggable,
-    DraggableDriverCard,
-  },
-  props: {
-    grandPrix: {
-      type: Object as PropType<GrandPrix>,
-      required: true,
-    },
-    session: {
-      type: Object as PropType<RaceSession>,
-      required: true,
-    },
-    grid: {
-      type: Object as PropType<Array<StartGridPosition>>,
-      required: true,
-    },
-    hasSavedGrid: {
-      type: Boolean,
-      default: false,
-    }
-  },
-  setup() {
-    const authStore = useAuthStore();
+const hasSavedGrid = defineModel<boolean>("hasSavedGrid", {default: false});
 
-    const currentUser = authStore.loggedUser;
+const props = defineProps<{
+  grandPrix: GrandPrix;
+  session: RaceSession;
+  grid: Array<StartGridPosition>;
+}>();
 
-    return {currentUser};
-  },
-  data() {
-    return {
-      notSendNotification: false,
-      notOverrideGrid: false,
-      fastLap: {} as Driver,
-      sessionGrid: [...this.grid],
-    }
-  },
-  methods: {
-    async saveGrid() {
-      const payload = {
-        grid: this.sessionGrid.map((gridPosition: StartGridPosition, index: number, array: StartGridPosition[]) => {
-          return {
-            driver: gridPosition.driver.id,
-            isFromPit: gridPosition.isFromPit,
-            note: gridPosition.note,
-            position: index + 1,
-          }
-        })
-      };
-      console.log(payload)
+const sessionGrid = ref<Array<StartGridPosition>>([...props.grid]);
 
-      await grandPrixService.saveGrid(this.grandPrix, this.session, payload)
-      notificationService.showNotification("¡Has guardado la parrilla!");
-    }
+async function saveGrid() {
+  const payload = {
+    grid: sessionGrid.value.map((gridPosition, index) => ({
+      driver: gridPosition.driver.id,
+      isFromPit: gridPosition.isFromPit,
+      note: gridPosition.note,
+      position: index + 1,
+    })),
+  };
+
+  try {
+    await grandPrixService.saveGrid(props.grandPrix, props.session, payload);
+    notificationService.showNotification("¡Has guardado la parrilla!");
+    hasSavedGrid.value = true;
+  } catch (error: any) {
+    notificationService.showNotification(error.message, "error");
   }
-});
+}
 </script>

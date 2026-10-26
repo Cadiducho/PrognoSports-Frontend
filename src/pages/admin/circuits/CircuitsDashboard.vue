@@ -1,19 +1,12 @@
 <template>
-  <div
-    id="adminDrivers"
-    class="box"
-  >
-    <PTitle
-      class="mb-5"
-      name="Administración de circuitos"
-    />
-
-    <p-button
-      class="mb-4"
-      label="Nuevo circuito"
-      color="info"
-      to="/admin/circuits/create"
-    />
+  <PPage>
+    <template #actions>
+      <p-button
+        label="Nuevo circuito"
+        color="info"
+        to="/admin/circuits/create"
+      />
+    </template>
 
     <p-table
       :columns="columns"
@@ -36,25 +29,24 @@
         ¿Está seguro que desea eliminar el circuito <strong>{{ circuitToDelete?.name }}</strong>? Esta acción no se puede deshacer.
       </template>
       <template #footer>
-        <button
-          class="button is-danger"
+        <p-button
+          color="danger"
           @click="deleteCircuit(circuitToDelete)"
         >
           Eliminar
-        </button>
-        <button
-          class="button"
+        </p-button>
+        <p-button
+          type="soft"
           @click="showConfirmDeleteModal = false"
         >
           Cancelar
-        </button>
+        </p-button>
       </template>
     </PrognoModal>
-  </div>
+  </PPage>
 </template>
 
 <script lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
 import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {circuitService, notificationService} from "@/_services";
 
@@ -71,8 +63,6 @@ export default defineComponent({
         PButton,
         PrognoModal,
         PTable,
-        AlertNoPermission,
-        PTitle,
     },
     setup() {
         const authStore = useAuthStore();

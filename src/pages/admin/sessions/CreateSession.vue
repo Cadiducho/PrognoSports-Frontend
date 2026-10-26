@@ -1,21 +1,51 @@
 <template>
-    <div id="createSession" class="box">
-        <PTitle class="mb-5" name="Crear sesión"/>
+  <PPage>
+    <PInput
+      v-model="createdSession.name"
+      label="Nombre de la sesión"
+      name="name"
+    />
+    <PInput
+      v-model="createdSession.code"
+      label="Código corto de la sesión"
+      name="code"
+    />
+    <PSwitch
+      v-model="createdSession.hasGrid"
+      class="mt-4"
+      name="hasGrid"
+    >
+      ¿Tiene parrilla de salida?
+    </PSwitch>
+    <PSwitch
+      v-model="createdSession.hasFastLap"
+      class="mt-4"
+      name="hasFastLap"
+    >
+      ¿Admite vueltas rápidas?
+    </PSwitch>
 
-        <PInput label="Nombre de la sesión" name="name" v-model="createdSession.name" />
-        <PInput label="Código corto de la sesión" name="code" v-model="createdSession.code" />
-        <PSwitch class="mt-4" name="hasGrid" v-model="createdSession.hasGrid">¿Tiene parrilla de salida?</PSwitch>
-        <PSwitch class="mt-4" name="hasFastLap" v-model="createdSession.hasFastLap">¿Admite vueltas rápidas?</PSwitch>
-
-        <div class="flex mt-4">
-            <PButton color="danger" type="soft" class="me-4" @click="router.push({name: 'adminSessions'})">Cancelar</PButton>
-            <PButton class="mt-4" :disabled="!isDataOk()" @click="registerSession">Crear sesión</PButton>
-        </div>
+    <div class="flex mt-4">
+      <PButton
+        color="danger"
+        type="soft"
+        class="me-4"
+        @click="router.push({name: 'adminSessions'})"
+      >
+        Cancelar
+      </PButton>
+      <PButton
+        class="mt-4"
+        :disabled="!isDataOk()"
+        @click="registerSession"
+      >
+        Crear sesión
+      </PButton>
     </div>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
 import {notificationService, sessionService} from "@/_services";
 
 import {reactive} from "vue";

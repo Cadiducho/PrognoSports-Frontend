@@ -1,21 +1,16 @@
 <template>
-  <div
-    id="createCompetition"
-    class="box"
-  >
-    <PTitle
-      class="mb-5"
-      name="Crear competición"
-    />
-
-    <o-steps v-model="activeStep">
-      <o-step-item
-        step="1"
-        label="Datos de la competición"
-      >
-        <h2 class="title">
+  <PPage>
+    <PStepper
+      v-model="activeStep"
+      :steps="[{ label: 'Datos de la competición' }, { label: 'Finalizar' }]"
+    >
+      <template #step-0>
+        <PTitle
+          tag="h2"
+          type="title"
+        >
           Datos de la competición
-        </h2>
+        </PTitle>
 
         <PField label="Nombre de la competición">
           <PInput
@@ -53,16 +48,16 @@
           />
         </PField>
 
-        <hr>
-      </o-step-item>
+        <PDivider />
+      </template>
 
-      <o-step-item
-        step="2"
-        label="Finalizar"
-      >
-        <h2 class="title">
+      <template #step-1>
+        <PTitle
+          tag="h2"
+          type="title"
+        >
           Finalizar
-        </h2>
+        </PTitle>
 
         <AlertInvalidData
           :object="createdCompetition.name"
@@ -85,22 +80,22 @@
           Revisa los datos, se va a crear la siguiente competición
         </PrognoAlert>
 
-        <div class="content">
-          <p class="card-text">
+        <PProse>
+          <p>
             <b>Nombre de la competición: </b>{{ createdCompetition.name }}
           </p>
-          <p class="card-text">
+          <p>
             <b>Nombre completo de la competición: </b>{{ createdCompetition.fullname }}
           </p>
-          <p class="card-text">
+          <p>
             <b>Code de la competición: </b>{{ createdCompetition.code }}
           </p>
-        </div>
-        <section class="content">
+        </PProse>
+        <PProse>
           <div v-html="compiledRules" />
-        </section>
+        </PProse>
 
-        <hr>
+        <PDivider />
 
 
         <PButton
@@ -110,16 +105,15 @@
         >
           Crear competición
         </PButton>
-      </o-step-item>
-    </o-steps>
-  </div>
+      </template>
+    </PStepper>
+  </PPage>
 </template>
 
 <script lang="ts">
 import PTitle from "@/components/lib/PTitle.vue";
 import {competitionService, notificationService} from "@/_services";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
-import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {ICompetition} from "@/types/Competition";
 import {marked} from "marked";
 
@@ -129,16 +123,21 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
+import PStepper from "@/components/lib/PStepper.vue";
+import PProse from "@/components/lib/PProse.vue";
+import PDivider from "@/components/lib/PDivider.vue";
 
 export default defineComponent({
     name: "CreateCompetition",
 
     components: {
+    PProse,
+    PDivider,
       PrognoAlert,
+      PStepper,
       PInput,
       PField,
       PButton,
-        AlertNoPermission,
         AlertInvalidData,
         PTitle,
     },

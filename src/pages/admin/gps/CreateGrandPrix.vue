@@ -1,13 +1,5 @@
 <template>
-  <div
-    id="createGrandPrix"
-    class="box"
-  >
-    <PTitle
-      class="mb-5"
-      name="Crear gran premio"
-    />
-
+  <PPage>
     <nav class="block">
       <PButton
         color="info"
@@ -19,14 +11,17 @@
       </PButton>
     </nav>
 
-    <o-steps v-model="activeStep">
-      <o-step-item
-        step="1"
-        label="Datos del gran premio"
-      >
-        <h2 class="title">
+    <PStepper
+      v-model="activeStep"
+      :steps="[{ label: 'Datos del gran premio' }, { label: 'Finalizar' }]"
+    >
+      <template #step-0>
+        <PTitle
+          tag="h2"
+          type="title"
+        >
           Datos del gran premio
-        </h2>
+        </PTitle>
 
         <PField label="Nombre del Gran Premio">
           <PInput
@@ -45,15 +40,15 @@
             lazy
           />
         </PField>
-      </o-step-item>
+      </template>
 
-      <o-step-item
-        step="2"
-        label="Finalizar"
-      >
-        <h2 class="title">
+      <template #step-1>
+        <PTitle
+          tag="h2"
+          type="title"
+        >
           Finalizar
-        </h2>
+        </PTitle>
 
         <AlertInvalidData
           :object="createdGrandPrix.name"
@@ -71,32 +66,31 @@
           Revisa los datos, se va a crear el Gran Premio
         </PrognoAlert>
 
-        <div class="content">
-          <p class="card-text">
+        <PProse>
+          <p>
             <b>Nombre del Gran Premio: </b>{{ createdGrandPrix.name }}
           </p>
-          <p class="card-text">
+          <p>
             <b>Código del Gran Premio: </b>{{ createdGrandPrix.code }}
           </p>
-        </div>
+        </PProse>
 
-        <hr>
+        <PDivider />
         <PButton
           :disabled="!isDataOk()"
           label="Crear Gran Premio"
           color="primary"
           @click="registerGrandPrix()"
         />
-      </o-step-item>
-    </o-steps>
-  </div>
+      </template>
+    </PStepper>
+  </PPage>
 </template>
 
 <script lang="ts">
 import PTitle from "@/components/lib/PTitle.vue"
 import {circuitService, grandPrixService, notificationService, seasonService} from "@/_services";
 import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
-import AlertNoPermission from "@/components/lib/AlertNoPermission.vue";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Season} from "@/types/Season";
 import {Circuit} from "@/types/Circuit";
@@ -107,15 +101,20 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
+import PStepper from "@/components/lib/PStepper.vue";
+import PProse from "@/components/lib/PProse.vue";
+import PDivider from "@/components/lib/PDivider.vue";
 
 export default defineComponent({
     name: "CreateGrandPrix",
     components: {
+    PProse,
+    PDivider,
       PrognoAlert,
+      PStepper,
       PInput,
       PField,
       PButton,
-        AlertNoPermission,
         AlertInvalidData,
         PTitle,
     },

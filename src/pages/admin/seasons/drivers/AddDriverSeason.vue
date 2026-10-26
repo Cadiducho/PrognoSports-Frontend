@@ -1,24 +1,8 @@
 <template>
-  <loading v-if="isLoading" />
-  <PCard v-else>
-    <PTitle
-      class="mb-5"
-      :name="`Agregar Piloto a la temporada ${season.name}`"
-    />
-    <nav class="flex justify-between mb-4">
-      <section class="flex flex-wrap">
-        <p-button
-          color="info"
-          icon="fa fa-chevron-left"
-          :to="{name: 'adminDriversInSeason'}"
-          tag="router-link"
-          class="mr-2"
-        >
-          Volver listado de Pilotos en la temporada
-        </p-button>
-      </section>
-    </nav>
-
+  <PPage
+    :loading="isLoading"
+    :subtitle="`Temporada ${season?.name}`"
+  >
     <form>
       <p-select
         v-model="addedDriver.id"
@@ -59,18 +43,16 @@
         @click="addDriverToSeason()"
       />
     </form>
-  </PCard>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
 import {driversService, notificationService, seasonService} from "@/_services";
 
 import {onMounted, ref} from "vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import {useRoute, useRouter} from "vue-router";
-import PCard from "@/components/lib/PCard.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import {Season} from "@/types/Season";
 import Loading from "@/components/lib/Loading.vue";

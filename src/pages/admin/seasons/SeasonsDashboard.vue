@@ -1,20 +1,6 @@
 <template>
-  <PCard>
-    <PTitle
-      class="mb-5"
-      name="Administración de temporadas"
-    />
-
-    <nav class="flex mb-4">
-      <p-button
-        color="info"
-        icon="fa fa-chevron-left"
-        :to="{name: 'admin'}"
-        tag="router-link"
-        class="mr-2"
-      >
-        Volver a Administración
-      </p-button>
+  <PPage>
+    <template #actions>
       <p-button
         color="primary"
         icon="fa fa-plus"
@@ -23,7 +9,7 @@
       >
         Nueva Temporada
       </p-button>
-    </nav>
+    </template>
 
     <p-table
       :columns="columns"
@@ -48,29 +34,27 @@
         ¿Está seguro que desea eliminar la temporada <strong>{{ seasonToDelete?.name }}</strong>? Esta acción no se puede deshacer.
       </template>
       <template #footer>
-        <button
-          class="button is-danger"
+        <p-button
+          color="danger"
           @click="deleteSeason(seasonToDelete)"
         >
           Eliminar
-        </button>
-        <button
-          class="button"
+        </p-button>
+        <p-button
+          type="soft"
           @click="showConfirmDeleteModal = false"
         >
           Cancelar
-        </button>
+        </p-button>
       </template>
     </PrognoModal>
-  </PCard>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import PTable from "@/components/lib/table/PTable.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
-import PCard from "@/components/lib/PCard.vue";
 import {useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
 import {notificationService, seasonService} from "@/_services";

@@ -1,94 +1,80 @@
 <template>
-  <div class="content mt-5">
+  <div class="mt-5">
     <PrognoAlert message="Arrastra las tarjetas para completar tu pronóstico." />
+    <PrognoAlert
+      v-if="hasUnavailablePredictions"
+      variant="danger"
+    >
+      Tu pronóstico contiene pilotos que ya no están inscritos en este Gran Premio. Sustitúyelos antes de guardarlo.
+    </PrognoAlert>
 
-    <div class="grid grid-cols-2 space-x-4 mb-4">
-      <section>
-        <h3 class="select-none dark:text-gray-300">
-          Pilotos disponibles
-        </h3>
-
-        <section class="busqueda-ordenada mb-2">
-          <p-button
-            color="info"
-            expanded
-            class="lg:flex-1"
-            @click="opcionesOrdenadoOpen = !opcionesOrdenadoOpen"
-          >
-            Ordenar
-          </p-button>
-
-          <PInput
-            v-model="filtroPiloto"
-            class="field lg:flex-2"
-            placeholder="Buscar..."
-            no-margin
-          />
-        </section>
-
-        <PCollapse
-          :open="opcionesOrdenadoOpen"
-          class="box-ordenado"
+    <div class="mb-4 grid grid-cols-2 gap-2 sm:gap-4 lg:gap-6">
+      <section class="min-w-0">
+        <PTitle
+          tag="h3"
+          type="section"
         >
-          <PCard class="mt-1">
-            <label class="label">Orderar lista de pilotos</label>
-            <div class="field mb-0">
-              <PRadio
-                v-model="orderType"
-                :value="0"
-              >
-                Por nombre
-              </PRadio>
-            </div>
-            <div class="field mb-0">
-              <PRadio
-                v-model="orderType"
-                :value="1"
-              >
-                Por equipos
-              </PRadio>
-            </div>
-            <div class="field mb-0">
-              <PRadio
-                v-model="orderType"
-                :value="2"
-              >
-                Por dorsal
-              </PRadio>
-            </div>
-            <div class="field mb-1">
-              <PRadio
-                v-if="indexedGrid.size > 0"
-                v-model="orderType"
-                :value="3"
-              >
-                Por parrilla
-              </PRadio>
-            </div>
-            <label class="label mt-2">Dirección del orden</label>
-            <div class="field">
-              <PRadio
-                v-model="orderAscendent"
-                :value="true"
-              >
-                Orden ascendente
-              </PRadio>
-              <PRadio
-                v-model="orderAscendent"
-                :value="false"
-              >
-                Orden descendente
-              </PRadio>
-            </div>
-          </PCard>
-        </PCollapse>
+          Pilotos disponibles
+        </PTitle>
+
+        <PSearchSortBar
+          v-model="filtroPiloto"
+          v-model:open="opcionesOrdenadoOpen"
+          placeholder="Buscar piloto o equipo..."
+        >
+          <template #options>
+            <PLabel label="Ordenar lista de pilotos" />
+            <PRadio
+              v-model="orderType"
+              :value="0"
+            >
+              Por nombre
+            </PRadio>
+            <PRadio
+              v-model="orderType"
+              :value="1"
+            >
+              Por equipos
+            </PRadio>
+            <PRadio
+              v-model="orderType"
+              :value="2"
+            >
+              Por dorsal
+            </PRadio>
+            <PRadio
+              v-if="indexedGrid.size > 0"
+              v-model="orderType"
+              :value="3"
+            >
+              Por parrilla
+            </PRadio>
+
+            <PLabel
+              class="mt-3"
+              label="Dirección del orden"
+            />
+            <PRadio
+              v-model="orderAscendent"
+              :value="true"
+            >
+              Orden ascendente
+            </PRadio>
+            <PRadio
+              v-model="orderAscendent"
+              :value="false"
+            >
+              Orden descendente
+            </PRadio>
+          </template>
+        </PSearchSortBar>
 
         <draggable
           :id="`pronosticados-${session.id}`"
           class="w-full h-full select-none space-y-2"
           :list="pilotosDisponiblesFiltrados"
           group="people"
-          item-key="name"
+          item-key="id"
         >
           <template #item="{ element, index }">
             <DraggableDriverCard
@@ -101,29 +87,35 @@
         </draggable>
       </section>
 
-      <section>
-        <h3 class="select-none dark:text-gray-300 inline-flex flex-wrap items-center  gap-2">
+      <section class="min-w-0">
+        <PTitle
+          tag="h3"
+          type="section"
+          class="inline-flex flex-wrap items-center gap-2"
+        >
           Tu pronóstico
           <PTag
             v-if="changed"
             color="warning"
+            size="small"
           >
             Modificado
           </PTag>
-        </h3>
+        </PTitle>
 
         <draggable
           :id="`pronosticados-${session.id}`"
           class="w-full h-full select-none space-y-2"
           :list="pilotosPronosticados"
           group="people"
-          item-key="name"
+          item-key="id"
         >
           <template #item="{ element, index }">
             <DraggableDriverCard
               :driver="element"
               :index="index"
               show-position
+              :unavailable="!driverIds.has(element.id)"
             />
           </template>
         </draggable>
@@ -135,7 +127,7 @@
         v-if="pilotosPronosticados.length === ruleSet.cantidadPilotosPronosticados(session)"
         color="primary"
         expanded
-        :disabled="sendingPronostico"
+        :disabled="sendingPronostico || hasUnavailablePredictions"
         @click="enviarPronostico"
       >
         Enviar pronóstico
@@ -160,7 +152,7 @@
       Ya no se puede pronosticar
     </p-button>
 
-    <hr v-if="(pilotosPronosticados.length > 0) && session.isBeforeClosureDate()">
+    <PDivider v-if="(pilotosPronosticados.length > 0) && session.isBeforeClosureDate()" />
     <p-button
       v-if="(pilotosPronosticados.length > 0) && session.isBeforeClosureDate()"
       color="danger"
@@ -190,10 +182,11 @@ import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import DraggableDriverCard from "@/components/gps/DraggableDriverCard.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PRadio from "@/components/lib/forms/PRadio.vue";
-import PInput from "@/components/lib/forms/PInput.vue";
-import PCollapse from "@/components/lib/PCollapse.vue";
+import PLabel from "@/components/lib/forms/PLabel.vue";
+import PSearchSortBar from "@/components/lib/PSearchSortBar.vue";
+import PTitle from "@/components/lib/PTitle.vue";
+import PDivider from "@/components/lib/PDivider.vue";
 import useEmitter from "@/composables/useEmitter";
-import PCard from "@/components/lib/PCard.vue";
 import PTag from "@/components/lib/PTag.vue";
 
 const props = defineProps<{
@@ -222,6 +215,8 @@ const opcionesOrdenadoOpen = ref(false);
 const orderType = ref(1);
 const orderAscendent = ref(true);
 const sendingPronostico = ref(false);
+const driverIds = computed(() => new Set(props.drivers.map(driver => driver.id)));
+const hasUnavailablePredictions = computed(() => pilotosPronosticados.some(driver => !driverIds.value.has(driver.id)));
 
 const pilotosDisponiblesFiltrados = computed({
   get() {
@@ -257,7 +252,7 @@ const pilotosDisponiblesFiltrados = computed({
 
 const changed = computed(() => {
   return pilotosGuardados.value.length !== pilotosPronosticados.length
-    || pilotosGuardados.value.some((d, index) => d.code !== pilotosPronosticados[index].code);
+    || pilotosGuardados.value.some((d, index) => d.id !== pilotosPronosticados[index]?.id);
 })
 
 const aplicaFiltrito = (driver: Driver) => {
@@ -324,10 +319,13 @@ onMounted(async() => {
       // Básicamente, si hay pronóstico. De otro modo, driver es undefined (value es {})
       if (value.driver != undefined) {
         // Elimino al piloto pronosticado de la lsita de disponibles
-        pilotosDisponibles.value = pilotosDisponibles.value.filter(d => d.code != value.driver.code);
+        const activeDriver = props.drivers.find(driver => driver.id === value.driver.id);
+        const predictedDriver = activeDriver ?? value.driver;
+
+        pilotosDisponibles.value = pilotosDisponibles.value.filter(d => d.id !== value.driver.id);
 
         // Añado el piloto pronosticado a la lista de pronósticos
-        pilotosPronosticados.push(value.driver);
+        pilotosPronosticados.push(predictedDriver);
       }
     }
   } catch (error) {

@@ -1,27 +1,5 @@
 <template>
-  <div
-    id="adminUsers"
-    class="box"
-  >
-    <PTitle
-      class="mb-5"
-      name="Administración de usuarios"
-    />
-
-    <nav class="flex mb-4">
-      <section class="flex flex-wrap">
-        <PButton
-          color="info"
-          icon="fa fa-chevron-left"
-          :to="{ name: 'admin' }"
-          tag="router-link"
-          class="mr-2"
-        >
-          Volver a Administración
-        </PButton>
-      </section>
-    </nav>
-
+  <PPage>
     <div class="block">
       <PSwitch v-model="isPaginated">
         Paginated
@@ -56,11 +34,10 @@
         />-->
       </template>
     </PTable>
-  </div>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
 import { User } from "@/types/User";
 import { userService } from "@/_services";
 import { ref, onMounted } from "vue";

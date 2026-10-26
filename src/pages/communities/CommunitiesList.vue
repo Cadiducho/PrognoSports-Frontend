@@ -1,10 +1,6 @@
 
 <template>
-  <PCard>
-    <PTitle
-      class="mb-5"
-      name="Lista de Comunidades"
-    />
+  <PPage>
     <div v-if="isLoading">
       <loading />
     </div>
@@ -117,18 +113,16 @@
         </PTabPanel>
       </PTabs>
     </div>
-  </PCard>
+  </PPage>
 </template>
 
 <script setup lang="ts">
-import useEmitter from "@/composables/useEmitter";
+import { useEmitterListener } from "@/composables/useEmitter";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {Community} from "@/types/Community";
 import {computed, onMounted, ref} from "vue";
 import {communityService} from "@/_services";
-import PTitle from "@/components/lib/PTitle.vue";
-import PCard from "@/components/lib/PCard.vue";
 import CommunityListItem from "@/components/communities/CommunityListItem.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
@@ -137,7 +131,6 @@ import PTabPanel from "@/components/lib/PTabPanel.vue";
 import PTabs from "@/components/lib/PTabs.vue";
 import PTabItem from "@/components/lib/PTabItem.vue";
 
-const emitter = useEmitter();
 const authStore = useAuthStore();
 const communityStore = useCommunityStore();
 
@@ -160,11 +153,11 @@ const closedCommunities = computed(() => {
 
 onMounted(() => {
   loadCommunities();
+});
 
-  emitter.on('reloadCommunitiesList', () => {
-    isLoading.value = true;
-    loadCommunities();
-  });
+useEmitterListener('reloadCommunitiesList', () => {
+  isLoading.value = true;
+  loadCommunities();
 });
 
 const loadCommunities = async () => {

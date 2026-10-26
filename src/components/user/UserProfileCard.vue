@@ -1,41 +1,49 @@
 <template>
-  <div class="section">
-    <div class="container">
-      <div class="columns is-mobile">
-        <div class="column is-1" />
-        <div class="column">
-          <figure class="image">
-            <img
-              :class="{ photoOpacity : !showSettingsButton}"
-              :src="profile.profileImage()"
-              alt="Profile image"
-            >
-
-            <label
-              v-if="!showSettingsButton"
-              class="icon edit-icon"
-            >
-              <i class="fa fa-camera" />
-              <input
-                accept="image/*"
-                tabindex="-1"
-                type="file"
-                hidden
-                @change="onFileChange"
+  <section class="w-full py-6">
+    <PContainer size="lg">
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+        <PEditableImage
+          v-if="!showSettingsButton"
+          class="mx-auto w-full max-w-sm"
+          :src="profile.profileImage()"
+          alt="Profile image"
+          label="Cambiar imagen de perfil"
+          @select="onFileSelected"
+        />
+        <figure
+          v-else
+          class="relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800"
+        >
+          <img
+            class="h-full w-full object-cover"
+            :src="profile.profileImage()"
+            alt="Profile image"
+          >
+        </figure>
+        <div class="min-w-0 space-y-1 text-gray-700 dark:text-gray-300">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <PTitle
+                tag="p"
+                type="title"
+                class="font-bold"
               >
-            </label>
-          </figure>
-        </div>
-        <div class="column is-1" />
-        <div class="column is-two-thirds content">
-          <p class="is-flex is-mobile is-justify-content-space-between">
-            <span class="title is-bold">
-              {{ profile.username }}
+                {{ profile.username }}
 
-              <PTag
-                :style="profile.styleRankTag()"
-              >{{ profile.rank.name }}</PTag>
-            </span>
+                <PTag
+                  :style="profile.styleRankTag()"
+                >
+                  {{ profile.rank.name }}
+                </PTag>
+              </PTitle>
+
+              <p
+                v-if="profile.bio"
+                class="text-sm text-gray-600 dark:text-gray-300"
+              >
+                {{ profile.bio }}
+              </p>
+            </div>
 
             <PButton
               v-if="showSettingsButton && profile.id === currentUser.id"
@@ -46,24 +54,19 @@
             >
               Ajustes
             </PButton>
-          </p>
-          <p v-if="profile.bio">
-            <span class="subtitle">
-              <small>{{ profile.bio }}</small>
-            </span>
-          </p>
+          </div>
 
           <div class="block mb-1">
-            <span class="icon-text">
-              <span class="icon mr-2">
+            <span class="inline-flex items-center gap-2">
+              <span class="inline-flex shrink-0 items-center justify-center mr-2">
                 <i class="fas fa-clock" />
               </span>
               Última conexión: {{ dateDiff(profile.last_activity) }}
             </span>
           </div>
           <div class="block mb-1">
-            <span class="icon-text">
-              <span class="icon mr-2">
+            <span class="inline-flex items-center gap-2">
+              <span class="inline-flex shrink-0 items-center justify-center mr-2">
                 <i class="fas fa-calendar" />
               </span>
               Registrado el {{ humanDateTime(profile.created) }}
@@ -73,8 +76,8 @@
             v-if="profile.location"
             class="block mb-1"
           >
-            <span class="icon-text">
-              <span class="icon mr-2">
+            <span class="inline-flex items-center gap-2">
+              <span class="inline-flex shrink-0 items-center justify-center mr-2">
                 <i class="fas fa-map-marker-alt" />
               </span>
               {{ profile.location }}
@@ -84,8 +87,8 @@
             v-if="profile.birthdate"
             class="block mb-1"
           >
-            <span class="icon-text">
-              <span class="icon mr-2">
+            <span class="inline-flex items-center gap-2">
+              <span class="inline-flex shrink-0 items-center justify-center mr-2">
                 <i class="fas fa-birthday-cake" />
               </span>
               {{ humanDate(profile.birthdate) }}
@@ -93,8 +96,8 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    </PContainer>
+  </section>
 
   <UploadFileModal
     v-model="showEditImageModal"
@@ -122,10 +125,16 @@ import PTag from "@/components/lib/PTag.vue";
 import UploadFileModal from "@/components/lib/UploadFileModal.vue";
 import {notificationService, userService} from "@/_services";
 import PButton from "@/components/lib/forms/PButton.vue";
+import PTitle from "@/components/lib/PTitle.vue";
+import PEditableImage from "@/components/lib/PEditableImage.vue";
+import PContainer from "@/components/lib/PContainer.vue";
 
 export default defineComponent({
     name: "UserProfileCard",
     components: {
+    PTitle,
+    PContainer,
+    PEditableImage,
       PButton,
         UploadFileModal,
         PTag,
@@ -156,19 +165,13 @@ export default defineComponent({
     data() {
         return {
             showEditImageModal: false,
-            selectedFile: null,
+            selectedFile: null as File | null,
         }
     },
     methods: {
-        onFileChange(e: any) {
-            this.showEditImageModal = false;
-            this.selectedFile = null;
-
-            let file = e.target.files[0];
-            if (file) {
-                this.selectedFile = file;
-                this.showEditImageModal = true;
-            }
+        onFileSelected(file: File) {
+            this.selectedFile = file;
+            this.showEditImageModal = true;
         },
         uploadProfileImage(blob: Blob) {
             if (blob.size > 2_097_152) {
@@ -186,20 +189,3 @@ export default defineComponent({
     }
 });
 </script>
-
-<style scoped>
-
-.photoOpacity {
-    opacity: 0.75;
-}
-
-/* Resolución móvil */
-@media screen and (max-width: 769px) {
-    .ui-image img {
-        max-width: 50%;
-    }
-    .edit-icon {
-        left: 25%;
-    }
-}
-</style>
