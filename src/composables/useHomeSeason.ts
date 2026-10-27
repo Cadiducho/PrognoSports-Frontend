@@ -1,7 +1,9 @@
 import { ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import type { GrandPrix } from "@/types/GrandPrix";
+import type { Season } from "@/types/Season";
 import { grandPrixService, scoreService, seasonService } from "@/_services";
+import { errorMessage } from "@/composables/errorMessage";
 import { useCommunityStore } from "@/store/communityStore";
 import type { PointsByGp } from "@/composables/charts/homeSeason";
 
@@ -9,12 +11,16 @@ import type { PointsByGp } from "@/composables/charts/homeSeason";
  * Carga de la temporada actual de la comunidad para la Home: Grandes Premios y puntos de todos los usuarios.
  * Es la misma llamada que usa el ranking, así que no añade peticiones nuevas. Se carga una vez y la comparten
  * todas las pestañas de gráficas.
+ *
+ * `season` se publica en cuanto se conoce (antes de tener los GPs y los puntos), para que lo que solo depende de
+ * ella, como el resumen del usuario, no espere a lo más lento. Se vacía al empezar cada carga.
  */
 export function useHomeSeason() {
   const communityStore = useCommunityStore();
   const { currentCommunity, thereIsCurrentCommunity } = storeToRefs(communityStore);
 
   const loading = ref(true);
+  const season = ref<Season | null>(null);
   const grandPrixes = ref<GrandPrix[]>([]);
   const pointsByGp = ref<PointsByGp>({});
 
@@ -24,6 +30,7 @@ export function useHomeSeason() {
   async function load(): Promise<void> {
     const request = ++lastRequest;
     loading.value = true;
+    season.value = null;
 
     if (!thereIsCurrentCommunity.value) {
       grandPrixes.value = [];
@@ -34,10 +41,15 @@ export function useHomeSeason() {
 
     try {
       const community = currentCommunity.value;
-      const season = await seasonService.getCurrentSeason(community.competition);
+      const currentSeason = await seasonService.getCurrentSeason(community.competition);
+      if (request !== lastRequest) {
+        return;
+      }
+      season.value = currentSeason;
+
       const [gpList, points] = await Promise.all([
-        grandPrixService.getGrandPrixesList(season),
-        scoreService.getUserPointsByGP(community, season),
+        grandPrixService.getGrandPrixesList(currentSeason),
+        scoreService.getUserPointsByGP(community, currentSeason),
       ]);
 
       if (request !== lastRequest) {
@@ -47,7 +59,7 @@ export function useHomeSeason() {
       pointsByGp.value = points;
     } catch (error: unknown) {
       // Un usuario sin permisos sobre el ranking de la comunidad no es un error que mostrar
-      if (!(error instanceof Error) || !error.message.includes("Unauthorized")) {
+      if (!errorMessage(error)?.includes("Unauthorized")) {
         console.error(error);
       }
       if (request === lastRequest) {
@@ -63,5 +75,5 @@ export function useHomeSeason() {
 
   watch(currentCommunity, load, { immediate: true });
 
-  return { loading, grandPrixes, pointsByGp, currentCommunity };
+  return { loading, season, grandPrixes, pointsByGp, currentCommunity };
 }

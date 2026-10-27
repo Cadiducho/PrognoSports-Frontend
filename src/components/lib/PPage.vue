@@ -18,7 +18,7 @@
     <header class="flex flex-wrap items-end justify-between gap-3">
       <div>
         <PTitle
-          :name="heading"
+          :name="displayedHeading"
           no-margin
         />
         <p
@@ -64,6 +64,8 @@ import {usePageStore} from "@/store/pageStore";
 
 interface Props {
   title?: string;
+  /** Encabezado visible cuando debe diferir del título de la página (pestaña del navegador y migas de pan) */
+  heading?: string;
   subtitle?: string;
   /** `card`: el contenido va dentro de una PCard. `plain`: la vista pone sus propias cards */
   variant?: 'card' | 'plain';
@@ -75,6 +77,7 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {
   title: undefined,
+  heading: undefined,
   subtitle: undefined,
   variant: 'card',
   size: 'full',
@@ -87,7 +90,7 @@ const route = useRoute();
 const pageStore = usePageStore();
 const {parent} = useBreadcrumbs();
 
-const heading = computed(() => props.title ?? route.meta.title);
+const displayedHeading = computed(() => props.heading ?? props.title ?? route.meta.title);
 const notFoundText = computed(() => typeof props.notFound === 'string' ? props.notFound : 'No se ha encontrado lo que buscabas');
 
 // Sincroniza el título dinámico con el breadcrumb y document.title

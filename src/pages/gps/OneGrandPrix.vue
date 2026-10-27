@@ -231,6 +231,11 @@ onMounted(async () => {
         break;
       }
     }
+    // Si se llega con `?sesion=<nombre>` (por ejemplo desde el Inicio), esa sesión tiene prioridad
+    const requested = route.query.sesion;
+    if (typeof requested === 'string' && gp.sessions.some((ses: RaceSession) => ses.name === requested)) {
+      activeTab.value = requested;
+    }
 
     await loading;
   } catch (error: any) {

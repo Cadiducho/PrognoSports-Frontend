@@ -1,7 +1,7 @@
 <template>
   <div
     v-show="show"
-    class="fixed bottom-0 right-2 md:right-16 p-4"
+    class="fixed bottom-16 right-2 z-40 p-4 md:bottom-0 md:right-16"
   >
     <PTooltip
       label="Volver arriba"
