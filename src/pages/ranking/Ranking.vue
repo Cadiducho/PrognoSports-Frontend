@@ -42,12 +42,12 @@
             label="Ranking acumulado"
           />
           <PTabItem
-            name="byHits"
-            label="Ranking por aciertos"
-          />
-          <PTabItem
             name="byRanking"
             label="Ranking por clasificacion"
+          />
+          <PTabItem
+            name="alternatives"
+            label="Rankings alternativos"
           />
         </template>
         <PTabPanel name="byGp">
@@ -76,17 +76,6 @@
             :legend-items="legendItems"
           />
         </PTabPanel>
-        <PTabPanel name="byHits">
-          <RankingHitsTab
-            :rows="hitsRows"
-            :community-members="communityMembers"
-            :grand-prixes="grandPrixesWithPoints"
-            :row-class="checkRowClass"
-            :check-max-hits="checkMaxHits"
-            :hits-heatmap-chart="hitsHeatmapChart"
-            :hits-heatmap-chart-height="hitsHeatmapChartHeight"
-          />
-        </PTabPanel>
         <PTabPanel name="byRanking">
           <RankingStandingsTab
             v-model:visible-users="visibleUsers"
@@ -98,13 +87,26 @@
             :legend-items="legendItems"
           />
         </PTabPanel>
+        <PTabPanel name="alternatives">
+          <RankingAlternativesTab
+            :rankings="alternativeRankings"
+            :current-username="currentUser.username"
+            :community-members="communityMembers"
+            :grand-prixes="grandPrixesWithPoints"
+            :hits-rows="hitsRows"
+            :row-class="checkRowClass"
+            :check-max-hits="checkMaxHits"
+            :hits-heatmap-chart="hitsHeatmapChart"
+            :hits-heatmap-chart-height="hitsHeatmapChartHeight"
+          />
+        </PTabPanel>
       </PTabs>
     </template>
   </PPage>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/store/authStore";
 import { useCommunityStore } from "@/store/communityStore";
@@ -113,13 +115,14 @@ import PSelect from "@/components/lib/forms/PSelect.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import RankingByGpTab from "@/pages/ranking/components/RankingByGpTab.vue";
 import RankingAccumulatedTab from "@/pages/ranking/components/RankingAccumulatedTab.vue";
-import RankingHitsTab from "@/pages/ranking/components/RankingHitsTab.vue";
+import RankingAlternativesTab from "@/pages/ranking/components/RankingAlternativesTab.vue";
 import RankingStandingsTab from "@/pages/ranking/components/RankingStandingsTab.vue";
 import PTabPanel from "@/components/lib/PTabPanel.vue";
 import { TableEntry } from "@/pages/ranking/types/ranking";
 import type { AccumulatedMode } from "@/composables/charts/accumulatedView";
 import { useRankingData } from "@/pages/ranking/composables/useRankingData";
 import { useRankingCharts } from "@/pages/ranking/composables/useRankingCharts";
+import { buildAlternativeRankings } from "@/pages/ranking/composables/alternativeRankings";
 import PTabs from "@/components/lib/PTabs.vue";
 import PTabItem from "@/components/lib/PTabItem.vue";
 
@@ -151,6 +154,8 @@ const {
   checkAccumulatedWinner,
   checkMaxHits,
 } = useRankingData(currentCommunity);
+
+const alternativeRankings = computed(() => buildAlternativeRankings(byGpRows.value, grandPrixesWithPoints.value));
 
 // Usuarios visibles en las gráficas de líneas: se comparten entre pestañas y arrancan con el top 8
 const visibleUsers = ref<string[]>([]);
