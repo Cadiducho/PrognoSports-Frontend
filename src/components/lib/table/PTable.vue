@@ -131,7 +131,7 @@
               />
               <i
                 v-if="hasDeleteButton"
-                class="fa fa-trash cursor-pointer text-error-600 hover:text-error-700 p-1"
+                class="fa fa-trash cursor-pointer text-error-600 hover:text-error-700 dark:text-error-400 dark:hover:text-error-300 p-1"
                 @click="$emit('delete', row)"
               />
             </slot>

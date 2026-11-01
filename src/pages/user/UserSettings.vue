@@ -42,6 +42,37 @@
     </PCard>
 
     <PCard>
+      <PTitle type="subtitle">
+        Apariencia
+      </PTitle>
+
+      <div class="mb-4">
+        <PRadio
+          v-model="themePreference"
+          value="light"
+        >
+          Claro
+        </PRadio>
+      </div>
+      <div class="mb-4">
+        <PRadio
+          v-model="themePreference"
+          value="dark"
+        >
+          Oscuro
+        </PRadio>
+      </div>
+      <div class="mb-4">
+        <PRadio
+          v-model="themePreference"
+          value="system"
+        >
+          Usar el tema del sistema
+        </PRadio>
+      </div>
+    </PCard>
+
+    <PCard>
       <form @submit.prevent="save()">
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div class="min-w-0">
@@ -283,8 +314,9 @@
 import UserLevelResume from "@/components/user/UserLevelResume.vue";
 import UserProfileCard from "@/components/user/UserProfileCard.vue";
 
-import {defineComponent, reactive, ref} from "vue";
+import {computed, defineComponent, reactive, ref} from "vue";
 import {useAuthStore} from "@/store/authStore";
+import {useThemeStore, type ThemePreference} from "@/store/themeStore";
 import {useCommunityStore} from "@/store/communityStore";
 import useEmitter from "@/composables/useEmitter";
 import {useDayjs} from "@/composables/useDayjs";
@@ -340,7 +372,13 @@ export default defineComponent({
     const editedUser = reactive(currentUser as Partial<User>);
     delete editedUser.currentCommunity;
 
-    return {currentUser, editedUser, currentCommunity, emitter, dateDiff, humanDateTime, humanDate, formatDate};
+    const themeStore = useThemeStore();
+    const themePreference = computed<ThemePreference>({
+      get: () => themeStore.preference,
+      set: (value) => themeStore.setPreference(value),
+    });
+
+    return {currentUser, editedUser, currentCommunity, emitter, dateDiff, humanDateTime, humanDate, formatDate, themePreference};
   },
   data() {
     return {

@@ -33,7 +33,7 @@ const isActive = computed(() => currentActiveTab.value === props.name);
 const tabClasses = computed(() => [
   isActive.value
     ? 'border-blue-500 text-blue-600 dark:text-blue-400 font-semibold translate-x-1'
-    : 'border-transparent text-gray-700 dark:text-gray-300 hover:text-blue-500 hover:border-blue-300 motion-safe:hover:translate-x-1',
+    : 'border-transparent text-gray-700 dark:text-gray-300 hover:text-blue-500 hover:border-blue-300 dark:hover:text-blue-400 dark:hover:border-blue-400 motion-safe:hover:translate-x-1',
 ]);
 
 const handleClick = () => {

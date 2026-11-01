@@ -21,7 +21,7 @@
       <article class="w-full md:w-1/2 p-4">
         <router-link
           to="/admin/competitions"
-          class="py-4 flex items-center justify-center bg-error-600 rounded-lg shadow-lg text-black font-bold"
+          class="py-4 flex items-center justify-center bg-error-600 rounded-lg shadow-lg text-white font-bold"
         >
           Administración de Competiciones
         </router-link>
@@ -39,7 +39,7 @@
       <article class="w-full md:w-1/3 p-4">
         <router-link
           to="/admin/gps"
-          class="py-4 flex items-center justify-center bg-blue-600 rounded-lg shadow-lg text-black font-bold"
+          class="py-4 flex items-center justify-center bg-blue-600 rounded-lg shadow-lg text-white font-bold"
         >
           Administración de Grandes Premios
         </router-link>
@@ -58,7 +58,7 @@
       <article class="w-full md:w-1/3 p-4">
         <router-link
           to="/admin/circuits"
-          class="py-4 flex items-center justify-center bg-violet-500 rounded-lg shadow-lg text-black font-bold"
+          class="py-4 flex items-center justify-center bg-violet-500 rounded-lg shadow-lg text-white font-bold"
         >
           Administración de Circuitos
         </router-link>
@@ -76,7 +76,7 @@
       <article class="w-full md:w-1/2 p-4">
         <router-link
           to="/admin/constructors"
-          class="py-4 flex items-center justify-center bg-amber-700 rounded-lg shadow-lg text-black font-bold"
+          class="py-4 flex items-center justify-center bg-amber-700 rounded-lg shadow-lg text-white font-bold"
         >
           Administración de Constructores
         </router-link>

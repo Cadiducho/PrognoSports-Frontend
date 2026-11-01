@@ -3,6 +3,7 @@ import {Community} from "@/types/Community";
 import {Dictionary} from "@/types/Dictionary";
 import {BASE_URL} from "@/_services";
 import {RaceSession} from "@/types/RaceSession";
+import {useStyles} from "@/composables/useStyles";
 
 export type UserId = number;
 export interface IUser {
@@ -87,7 +88,8 @@ export class User implements IUser {
   public styleRankTag() {
     return {
       backgroundColor: '#' + this.rank.color,
-      color: 'white',
+      // Texto con contraste suficiente sobre el color (libre) del rango, en claro y oscuro
+      color: useStyles().invertColor(this.rank.color),
     }
   }
 

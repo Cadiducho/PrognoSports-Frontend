@@ -30,7 +30,7 @@
               {{ ses.humanName() }}
               <span
                 v-if="currentSession?.id === ses.id"
-                class="inline-block px-2 py-1 leading-none bg-warning-200 text-warning-800 rounded-full font-semibold uppercase tracking-wide text-xs"
+                class="inline-block px-2 py-1 leading-none bg-warning-200 text-warning-800 dark:bg-warning-400/20 dark:text-warning-300 rounded-full font-semibold uppercase tracking-wide text-xs"
               >
                 Editando
               </span>

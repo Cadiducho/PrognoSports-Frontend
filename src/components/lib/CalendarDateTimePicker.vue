@@ -20,7 +20,7 @@
           type="text"
           :value="formattedDateTime"
           readonly
-          class="bg-white dark:dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 pr-10 cursor-pointer shadow-sm transition-colors duration-300"
+          class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 pr-10 cursor-pointer shadow-sm transition-colors duration-300"
           :placeholder="placeholder"
           @click="toggleCalendar"
         >
@@ -138,7 +138,7 @@
                     </option>
                   </select>
                   <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                    <i class="fas fa-chevron-down text-gray-400 text-xs" />
+                    <i class="fas fa-chevron-down text-gray-400 dark:text-gray-500 text-xs" />
                   </div>
                 </div>
               </div>
@@ -167,7 +167,7 @@
                     </option>
                   </select>
                   <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                    <i class="fas fa-chevron-down text-gray-400 text-xs" />
+                    <i class="fas fa-chevron-down text-gray-400 dark:text-gray-500 text-xs" />
                   </div>
                 </div>
               </div>

@@ -48,7 +48,8 @@ export function buildHitsHeatmapChart({ cells, grandPrixes, rankedUsernames }: H
         x: "gpCode",
         y: "username",
         text: (row) => row.hits,
-        fill: "#111827",
+        // Texto claro sobre los niveles oscuros (gris y morado) para mantener el contraste
+        fill: (row) => (row.level === "zero" || row.level === "max" ? "#ffffff" : "#111827"),
         fontWeight: 600,
       }),
     ],

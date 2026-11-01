@@ -25,9 +25,9 @@ const icon = computed(() => {
 
 const color = computed(() => {
   if (props.value) {
-    return ['text-success-500', 'hover:text-success-700'];
+    return ['text-success-600', 'hover:text-success-700', 'dark:text-success-400', 'dark:hover:text-success-300'];
   } else {
-    return ['text-error-500', 'hover:text-error-700'];
+    return ['text-error-600', 'hover:text-error-700', 'dark:text-error-400', 'dark:hover:text-error-300'];
   }
 })
 

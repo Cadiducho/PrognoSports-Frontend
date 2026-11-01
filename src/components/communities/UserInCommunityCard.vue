@@ -4,8 +4,8 @@
         class="bg-white dark:bg-gray-900 dark:ring-1 dark:ring-white/10 shadow-lg rounded-lg overflow-hidden my-4 w-full hover:shadow-xl hover:scale-105 transition ease-in-out delay-150 duration-300"
         >
         <img class="w-full h-48 object-cover object-center" :src="member.user.profileImage()" alt="User image">
-        <div class="px-6 py-2 bg-gray-200 dark:bg-gray-800">
-            <h1 class="mx-3 text-white font-semibold text-lg text-center" :style="{ color : '#' + member.user.rank.color }">{{ member.user.rank.name }}</h1>
+        <div class="px-6 py-2" :style="member.user.styleRankTag()">
+            <h1 class="mx-3 font-semibold text-lg text-center">{{ member.user.rank.name }}</h1>
         </div>
         <div class="py-4 px-5">
             <!-- Username -->

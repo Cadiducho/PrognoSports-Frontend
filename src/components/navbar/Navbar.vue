@@ -42,7 +42,7 @@
           <div
             id="prognoNavbar"
             :class="[
-              'border-t border-gray-200 pb-3 pt-3 md:flex md:flex-1 md:items-center md:justify-between md:border-t-0 md:pb-0 md:pt-0',
+              'border-t border-gray-200 dark:border-gray-700 pb-3 pt-3 md:flex md:flex-1 md:items-center md:justify-between md:border-t-0 md:pb-0 md:pt-0',
               isOpen ? 'block' : 'hidden md:flex'
             ]"
           >
@@ -83,8 +83,9 @@
 
             <div
               v-if="!isLoggedIn"
-              class="flex flex-wrap items-center justify-start gap-2 md:ml-auto md:justify-end"
+              class="flex flex-wrap items-center justify-start gap-2 md:ml-auto md:justify-end md:gap-3"
             >
+              <SwitchTheme />
               <div class="flex flex-wrap justify-start gap-2 md:justify-end">
                 <PButton
                   type="solid"
