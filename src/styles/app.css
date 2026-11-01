@@ -8,6 +8,14 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
   html,
   body {
     max-width: 100vw;
@@ -40,3 +48,34 @@
 }
 
 .leaflet-pane { z-index: 10; }
+
+/* Leaflet en modo oscuro: popups, controles y atribución (las teselas oscuras se eligen en OneCircuit) */
+.dark .leaflet-popup-content-wrapper,
+.dark .leaflet-popup-tip {
+  background: #1f2937;
+  color: #e5e7eb;
+}
+
+.dark .leaflet-popup-close-button {
+  color: #d1d5db;
+}
+
+.dark .leaflet-bar a {
+  background-color: #1f2937;
+  color: #e5e7eb;
+  border-bottom-color: #4b5563;
+}
+
+.dark .leaflet-bar a:hover,
+.dark .leaflet-bar a:focus-visible {
+  background-color: #374151;
+}
+
+.dark .leaflet-container .leaflet-control-attribution {
+  background: rgb(17 24 39 / 80%);
+  color: #d1d5db;
+}
+
+.dark .leaflet-control-attribution a {
+  color: #93c5fd;
+}

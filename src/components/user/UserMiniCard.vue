@@ -17,8 +17,8 @@
       <div class="flex flex-wrap items-center justify-between gap-2">
         <span class="break-words text-xl font-semibold text-gray-900 dark:text-gray-100">{{ objUser.username }}</span>
         <span
-          :style="{ color: `#${objUser.rank.color}`, 'border-color': `#${objUser.rank.color}` }"
-          class="inline-flex whitespace-nowrap rounded border px-2 text-sm"
+          :style="objUser.styleRankTag()"
+          class="inline-flex whitespace-nowrap rounded px-2 text-sm font-medium"
         >
           {{ objUser.rank.name }}
         </span>

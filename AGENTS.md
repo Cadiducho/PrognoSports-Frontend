@@ -45,7 +45,7 @@ Configuration uses Vite modes and `.env` files:
 - **State** (`src/store`): Pinia options-style stores (auth, community, app, theme, toast). `authStore` owns the logged-in user and token.
 - **Domain models** (`src/types`): classes/interfaces mirroring API entities. Some build asset URLs from `BASE_URL`.
 - **UI**: `src/components/lib` holds the in-house `P*` primitives and form/table helpers; feature components sit in sibling folders. `src/pages/admin/**` is the CRUD back-office.
-- **Styling**: Tailwind 3 (custom palette in `tailwind.config.mjs`, `darkMode: 'class'`) coexists with Bulma 0.9 + the Oruga Bulma theme (`src/scss/app.scss`). Bulma is being phased out (hence `cssMinify: 'esbuild'` in `vite.config.mts`), so prefer Tailwind for new UI. Oruga components are registered globally, which is why `vue/no-undef-components` is disabled.
+- **Styling**: Tailwind 3 (custom palette in `tailwind.config.mjs`, `darkMode: 'class'`) is the only styling system (`src/styles/app.css`; Bulma and Oruga are gone). Dark mode is driven by `themeStore` (preference `light | dark | system`, persisted in `localStorage.theme`), which toggles the `dark` class and `color-scheme` on `<html>`; an inline script in `index.html` applies it before first paint. New UI must include `dark:` variants.
 - `@` aliases `src/`.
 
 ## Conventions

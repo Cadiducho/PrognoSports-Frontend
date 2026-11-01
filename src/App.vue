@@ -5,6 +5,7 @@
   >
     <Toaster
       rich-colors
+      :theme="darkMode ? 'dark' : 'light'"
       :position="toastStore.position"
     />
 
@@ -26,14 +27,14 @@ import {useToastStore} from "@/store/toastStore";
 import { useTitle } from '@vueuse/core'
 import {watchEffect} from "vue";
 import {useRoute} from "vue-router";
+import {storeToRefs} from "pinia";
 import {useThemeStore} from "@/store/themeStore";
 import {usePageStore} from "@/store/pageStore";
 
 const toastStore = useToastStore();
-const styleStore = useThemeStore();
+const { darkMode } = storeToRefs(useThemeStore());
 
 const isBeta = import.meta.env.MODE == 'beta';
-console.log("isBeta", isBeta);
 const appName = isBeta ? 'PrognoSports (Beta)' : 'PrognoSports';
 const route = useRoute();
 const pageStore = usePageStore();
@@ -43,8 +44,4 @@ watchEffect(() => {
     const pageTitle = pageStore.title ?? route.meta.title;
     title.value = pageTitle ? `${pageTitle} · ${appName}` : appName;
 });
-
-const darkMode = styleStore.darkMode;
-styleStore.setDarkMode(darkMode);
-
 </script>

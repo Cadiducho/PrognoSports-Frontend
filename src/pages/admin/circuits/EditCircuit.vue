@@ -48,12 +48,12 @@
         />
         <input
           type="file"
-          class="block w-full text-sm text-slate-500
+          class="block w-full text-sm text-slate-500 dark:text-slate-400
                           file:mr-4 file:py-2 file:px-4
                           file:rounded-full file:border-0
                           file:text-sm file:font-semibold
-                          file:bg-violet-50 file:text-violet-700
-                          hover:file:bg-violet-100
+                          file:bg-violet-50 file:text-violet-700 dark:file:bg-violet-900/40 dark:file:text-violet-200
+                          hover:file:bg-violet-100 dark:hover:file:bg-violet-900/60
                         "
           @change="onFileChange"
         >
