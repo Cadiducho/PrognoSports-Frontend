@@ -70,6 +70,13 @@ export class GrandPrix implements IGrandPrix {
         return new Date(Math.max(...this.sessions.map(ses => ses.date.getTime())));
     }
 
+    /**
+     * Si ya ha empezado la última sesión del Gran Premio. Sin sesiones, no se considera disputado
+     */
+    hasStartedLastSession(): boolean {
+        return this.sessions.length > 0 && this.lastDate().getTime() <= Date.now();
+    }
+
     gpLink(): Object {
         return {
             name: "gpdetails",
