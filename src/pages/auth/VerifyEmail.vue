@@ -37,7 +37,7 @@
 
 
         <div v-if="showSendVerificationEmail">
-          <hr>
+          <hr class="border-gray-200 dark:border-gray-700">
 
           <p class="mt-6 text-gray-700 dark:text-gray-300 font-bold text-lg">
             Si este email no ha llegado a tu bandeja de entrada, por favor, revisa la carpeta de spam.

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      class="overflow-hidden rounded-lg border border-gray-200 bg-white text-center text-slate-900 shadow-xs dark:bg-slate-800 dark:text-slate-100"
+      class="overflow-hidden rounded-lg border border-gray-200 bg-white text-center text-slate-900 shadow-xs dark:border-gray-700 dark:bg-slate-800 dark:text-slate-100"
       :style="cardStyle"
     >
       <header
