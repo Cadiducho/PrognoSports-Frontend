@@ -128,7 +128,7 @@ const sessionsChart = computed(() => buildHomeSessionsChart({
       <div class="mt-3 flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
         <PField
           label="Comparar con"
-          class="min-w-[12rem] max-w-full"
+          class="min-w-48 max-w-full"
         >
           <PSelect v-model="compareWith">
             <option :value="NO_ONE">

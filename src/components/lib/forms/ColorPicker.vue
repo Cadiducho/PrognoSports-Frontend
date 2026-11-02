@@ -12,7 +12,7 @@
       <input
         v-model="pickerValue"
         type="color"
-        class="w-16 h-10 rounded border border-gray-300 dark:border-gray-600 cursor-pointer"
+        class="w-16 h-10 rounded-sm border border-gray-300 dark:border-gray-600 cursor-pointer"
         @input="onPickerChange"
       >
     </div>
@@ -21,7 +21,7 @@
       class="mt-2 flex items-center gap-2"
     >
       <div
-        class="w-12 h-12 rounded border border-gray-300 dark:border-gray-600 shadow-sm"
+        class="w-12 h-12 rounded-sm border border-gray-300 dark:border-gray-600 shadow-xs"
         :style="{ backgroundColor: previewColor }"
       />
       <span class="text-sm text-gray-600 dark:text-gray-400">Vista previa</span>

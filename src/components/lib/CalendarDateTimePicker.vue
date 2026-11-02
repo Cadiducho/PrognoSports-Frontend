@@ -20,7 +20,7 @@
           type="text"
           :value="formattedDateTime"
           readonly
-          class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 pr-10 cursor-pointer shadow-sm transition-colors duration-300"
+          class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 pr-10 cursor-pointer shadow-xs transition-colors duration-300"
           :placeholder="placeholder"
           @click="toggleCalendar"
         >
@@ -35,7 +35,7 @@
           v-if="showCalendar"
           ref="popupRef"
           :style="isDesktop ? floatingStyles : undefined"
-          class="fixed z-[60] w-[320px] max-sm:max-h-[90vh] max-sm:overflow-y-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700 max-sm:top-1/2 max-sm:left-1/2 max-sm:-translate-x-1/2 max-sm:-translate-y-1/2 max-sm:w-[90%] max-sm:max-w-[400px]"
+          class="fixed z-60 w-[320px] max-sm:max-h-[90vh] max-sm:overflow-y-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700 max-sm:top-1/2 max-sm:left-1/2 max-sm:-translate-x-1/2 max-sm:-translate-y-1/2 max-sm:w-[90%] max-sm:max-w-[400px]"
         >
           <!-- Encabezado del calendario -->
           <div class="flex flex-col sm:flex-row items-center justify-between mb-2 sm:mb-3 gap-2">

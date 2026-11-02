@@ -45,6 +45,8 @@ const labelClasses = computed(() => ({
 </script>
 
 <style scoped>
+@reference "@/styles/app.css";
+
 .radio {
     @apply border-gray-300 focus:ring-2 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-offset-gray-800;
     &.small {

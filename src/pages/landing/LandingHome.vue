@@ -79,7 +79,7 @@
           </p>
         </div>
         <PButton
-          class="shrink-0 !bg-white !text-brand-accent-700 hover:!bg-gray-100"
+          class="shrink-0 bg-white! text-brand-accent-700! hover:bg-gray-100!"
           pilled
           size="large"
           @click="sendToRegister"

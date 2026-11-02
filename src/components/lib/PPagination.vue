@@ -24,7 +24,7 @@
       </div>
       <div>
         <nav
-          class="isolate inline-flex -space-x-px rounded-md shadow-sm"
+          class="isolate inline-flex -space-x-px rounded-md shadow-xs"
           aria-label="Pagination"
         >
           <button
@@ -182,7 +182,7 @@ export default defineComponent({
     getButtonClasses(page: number) {
       const base = "relative inline-flex items-center px-4 py-2 text-sm font-semibold ";
       if (page === this.current) {
-        return base + "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        return base + "z-10 bg-indigo-600 text-white focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
       } else {
         return base + "text-gray-900 dark:text-gray-300 ring-1 ring-inset ring-gray-300 hover:bg-slate-200 focus:outline-offset-0 dark:hover:bg-gray-700 dark:ring-gray-700 dark:focus:outline-offset-0";
       }

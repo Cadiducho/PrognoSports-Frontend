@@ -1,7 +1,7 @@
 <template>
   <PContainer
     :size="size"
-    class="flex flex-col gap-4 !px-0"
+    class="flex flex-col gap-4 px-0!"
   >
     <template v-if="breadcrumb">
       <Breadcrumb class="hidden sm:block" />

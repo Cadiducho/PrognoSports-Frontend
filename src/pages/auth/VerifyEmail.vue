@@ -117,6 +117,8 @@ const verifyAccount = async () => {
 </script>
 
 <style scoped>
+@reference "@/styles/app.css";
+
 .verification-input {
   @apply mt-4;
   letter-spacing: 8px;

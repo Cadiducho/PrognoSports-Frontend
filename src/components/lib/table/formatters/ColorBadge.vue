@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center gap-2">
     <div
-      class="w-6 h-6 rounded border border-gray-300 dark:border-gray-600 shadow-sm"
+      class="w-6 h-6 rounded-sm border border-gray-300 dark:border-gray-600 shadow-xs"
       :style="{ backgroundColor: colorValue }"
       :title="colorValue"
     />

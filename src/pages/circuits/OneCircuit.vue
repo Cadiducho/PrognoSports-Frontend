@@ -72,7 +72,7 @@
           <button
             v-for="(variant, index) in circuit.variants"
             :key="variant.name + index"
-            class="mb-2 mr-3 rounded-full bg-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-cyan-600"
+            class="mb-2 mr-3 rounded-full bg-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-xs transition hover:bg-cyan-600"
             @click="selectedVariant = index"
           >
             {{ variant.name }}

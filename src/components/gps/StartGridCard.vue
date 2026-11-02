@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      class="overflow-hidden rounded-lg border bg-white text-center text-slate-900 shadow-sm dark:bg-slate-800 dark:text-slate-100"
+      class="overflow-hidden rounded-lg border border-gray-200 bg-white text-center text-slate-900 shadow-xs dark:bg-slate-800 dark:text-slate-100"
       :style="cardStyle"
     >
       <header
@@ -11,7 +11,7 @@
         <div class="flex items-center justify-center gap-2">
           <PTag
             size="small"
-            class="!bg-gray-800 !border-gray-800 dark:!bg-gray-800 dark:!border-gray-800 text-gray-light-50"
+            class="bg-gray-800! border-gray-800! dark:bg-gray-800! dark:border-gray-800! text-gray-light-50"
           >
             {{ gridPos.position }}º
           </PTag>

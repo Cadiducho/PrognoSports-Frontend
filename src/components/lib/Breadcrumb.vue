@@ -6,7 +6,7 @@
     <ol class="flex flex-wrap items-center gap-x-2.5 gap-y-1">
       <li>
         <router-link
-          class="inline-flex items-center rounded p-1 text-gray-500 transition hover:text-brand-500 dark:text-gray-400 dark:hover:text-brand-400"
+          class="inline-flex items-center rounded-sm p-1 text-gray-500 transition hover:text-brand-500 dark:text-gray-400 dark:hover:text-brand-400"
           :to="{name: 'home'}"
           aria-label="Inicio"
           title="Inicio"

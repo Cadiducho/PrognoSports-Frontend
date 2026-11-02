@@ -71,7 +71,7 @@ const closeAlert = () => {
 };
 
 const alertClasses = computed(() => {
-  const baseClasses = "flex items-center text-sm font-medium px-4 py-3 mb-4 rounded border";
+  const baseClasses = "flex items-center text-sm font-medium px-4 py-3 mb-4 rounded-sm border";
   // Texto 800 sobre fondo 50/100 (claro) y 200 sobre fondo 900/30 (oscuro): contraste AA sin colores chillones
   const variantClasses = {
     info: "bg-info-50 text-info-800 border-info-200 dark:bg-info-900/30 dark:text-info-200 dark:border-info-800",

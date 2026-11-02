@@ -118,6 +118,8 @@ export default defineComponent({
 </script>
 
 <style scoped>
+@reference "@/styles/app.css";
+
 .small {
   @apply py-1 px-3 text-sm;
 }
@@ -128,7 +130,7 @@ export default defineComponent({
   @apply py-3 px-5 text-lg;
 }
 .solid {
-  @apply border border-transparent shadow-sm font-semibold;
+  @apply border border-transparent shadow-xs font-semibold;
 
   &.teal {
     @apply bg-tertiary-500 hover:bg-tertiary-600 dark:focus:ring-offset-gray-dark-900 text-gray-light-50 dark:text-gray-dark-900;
@@ -153,7 +155,7 @@ export default defineComponent({
   }
 }
 .outline-pbutton {
-  @apply border border-current shadow-sm font-semibold bg-transparent;
+  @apply border border-current shadow-xs font-semibold bg-transparent;
 
   &.teal {
     @apply text-tertiary-500 hover:bg-tertiary-500 hover:text-gray-light-50 dark:hover:text-gray-dark-900;
@@ -178,7 +180,7 @@ export default defineComponent({
   }
 }
 .soft {
-  @apply border border-transparent shadow-sm font-semibold;
+  @apply border border-transparent shadow-xs font-semibold;
 
   &.teal {
     @apply bg-tertiary-100 hover:bg-tertiary-200 dark:bg-tertiary-900/30 dark:hover:bg-tertiary-800/50 text-tertiary-600 dark:text-tertiary-300;
@@ -203,7 +205,7 @@ export default defineComponent({
   }
 }
 .ghost {
-  @apply border border-transparent shadow-sm font-semibold bg-transparent;
+  @apply border border-transparent shadow-xs font-semibold bg-transparent;
 
   &.teal {
     @apply hover:bg-tertiary-100 dark:hover:bg-tertiary-900/30 text-tertiary-600 dark:text-tertiary-300;

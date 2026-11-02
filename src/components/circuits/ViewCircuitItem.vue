@@ -2,7 +2,7 @@
   <article class="h-full">
     <router-link
       :to="circuit.circuitLink()"
-      class="c-card group flex h-full min-h-[24rem] flex-col overflow-hidden rounded-lg border border-slate-200 bg-white text-slate-700 shadow-md transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+      class="c-card group flex h-full min-h-96 flex-col overflow-hidden rounded-lg border border-slate-200 bg-white text-slate-700 shadow-md transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
     >
       <div class="relative h-48 overflow-hidden bg-slate-50 dark:bg-slate-900/40">
         <img

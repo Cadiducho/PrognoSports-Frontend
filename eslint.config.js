@@ -47,7 +47,7 @@ export default [
             ],
             'vue/no-multiple-objects-in-class': 'warn',
             'vue/no-root-v-if': 'error',
-            'vue/no-undef-components': 'off', // off because of Oruga
+            'vue/no-undef-components': 'off',
             'vue/no-undef-properties': 'warn',
             'vue/no-unused-refs': 'warn',
             'vue/no-useless-mustaches': 'warn',

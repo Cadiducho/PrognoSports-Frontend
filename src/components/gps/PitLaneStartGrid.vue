@@ -2,7 +2,7 @@
   <div class="mt-2">
     <div
       v-if="hasPitLaneExits || hasGridChanges"
-      class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800"
+      class="rounded-lg border border-slate-200 bg-white p-4 shadow-xs dark:border-slate-700 dark:bg-slate-800"
     >
       <div
         v-if="hasPitLaneExits"

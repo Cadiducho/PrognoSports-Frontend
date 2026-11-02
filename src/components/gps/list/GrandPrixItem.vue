@@ -2,7 +2,7 @@
   <article class="h-full">
     <router-link
       :to="gp.gpLink()"
-      class="c-card group flex h-full min-h-[30rem] flex-col overflow-hidden rounded-lg border border-slate-200 bg-white text-slate-700 shadow-md transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+      class="c-card group flex h-full min-h-120 flex-col overflow-hidden rounded-lg border border-slate-200 bg-white text-slate-700 shadow-md transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
     >
       <div class="relative h-48 overflow-hidden bg-slate-50 dark:bg-slate-900/40">
         <img
@@ -16,7 +16,7 @@
         <span class="inline-block w-fit rounded-full bg-orange-200 px-2 py-1 text-xs font-semibold uppercase leading-none tracking-wide text-orange-800 dark:bg-orange-400/20 dark:text-orange-300">
           Ronda #{{ gp.round }}
         </span>
-        <h2 class="mt-2 min-h-[3.5rem] text-base font-bold leading-tight text-slate-800 dark:text-slate-100">
+        <h2 class="mt-2 min-h-14 text-base font-bold leading-tight text-slate-800 dark:text-slate-100">
           {{ gp.name }} de {{ gp.season.name }}
         </h2>
         <p class="text-sm text-slate-600 dark:text-slate-300">

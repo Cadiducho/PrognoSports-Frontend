@@ -38,7 +38,7 @@ const activeStyle = (item: ChartLegendItem) => ({
     >
       <button
         type="button"
-        class="inline-flex max-w-full items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+        class="inline-flex max-w-full items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-semibold transition-colors focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
         :class="isVisible(item.key)
           ? 'text-gray-900 hover:brightness-95 dark:text-gray-100 dark:hover:brightness-125'
           : 'border-gray-500/30 bg-gray-500/10 text-gray-500 hover:bg-gray-500/20 dark:text-gray-400'"
@@ -55,7 +55,7 @@ const activeStyle = (item: ChartLegendItem) => ({
             backgroundColor: isVisible(item.key) ? item.color : 'transparent',
           }"
         />
-        <span class="max-w-[11rem] truncate">{{ item.label }}</span>
+        <span class="max-w-44 truncate">{{ item.label }}</span>
       </button>
     </li>
   </ul>

@@ -20,7 +20,7 @@
     <!-- Solo en `pnpm dev:prod`: servidor de desarrollo contra la API de producción -->
     <div
       v-if="isDevAgainstProd"
-      class="fixed bottom-0 inset-x-0 z-[9999] bg-red-600 text-white text-center text-xs font-bold py-1 pointer-events-none"
+      class="fixed bottom-0 inset-x-0 z-9999 bg-red-600 text-white text-center text-xs font-bold py-1 pointer-events-none"
     >
       ⚠ MODO DESARROLLO CONTRA PRODUCCIÓN: los cambios afectan a datos reales ({{ apiUrl }})
     </div>
