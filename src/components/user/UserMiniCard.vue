@@ -15,17 +15,17 @@
         </figure>
       </template>
       <div class="flex flex-wrap items-center justify-between gap-2">
-        <span class="break-words text-xl font-semibold text-gray-900 dark:text-gray-100">{{ objUser.username }}</span>
+        <span class="wrap-break-word text-xl font-semibold text-gray-900 dark:text-gray-100">{{ objUser.username }}</span>
         <span
           :style="objUser.styleRankTag()"
-          class="inline-flex whitespace-nowrap rounded px-2 text-sm font-medium"
+          class="inline-flex whitespace-nowrap rounded-sm px-2 text-sm font-medium"
         >
           {{ objUser.rank.name }}
         </span>
       </div>
       <p
         v-if="objUser.bio"
-        class="mt-1 break-words text-sm text-gray-600 dark:text-gray-300"
+        class="mt-1 wrap-break-word text-sm text-gray-600 dark:text-gray-300"
       >
         {{ objUser.bio }}
       </p>
@@ -39,7 +39,7 @@
         class="flex items-center gap-2"
       >
         <i class="fas fa-map-marker-alt fa-sm" />
-        <span class="break-words">{{ objUser.location }}</span>
+        <span class="wrap-break-word">{{ objUser.location }}</span>
       </li>
       <li class="flex items-center gap-2">
         <i class="fas fa-clock fa-sm" />
@@ -57,8 +57,8 @@ import PMedia from "@/components/lib/PMedia.vue";
 import PCard from "@/components/lib/PCard.vue";
 
 export default defineComponent({
-  components: { PMedia, PCard },
     name: "ScoreComponents",
+  components: { PMedia, PCard },
     props: {
         user: {
             type: Object as PropType<User>,

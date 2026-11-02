@@ -19,7 +19,7 @@
     >
       <span class="switch-icon">🌑</span>
       <span class="switch-icon">☀️</span>
-      <span class="switch-ball absolute left-0.5 top-0.5 h-6 w-6 rounded-full bg-gray-200 shadow dark:bg-gray-700" />
+      <span class="switch-ball absolute left-0.5 top-0.5 h-6 w-6 rounded-full bg-gray-200 shadow-sm dark:bg-gray-700" />
     </span>
   </label>
 </template>
@@ -37,6 +37,8 @@ const switchId = useId();
 </script>
 
 <style scoped>
+@reference "@/styles/app.css";
+
 .switch-container {
   transition: background-color 0.3s ease;
 }

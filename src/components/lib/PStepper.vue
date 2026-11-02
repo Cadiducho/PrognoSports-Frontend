@@ -10,7 +10,7 @@
       >
         <button
           type="button"
-          class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-brand-500"
+          class="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-left text-sm font-medium transition focus:outline-hidden focus:ring-2 focus:ring-brand-500"
           :class="index === model ? 'bg-brand-100 text-brand-800 dark:bg-brand-900/40 dark:text-brand-100' : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'"
           :aria-current="index === model ? 'step' : undefined"
           @click="model = index"

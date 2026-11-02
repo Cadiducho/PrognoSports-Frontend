@@ -41,7 +41,7 @@
     >
       <button
         type="button"
-        class="text-sm font-semibold text-brand-600 hover:underline dark:text-brand-300"
+        class="cursor-pointer text-sm font-semibold text-brand-600 hover:underline dark:text-brand-300"
         @click="showAll = !showAll"
       >
         {{ showAll ? "Ver menos" : `Ver todos (${ranking.rows.length})` }}

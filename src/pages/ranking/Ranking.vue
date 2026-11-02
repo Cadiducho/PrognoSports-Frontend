@@ -195,7 +195,7 @@ watch(canCompareWithMe, (canCompare) => {
 
 const checkRowClass = (row: TableEntry, _index: number) => {
   if (row.user.username === currentUser.username) {
-    return "bg-brand-accent-500 text-white hover:!text-white dark:bg-brand-600";
+    return "bg-brand-accent-500 text-white hover:text-white! dark:bg-brand-600";
   }
   return "";
 };

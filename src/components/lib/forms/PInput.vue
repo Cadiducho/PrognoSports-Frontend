@@ -86,9 +86,9 @@ const sizeClasses = {
 };
 
 const inputClasses = computed(() => [
-  "block w-full appearance-none rounded-md border border-gray-300 bg-white pr-4 leading-normal text-gray-700 placeholder:text-gray-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder:text-gray-400",
+  "block w-full appearance-none rounded-md border border-gray-300 bg-white pr-4 leading-normal text-gray-700 placeholder:text-gray-400 focus:border-brand-500 focus:outline-hidden focus:ring-1 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder:text-gray-400",
   sizeClasses[props.size],
-  props.error ? "!border-error-500 focus:!ring-error-500 dark:!border-error-400" : "",
+  props.error ? "border-error-500! focus:ring-error-500! dark:border-error-400!" : "",
   props.icon && !props.isTextarea ? "pl-10" : "pl-3"
 ]);
 </script>

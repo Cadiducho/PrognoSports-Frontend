@@ -84,7 +84,9 @@ const selectClasses = computed(() => ({
 </script>
 
 <style scoped>
+@reference "@/styles/app.css";
+
 .select {
-  @apply appearance-none cursor-pointer block w-full p-2 py-2 pl-3 pr-10 text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 bg-none
+  @apply appearance-none cursor-pointer block w-full p-2 py-2 pl-3 pr-10 text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:outline-hidden focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 bg-none
 }
 </style>

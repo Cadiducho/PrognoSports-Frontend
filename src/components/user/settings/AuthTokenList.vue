@@ -2,16 +2,16 @@
   <PTitle
     type="subtitle"
     tag="h2"
-    class="dark:text-white"
+    class="dark:text-white!"
   >
     Tokens de inicio de sesión recientes
   </PTitle>
 
-  <ul class="select-none outline-solid pl-0 space-y-3">
+  <ul class="select-none pl-0 space-y-3">
     <li
       v-for="token in authTokens.slice(0, 5)"
       :key="token.token"
-      class="font-semibold flex justify-between p-2 bg-slate-50 dark:bg-slate-800 dark:text-white"
+      class="font-semibold flex justify-between rounded-md border border-slate-200 bg-slate-100 p-3 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
     >
       <section class="flex flex-col">
         <span>

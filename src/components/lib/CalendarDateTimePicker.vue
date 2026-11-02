@@ -20,7 +20,7 @@
           type="text"
           :value="formattedDateTime"
           readonly
-          class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 pr-10 cursor-pointer shadow-sm transition-colors duration-300"
+          class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm placeholder:text-gray-400 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 pr-10 cursor-pointer shadow-xs transition-colors duration-300"
           :placeholder="placeholder"
           @click="toggleCalendar"
         >
@@ -35,7 +35,7 @@
           v-if="showCalendar"
           ref="popupRef"
           :style="isDesktop ? floatingStyles : undefined"
-          class="fixed z-[60] w-[320px] max-sm:max-h-[90vh] max-sm:overflow-y-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700 max-sm:top-1/2 max-sm:left-1/2 max-sm:-translate-x-1/2 max-sm:-translate-y-1/2 max-sm:w-[90%] max-sm:max-w-[400px]"
+          class="fixed z-60 w-[320px] max-sm:max-h-[90vh] max-sm:overflow-y-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700 max-sm:top-1/2 max-sm:left-1/2 max-sm:-translate-x-1/2 max-sm:-translate-y-1/2 max-sm:w-[90%] max-sm:max-w-[400px]"
         >
           <!-- Encabezado del calendario -->
           <div class="flex flex-col sm:flex-row items-center justify-between mb-2 sm:mb-3 gap-2">
@@ -43,14 +43,14 @@
             <div class="flex gap-1">
               <button
                 type="button"
-                class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors"
+                class="p-2 cursor-pointer rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors"
                 @click="navigateYear(-1)"
               >
                 <i class="fas fa-angle-double-left text-xs sm:text-base" />
               </button>
               <button
                 type="button"
-                class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors"
+                class="p-2 cursor-pointer rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors"
                 @click="navigateMonth(-1)"
               >
                 <i class="fas fa-angle-left text-xs sm:text-base" />
@@ -66,14 +66,14 @@
             <div class="flex gap-1">
               <button
                 type="button"
-                class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors"
+                class="p-2 cursor-pointer rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors"
                 @click="navigateMonth(1)"
               >
                 <i class="fas fa-angle-right text-xs sm:text-base" />
               </button>
               <button
                 type="button"
-                class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors"
+                class="p-2 cursor-pointer rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 transition-colors"
                 @click="navigateYear(1)"
               >
                 <i class="fas fa-angle-double-right text-xs sm:text-base" />
@@ -102,7 +102,7 @@
               v-for="day in daysInMonth"
               :key="day"
               type="button"
-              class="h-8 w-8 flex items-center justify-center rounded-lg text-xs sm:text-sm font-medium transition-all duration-200"
+              class="h-8 w-8 flex cursor-pointer items-center justify-center rounded-lg text-xs sm:text-sm font-medium transition-all duration-200"
               :class="getDayClasses(day)"
               @click="selectDay(day)"
             >

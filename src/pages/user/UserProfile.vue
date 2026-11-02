@@ -11,7 +11,7 @@
         :show-settings-button="true"
       />
 
-      <hr>
+      <hr class="border-gray-200 dark:border-gray-700">
 
       <UserLevelResume :user="profile" />
     </PCard>

@@ -1,7 +1,7 @@
 <template>
   <span
     :class="[
-      'inline-flex items-center font-medium rounded transition-colors select-none',
+      'inline-flex items-center font-medium transition-colors select-none',
       sizeClasses,
       colorClasses,
       variantClasses
@@ -79,7 +79,7 @@ const variantClasses = computed(() => {
     case 'rounded':
       return 'rounded-full'
     default:
-      return 'rounded'
+      return 'rounded-sm'
   }
 })
 </script>

@@ -1,28 +1,68 @@
 <template>
-    <PCard v-if="noNextGp">
-        <PTitle type="subtitle">Próximo Gran Premio</PTitle>
-        <PTitle tag="p">No hay próximo Gran Premio</PTitle>
-    </PCard>
+  <PCard v-if="noNextGp">
+    <PTitle type="subtitle">
+      Próximo Gran Premio
+    </PTitle>
+    <PTitle tag="p">
+      No hay próximo Gran Premio
+    </PTitle>
+  </PCard>
 
-    <PCard v-else-if="!loadingGpData" class="text-gray-900 no-underline dark:text-gray-100">
-        <PTitle type="subtitle" tag="h2">Próximo Gran Premio</PTitle>
-        <PTitle tag="h1">{{ nextGp.name }}</PTitle>
-        <figure v-if="nextGp.hasPromoImage" class="max-w-lg">
-            <img class="h-auto max-w-full rounded-lg" :src="nextGp.promoImage()" alt="Next grand prix promo image">
-        </figure>
-        <hr v-else>
+  <PCard
+    v-else-if="!loadingGpData"
+    class="text-gray-900 no-underline dark:text-gray-100"
+  >
+    <PTitle
+      type="subtitle"
+      tag="h2"
+    >
+      Próximo Gran Premio
+    </PTitle>
+    <PTitle tag="h1">
+      {{ nextGp.name }}
+    </PTitle>
+    <figure
+      v-if="nextGp.hasPromoImage"
+      class="max-w-lg"
+    >
+      <img
+        class="h-auto max-w-full rounded-lg"
+        :src="nextGp.promoImage()"
+        alt="Next grand prix promo image"
+      >
+    </figure>
+    <hr
+      v-else
+      class="border-gray-200 dark:border-gray-700"
+    >
 
 
-        <h3 class="text-2xl font-semibold mt-5">{{ nextGp.circuit?.name }} - Ronda #{{ nextGp.round }}</h3>
-        <p class="text-lg font-semibold">{{ nextGp.circuit?.locality }} ({{ nextGp.circuit?.country }})</p>
-        <ul class="list-disc list-inside " v-for="session in nextGp.sessions">
-            <li>
-                <b class="-ml-2">{{ session.humanName() }}:</b> {{ humanDateTime(session.date) }} ({{ dateDiff(session.date) }})
-            </li>
-        </ul>
+    <h3 class="text-2xl font-semibold mt-5">
+      {{ nextGp.circuit?.name }} - Ronda #{{ nextGp.round }}
+    </h3>
+    <p class="text-lg font-semibold">
+      {{ nextGp.circuit?.locality }} ({{ nextGp.circuit?.country }})
+    </p>
+    <ul
+      v-for="session in nextGp.sessions"
+      :key="session.id"
+      class="list-disc list-inside "
+    >
+      <li>
+        <b class="-ml-2">{{ session.humanName() }}:</b> {{ humanDateTime(session.date) }} ({{ dateDiff(session.date) }})
+      </li>
+    </ul>
 
-        <PButton expanded tag="router-link" :to="nextGp.gpLink()" color="primary" class="mt-5">Pronosticar</PButton>
-    </PCard>
+    <PButton
+      expanded
+      tag="router-link"
+      :to="nextGp.gpLink()"
+      color="primary"
+      class="mt-5"
+    >
+      Pronosticar
+    </PButton>
+  </PCard>
 </template>
 
 <script lang="ts">
@@ -56,13 +96,13 @@
                 loadingGpData: true,
             }
         },
-        mounted() {
-            if (this.thereIsCurrentCommunity) {
+        watch: {
+            currentCommunity(newCommunity, oldcommunity) {
                 this.fetchNextGrandPrixData();
             }
         },
-        watch: {
-            currentCommunity(newCommunity, oldcommunity) {
+        mounted() {
+            if (this.thereIsCurrentCommunity) {
                 this.fetchNextGrandPrixData();
             }
         },

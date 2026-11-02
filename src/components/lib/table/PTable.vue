@@ -112,7 +112,7 @@
           <td
             v-if="hasActions"
             :class="getTdStyle()"
-            class="!text-right"
+            class="text-right!"
           >
             <slot
               name="actions"

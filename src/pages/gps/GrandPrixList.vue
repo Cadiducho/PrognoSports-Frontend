@@ -42,7 +42,7 @@
           <PTimelineItem
             v-for="(gp, index) in allGps"
             :key="gp.name + index"
-            class="!pb-0"
+            class="pb-0!"
             :variant="timelineVariant(gp)"
             :icon="isThisWeek(gp.lastDate()) ? 'fa fa-flag' : undefined"
           >
