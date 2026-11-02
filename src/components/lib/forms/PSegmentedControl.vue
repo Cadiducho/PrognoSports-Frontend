@@ -40,9 +40,9 @@ const onKeydown = (event: KeyboardEvent, index: number): void => {
       :key="option.value"
       type="button"
       role="radio"
-      class="rounded-md px-3 py-1.5 text-sm font-semibold transition-colors focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+      class="cursor-pointer rounded-md px-3 py-1.5 text-sm font-semibold transition-colors focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
       :class="selected === option.value
-        ? 'bg-white text-brand-700 shadow-xs dark:bg-gray-700 dark:text-brand-200'
+        ? 'bg-white text-brand-700 shadow-sm dark:bg-gray-700 dark:text-brand-200'
         : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100'"
       :aria-checked="selected === option.value"
       :tabindex="selected === option.value ? 0 : -1"

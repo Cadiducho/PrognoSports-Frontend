@@ -2,7 +2,7 @@
   <PTitle
     type="subtitle"
     tag="h2"
-    class="dark:text-white"
+    class="dark:text-white!"
   >
     Tokens de inicio de sesión recientes
   </PTitle>

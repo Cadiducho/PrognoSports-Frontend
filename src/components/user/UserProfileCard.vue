@@ -26,7 +26,7 @@
               <PTitle
                 tag="p"
                 type="title"
-                class="font-bold"
+                class="font-bold!"
               >
                 {{ profile.username }}
 

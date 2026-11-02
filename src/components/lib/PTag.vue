@@ -1,7 +1,7 @@
 <template>
   <span
     :class="[
-      'inline-flex items-center font-medium rounded-sm transition-colors select-none',
+      'inline-flex items-center font-medium transition-colors select-none',
       sizeClasses,
       colorClasses,
       variantClasses
@@ -18,7 +18,7 @@ import { TagColor, TagSize } from '@/types/components'
 const props = defineProps<{
   color?: TagColor
   size?: TagSize,
-  variant?: 'rounded-sm' | 'default'
+  variant?: 'rounded' | 'default'
 }>()
 
 const color = computed(() => props.color || 'neutral')
@@ -76,7 +76,7 @@ const sizeClasses = computed(() => {
 
 const variantClasses = computed(() => {
   switch (props.variant) {
-    case 'rounded-sm':
+    case 'rounded':
       return 'rounded-full'
     default:
       return 'rounded-sm'

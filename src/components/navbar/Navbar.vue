@@ -23,7 +23,7 @@
 
             <button
               type="button"
-              class="inline-flex h-9 w-9 items-center justify-center rounded-md text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 md:hidden dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-white"
+              class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-md text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 focus:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 md:hidden dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-white"
               aria-label="menu"
               :aria-expanded="isOpen"
               @click="isOpen = !isOpen"

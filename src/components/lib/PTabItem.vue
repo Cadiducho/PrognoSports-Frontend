@@ -4,7 +4,7 @@
     :to="to"
     :href="href"
     :type="!to && !href ? 'button' : undefined"
-    class="px-4 py-2 border-b-2 transform-gpu transition-[color,border-color,transform] duration-200 ease-out motion-reduce:transition-none"
+    class="px-4 py-2 border-b-2 transform-gpu transition-[color,border-color,translate] duration-200 ease-out motion-reduce:transition-none"
     :class="tabClasses"
     @click.prevent="handleClick"
   >

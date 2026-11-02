@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center justify-center min-h-fit">
     <PTitle
       name="Verifica tu email"
-      class="text-2xl font-bold mb-4"
+      class="text-2xl font-bold! mb-4"
     />
     <PContainer
       size="sm"
@@ -42,7 +42,7 @@
           <p class="mt-6 text-gray-700 dark:text-gray-300 font-bold text-lg">
             Si este email no ha llegado a tu bandeja de entrada, por favor, revisa la carpeta de spam.
           </p>
-          <p class="mb-2text-gray-700 dark:text-gray-300 font-bold text-lg">
+          <p class="mb-2 text-gray-700 dark:text-gray-300 font-bold text-lg">
             Si necesitas que te enviemos un nuevo correo de verificación, haz click en el siguiente botón.
           </p>
           <PButton

@@ -99,6 +99,7 @@ export default defineComponent({
             'small': props.size === 'small',
             'medium': props.size === 'medium',
             'large': props.size === 'large',
+            'cursor-pointer': !props.disabled,
             'w-full': props.expanded,
             'rounded-full': props.pilled,
             'rounded-md': props.rounded && !props.pilled,

@@ -26,7 +26,7 @@
 
     <button
       v-if="closable"
-      class="ml-auto"
+      class="ml-auto cursor-pointer"
       @click="closeAlert"
     >
       <svg
