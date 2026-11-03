@@ -20,7 +20,7 @@ import {
 import { type CommunityPoint, SESSION_ORDER, type SeriesPoint, sessionName } from "@/composables/charts/homeSeason";
 import type { GrandPrix } from "@/types/GrandPrix";
 
-const ME_LABEL = "Tú";
+const DEFAULT_ME_LABEL = "Tú";
 const LEADER_LABEL = "Líder";
 const AVERAGE_LABEL = "Media";
 
@@ -48,6 +48,8 @@ interface TrophyRow {
 }
 
 export interface HomePointsInput {
+  /** Etiqueta de la serie principal; por defecto "Tú" */
+  meLabel?: string;
   /** Grandes Premios que se dibujan (ya recortados por la ventana) */
   grandPrixes: readonly GrandPrix[];
   username: string;
@@ -88,7 +90,8 @@ function segmentsOf(point: SeriesPoint): SegmentRow[] {
  * Van separados porque sus magnitudes (cientos frente a decenas) aplastarían una serie.
  */
 export function buildHomePointsChart(input: HomePointsInput) {
-  const { grandPrixes, username, me, community, winners, compare } = input;
+  const { grandPrixes, username, me, community, winners, compare, meLabel } = input;
+  const ME_LABEL = truncateLabel(meLabel ?? DEFAULT_ME_LABEL, 12);
   const compareLabel = compare ? truncateLabel(compare.name, 12) : null;
 
   const topRows: TopRow[] = grandPrixes.map((gp, index) => ({

@@ -11,7 +11,7 @@ import { HOME_CHART_HEIGHT, HOME_COLORS, LABEL_FONT_SIZE } from "@/composables/c
 import type { SeriesPoint } from "@/composables/charts/homeSeason";
 import type { GrandPrix } from "@/types/GrandPrix";
 
-const ME_LABEL = "Tú";
+const DEFAULT_ME_LABEL = "Tú";
 
 interface PositionRow {
   gpCode: string;
@@ -22,6 +22,8 @@ interface PositionRow {
 }
 
 export interface HomePositionInput {
+  /** Etiqueta de la serie principal; por defecto "Tú" */
+  meLabel?: string;
   grandPrixes: readonly GrandPrix[];
   me: readonly SeriesPoint[];
   compare?: { name: string; series: readonly SeriesPoint[] };
@@ -46,7 +48,8 @@ function positionTicks(maxPosition: number): number[] {
  * Tu posición en la clasificación tras cada Gran Premio, como un bump chart (1º arriba).
  * Si se compara con otro usuario, su recorrido se dibuja con otro color.
  */
-export function buildHomePositionChart({ grandPrixes, me, compare }: HomePositionInput) {
+export function buildHomePositionChart({ grandPrixes, me, compare, meLabel }: HomePositionInput) {
+  const ME_LABEL = truncateLabel(meLabel ?? DEFAULT_ME_LABEL, 12);
   const compareLabel = compare ? truncateLabel(compare.name, 12) : null;
 
   const toRows = (series: readonly SeriesPoint[], who: string): PositionRow[] => series.map((point) => ({

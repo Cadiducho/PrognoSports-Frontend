@@ -34,17 +34,30 @@ import HomePositionBadge from "@/components/home/HomePositionBadge.vue";
 
 type HomeTab = "points" | "position" | "hits";
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   user: User;
-}>();
+  /** Datos de temporada ya cargados por el padre, para no repetir la petición */
+  season?: ReturnType<typeof useHomeSeason>;
+  /** false al mostrar el perfil de otro usuario: textos en tercera persona */
+  own?: boolean;
+  /** Usuario con el que se compara de entrada, si está en la clasificación */
+  initialCompare?: string;
+  showRankingButton?: boolean;
+}>(), {
+  season: undefined,
+  own: true,
+  initialCompare: undefined,
+  showRankingButton: true,
+});
 
-const { loading, grandPrixes, pointsByGp } = useHomeSeason();
+const { loading, grandPrixes, pointsByGp } = props.season ?? useHomeSeason();
 
 const tab = ref<HomeTab>("points");
 const windowSize = ref<HomeWindow>("season");
 // El select necesita un valor no vacío para poder volver a "Nadie"
 const NO_ONE = "__no_one__";
 const compareWith = ref<string>(NO_ONE);
+let initialCompareApplied = false;
 
 const tabOptions: { value: HomeTab; label: string }[] = [
   { value: "points", label: "Puntos" },
@@ -57,6 +70,8 @@ const windowOptions: { value: HomeWindow; label: string }[] = [
 ];
 
 const username = computed(() => props.user.username);
+// En el perfil de otro usuario las series se llaman por su nombre en lugar de "Tú"
+const meLabel = computed(() => (props.own ? undefined : props.user.username));
 
 // Solo los GPs con puntos: así las gráficas llenan el ancho y "últimos 5" son los últimos 5 jugados
 const played = computed(() => playedGps(grandPrixes.value, pointsByGp.value));
@@ -66,10 +81,15 @@ const compareOptions = computed(() => rankedUsernames(played.value, pointsByGp.v
 
 // Si cambia la comunidad o la temporada y el usuario elegido ya no está, se vuelve a "Nadie"
 watch(compareOptions, (options) => {
+  if (!initialCompareApplied && props.initialCompare && options.includes(props.initialCompare)) {
+    initialCompareApplied = true;
+    compareWith.value = props.initialCompare;
+    return;
+  }
   if (compareWith.value !== NO_ONE && !options.includes(compareWith.value)) {
     compareWith.value = NO_ONE;
   }
-});
+}, { immediate: true });
 
 const me = computed(() => userSeries(shown.value, pointsByGp.value, username.value));
 const community = computed(() => communitySeries(shown.value, pointsByGp.value));
@@ -86,6 +106,7 @@ const position = computed(() => latestPosition(fullMe.value));
 
 const pointsChart = computed(() => buildHomePointsChart({
   grandPrixes: shown.value,
+  meLabel: meLabel.value,
   username: username.value,
   me: me.value,
   community: community.value,
@@ -94,16 +115,19 @@ const pointsChart = computed(() => buildHomePointsChart({
 }));
 const positionChart = computed(() => buildHomePositionChart({
   grandPrixes: shown.value,
+  meLabel: meLabel.value,
   me: me.value,
   compare: compare.value,
 }));
 const hitsChart = computed(() => buildHomeHitsChart({
   grandPrixes: shown.value,
+  meLabel: meLabel.value,
   me: me.value,
   community: community.value,
   compare: compare.value,
 }));
 const sessionsChart = computed(() => buildHomeSessionsChart({
+  meLabel: meLabel.value,
   me: sessionAverages(shown.value, pointsByGp.value, username.value),
   community: sessionAverages(shown.value, pointsByGp.value, null),
   compare: compareName.value
@@ -161,15 +185,18 @@ const sessionsChart = computed(() => buildHomeSessionsChart({
         <PChart
           v-if="tab === 'points'"
           :definition="pointsChart"
-          aria-label="Tus puntos acumulados frente al líder y la media, y tus puntos por Gran Premio desglosados por sesión"
+          :aria-label="`${own ? 'Tus puntos' : 'Puntos'} acumulados frente al líder y la media, y puntos por Gran Premio desglosados por sesión`"
           :height="HOME_CHART_HEIGHT"
         />
 
         <template v-else-if="tab === 'position'">
-          <HomePositionBadge :position="position" />
+          <HomePositionBadge
+            :position="position"
+            :own="own"
+          />
           <PChart
             :definition="positionChart"
-            aria-label="Tu posición en la clasificación tras cada Gran Premio"
+            :aria-label="`${own ? 'Tu posición' : 'Posición'} en la clasificación tras cada Gran Premio`"
             :height="HOME_CHART_HEIGHT"
           />
         </template>
@@ -177,7 +204,7 @@ const sessionsChart = computed(() => buildHomeSessionsChart({
         <template v-else>
           <PChart
             :definition="hitsChart"
-            aria-label="Tu porcentaje de acierto en cada Gran Premio frente a la media de la comunidad"
+            :aria-label="`${own ? 'Tu porcentaje' : 'Porcentaje'} de acierto en cada Gran Premio frente a la media de la comunidad`"
             :height="HITS_CHART_HEIGHT"
           />
           <h4 class="mb-1 mt-4 text-base font-semibold text-gray-800 dark:text-gray-200">
@@ -188,12 +215,16 @@ const sessionsChart = computed(() => buildHomeSessionsChart({
             aria-label="Media de puntos por tipo de sesión, frente a la comunidad"
             :height="SESSIONS_CHART_HEIGHT"
           />
-          <HomeFormStats :form="form" />
+          <HomeFormStats
+            :form="form"
+            :own="own"
+          />
         </template>
       </section>
     </template>
 
     <PButton
+      v-if="showRankingButton"
       class="mt-4"
       label="Ir al Ranking"
       expanded
