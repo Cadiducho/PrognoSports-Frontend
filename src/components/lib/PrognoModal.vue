@@ -14,7 +14,7 @@
         <!-- dialog -->
         <div
           ref="dialogEl"
-          class="relative mx-4 my-4 max-h-[90vh] w-full overflow-y-auto rounded-lg bg-white shadow-sm dark:bg-gray-900 md:w-1/2"
+          class="relative mx-4 my-4 max-h-[90vh] w-full overflow-y-auto rounded-lg bg-white shadow-xs dark:bg-gray-900 md:w-1/2"
           role="dialog"
           aria-modal="true"
           :aria-labelledby="ariaLabelledby"
@@ -35,7 +35,7 @@
               <button
                 ref="closeButtonEl"
                 type="button"
-                class="ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
+                class="ms-auto inline-flex cursor-pointer h-8 w-8 items-center justify-center rounded-lg bg-transparent text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
                 @click="close('button')"
               >
                 <svg

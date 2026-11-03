@@ -26,7 +26,7 @@
 
     <button
       v-if="closable"
-      class="ml-auto"
+      class="ml-auto cursor-pointer"
       @click="closeAlert"
     >
       <svg
@@ -71,12 +71,13 @@ const closeAlert = () => {
 };
 
 const alertClasses = computed(() => {
-  const baseClasses = "flex items-center text-sm font-bold px-4 py-3 mb-4 rounded";
+  const baseClasses = "flex items-center text-sm font-medium px-4 py-3 mb-4 rounded-sm border";
+  // Texto 800 sobre fondo 50/100 (claro) y 200 sobre fondo 900/30 (oscuro): contraste AA sin colores chillones
   const variantClasses = {
-    info: "bg-info-100 dark:bg-info-600 text-info-700 dark:text-slate-200 border-info-500",
-    danger: "bg-error-100 text-error-500 border border-error-200",
-    warning: "bg-warning-100 border border-warning-200 text-warning-600",
-    success: "bg-success-100 border border-success-200 text-success-500"
+    info: "bg-info-50 text-info-800 border-info-200 dark:bg-info-900/30 dark:text-info-200 dark:border-info-800",
+    danger: "bg-error-50 text-error-800 border-error-200 dark:bg-error-900/30 dark:text-error-200 dark:border-error-800",
+    warning: "bg-warning-50 text-warning-800 border-warning-200 dark:bg-warning-900/30 dark:text-warning-200 dark:border-warning-800",
+    success: "bg-success-50 text-success-800 border-success-200 dark:bg-success-900/30 dark:text-success-200 dark:border-success-800"
   };
   return `${baseClasses} ${variantClasses[props.variant || 'info']}`;
 });

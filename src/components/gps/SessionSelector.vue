@@ -12,7 +12,7 @@
         type="button"
         role="tab"
         :aria-selected="model === session.name"
-        class="flex min-w-[7.5rem] flex-1 flex-col items-center rounded-lg px-4 py-2.5 transition-colors duration-200 motion-reduce:transition-none"
+        class="flex min-w-30 flex-1 flex-col items-center rounded-lg px-4 py-2.5 transition-colors duration-200 motion-reduce:transition-none"
         :class="model === session.name
           ? 'bg-blue-600 text-white shadow dark:bg-blue-500'
           : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'"

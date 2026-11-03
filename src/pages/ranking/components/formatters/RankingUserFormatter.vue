@@ -1,6 +1,6 @@
 <template>
   <RankingUserCell
-    :entry="row.entry"
+    :user="row.entry.user"
     :community-members="communityMembers"
   />
 </template>

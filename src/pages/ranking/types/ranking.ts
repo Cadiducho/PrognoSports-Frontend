@@ -7,6 +7,23 @@ export interface TableEntry {
   totalScore: number;
 }
 
+export interface AlternativeRankingRow {
+  user: User;
+  value: number;
+  position: number;
+  realPosition: number;
+  /** Puestos ganados (positivo) o perdidos (negativo) frente a la clasificación real */
+  delta: number;
+}
+
+export interface AlternativeRanking {
+  key: string;
+  title: string;
+  color: string;
+  unit?: string;
+  rows: AlternativeRankingRow[];
+}
+
 /** Un punto de una línea del ranking. `value` null deja un hueco en la línea. */
 export interface RankingLinePoint {
   gpCode: string;

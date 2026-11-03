@@ -204,7 +204,7 @@ const showFilters = computed(() => tab.value !== "records");
       >
         <PField
           label="Comparar con"
-          class="min-w-[12rem] max-w-full"
+          class="min-w-48 max-w-full"
         >
           <PSelect v-model="compareWith">
             <option :value="AUTO">

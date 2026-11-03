@@ -108,7 +108,7 @@ const cards = computed<Kpi[]>(() => {
       <PTooltip
         v-for="card in cards"
         :key="card.label"
-        class="!flex"
+        class="flex!"
       >
         <!-- Enfocable, para que el tooltip también abra con teclado y al tocar en móvil -->
         <div

@@ -10,7 +10,7 @@
       v-if="userPoints.pointsInGP && checkGpWinner(gp.id, userPoints.pointsInGP)"
       :label="`Ganador de ${gp.name}`"
     >
-      <span class="text-blue-500">
+      <span class="text-blue-600 dark:text-blue-400">
         <PIcon icon="fas fa-trophy" />
       </span>
     </PTooltip>

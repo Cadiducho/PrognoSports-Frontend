@@ -24,28 +24,32 @@
         <PCard
           tag="article"
           padding="sm"
-          :class="currentSession?.id === ses.id ? 'ring-2 !ring-brand-500' : 'hover:bg-gray-50 dark:hover:bg-gray-800'"
+          :class="currentSession?.id === ses.id ? 'ring-2 ring-brand-500!' : 'hover:bg-gray-50 dark:hover:bg-gray-800'"
         >
-            <PTitle tag="p" type="subtitle" class="mb-2">
-              {{ ses.humanName() }}
-              <span
-                v-if="currentSession?.id === ses.id"
-                class="inline-block px-2 py-1 leading-none bg-warning-200 text-warning-800 rounded-full font-semibold uppercase tracking-wide text-xs"
-              >
-                Editando
-              </span>
-            </PTitle>
+          <PTitle
+            tag="p"
+            type="subtitle"
+            class="mb-2"
+          >
+            {{ ses.humanName() }}
+            <span
+              v-if="currentSession?.id === ses.id"
+              class="inline-block px-2 py-1 leading-none bg-warning-200 text-warning-800 dark:bg-warning-400/20 dark:text-warning-300 rounded-full font-semibold uppercase tracking-wide text-xs"
+            >
+              Editando
+            </span>
+          </PTitle>
 
-            <div class="space-y-1 text-sm text-gray-700 dark:text-gray-300">
-              <p class="mb-0">
-                <i class="fa-solid fa-pencil mr-2" />
-                <b>Code: </b> {{ ses.name }}
-              </p>
-              <p>
-                <i class="fa-solid fa-calendar-days mr-2" />
-                <b>Fecha: </b> {{ humanDateTime(ses.date) }}
-              </p>
-            </div>
+          <div class="space-y-1 text-sm text-gray-700 dark:text-gray-300">
+            <p class="mb-0">
+              <i class="fa-solid fa-pencil mr-2" />
+              <b>Code: </b> {{ ses.name }}
+            </p>
+            <p>
+              <i class="fa-solid fa-calendar-days mr-2" />
+              <b>Fecha: </b> {{ humanDateTime(ses.date) }}
+            </p>
+          </div>
         </PCard>
       </router-link>
     </div>

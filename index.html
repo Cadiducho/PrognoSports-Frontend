@@ -13,6 +13,21 @@
         <link rel="icon" href="/favicon.ico">
         <link rel="manifest" href="/manifest.json">
         <title>PrognoSports</title>
+        <script>
+            // Aplica el tema antes de pintar para evitar el destello claro (ver themeStore.ts)
+            (function () {
+                try {
+                    var theme = localStorage.getItem('theme');
+                    if (!theme) {
+                        var legacy = localStorage.getItem('dark');
+                        theme = legacy === 'true' ? 'dark' : legacy === 'false' ? 'light' : 'system';
+                    }
+                    var dark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                    document.documentElement.classList.toggle('dark', dark);
+                    document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+                } catch (e) {}
+            })();
+        </script>
     </head>
     <body>
         <noscript>

@@ -144,6 +144,8 @@ const humanDateTime = dayjs.humanDateTime;
 </script>
 
 <style scoped>
+@reference "@/styles/app.css";
+
 .list-item {
     @apply text-zinc-500 dark:text-gray-200 hover:text-zinc-600 dark:hover:text-gray-300 text-left font-normal leading-6 no-underline
 }

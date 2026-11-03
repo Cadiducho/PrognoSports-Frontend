@@ -49,7 +49,7 @@
       </PTag>
 
       <span
-        class="ml-auto shrink-0 rounded px-1.5 py-px text-[11px] font-bold"
+        class="ml-auto shrink-0 rounded-sm px-1.5 py-px text-[11px] font-bold"
         :style="numberStyle"
       >
         {{ gridPos.driver.number }}

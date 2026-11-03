@@ -1,13 +1,13 @@
 <template>
-  <div class="flex items-center justify-between border-t border-gray-200 dark:bg-gray-800 px-4 py-3 sm:px-6">
+  <div class="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 dark:bg-gray-800 px-4 py-3 sm:px-6">
     <div class="flex flex-1 justify-between sm:hidden">
       <a
         href="#"
-        class="relative inline-flex items-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-200"
+        class="relative inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-800 dark:text-gray-200"
       >Previo</a>
       <a
         href="#"
-        class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-200"
+        class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-800 dark:text-gray-200"
       >Anterior</a>
     </div>
     <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
@@ -24,13 +24,13 @@
       </div>
       <div>
         <nav
-          class="isolate inline-flex -space-x-px rounded-md shadow-sm"
+          class="isolate inline-flex -space-x-px rounded-md shadow-xs"
           aria-label="Pagination"
         >
           <button
             :disabled="current === 1"
             :class="{'cursor-not-allowed bg-gray-200 !hover:bg-gray-200 dark:bg-gray-700 !hover:dark:bg-gray-700': (current === 1)}"
-            class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-slate-200 dark:hover:bg-gray-700 focus:z-20 focus:outline-offset-0"
+            class="relative inline-flex enabled:cursor-pointer items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-slate-200 dark:hover:bg-gray-700 focus:z-20 focus:outline-offset-0"
             @click="updatePage(current - 1)"
           >
             <span class="sr-only">Anterior</span>
@@ -60,7 +60,7 @@
           <button
             :disabled="current === pageCount"
             :class="{'cursor-not-allowed bg-gray-200 !hover:bg-gray-200 dark:bg-gray-700 dark:ring-gray-600': (current === pageCount)}"
-            class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-slate-200 dark:hover:bg-gray-700 focus:z-20 focus:outline-offset-0"
+            class="relative inline-flex enabled:cursor-pointer items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-slate-200 dark:hover:bg-gray-700 focus:z-20 focus:outline-offset-0"
             @click="updatePage(current + 1)"
           >
             <span class="sr-only">Siguiente</span>
@@ -180,9 +180,9 @@ export default defineComponent({
       this.$emit('update:currentPage', page)
     },
     getButtonClasses(page: number) {
-      const base = "relative inline-flex items-center px-4 py-2 text-sm font-semibold ";
+      const base = "relative inline-flex cursor-pointer items-center px-4 py-2 text-sm font-semibold ";
       if (page === this.current) {
-        return base + "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        return base + "z-10 bg-indigo-600 text-white focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
       } else {
         return base + "text-gray-900 dark:text-gray-300 ring-1 ring-inset ring-gray-300 hover:bg-slate-200 focus:outline-offset-0 dark:hover:bg-gray-700 dark:ring-gray-700 dark:focus:outline-offset-0";
       }

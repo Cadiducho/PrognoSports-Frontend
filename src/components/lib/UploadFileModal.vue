@@ -147,4 +147,8 @@ export default defineComponent({
     height: calc(100% - 0.1rem);
     background: #DDD;
 }
+
+.dark .cropper {
+    background: #374151;
+}
 </style>

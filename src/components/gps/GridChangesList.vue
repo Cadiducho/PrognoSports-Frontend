@@ -11,7 +11,7 @@
           class="flex gap-3 border-t border-slate-100 py-2 text-sm first:border-t-0 dark:border-slate-700"
         >
           <span
-            class="w-1 shrink-0 self-stretch rounded"
+            class="w-1 shrink-0 self-stretch rounded-sm"
             :style="{ backgroundColor: `#${change.driver.team.teamcolor}` }"
           />
           <!-- La nota va debajo: en una columna estrecha no cabe al lado -->
