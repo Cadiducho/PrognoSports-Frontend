@@ -12,7 +12,8 @@
 </template>
 
 <script setup lang="ts">
-const model = defineModel<number>({ required: true });
+// `undefined` deja el campo vacío hasta que se escribe un número
+const model = defineModel<number | undefined>();
 withDefaults(defineProps<{ min?: number; max?: number; step?: number }>(), { step: 1 });
 
 const updateValue = (event: Event) => {
@@ -23,6 +24,6 @@ const updateValue = (event: Event) => {
 // Si se deja vacío, vuelve a mostrar el valor que realmente tiene el modelo
 const restoreIfEmpty = (event: Event) => {
   const input = event.target as HTMLInputElement;
-  if (Number.isNaN(input.valueAsNumber)) input.value = String(model.value);
+  if (Number.isNaN(input.valueAsNumber)) input.value = model.value === undefined ? '' : String(model.value);
 };
 </script>

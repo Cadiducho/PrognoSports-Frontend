@@ -1,13 +1,12 @@
 <template>
   <fieldset
     class="w-full"
-    :class="{'mb-3': !noMargin}"
+    :class="[{'mb-3': !noMargin}, fieldSpanClass(span)]"
   >
     <p-label
       v-if="label"
       :for="id"
       :label="label"
-      :message="message"
     >
       {{ props.label }}
     </p-label>
@@ -41,12 +40,19 @@
         :placeholder="placeholder"
       >
     </div>
+    <p
+      v-if="message"
+      class="mt-1 text-xs text-gray-500 dark:text-gray-400"
+    >
+      {{ message }}
+    </p>
   </fieldset>
 </template>
 
 <script setup lang="ts" generic="T">
 import { computed, useId } from "vue";
 import PLabel from "@/components/lib/forms/PLabel.vue";
+import {FieldSpan, fieldSpanClass} from "@/components/lib/forms/formGrid";
 
 const model = defineModel<T>();
 const props = withDefaults(defineProps<{
@@ -62,9 +68,12 @@ const props = withDefaults(defineProps<{
   rows?: number;
   size?: 'small' | 'medium' | 'large';
   error?: boolean;
+  /** Columnas que ocupa dentro de un `PFormGrid` */
+  span?: FieldSpan;
 }>(), {
   label: '',
   message: '',
+  span: undefined,
   name: '',
   maxLenght: 128,
   type: 'text',

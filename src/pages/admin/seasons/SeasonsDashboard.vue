@@ -31,20 +31,25 @@
         Confirmar eliminación
       </template>
       <template #content>
-        ¿Está seguro que desea eliminar la temporada <strong>{{ seasonToDelete?.name }}</strong>? Esta acción no se puede deshacer.
+        <p>
+          ¿Está seguro que desea eliminar la temporada <strong>{{ seasonToDelete?.name }}</strong>? Esta acción no se puede deshacer.
+        </p>
+        <p>
+          También se quitarán sus pilotos y constructores. No se puede borrar si tiene Grandes Premios, reglas de comunidades o es la temporada actual de su competición.
+        </p>
       </template>
       <template #footer>
-        <p-button
-          color="danger"
-          @click="deleteSeason(seasonToDelete)"
-        >
-          Eliminar
-        </p-button>
         <p-button
           type="soft"
           @click="showConfirmDeleteModal = false"
         >
           Cancelar
+        </p-button>
+        <p-button
+          color="danger"
+          @click="deleteSeason(seasonToDelete)"
+        >
+          Eliminar
         </p-button>
       </template>
     </PrognoModal>
@@ -61,6 +66,7 @@ import {useQuery} from "@pinia/colada";
 import {notificationService} from "@/_services";
 import {seasonListQuery, useDeleteSeason} from "@/queries/seasons";
 import {Season} from "@/types/Season";
+import {errorMessage} from "@/composables/errorMessage";
 
 const router = useRouter();
 
@@ -113,13 +119,12 @@ const deleteSeason = async (season?: Season) => {
     if (!season) {
         return;
     }
+    showConfirmDeleteModal.value = false;
     try {
         await deleteSeasonMutation(season);
         notificationService.showNotification("Se ha eliminado correctamente la temporada `" + season.name + "`", "success");
-        showConfirmDeleteModal.value = false;
-    } catch (e: any) {
-        notificationService.showNotification(e.response.data.message, "error");
-        console.error(e.response.data.message);
+    } catch (e) {
+        notificationService.showNotification(errorMessage(e) ?? "No se ha podido eliminar la temporada", "error");
     }
 }
 </script>
