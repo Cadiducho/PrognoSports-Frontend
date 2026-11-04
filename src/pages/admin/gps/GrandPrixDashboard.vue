@@ -4,7 +4,7 @@
       <p-button
         color="primary"
         icon="fa fa-plus"
-        :to="{name: 'gpCreate'}"
+        :to="{name: 'adminGpCreate'}"
         tag="router-link"
       >
         Nuevo Gran Premio

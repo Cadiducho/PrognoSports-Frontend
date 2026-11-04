@@ -140,9 +140,27 @@ export const routes = [
             },
             {
                 path: 'drivers',
-                name: 'adminDrivers',
-                component: () => import('@/pages/admin/drivers/DriversDashboard.vue'),
-                meta: { title: "Pilotos" }
+                component: EmptyRoutedLayout,
+                meta: { title: "Pilotos" },
+                children: [
+                    {
+                        path: '',
+                        name: 'adminDrivers',
+                        component: () => import('@/pages/admin/drivers/DriversDashboard.vue'),
+                    },
+                    {
+                        path: 'create',
+                        name: 'adminDriverCreate',
+                        component: () => import('@/pages/admin/drivers/CreateDriver.vue'),
+                        meta: { title: "Nuevo piloto" }
+                    },
+                    {
+                        path: ':driver',
+                        name: 'adminDriverEdit',
+                        component: () => import('@/pages/admin/drivers/EditDriver.vue'),
+                        meta: { title: "Editar piloto" }
+                    },
+                ],
             },
             {
                 path: 'circuits',
@@ -225,6 +243,12 @@ export const routes = [
                         path: '',
                         name: 'adminGps',
                         component: () => import('@/pages/admin/gps/GrandPrixDashboard.vue'),
+                    },
+                    {
+                        path: 'create',
+                        name: 'adminGpCreate',
+                        component: () => import('@/pages/admin/gps/CreateGrandPrix.vue'),
+                        meta: { title: "Nuevo gran premio" }
                     },
                     {
                         path: ':gp',
@@ -399,17 +423,16 @@ export const routes = [
                 component: () => import('@/pages/communities/CreateCommunity.vue'),
                 meta: { title: "Nueva comunidad" }
             },
+            // Los wizards de piloto y gran premio viven ahora en /admin/*/create
             {
                 path: 'driver',
                 name: 'driverCreate',
-                component: () => import('@/pages/admin/drivers/CreateDriver.vue'),
-                meta: { title: "Nuevo piloto", requiresAdmin: true }
+                redirect: { name: 'adminDriverCreate' },
             },
             {
                 path: 'grandprix',
                 name: 'gpCreate',
-                component: () => import('@/pages/admin/gps/CreateGrandPrix.vue'),
-                meta: { title: "Nuevo gran premio", requiresAdmin: true }
+                redirect: { name: 'adminGpCreate' },
             },
         ]
     },

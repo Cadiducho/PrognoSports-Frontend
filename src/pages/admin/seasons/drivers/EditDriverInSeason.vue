@@ -114,7 +114,7 @@ onMounted(async () => {
     ]);
 
     season.value = seasonData;
-    const foundDriver = driversData.find(d => d.id == driverId);
+    const foundDriver = driversData.find(d => d.id === Number(driverId));
 
     if (!foundDriver) {
       notificationService.showNotification("Piloto no encontrado en esta temporada", "error");

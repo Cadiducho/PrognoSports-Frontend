@@ -45,7 +45,7 @@ import {StartGridPosition} from "@/types/StartGridPosition";
 const props = defineProps<{
   grid: Array<StartGridPosition>;
   /** Id del piloto -> posición en la sesión que define esta parrilla */
-  origins: Map<string, number>;
+  origins: Map<number, number>;
   originName?: string;
 }>();
 

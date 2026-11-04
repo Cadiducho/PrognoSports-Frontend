@@ -1,114 +1,131 @@
 <template>
   <PPage
-    :title="thereIsGrandPrix ? grandPrix.name : undefined"
-    :loading="isLoadingGrandPrix"
-    :not-found="!thereIsGrandPrix && `El Gran Premio ${id} no ha sido encontrado`"
+    :title="grandPrix?.name"
+    :loading="isLoading"
+    :not-found="!grandPrix && `El Gran Premio ${route.params.gp} no ha sido encontrado`"
   >
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <div class="min-w-0">
-        <PTitle
-          tag="h2"
-          type="subtitle"
-        >
-          Datos del {{ grandPrix.name }}
-        </PTitle>
+    <PFormGrid
+      :cols="4"
+      class="mb-4"
+    >
+      <PInput
+        v-model="form.name"
+        label="Nombre"
+        name="name"
+        :span="3"
+      />
+      <PInput
+        :model-value="form.code"
+        label="Código del Gran Premio"
+        message="Siglas, 2 o 3 letras (p. ej. BRA, UAE, AZ)"
+        name="code"
+        @update:model-value="form.code = String($event ?? '').toUpperCase()"
+      />
+    </PFormGrid>
 
-        <PField label="Nombre">
-          <PInput
-            v-model="grandPrix.name"
-            name="name"
-          />
-        </PField>
+    <PButton
+      :disabled="!isDataOk || isSaving"
+      label="Guardar cambios"
+      color="primary"
+      @click="editGrandPrix"
+    />
 
+    <PDivider />
 
-        <PField label="Código del Gran Premio">
-          <PInput
-            v-model="grandPrix.code"
-            name="code"
-          />
-        </PField>
-
-
-        <PDivider />
-        <PButton
-          :disabled="!isDataOk()"
-          label="Editar Gran Premio"
-          color="primary"
-          @click="editGrandPrix()"
+    <EntitySeasonsPanel
+      v-if="grandPrix && circuits"
+      :load="() => grandPrixService.getSeasonsOfGrandPrix(grandPrix!.id)"
+      :create-model="emptyGrandPrixSeasonModel"
+      :is-valid="isGrandPrixSeasonModelValid"
+      :submit="(season, model) => grandPrixService.linkGrandPrixToSeason(season.id, grandPrixSeasonPayload(grandPrix!.id, model))"
+      :edit-route="(season) => ({name: 'adminGpEditInSeason', params: {season: season.id, gp: grandPrix!.id}})"
+    >
+      <template #entry="{ entry }">
+        Ronda {{ entry.round }}<template v-if="entry.circuit">
+          · {{ entry.circuit.name }}
+        </template>
+        <span
+          v-if="entry.suspended"
+          class="ml-1 rounded-full bg-error-100 px-2 text-xs text-error-800 dark:bg-error-900/40 dark:text-error-300"
+        >Suspendido</span>
+      </template>
+      <template #fields="{ season, model, update }">
+        <GrandPrixSeasonFields
+          :model-value="model"
+          :circuits="circuits"
+          :season="season"
+          @update:model-value="update"
         />
-      </div>
-    </div>
+      </template>
+    </EntitySeasonsPanel>
   </PPage>
 </template>
 
-<script lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
-import {grandPrixService, notificationService} from "@/_services";
+<script setup lang="ts">
+import {computed, onMounted, reactive, ref} from "vue";
+import {useRoute} from "vue-router";
+import {circuitService, grandPrixService, notificationService} from "@/_services";
 import {GrandPrix} from "@/types/GrandPrix";
-
-import {defineComponent} from "vue";
-import {useAuthStore} from "@/store/authStore";
+import {Circuit} from "@/types/Circuit";
+import {errorMessage} from "@/composables/errorMessage";
+import {isFilled} from "@/utils/adminValidators";
+import {
+  emptyGrandPrixSeasonModel,
+  grandPrixSeasonPayload,
+  isGrandPrixSeasonModelValid
+} from "@/components/admin/seasons/seasonLinkModels";
+import EntitySeasonsPanel from "@/components/admin/seasons/EntitySeasonsPanel.vue";
+import GrandPrixSeasonFields from "@/components/admin/seasons/GrandPrixSeasonFields.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
-import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
+import PFormGrid from "@/components/lib/forms/PFormGrid.vue";
 import PDivider from "@/components/lib/PDivider.vue";
 
-export default defineComponent({
-    name: "EditGrandPrix",
-    components: {
-    PDivider,
-      PInput,
-      PField,
-      PButton,
-        PTitle,
-    },
-    setup() {
-        const authStore = useAuthStore();
-        const currentUser = authStore.loggedUser;
-        return {currentUser};
-    },
-    data() {
-        return {
-            id: this.$route.params.gp,
+const route = useRoute();
 
-            grandPrix: {} as GrandPrix,
-            thereIsGrandPrix: false,
-            isLoadingGrandPrix: true,
-        }
-    },
-    mounted() {
-        grandPrixService.getGrandPrix(this.id)
-            .then(gp => {
-                this.grandPrix = gp;
-                this.thereIsGrandPrix = true;
-            }).finally(() => {
-                this.isLoadingGrandPrix = false;
-            }
-        );
-    },
-    methods: {
-        isDataOk(): boolean {
-            return !(this.grandPrix.code.trim() === ""
-                && this.grandPrix.name.trim() === ""
-            )
-        },
-        editGrandPrix(): void {
-            let data = {
-                id: this.grandPrix!.id,
-                name: this.grandPrix!.name,
-                code: this.grandPrix!.code,
-            };
+const grandPrix = ref<GrandPrix>();
+const circuits = ref<Circuit[]>();
+const isLoading = ref(true);
+const isSaving = ref(false);
+const form = reactive({name: '', code: ''});
 
-            grandPrixService.editGrandPrix(data).then((result) => {
-              notificationService.showNotification("Se ha editado correctamente el gran premio `" + result.name + "`", "error");
+onMounted(async () => {
+  try {
+    grandPrix.value = await grandPrixService.getGrandPrix(route.params.gp as string);
+    form.name = grandPrix.value.name;
+    form.code = grandPrix.value.code;
+  } catch {
+    grandPrix.value = undefined;
+  } finally {
+    isLoading.value = false;
+  }
 
-              this.$router.push({
-                name: 'adminGps'
-              })
-            }).catch((error) => {
-                notificationService.showNotification(error.message, "error");
-            });
-        },
-    }
+  try {
+    circuits.value = await circuitService.getCircuitList();
+  } catch {
+    circuits.value = [];
+    notificationService.showNotification("No se han podido cargar los circuitos", "error");
+  }
 });
+
+const isDataOk = computed(() => isFilled(form.name) && isFilled(form.code));
+
+const editGrandPrix = async () => {
+  if (!grandPrix.value || !isDataOk.value) return;
+  isSaving.value = true;
+  try {
+    const result = await grandPrixService.editGrandPrix({
+      id: grandPrix.value.id,
+      name: form.name.trim(),
+      code: form.code.trim(),
+    });
+    grandPrix.value.name = result?.name ?? form.name;
+    grandPrix.value.code = result?.code ?? form.code;
+    notificationService.showNotification("Se ha editado correctamente el gran premio `" + grandPrix.value.name + "`");
+  } catch (e) {
+    notificationService.showNotification(errorMessage(e) ?? "No se ha podido editar el gran premio", "error");
+  } finally {
+    isSaving.value = false;
+  }
+};
 </script>

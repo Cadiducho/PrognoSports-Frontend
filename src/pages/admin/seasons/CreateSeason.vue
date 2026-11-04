@@ -1,6 +1,6 @@
 <template>
   <PPage>
-    <nav class="flex justify-between mb-4">
+    <nav class="mb-4 flex justify-between">
       <section class="flex flex-wrap">
         <p-button
           color="info"
@@ -14,37 +14,45 @@
       </section>
     </nav>
 
-
-    <PInput
-      v-model="createdSeason.name"
-      label="Nombre de la temporada"
-      placeholder="Nombre de la temporada"
-      name="name"
-    />
-    <PInput
-      v-model="createdSeason.totalEvents"
-      label="Número de eventos totales"
-      placeholder="Número de eventos totales"
-      name="totalEvents"
-      type="number"
-    />
-
-    <p-select
-      v-model="createdSeason.competitionId"
-      label="Selecciona una competición"
+    <PFormGrid
+      :cols="3"
+      class="mb-4"
     >
-      <option
-        v-for="comp in competitions"
-        :key="comp.id"
-        :value="comp.id"
+      <p-select
+        v-model="createdSeason.competitionId"
+        label="Competición"
+        placeholder="Selecciona una competición"
       >
-        {{ comp.name }} ({{ comp.code }}) - {{ comp.fullname }}
-      </option>
-    </p-select>
+        <option
+          v-for="comp in competitions"
+          :key="comp.id"
+          :value="comp.id"
+        >
+          {{ comp.name }} ({{ comp.code }}) - {{ comp.fullname }}
+        </option>
+      </p-select>
+
+      <PInput
+        v-model="createdSeason.name"
+        label="Nombre de la temporada"
+        placeholder="2026"
+        name="name"
+      />
+
+      <PField label="Número de eventos totales">
+        <PNumberInput
+          v-model="createdSeason.totalEvents"
+          :min="1"
+        />
+      </PField>
+    </PFormGrid>
+
+    <PrognoAlert variant="info">
+      Tras crearla podrás añadir sus pilotos, constructores y grandes premios.
+    </PrognoAlert>
 
     <PButton
-      class="mt-4"
-      :disabled="!isDataOk()"
+      :disabled="!isDataOk || isSaving"
       type="solid"
       label="Crear temporada"
       @click="registerSeason"
@@ -56,47 +64,57 @@
 import {competitionService, notificationService, seasonService} from "@/_services";
 import {Competition} from "@/types/Competition";
 
-import {onMounted, reactive, ref} from "vue";
+import {computed, onMounted, reactive, ref} from "vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
+import PField from "@/components/lib/forms/PField.vue";
+import PFormGrid from "@/components/lib/forms/PFormGrid.vue";
+import PNumberInput from "@/components/lib/forms/PNumberInput.vue";
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import {useRouter} from "vue-router";
 import PSelect from "@/components/lib/forms/PSelect.vue";
+import {errorMessage} from "@/composables/errorMessage";
+import {isFilled, isIntAtLeast} from "@/utils/adminValidators";
 
 const router = useRouter();
 
 const createdSeason = reactive({
   name: '',
-  totalEvents: 0,
-  competitionId: 0
+  totalEvents: undefined as number | undefined,
+  competitionId: '' as number | '',
 });
 const competitions = ref<Competition[]>([]);
+const isSaving = ref(false);
 
 onMounted(() => {
   competitionService.getCompetitionList().then((list) => {
-    competitions.value = [];
-    competitions.value.push(...list);
+    competitions.value = list;
   })
 });
 
-const isDataOk = (): boolean => {
-  return ((createdSeason.name.length > 0) && (createdSeason.totalEvents > 0) && (createdSeason.competitionId > 0))
-}
-const registerSeason = async () => {
-  let rawSeason = {
-    name: createdSeason.name,
-    totalEvents: createdSeason.totalEvents,
-    competition: createdSeason.competitionId
-  }
+const isDataOk = computed(() =>
+  isFilled(createdSeason.name) && isIntAtLeast(createdSeason.totalEvents) && createdSeason.competitionId !== ''
+);
 
+const registerSeason = async () => {
+  if (!isDataOk.value) return;
+  isSaving.value = true;
   try {
-    const result = await seasonService.createSeason(rawSeason);
+    const result = await seasonService.createSeason({
+      name: createdSeason.name.trim(),
+      totalEvents: createdSeason.totalEvents!,
+      competition: createdSeason.competitionId as number,
+    });
     notificationService.showNotification("Se ha registrado correctamente la temporada `" + result.name + "`");
 
-    router.push({
-      name: 'adminSeasons'
+    await router.push({
+      name: 'adminSeasonEdit',
+      params: {season: result.id}
     })
-  } catch (error: any) {
-    notificationService.showNotification(error.message, "error");
+  } catch (error) {
+    notificationService.showNotification(errorMessage(error) ?? "No se ha podido crear la temporada", "error");
+  } finally {
+    isSaving.value = false;
   }
 }
 </script>

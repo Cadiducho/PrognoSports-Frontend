@@ -11,6 +11,7 @@ import {Dictionary} from "@/types/Dictionary";
 import {PrognoService} from "@/_services/progno.service";
 import {Circuit} from "@/types/Circuit";
 import {CircuitVariant} from "@/types/CircuitVariant";
+import {SeasonMembership, findSeasonMemberships, sameText} from "@/_services/seasonMembership";
 
 export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
 
@@ -27,8 +28,8 @@ export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
     }
 
     public async getGrandPrixesList(season: Season): Promise<Array<GrandPrix>> {
-        let comp = 1; // ToDo: Remove from API
-        let seas = season.id ?? season.name;
+        const comp = season.competition?.id ?? 1; // ToDo: Remove from API
+        const seas = season.id ?? season.name;
 
         return this.getObjectListFromAPI(`/gps/${comp}/${seas}`);
     }
@@ -45,22 +46,43 @@ export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
         return this.getObjectFromAPI(`/gps/${grandPrixId}`);
     }
 
-    public async getGrandPrixInSeason(season: Season, id: string): Promise<GrandPrix> {
-        let comp = 1;  // ToDo: Remove from API
-        let seas = season.id ?? season.name;
+    public async getGrandPrixInSeason(season: Season, id: string | number): Promise<GrandPrix> {
+        const comp = season.competition?.id ?? 1;  // ToDo: Remove from API
+        const seas = season.id ?? season.name;
 
         return this.getObjectFromAPI(`/gps/${comp}/${seas}/${id}`);
     }
 
-    public async linkGrandPrixToSeason(seasonId: string, data: {gp: number, circuit: number, variant: number, laps: number, round: number}) {
-      return await axios.post(`/seasons/${seasonId}/gps`, data);
+    public async linkGrandPrixToSeason(seasonId: string | number, data: {gp: number, circuit: number, variant: number, laps: number, round: number}): Promise<IGrandPrix> {
+        return await axios.post(`/seasons/${seasonId}/gps`, data);
     }
 
+    /**
+     * Crea un gran premio y lo devuelve siempre con su id.
+     */
     public async createGrandPrix(data: { name: string, code: string }): Promise<GrandPrix> {
-        return await axios.post(`/gps/`, data);
+        const created: IGrandPrix = await axios.post(`/gps`, data);
+        if (created?.id != undefined) {
+            return this.factory(created);
+        }
+
+        // TODO(Cadiducho/PrognoSports#241): quitar cuando el POST devuelva el id generado. El nombre es único.
+        const found = (await this.getAllGrandPrixes()).find(gp => sameText(gp.name, data.name));
+        if (!found) {
+            throw {message: "El gran premio se ha creado, pero no se ha podido recuperar su id"};
+        }
+        return found;
     }
 
-    public async editGrandPrix(data: {id: string, name: string, code: string}): Promise<GrandPrix> {
+    /**
+     * Temporadas en las que se disputa un gran premio, con sus datos en cada una (ronda, circuito...).
+     * El backend no tiene endpoint para esto, así que se consulta cada temporada.
+     */
+    public async getSeasonsOfGrandPrix(gpId: number): Promise<Array<SeasonMembership<GrandPrix>>> {
+        return findSeasonMemberships(season => this.getGrandPrixesList(season), gpId);
+    }
+
+    public async editGrandPrix(data: {id: string | number, name: string, code: string}): Promise<GrandPrix> {
         return await axios.put(`/gps/${data.id}`, data);
     }
 
@@ -87,7 +109,7 @@ export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
         return await axios.get(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.id}/results`);
     }
 
-    public async saveResults(gp: GrandPrix, session: RaceSession, payload: {results: Map<number, string>, notSendNotification: boolean}): Promise<Array<RaceResult>> {
+    public async saveResults(gp: GrandPrix, session: RaceSession, payload: {results: Map<number, number>, notSendNotification: boolean}): Promise<Array<RaceResult>> {
         const realPayload = {
             results: Object.fromEntries(payload.results!),
             notSendNotification: payload.notSendNotification,
@@ -95,7 +117,7 @@ export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
         return await axios.post(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.id}/results`, realPayload);
     }
 
-    public async saveGrid(gp: GrandPrix, session: RaceSession, payload: { grid: { note: string | undefined; isFromPit: boolean; driver: string; position: number }[] } ): Promise<boolean> {
+    public async saveGrid(gp: GrandPrix, session: RaceSession, payload: { grid: { note: string | undefined; isFromPit: boolean; driver: number; position: number }[] } ): Promise<boolean> {
         return await axios.patch(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.id}/grid`, payload);
     }
 
