@@ -59,24 +59,23 @@
             <section class="space-y-4 p-4 text-base leading-relaxed text-gray-500 dark:text-gray-400 md:p-5">
               <slot name="content" />
             </section>
-            <footer class="flex items-center border-t border-gray-200 p-4 rounded-b dark:border-gray-600 md:p-5">
+            <!-- Acciones a la derecha, la principal la última -->
+            <footer class="flex flex-wrap items-center justify-end gap-2 border-t border-gray-200 p-4 rounded-b dark:border-gray-600 md:p-5">
               <slot name="footer">
-                <section class="space-x-2">
-                  <p-button native-type="submit">
-                    <slot name="saveText">
-                      Guardar cambios
-                    </slot>
-                  </p-button>
-                  <p-button
-                    color="info"
-                    type="soft"
-                    @click="close('button')"
-                  >
-                    <slot name="cancelText">
-                      Cancelar
-                    </slot>
-                  </p-button>
-                </section>
+                <p-button
+                  color="info"
+                  type="soft"
+                  @click="close('button')"
+                >
+                  <slot name="cancelText">
+                    Cancelar
+                  </slot>
+                </p-button>
+                <p-button native-type="submit">
+                  <slot name="saveText">
+                    Guardar cambios
+                  </slot>
+                </p-button>
               </slot>
             </footer>
           </form>

@@ -5,56 +5,33 @@
     :loading="isLoading"
   >
     <form
+      class="flex flex-col gap-4"
       @submit.prevent="updateDriver"
     >
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Información del piloto (solo lectura) -->
-        <PField label="Nombre completo">
-          <PInput
-            :model-value="driver.firstname + ' ' + driver.lastname"
-            disabled
-            readonly
-          />
-        </PField>
+      <!-- Información del piloto (solo lectura) -->
+      <PFormGrid :cols="2">
+        <PInput
+          :model-value="`${driver.firstname} ${driver.lastname}`"
+          label="Nombre completo"
+          disabled
+          readonly
+        />
+        <PInput
+          :model-value="driver.code"
+          label="Código"
+          disabled
+          readonly
+        />
+      </PFormGrid>
 
-        <PField label="Código">
-          <PInput
-            :model-value="driver.code"
-            disabled
-            readonly
-          />
-        </PField>
+      <!-- Datos del piloto en la temporada -->
+      <DriverSeasonFields v-model="editedDriver" />
 
-        <!-- Campos editables -->
-        <PField
-          label="Número"
-          required
-        >
-          <PInput
-            v-model.number="editedDriver.number"
-            type="number"
-            min="0"
-            max="99"
-            required
-          />
-        </PField>
-
-        <PField
-          label="Color"
-          required
-        >
-          <ColorPicker
-            v-model="editedDriver.color"
-            required
-          />
-        </PField>
-      </div>
-
-      <div class="flex gap-2 mt-6">
+      <div class="flex gap-2">
         <PButton
+          native-type="submit"
           icon="fa fa-save"
           :disabled="!isFormValid || isSaving"
-          @click="updateDriver"
         >
           {{ isSaving ? 'Guardando...' : 'Guardar cambios' }}
         </PButton>
@@ -73,10 +50,16 @@
 
 <script setup lang="ts">
 import PButton from "@/components/lib/forms/PButton.vue";
-import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
-import ColorPicker from "@/components/lib/forms/ColorPicker.vue";
+import PFormGrid from "@/components/lib/forms/PFormGrid.vue";
+import DriverSeasonFields from "@/components/admin/seasons/DriverSeasonFields.vue";
+import {
+  DriverSeasonModel,
+  driverSeasonPayload,
+  isDriverSeasonModelValid
+} from "@/components/admin/seasons/seasonLinkModels";
 import { driversService, seasonService, notificationService } from "@/_services";
+import { errorMessage } from "@/composables/errorMessage";
 import { Season } from "@/types/Season";
 import { Driver } from "@/types/Driver";
 import { ref, onMounted, computed } from "vue";
@@ -87,20 +70,15 @@ const router = useRouter();
 
 const season = ref<Season>({} as Season);
 const driver = ref<Driver>({} as Driver);
-const editedDriver = ref({
-  number: 0,
-  color: ''
-});
+const editedDriver = ref<DriverSeasonModel>({number: undefined, color: ''});
 const isLoading = ref(true);
 const isSaving = ref(false);
 
-const isFormValid = computed(() => {
-  const colorRegex = /^#?[0-9A-Fa-f]{6}$/;
-  return (
-    editedDriver.value.number >= 0 &&
-    editedDriver.value.number <= 99 &&
-    colorRegex.test(editedDriver.value.color)
-  );
+const isFormValid = computed(() => isDriverSeasonModelValid(editedDriver.value));
+
+const modelFromDriver = (data: Driver): DriverSeasonModel => ({
+  number: data.number,
+  color: data.color ?? '',
 });
 
 onMounted(async () => {
@@ -108,38 +86,24 @@ onMounted(async () => {
     const seasonId = route.params.season as string;
     const driverId = route.params.driver as string;
 
-    const [seasonData, driversData] = await Promise.all([
+    const [seasonData, driverData] = await Promise.all([
       seasonService.getSeason(seasonId),
-      driversService.getDriversInSeason({ id: Number(seasonId) } as Season)
+      driversService.getDriverInSeason(seasonId, driverId),
     ]);
 
     season.value = seasonData;
-    const foundDriver = driversData.find(d => d.id == driverId);
-
-    if (!foundDriver) {
-      notificationService.showNotification("Piloto no encontrado en esta temporada", "error");
-      router.push({ name: 'adminDriversInSeason', params: { season: seasonId } });
-      return;
-    }
-
-    driver.value = foundDriver;
-    editedDriver.value = {
-      number: foundDriver.number,
-      color: foundDriver.color,
-    };
+    driver.value = driverData;
+    editedDriver.value = modelFromDriver(driverData);
   } catch (error) {
-    notificationService.showNotification("Error al cargar los datos", "error");
-    console.error(error);
+    notificationService.showNotification(errorMessage(error) ?? "Piloto no encontrado en esta temporada", "error");
+    await router.push({ name: 'adminDriversInSeason', params: { season: route.params.season } });
   } finally {
     isLoading.value = false;
   }
 });
 
 const resetForm = () => {
-  editedDriver.value = {
-    number: driver.value.number,
-    color: driver.value.color.replace('#', '')
-  };
+  editedDriver.value = modelFromDriver(driver.value);
 };
 
 const updateDriver = async () => {
@@ -148,30 +112,17 @@ const updateDriver = async () => {
   isSaving.value = true;
   try {
     const seasonId = route.params.season as string;
-    const driverId = driver.value.id;
+    const {number, color} = driverSeasonPayload(driver.value.id, editedDriver.value);
 
-    await driversService.updateDriverInSeason(seasonId, driverId, {
-      number: editedDriver.value.number,
-      color: editedDriver.value.color,
-    });
+    await driversService.updateDriverInSeason(seasonId, driver.value.id, {number, color});
 
-    notificationService.showNotification(
-      `Piloto ${driver.value.firstname} ${driver.value.lastname} actualizado correctamente`,
-      "success"
-    );
+    notificationService.showNotification(`Piloto ${driver.value.firstname} ${driver.value.lastname} actualizado correctamente`);
 
-    router.push({ name: 'adminDriversInSeason', params: { season: seasonId } });
+    await router.push({ name: 'adminDriversInSeason', params: { season: seasonId } });
   } catch (error) {
-    notificationService.showNotification("Error al actualizar el piloto", "error");
-    console.error(error);
+    notificationService.showNotification(errorMessage(error) ?? "Error al actualizar el piloto", "error");
   } finally {
     isSaving.value = false;
   }
 };
 </script>
-
-
-
-
-
-

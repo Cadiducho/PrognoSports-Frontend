@@ -186,6 +186,7 @@ layer(base);
 }
 
 @layer base {
+  /* Barras de scroll y controles nativos según el tema */
   html {
     color-scheme: light;
   }

@@ -4,7 +4,6 @@ import {RaceSession} from "@/types/RaceSession";
 import {Driver} from "@/types/Driver";
 
 export type Events = {
-    changeGridSession: RaceSession;
     updatedTipps: { session: RaceSession; tipps: Array<Driver> };
 };
 

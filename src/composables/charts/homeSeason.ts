@@ -194,6 +194,115 @@ export function computeForm(series: readonly SeriesPoint[], community: readonly 
   };
 }
 
+/** Cifras de la tarjeta de KPIs del Inicio */
+export interface HomeKpis {
+  position: LatestPosition | null;
+  points: number;
+  /** Puntos que le faltan al líder; 0 si lo eres tú */
+  gapToLeader: number;
+  /** Media de puntos por GP del usuario; null si aún no ha puntuado */
+  average: number | null;
+  /** Media de puntos por GP de toda la comunidad */
+  communityAverage: number | null;
+  wins: number;
+  /** GPs en los que el usuario tiene puntos */
+  played: number;
+}
+
+export function homeKpis(played: readonly GrandPrix[], pointsByGp: PointsByGp, username: string): HomeKpis {
+  const series = userSeries(played, pointsByGp, username);
+  const community = communitySeries(played, pointsByGp);
+  const form = computeForm(series, community);
+  // Si el usuario no tiene entrada en el último GP, vale su último acumulado y el líder de ese mismo GP
+  const lastIndex = series.reduce((found, point, index) => (point.accumulated !== null ? index : found), -1);
+  const leader = lastIndex === -1 ? null : community[lastIndex]?.leader ?? null;
+  const points = lastIndex === -1 ? 0 : series[lastIndex]!.accumulated ?? 0;
+  const communityAverages = community.flatMap((point) => (point.averagePointsInGP === null ? [] : [point.averagePointsInGP]));
+  const winners = gpWinners(played, pointsByGp);
+
+  return {
+    position: latestPosition(series),
+    points,
+    gapToLeader: leader === null ? 0 : Math.max(leader - points, 0),
+    average: form?.seasonAverage ?? null,
+    communityAverage: mean(communityAverages),
+    wins: [...winners.values()].filter((names) => names.includes(username)).length,
+    played: series.filter((point) => point.pointsInGP !== null).length,
+  };
+}
+
+/** Una fila de «Tu entorno en el ranking» */
+export interface NeighbourRow {
+  position: number;
+  username: string;
+  isMe: boolean;
+  accumulated: number;
+  /** Puntos de diferencia con el usuario (positivo = va por delante) */
+  gap: number;
+}
+
+/** Clasificación, de mejor a peor, del último GP jugado en el que `username` tiene entrada */
+function lastStandings(played: readonly GrandPrix[], pointsByGp: PointsByGp, username: string): UserPoints[] {
+  for (let index = played.length - 1; index >= 0; index--) {
+    const entries = entriesOf(pointsByGp, played[index]!);
+    if (entries.some((entry) => entry.user.username === username)) {
+      return entries.sort((a, b) => (
+        b.accumulatedPoints - a.accumulatedPoints
+        || a.standings - b.standings
+        || a.user.username.localeCompare(b.user.username)
+      ));
+    }
+  }
+  return [];
+}
+
+/**
+ * Las `radius` posiciones por encima y por debajo del usuario en el último GP jugado. Cerca de los extremos
+ * la ventana se desplaza para mantener el mismo número de filas.
+ */
+export function standingsNeighbours(
+  played: readonly GrandPrix[],
+  pointsByGp: PointsByGp,
+  username: string,
+  radius = 2,
+): NeighbourRow[] {
+  const sorted = lastStandings(played, pointsByGp, username);
+  const index = sorted.findIndex((entry) => entry.user.username === username);
+  if (index === -1) {
+    return [];
+  }
+  const size = radius * 2 + 1;
+  const start = Math.max(0, Math.min(index - radius, sorted.length - size));
+  const me = sorted[index]!;
+  return sorted.slice(start, start + size).map((entry, offset) => ({
+    position: entry.standings > 0 ? entry.standings : start + offset + 1,
+    username: entry.user.username,
+    isMe: entry.user.username === username,
+    accumulated: entry.accumulatedPoints,
+    gap: entry.accumulatedPoints - me.accumulatedPoints,
+  }));
+}
+
+export interface RivalAhead {
+  username: string;
+  /** `ahead`: va justo por delante de ti; `behind`: eres el líder y es el segundo */
+  relation: "ahead" | "behind";
+}
+
+/** Con quién compara el modo «Con el de delante»: el usuario justo por encima o, si eres el líder, el siguiente */
+export function userAhead(played: readonly GrandPrix[], pointsByGp: PointsByGp, username: string): RivalAhead | null {
+  const sorted = lastStandings(played, pointsByGp, username);
+  const index = sorted.findIndex((entry) => entry.user.username === username);
+  if (index === -1) {
+    return null;
+  }
+  if (index > 0) {
+    return { username: sorted[index - 1]!.user.username, relation: "ahead" };
+  }
+  const next = sorted[1];
+  return next ? { username: next.user.username, relation: "behind" } : null;
+}
+
 export interface LatestPosition {
   gpCode: string;
   standings: number;
