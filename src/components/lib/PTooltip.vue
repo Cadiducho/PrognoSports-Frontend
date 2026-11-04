@@ -7,8 +7,8 @@
       ref="referenceRef"
       @mouseenter="isOpen = true"
       @mouseleave="isOpen = false"
-      @focus="isOpen = true"
-      @blur="isOpen = false"
+      @focusin="isOpen = true"
+      @focusout="isOpen = false"
     >
       <slot />
     </div>

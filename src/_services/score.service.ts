@@ -45,7 +45,7 @@ export class ScoreService {
         return await axios.get(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${session.id}/tipps/${community.id}/calculations`);
     }
 
-    public async getPointsByPositionInGrandPrixSimulated(community: Community, gp: GrandPrix, session: RaceSession, results: Map<number, string>): Promise<ScoreCalculations> {
+    public async getPointsByPositionInGrandPrixSimulated(community: Community, gp: GrandPrix, session: RaceSession, results: Map<number, number>): Promise<ScoreCalculations> {
         const resultsPayload = Array.from(results.entries()).map(([position, driverId]) => {
             return {
                 position,

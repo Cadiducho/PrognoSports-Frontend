@@ -1,5 +1,5 @@
 <template>
-  <fieldset>
+  <fieldset :class="fieldSpanClass(props.span)">
     <PLabel
       v-if="label"
     >
@@ -47,6 +47,7 @@
 <script setup lang="ts" generic="T extends string | number | boolean | object">
 import {computed} from "vue";
 import PLabel from "@/components/lib/forms/PLabel.vue";
+import {FieldSpan, fieldSpanClass} from "@/components/lib/forms/formGrid";
 
 export interface Props {
   name?: string;
@@ -56,6 +57,8 @@ export interface Props {
   placeholder?: string;
   disabled?: boolean;
   multiple?: boolean;
+  /** Columnas que ocupa dentro de un `PFormGrid` */
+  span?: FieldSpan;
 }
 
 const modelValue = defineModel<T>({required: true});
@@ -68,6 +71,7 @@ const props = withDefaults(defineProps<Props>(), {
   placeholder: 'Selecciona una opción',
   disabled: false,
   multiple: false,
+  span: undefined,
 });
 
 const placeholderVisible = computed(() => !props.multiple && modelValue.value === "");

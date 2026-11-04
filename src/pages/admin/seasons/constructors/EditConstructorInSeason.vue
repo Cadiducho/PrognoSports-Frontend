@@ -5,67 +5,33 @@
     :loading="isLoading"
   >
     <form
+      class="flex flex-col gap-4"
       @submit.prevent="updateConstructor"
     >
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Información del constructor (solo lectura) -->
-        <PField label="Nombre">
-          <PInput
-            :model-value="constructor.name"
-            disabled
-            readonly
-          />
-        </PField>
+      <!-- Información del constructor (solo lectura) -->
+      <PFormGrid :cols="2">
+        <PInput
+          :model-value="constructor.name"
+          label="Nombre"
+          disabled
+          readonly
+        />
+        <PInput
+          :model-value="String(constructor.id ?? '')"
+          label="ID"
+          disabled
+          readonly
+        />
+      </PFormGrid>
 
-        <PField label="ID">
-          <PInput
-            :model-value="constructor.id.toString()"
-            disabled
-            readonly
-          />
-        </PField>
+      <!-- Datos del constructor en la temporada -->
+      <ConstructorSeasonFields v-model="editedConstructor" />
 
-        <!-- Campos editables -->
-        <PField
-          label="Nombre completo"
-          required
-        >
-          <PInput
-            v-model="editedConstructor.fullname"
-            type="text"
-            required
-            placeholder="Red Bull Racing Honda RBPT"
-          />
-        </PField>
-
-        <PField
-          label="Nombre del coche"
-          required
-        >
-          <PInput
-            v-model="editedConstructor.car"
-            type="text"
-            required
-            placeholder="RB20"
-          />
-        </PField>
-
-        <PField
-          label="Color del equipo"
-          required
-        >
-          <ColorPicker
-            v-model="editedConstructor.teamcolor"
-            required
-          />
-        </PField>
-      </div>
-
-      <div class="flex gap-2 mt-6">
+      <div class="flex gap-2">
         <PButton
+          native-type="submit"
           icon="fa fa-save"
           :disabled="!isFormValid || isSaving"
-          @click="updateConstructor"
         >
           {{ isSaving ? 'Guardando...' : 'Guardar cambios' }}
         </PButton>
@@ -84,10 +50,16 @@
 
 <script setup lang="ts">
 import PButton from "@/components/lib/forms/PButton.vue";
-import PField from "@/components/lib/forms/PField.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
-import ColorPicker from "@/components/lib/forms/ColorPicker.vue";
+import PFormGrid from "@/components/lib/forms/PFormGrid.vue";
+import ConstructorSeasonFields from "@/components/admin/seasons/ConstructorSeasonFields.vue";
+import {
+  ConstructorSeasonModel,
+  constructorSeasonPayload,
+  isConstructorSeasonModelValid
+} from "@/components/admin/seasons/seasonLinkModels";
 import { constructorService, seasonService, notificationService } from "@/_services";
+import { errorMessage } from "@/composables/errorMessage";
 import { Season } from "@/types/Season";
 import { Constructor } from "@/types/Constructor";
 import { ref, onMounted, computed } from "vue";
@@ -98,62 +70,42 @@ const router = useRouter();
 
 const season = ref<Season>({} as Season);
 const constructor = ref<Constructor>({} as Constructor);
-const editedConstructor = ref({
-  fullname: '',
-  car: '',
-  teamcolor: ''
-});
+const editedConstructor = ref<ConstructorSeasonModel>({fullname: '', car: '', teamcolor: ''});
 const isLoading = ref(true);
 const isSaving = ref(false);
 
-const isFormValid = computed(() => {
-  const colorRegex = /^#?[0-9A-Fa-f]{6}$/;
-  return (
-    editedConstructor.value.fullname.trim().length > 0 &&
-    editedConstructor.value.car.trim().length > 0 &&
-    colorRegex.test(editedConstructor.value.teamcolor)
-  );
+const isFormValid = computed(() => isConstructorSeasonModelValid(editedConstructor.value));
+
+const modelFromConstructor = (data: Constructor): ConstructorSeasonModel => ({
+  fullname: data.longname ?? '',
+  car: data.carname ?? '',
+  teamcolor: data.teamcolor ?? '',
 });
 
 onMounted(async () => {
   try {
     const seasonId = route.params.season as string;
+    // `params.constructor` choca en tipos con Object.prototype.constructor
     const constructorId = String(route.params.constructor);
 
-    const [seasonData, constructorsData] = await Promise.all([
+    const [seasonData, constructorData] = await Promise.all([
       seasonService.getSeason(seasonId),
-      constructorService.getConstructorsInSeason({ id: Number(seasonId) } as Season)
+      constructorService.getConstructorInSeason(seasonId, constructorId),
     ]);
 
     season.value = seasonData;
-    const foundConstructor = constructorsData.find(c => c.id.toString() === constructorId);
-
-    if (!foundConstructor) {
-      notificationService.showNotification("Constructor no encontrado en esta temporada", "error");
-      router.push({ name: 'adminConstructorsInSeason', params: { season: seasonId } });
-      return;
-    }
-
-    constructor.value = foundConstructor;
-    editedConstructor.value = {
-      fullname: foundConstructor.longname,
-      car: foundConstructor.carname,
-      teamcolor: foundConstructor.teamcolor.replace('#', '')
-    };
+    constructor.value = constructorData;
+    editedConstructor.value = modelFromConstructor(constructorData);
   } catch (error) {
-    notificationService.showNotification("Error al cargar los datos", "error");
-    console.error(error);
+    notificationService.showNotification(errorMessage(error) ?? "Constructor no encontrado en esta temporada", "error");
+    await router.push({ name: 'adminConstructorsInSeason', params: { season: route.params.season } });
   } finally {
     isLoading.value = false;
   }
 });
 
 const resetForm = () => {
-  editedConstructor.value = {
-    fullname: constructor.value.longname,
-    car: constructor.value.carname,
-    teamcolor: constructor.value.teamcolor.replace('#', '')
-  };
+  editedConstructor.value = modelFromConstructor(constructor.value);
 };
 
 const updateConstructor = async () => {
@@ -162,32 +114,17 @@ const updateConstructor = async () => {
   isSaving.value = true;
   try {
     const seasonId = route.params.season as string;
+    const {fullname, car, teamcolor} = constructorSeasonPayload(constructor.value.id, editedConstructor.value);
 
-    await constructorService.updateConstructorInSeason(seasonId, {
-      id: constructor.value.id,
-      fullname: editedConstructor.value.fullname,
-      car: editedConstructor.value.car,
-      teamcolor: editedConstructor.value.teamcolor
-    });
+    await constructorService.updateConstructorInSeason(seasonId, {id: constructor.value.id, fullname, car, teamcolor});
 
-    notificationService.showNotification(
-      `Constructor ${constructor.value.name} actualizado correctamente`,
-      "success"
-    );
+    notificationService.showNotification(`Constructor ${constructor.value.name} actualizado correctamente`);
 
-    router.push({ name: 'adminConstructorsInSeason', params: { season: seasonId } });
+    await router.push({ name: 'adminConstructorsInSeason', params: { season: seasonId } });
   } catch (error) {
-    notificationService.showNotification("Error al actualizar el constructor", "error");
-    console.error(error);
+    notificationService.showNotification(errorMessage(error) ?? "Error al actualizar el constructor", "error");
   } finally {
     isSaving.value = false;
   }
 };
 </script>
-
-
-
-
-
-
-

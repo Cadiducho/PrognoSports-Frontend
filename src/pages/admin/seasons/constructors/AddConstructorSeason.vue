@@ -3,49 +3,40 @@
     :loading="isLoading"
     :subtitle="`Temporada ${season?.name}`"
   >
-    <form>
+    <template #actions>
+      <PButton
+        tag="router-link"
+        :to="{name: 'adminConstructorCreate'}"
+        type="outline"
+        icon="fa fa-plus"
+      >
+        Crear constructor nuevo
+      </PButton>
+    </template>
+
+    <form @submit.prevent="addConstructorToSeason">
       <p-select
-        v-model="addedConstructor.constructorId"
+        v-model="constructorId"
         label="Constructor"
         placeholder="Selecciona un constructor"
         class="mb-3"
       >
         <option
-          v-for="cons in constructorsList"
+          v-for="cons in availableConstructors"
           :key="cons.id"
           :value="cons.id"
         >
           {{ cons.name }}
         </option>
       </p-select>
-      <PInput
-        v-model="addedConstructor.fullname"
-        label="Nombre largo"
-        placeholder="Nombre largo"
-        name="longname"
-      />
-      <PInput
-        v-model="addedConstructor.car"
-        label="Nombre del coche"
-        placeholder="Nombre del coche"
-        name="carname"
-      />
-      <PField
-        label="Color del equipo"
-        required
-      >
-        <ColorPicker
-          v-model="addedConstructor.teamcolor"
-          required
-        />
-      </PField>
+
+      <ConstructorSeasonFields v-model="seasonData" />
 
       <PButton
         class="mt-4"
-        :disabled="!isFormValid"
-        type="solid"
+        :disabled="!isFormValid || isSaving"
+        native-type="submit"
         label="Agregar constructor a la temporada"
-        @click="addConstructorToSeason()"
       />
     </form>
   </PPage>
@@ -54,67 +45,77 @@
 <script setup lang="ts">
 import {constructorService, notificationService, seasonService} from "@/_services";
 
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import PButton from "@/components/lib/forms/PButton.vue";
-import PInput from "@/components/lib/forms/PInput.vue";
 import {useRoute, useRouter} from "vue-router";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import {Season} from "@/types/Season";
-import Loading from "@/components/lib/Loading.vue";
 import {Constructor} from "@/types/Constructor";
-import ColorPicker from "@/components/lib/forms/ColorPicker.vue";
-import PField from "@/components/lib/forms/PField.vue";
+import ConstructorSeasonFields from "@/components/admin/seasons/ConstructorSeasonFields.vue";
+import {
+  ConstructorSeasonModel,
+  constructorSeasonPayload,
+  emptyConstructorSeasonModel,
+  isConstructorSeasonModelValid
+} from "@/components/admin/seasons/seasonLinkModels";
+import {errorMessage} from "@/composables/errorMessage";
 
 const router = useRouter();
 const route = useRoute();
 
 const isLoading = ref(true);
+const isSaving = ref(false);
 const season = ref({} as Season);
 const constructorsList = ref([] as Array<Constructor>);
-const addedConstructor = ref({
-  constructorId: 0,
-  fullname: '',
-  car: '',
-  teamcolor: ''
-})
+const constructorsInSeason = ref([] as Array<Constructor>);
+const constructorId = ref<number | ''>('');
+const seasonData = ref<ConstructorSeasonModel>(emptyConstructorSeasonModel());
 
-onMounted(async () => {
-  try {
-    const [seasonResponse, constructorsListResponse] = await Promise.all([
-      seasonService.getSeason(route.params.season as string),
-      constructorService.getAllConstructors()
-    ])
+// Sólo los constructores que aún no están en la temporada
+const availableConstructors = computed(() =>
+  constructorsList.value.filter(cons => !constructorsInSeason.value.some(inSeason => inSeason.id === cons.id))
+);
 
-    season.value = seasonResponse;
-    constructorsList.value = constructorsListResponse
-    isLoading.value = false;
-  } catch (e) {
-    console.error(e);
+// Propone el nombre corto como nombre largo si aún no se ha escrito
+watch(constructorId, (id) => {
+  const selected = constructorsList.value.find(cons => cons.id === id);
+  if (selected && !seasonData.value.fullname) {
+    seasonData.value = {...seasonData.value, fullname: selected.name};
   }
 });
 
-const isFormValid = computed(() => {
-  const colorRegex = /^#?[0-9A-Fa-f]{6}$/;
-  return (
-    addedConstructor.value.constructorId > 0 &&
-    addedConstructor.value.fullname.trim().length > 0 &&
-    addedConstructor.value.car.trim().length > 0 &&
-    colorRegex.test(addedConstructor.value.teamcolor)
-  );
+onMounted(async () => {
+  try {
+    season.value = await seasonService.getSeason(route.params.season as string);
+    const [allConstructors, inSeason] = await Promise.all([
+      constructorService.getAllConstructors(),
+      constructorService.getConstructorsInSeason(season.value),
+    ]);
+    constructorsList.value = allConstructors;
+    constructorsInSeason.value = inSeason;
+  } catch (e) {
+    notificationService.showNotification(errorMessage(e) ?? "Error al cargar los datos", "error");
+  } finally {
+    isLoading.value = false;
+  }
 });
 
-const addConstructorToSeason = async () => {
-  const seasonId = route.params.season.toString()
-  try {
-    const result = await constructorService.linkConstructorToSeason(seasonId, addedConstructor.value)
-    notificationService.showNotification("Se ha añadido correctamente el  constructor `" + result.name + "`");
+const isFormValid = computed(() => constructorId.value !== '' && isConstructorSeasonModelValid(seasonData.value));
 
-    router.push({
+const addConstructorToSeason = async () => {
+  if (!isFormValid.value) return;
+  isSaving.value = true;
+  try {
+    const result = await constructorService.linkConstructorToSeason(season.value.id, constructorSeasonPayload(constructorId.value as number, seasonData.value));
+    notificationService.showNotification("Se ha añadido correctamente el constructor `" + result.name + "`");
+
+    await router.push({
       name: 'adminConstructorsInSeason'
     })
-  } catch (error: any) {
-    console.error(error);
-    notificationService.showNotification(error.message, "error");
+  } catch (error) {
+    notificationService.showNotification(errorMessage(error) ?? "No se ha podido añadir el constructor", "error");
+  } finally {
+    isSaving.value = false;
   }
 }
 </script>

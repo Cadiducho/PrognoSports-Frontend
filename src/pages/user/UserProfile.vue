@@ -1,3 +1,81 @@
+<script setup lang="ts">
+import { computed, ref, watch } from "vue";
+import { useRoute } from "vue-router";
+import type { User } from "@/types/User";
+import { userService } from "@/_services";
+import { useAuthStore } from "@/store/authStore";
+import { useHomeSeason } from "@/composables/useHomeSeason";
+import { playedGps, userSeries } from "@/composables/charts/homeSeason";
+import { computeProfileHighlights } from "@/composables/charts/profileStats";
+import PPage from "@/components/lib/PPage.vue";
+import PCard from "@/components/lib/PCard.vue";
+import PTitle from "@/components/lib/PTitle.vue";
+import UserProfileCard from "@/components/user/UserProfileCard.vue";
+import UserLevelResume from "@/components/user/UserLevelResume.vue";
+import ProfileHighlights from "@/components/user/ProfileHighlights.vue";
+import ProfileCommunities from "@/components/user/ProfileCommunities.vue";
+import Loading from "@/components/lib/Loading.vue";
+import HomeSeasonAnalysis from "@/components/home/HomeSeasonAnalysis.vue";
+
+const route = useRoute();
+const authStore = useAuthStore();
+const currentUser = authStore.loggedUser;
+
+const isLoading = ref(true);
+const profile = ref<User>({ id: 0 } as User);
+
+// Se comparte con las gráficas para no repetir la petición de puntos de la temporada
+const season = useHomeSeason();
+
+const requestedUser = computed(() => route.params.user as string | undefined);
+const isOwnProfile = computed(() => profile.value.id !== 0 && profile.value.id === currentUser.id);
+
+const pageTitle = computed(() => {
+  if (isLoading.value || profile.value.id === 0) return undefined;
+  return isOwnProfile.value ? "Tu perfil" : profile.value.username;
+});
+
+// Evita que una respuesta lenta de un perfil anterior pise al actual
+let lastRequest = 0;
+
+watch(requestedUser, async (param) => {
+  const request = ++lastRequest;
+  isLoading.value = true;
+
+  // Sin usuario en la URL se muestra el que ha iniciado sesión
+  if (!param) {
+    profile.value = currentUser;
+    isLoading.value = false;
+    return;
+  }
+
+  try {
+    const user = await userService.getUser(param);
+    if (request === lastRequest) {
+      profile.value = user;
+    }
+  } catch (error: unknown) {
+    console.error(error);
+    if (request === lastRequest) {
+      profile.value = { id: 0 } as User;
+    }
+  } finally {
+    if (request === lastRequest) {
+      isLoading.value = false;
+    }
+  }
+}, { immediate: true });
+
+const userSeasonSeries = computed(() => {
+  const played = playedGps(season.grandPrixes.value, season.pointsByGp.value);
+  return userSeries(played, season.pointsByGp.value, profile.value.username);
+});
+const highlights = computed(() => computeProfileHighlights(userSeasonSeries.value));
+
+// En el perfil de otro usuario se compara con quien lo mira desde el principio
+const initialCompare = computed(() => (isOwnProfile.value ? undefined : currentUser.username));
+</script>
+
 <template>
   <PPage
     variant="plain"
@@ -13,77 +91,47 @@
 
       <hr class="border-gray-200 dark:border-gray-700">
 
-      <UserLevelResume :user="profile" />
+      <UserLevelResume
+        :key="profile.id"
+        :user="profile"
+      />
     </PCard>
 
-    <PCard>
-      <!-- ToDo: Gráficas -->
+    <PCard v-if="season.currentCommunity.value.id !== 0">
+      <PTitle
+        tag="h3"
+        type="subtitle"
+      >
+        Temporada en {{ season.currentCommunity.value.name }}
+      </PTitle>
+
+      <Loading v-if="season.loading.value" />
+      <ProfileHighlights
+        v-else-if="highlights"
+        :highlights="highlights"
+      />
+      <p
+        v-else
+        class="mb-2 text-sm text-gray-600 dark:text-gray-400"
+      >
+        {{ isOwnProfile ? "Aún no tienes" : `${profile.username} no tiene` }} puntos en esta comunidad esta temporada.
+      </p>
+    </PCard>
+
+    <!-- Mismo análisis que la Home. Se monta tras cada carga para que sus filtros se reinicien con la comunidad -->
+    <HomeSeasonAnalysis
+      v-if="season.currentCommunity.value.id !== 0 && !season.loading.value && highlights"
+      :key="profile.id"
+      :username="profile.username"
+      :grand-prixes="season.grandPrixes.value"
+      :points-by-gp="season.pointsByGp.value"
+      :own="isOwnProfile"
+      :initial-compare="initialCompare"
+      :show-ranking-button="false"
+    />
+
+    <PCard v-if="profile.id !== 0">
+      <ProfileCommunities :user="profile" />
     </PCard>
   </PPage>
 </template>
-
-<script lang="ts">
-import {User} from "@/types/User";
-import {userService} from "@/_services";
-import UserLevelResume from "@/components/user/UserLevelResume.vue";
-
-import {defineComponent} from "vue";
-import {useAuthStore} from "@/store/authStore";
-import {useCommunityStore} from "@/store/communityStore";
-import {useDayjs} from "@/composables/useDayjs";
-import UserProfileCard from "@/components/user/UserProfileCard.vue";
-import PCard from "@/components/lib/PCard.vue";
-
-export default defineComponent({
-    name: "UserProfile",
-    components: {
-      PCard,
-        UserProfileCard,
-        UserLevelResume
-    },
-    setup() {
-        const dayjs = useDayjs();
-        const authStore = useAuthStore();
-        const communityStore = useCommunityStore();
-
-        const dateDiff = dayjs.dateDiff;
-        const humanDateTime = dayjs.humanDateTime;
-        const humanDate = dayjs.humanDate;
-        const currentUser = authStore.loggedUser;
-        const currentCommunity = communityStore.currentCommunity;
-        return {currentUser, currentCommunity, dateDiff, humanDateTime, humanDate};
-    },
-    data() {
-        return {
-            thereIsUserParam: false,
-            isLoading: true,
-            profile: {id: 0} as User,
-        }
-    },
-    computed: {
-        pageTitle(): string | undefined {
-            if (this.isLoading || this.profile.id === 0) return undefined;
-            return this.$route.params.user ? this.profile.username : "Tu perfil";
-        }
-    },
-    mounted() {
-        this.isLoading = true;
-
-        // si hay un usuario en la URL, se busca
-        if (this.$route.params.user) {
-            userService.getUser(this.$route.params.user as string).then((user: User) => {
-                this.profile = user;
-                this.isLoading = false;
-            }).catch((error: any) => {
-                console.log(error);
-                this.isLoading = false;
-            });
-        } else {
-            console.log("usando el actual")
-            // si no, se utiliza el usuario que ha iniciado sesión
-            this.profile = this.currentUser;
-            this.isLoading = false;
-        }
-    }
-});
-</script>

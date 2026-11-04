@@ -54,6 +54,15 @@
             >
               Ajustes
             </PButton>
+            <PButton
+              v-else-if="!showSettingsButton && profile.id === currentUser.id"
+              color="primary"
+              icon="fas fa-user"
+              tag="router-link"
+              to="/user"
+            >
+              Ver mi perfil público
+            </PButton>
           </div>
 
           <div class="block mb-1">

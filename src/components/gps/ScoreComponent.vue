@@ -470,7 +470,7 @@ const onExitSimulation = (): void => {
 
 const onSimulateResults = async (drivers: Driver[]): Promise<void> => {
   try {
-    const resultsMap = new Map<number, string>(
+    const resultsMap = new Map<number, number>(
       drivers.map((driver, index) => [index + 1, driver.id])
     );
 

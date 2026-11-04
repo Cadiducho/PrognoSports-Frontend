@@ -8,8 +8,11 @@
       Tu pronóstico contiene pilotos que ya no están inscritos en este Gran Premio. Sustitúyelos antes de guardarlo.
     </PrognoAlert>
 
-    <div class="mb-4 grid grid-cols-2 gap-2 sm:gap-4 lg:gap-6">
-      <section class="min-w-0">
+    <div
+      class="mb-4 grid grid-cols-2 gap-2 sm:gap-4 lg:gap-6"
+      :class="{ 'lg:grid-cols-3': $slots.grid }"
+    >
+      <section class="flex min-w-0 flex-col">
         <PTitle
           tag="h3"
           type="section"
@@ -71,7 +74,7 @@
 
         <draggable
           :id="`pronosticados-${session.id}`"
-          class="w-full h-full select-none space-y-2"
+          class="w-full flex-1 select-none space-y-2"
           :list="pilotosDisponiblesFiltrados"
           group="people"
           item-key="id"
@@ -82,12 +85,13 @@
               :driver="element"
               :index="index"
               :show-position="false"
+              :grid-tag="gridAnnotations.get(element.id)"
             />
           </template>
         </draggable>
       </section>
 
-      <section class="min-w-0">
+      <section class="flex min-w-0 flex-col">
         <PTitle
           tag="h3"
           type="section"
@@ -105,7 +109,7 @@
 
         <draggable
           :id="`pronosticados-${session.id}`"
-          class="w-full h-full select-none space-y-2"
+          class="min-h-[200px] w-full flex-1 select-none space-y-2 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50/50 p-2 transition hover:border-gray-400 sm:p-3 dark:border-gray-600 dark:bg-gray-800/40 dark:hover:border-gray-500"
           :list="pilotosPronosticados"
           group="people"
           item-key="id"
@@ -116,10 +120,24 @@
               :index="index"
               show-position
               :unavailable="!driverIds.has(element.id)"
+              :grid-tag="gridAnnotations.get(element.id)"
             />
           </template>
         </draggable>
       </section>
+
+      <!-- Parrilla de salida de la sesión: bajo lg pasa debajo, a todo el ancho -->
+      <PCard
+        v-if="$slots.grid"
+        tag="section"
+        padding="sm"
+        class="col-span-2 min-w-0 self-start lg:col-span-1"
+      >
+        <template #header>
+          Parrilla de salida
+        </template>
+        <slot name="grid" />
+      </PCard>
     </div>
 
     <template v-if="isBeforeSessionClosure(session)">
@@ -173,6 +191,7 @@ import {GrandPrix} from "@/types/GrandPrix";
 import {Driver} from "@/types/Driver";
 import {RaceResult} from "@/types/RaceResult";
 import {StartGridPosition} from "@/types/StartGridPosition";
+import {gridPenaltyPlaces} from "@/types/GridEntry";
 import {RuleSet} from "@/types/RuleSet";
 import {computed, onMounted, reactive, ref} from "vue";
 import {useAuthStore} from "@/store/authStore";
@@ -190,6 +209,7 @@ import PDivider from "@/components/lib/PDivider.vue";
 import useEmitter from "@/composables/useEmitter";
 import PTag from "@/components/lib/PTag.vue";
 import {isBeforeSessionClosure} from "@/utils/raceSession";
+import PCard from "@/components/lib/PCard.vue";
 
 const props = defineProps<{
   session: RaceSession,
@@ -197,6 +217,10 @@ const props = defineProps<{
   ruleSet: RuleSet,
   drivers: Array<Driver>,
   startGrids: Map<RaceSession, Array<StartGridPosition>>
+}>();
+
+defineSlots<{
+  grid?: () => any;
 }>();
 
 const authStore = useAuthStore();
@@ -211,6 +235,8 @@ const pilotosGuardados = ref(new Array<Driver>());
 const pilotosDisponibles = ref(new Array<Driver>());
 const originalPilotos = new Array<Driver>();
 const indexedGrid = reactive(new Map<number, number>());
+// Pilotos de la parrilla de esta sesión con anotaciones (pit lane o nota), para que nadie pronostique con la parrilla equivocada
+const gridAnnotations = reactive(new Map<number, { label: string; note?: string }>());
 
 const filtroPiloto = ref('');
 const opcionesOrdenadoOpen = ref(false);
@@ -309,6 +335,11 @@ onMounted(async() => {
     if (session.id === props.session.id) {
       grid.forEach(gpos => {
         indexedGrid.set(gpos.driver.number, gpos.position);
+        if (gpos.isFromPit || gpos.note) {
+          const penalty = gpos.isFromPit ? undefined : gridPenaltyPlaces(gpos.note ?? '');
+          const label = gpos.isFromPit ? 'Pit lane' : penalty === 'back' ? 'Sanción ▼ final' : penalty ? `Sanción ▼${penalty}` : 'Nota';
+          gridAnnotations.set(gpos.driver.id, {label, note: gpos.note});
+        }
       })
     }
   }
