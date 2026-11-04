@@ -265,7 +265,7 @@
                     </td>
                     <td class="px-2 py-2">
                       <router-link
-                        :to="row.gp.gpLink()"
+                        :to="grandPrixLink(row.gp)"
                         class="hover:underline"
                       >
                         {{ row.gp.name }}
@@ -327,6 +327,7 @@ import { useAuthStore } from "@/store/authStore";
 import { Driver } from "@/types/Driver";
 import { GrandPrix } from "@/types/GrandPrix";
 import { Season } from "@/types/Season";
+import {grandPrixLink} from "@/utils/grandPrix";
 
 defineOptions({ name: "OneDriver" });
 

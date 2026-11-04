@@ -1,6 +1,6 @@
-import {getObject, getObjectList} from "@/_services/api";
+import {getObject, getObjectList, postObject} from "@/_services/api";
 import axios from "axios";
-import {GrandPrix, mapGrandPrix} from "@/types/GrandPrix";
+import {GrandPrix, GrandPrixDto, mapGrandPrix} from "@/types/GrandPrix";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
 import {StartGridPosition} from "@/types/StartGridPosition";
@@ -48,7 +48,7 @@ export class GrandprixService {
         return getObject(`/gps/${comp}/${seas}/${id}`, mapGrandPrix);
     }
 
-    public async linkGrandPrixToSeason(seasonId: string | number, data: {gp: number, circuit: number, variant: number, laps: number, round: number}): Promise<IGrandPrix> {
+    public async linkGrandPrixToSeason(seasonId: string | number, data: {gp: number, circuit: number, variant: number, laps: number, round: number}): Promise<GrandPrixDto> {
         return await axios.post(`/seasons/${seasonId}/gps`, data);
     }
 
@@ -56,17 +56,17 @@ export class GrandprixService {
      * Crea un gran premio. Devuelve el gran premio con su id generado.
      */
     public async createGrandPrix(data: { name: string, code: string }): Promise<GrandPrix> {
-        return this.postObjectToAPI(`/gps`, data);
+        return postObject(`/gps`, data, mapGrandPrix);
     }
 
     /**
      * Temporadas en las que se disputa un gran premio, con sus datos en cada una (ronda, circuito...)
      */
     public async getSeasonMembershipsOfGrandPrix(gpId: number): Promise<Array<SeasonMembership<GrandPrix>>> {
-        const memberships: Array<SeasonMembership<IGrandPrix>> = await axios.get(`/gps/${gpId}/seasons`);
+        const memberships: Array<SeasonMembership<GrandPrixDto>> = await axios.get(`/gps/${gpId}/seasons`);
         return memberships.map(membership => ({
             ...membership,
-            entry: membership.entry && this.factory(membership.entry),
+            entry: membership.entry && mapGrandPrix(membership.entry),
         }));
     }
 

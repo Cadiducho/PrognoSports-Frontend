@@ -32,12 +32,13 @@ import {computed, ref} from "vue";
 import {storeToRefs} from "pinia";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
+import {isUserVerified} from "@/utils/user";
 
 const authStore = useAuthStore();
 const {thereIsCurrentCommunity} = storeToRefs(useCommunityStore());
 
 // Sus destinos exigen sesión, correo verificado y comunidad; sin ellos los guards solo redirigirían de vuelta
-const showTabBar = computed(() => authStore.isLoggedIn && authStore.loggedUser.isVerified() && thereIsCurrentCommunity.value);
+const showTabBar = computed(() => authStore.isLoggedIn && isUserVerified(authStore.loggedUser) && thereIsCurrentCommunity.value);
 
 const isBeta = ref(import.meta.env.MODE == 'beta');
 const betaAceptada = ref(localStorage.getItem("beta-accepted") === "true");
