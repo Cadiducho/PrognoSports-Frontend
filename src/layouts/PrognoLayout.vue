@@ -38,7 +38,10 @@ const authStore = useAuthStore();
 const {thereIsCurrentCommunity} = storeToRefs(useCommunityStore());
 
 // Sus destinos exigen sesión, correo verificado y comunidad; sin ellos los guards solo redirigirían de vuelta
-const showTabBar = computed(() => authStore.isLoggedIn && isUserVerified(authStore.loggedUser) && thereIsCurrentCommunity.value);
+const showTabBar = computed(() => {
+  const user = authStore.loggedUser;
+  return !!user && isUserVerified(user) && thereIsCurrentCommunity.value;
+});
 
 const isBeta = ref(import.meta.env.MODE == 'beta');
 const betaAceptada = ref(localStorage.getItem("beta-accepted") === "true");

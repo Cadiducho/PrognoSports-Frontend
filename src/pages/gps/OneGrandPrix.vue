@@ -150,7 +150,7 @@ import {grandPrixFirstDate, grandPrixLastDate} from "@/utils/grandPrix";
 defineOptions({name: "OneGrandPrix"});
 
 const route = useRoute();
-const currentUser = useAuthStore().loggedUser;
+const currentUser = useAuthStore().requireUser();
 const currentCommunity = useCommunityStore().currentCommunity;
 
 const season = {name: route.params.season} as Season;
