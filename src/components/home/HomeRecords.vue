@@ -3,7 +3,7 @@ import { computed } from "vue";
 import type { FormStats } from "@/composables/charts/homeSeason";
 import type { SeasonRecords } from "@/composables/charts/homeStats";
 import HomeFormStats from "@/components/home/HomeFormStats.vue";
-import HomeStatTile from "@/components/home/HomeStatTile.vue";
+import StatTile from "@/components/stats/StatTile.vue";
 
 const props = defineProps<{
   records: SeasonRecords;
@@ -71,7 +71,7 @@ const achievements = computed(() => {
         Mejores y peores momentos
       </h3>
       <ul class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-        <HomeStatTile
+        <StatTile
           v-for="tile in moments"
           :key="tile.label"
           v-bind="tile"
@@ -87,7 +87,7 @@ const achievements = computed(() => {
         Rachas y logros
       </h3>
       <ul class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-        <HomeStatTile
+        <StatTile
           v-for="tile in achievements"
           :key="tile.label"
           v-bind="tile"

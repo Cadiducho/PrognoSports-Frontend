@@ -6,7 +6,7 @@ import { buildHomeHeadToHeadChart, HEAD_TO_HEAD_CHART_HEIGHT } from "@/composabl
 import { formatDelta } from "@/composables/charts/accumulatedView";
 import type { GrandPrix } from "@/types/GrandPrix";
 import PChart from "@/components/lib/charts/PChart.vue";
-import HomeStatTile from "@/components/home/HomeStatTile.vue";
+import StatTile from "@/components/stats/StatTile.vue";
 
 const props = withDefaults(defineProps<{
   grandPrixes: readonly GrandPrix[];
@@ -80,7 +80,7 @@ const tiles = computed(() => {
     />
 
     <ul class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-      <HomeStatTile
+      <StatTile
         v-for="tile in tiles"
         :key="tile.label"
         v-bind="tile"
@@ -98,7 +98,7 @@ const tiles = computed(() => {
         Quién gana en cada sesión
       </h3>
       <ul class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-        <HomeStatTile
+        <StatTile
           v-for="session in duel.bySession"
           :key="session.sessionId"
           :label="session.sessionName"
