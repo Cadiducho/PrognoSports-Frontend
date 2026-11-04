@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { computed } from "vue";
+import { useQuery } from "@pinia/colada";
 import type { User } from "@/types/User";
-import type { Community } from "@/types/Community";
-import { communityService } from "@/_services";
+import { userCommunitiesQuery } from "@/queries/communities";
 import PTitle from "@/components/lib/PTitle.vue";
 import PTag from "@/components/lib/PTag.vue";
 
@@ -10,26 +10,9 @@ const props = defineProps<{
   user: User;
 }>();
 
-const communities = ref<Community[]>([]);
-
-// Evita que una respuesta lenta de un perfil anterior pise al actual
-let lastRequest = 0;
-
-watch(() => props.user.id, async (id) => {
-  const request = ++lastRequest;
-  communities.value = [];
-  if (!id) {
-    return;
-  }
-  try {
-    const list = await communityService.getUserCommunities(props.user);
-    if (request === lastRequest) {
-      communities.value = list;
-    }
-  } catch (error: unknown) {
-    console.error(error);
-  }
-}, { immediate: true });
+// La misma consulta que el selector de comunidades: la clave lleva el id, así que cambiar de perfil no mezcla listas
+const { data } = useQuery(() => userCommunitiesQuery(props.user.id));
+const communities = computed(() => data.value ?? []);
 </script>
 
 <template>
