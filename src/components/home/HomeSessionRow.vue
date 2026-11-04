@@ -5,6 +5,8 @@ import type { NextGrandPrixSession } from "@/composables/useNextGrandPrix";
 import { useDayjs } from "@/composables/useDayjs";
 import PTag from "@/components/lib/PTag.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
+import {grandPrixLink} from "@/utils/grandPrix";
+import {sessionHumanName} from "@/utils/raceSession";
 
 const props = defineProps<{
   grandPrix: GrandPrix;
@@ -14,7 +16,7 @@ const props = defineProps<{
 const { formatDate } = useDayjs();
 
 // El GP abre la sesión indicada en `sesion`
-const to = computed(() => ({ ...props.grandPrix.gpLink(), query: { sesion: props.row.session.name } }));
+const to = computed(() => ({ ...grandPrixLink(props.grandPrix), query: { sesion: props.row.session.name } }));
 
 const day = computed(() => formatDate(props.row.session.date, "ddd").replace(".", ""));
 const date = computed(() => formatDate(props.row.session.date, "D"));
@@ -68,7 +70,7 @@ const action = computed(() => {
         :to="to"
         class="font-semibold text-gray-900 after:absolute after:inset-0 after:content-[''] dark:text-gray-100"
       >
-        {{ row.session.humanName() }}
+        {{ sessionHumanName(row.session) }}
       </router-link>
       <p class="text-sm text-gray-600 dark:text-gray-400">
         <span class="md:hidden">{{ day }} {{ date }} · </span>{{ time }} ·

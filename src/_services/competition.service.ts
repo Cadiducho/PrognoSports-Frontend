@@ -1,20 +1,15 @@
-import {Competition, ICompetition} from "@/types/Competition";
+import {getObject, getObjectList} from "@/_services/api";
+import {Competition, mapCompetition} from "@/types/Competition";
 import axios from "axios";
 import {Season} from "@/types/Season";
-import {PrognoService} from "@/_services/progno.service";
 
-export class CompetitionService extends PrognoService<ICompetition, Competition> {
-
-    factory(data: ICompetition): Competition {
-        return new Competition(data);
-    }
-
+export class CompetitionService {
     public async getCompetition(competitionId: string | number): Promise<Competition> {
-        return this.getObjectFromAPI(`/competitions/${competitionId}`)
+        return getObject(`/competitions/${competitionId}`, mapCompetition)
     }
 
     public async getCompetitionList(): Promise<Array<Competition>> {
-        return this.getObjectListFromAPI(`/competitions`)
+        return getObjectList(`/competitions`, mapCompetition)
     }
 
     public async getSeasonsOfCompetition(competition: Competition): Promise<Array<Season>> {

@@ -5,6 +5,7 @@ import type { NextGrandPrixSession } from "@/composables/useNextGrandPrix";
 import PCard from "@/components/lib/PCard.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import HomeSessionRow from "@/components/home/HomeSessionRow.vue";
+import {grandPrixPromoImageUrl, grandPrixLink} from "@/utils/grandPrix";
 
 const props = defineProps<{
   grandPrix: GrandPrix;
@@ -26,7 +27,7 @@ const circuitInfo = computed(() => [props.grandPrix.circuit?.name, props.grandPr
         </h2>
         <img
           v-if="grandPrix.hasPromoImage"
-          :src="grandPrix.promoImage()"
+          :src="grandPrixPromoImageUrl(grandPrix)"
           :alt="`Imagen promocional del ${grandPrix.name}`"
           class="h-36 w-full rounded-lg object-cover"
           loading="lazy"
@@ -37,7 +38,7 @@ const circuitInfo = computed(() => [props.grandPrix.circuit?.name, props.grandPr
         >{{ circuitInfo }}</span>
         <PButton
           tag="router-link"
-          :to="grandPrix.gpLink()"
+          :to="grandPrixLink(grandPrix)"
           color="primary"
           type="solid"
           expanded

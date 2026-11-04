@@ -4,6 +4,7 @@ import type { RouteLocationRaw } from "vue-router";
 import type { GrandPrix } from "@/types/GrandPrix";
 import { fetchNextGrandPrix } from "@/composables/nextGrandPrixCache";
 import { useCommunityStore } from "@/store/communityStore";
+import {grandPrixLink} from "@/utils/grandPrix";
 
 /** Lista de Grandes Premios: destino mientras carga o si no hay próximo GP */
 const GP_LIST: RouteLocationRaw = { path: "/gps" };
@@ -43,7 +44,7 @@ export function useNextGrandPrixLink() {
 
   watch(currentCommunity, load, { immediate: true });
 
-  const link = computed<RouteLocationRaw>(() => (grandPrix.value ? grandPrix.value.gpLink() as RouteLocationRaw : GP_LIST));
+  const link = computed<RouteLocationRaw>(() => (grandPrix.value ? grandPrixLink(grandPrix.value) : GP_LIST));
 
   return { link };
 }

@@ -18,7 +18,7 @@
           : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'"
         @click="select(session)"
       >
-        <span class="text-base font-semibold sm:text-lg">{{ session.humanName() }}</span>
+        <span class="text-base font-semibold sm:text-lg">{{ sessionHumanName(session) }}</span>
         <span class="text-xs opacity-70 sm:text-sm">{{ formatDate(session.date, "ddd D · H:mm") }}</span>
       </button>
     </div>
@@ -30,6 +30,7 @@ import {nextTick, ref} from "vue";
 import {RaceSession} from "@/types/RaceSession";
 import {useDayjs} from "@/composables/useDayjs";
 import PCard from "@/components/lib/PCard.vue";
+import {sessionHumanName} from "@/utils/raceSession";
 
 defineOptions({name: "SessionSelector"});
 

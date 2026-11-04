@@ -8,7 +8,7 @@
         >
           <img
             class="h-full w-full object-cover"
-            :src="community.communityImage()"
+            :src="communityImageUrl(community)"
             alt="Logo"
           >
         </router-link>
@@ -41,7 +41,7 @@
       </p>
       <p class="italic">
         Comunidad creada el
-        <time :datetime="community.created">{{ humanDateTime(community.created) }}</time>
+        <time :datetime="community.created.toISOString()">{{ humanDateTime(community.created) }}</time>
       </p>
     </div>
 
@@ -103,6 +103,7 @@
 
 <script lang="ts">
 import {Community} from "@/types/Community";
+import {communityImageUrl} from "@/utils/community";
 
 import {defineComponent, PropType} from "vue";
 import {useDayjs} from "@/composables/useDayjs";
@@ -138,7 +139,7 @@ export default defineComponent({
         const currentCommunity = communityStore.currentCommunity;
         const setCommunity = communityStore.setCommunity;
         const removeCommunity = communityStore.removeCommunity;
-        return { humanDateTime, emitter, currentCommunity, setCommunity, removeCommunity }
+        return { humanDateTime, emitter, currentCommunity, setCommunity, removeCommunity, communityImageUrl }
     },
     data() {
         return {

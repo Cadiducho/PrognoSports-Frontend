@@ -5,7 +5,7 @@
     @handle="handleSimulate"
   >
     <template #title>
-      Simular resultados de {{ session.humanName() }}
+      Simular resultados de {{ sessionHumanName(session) }}
     </template>
 
     <template #content>
@@ -51,6 +51,7 @@
 
 <script setup lang="ts">
 import { RaceSession } from "@/types/RaceSession";
+import {ruleSetPredictedPositions} from "@/utils/ruleSet";
 import { GrandPrix } from "@/types/GrandPrix";
 import { Driver } from "@/types/Driver";
 import { RuleSet } from "@/types/RuleSet";
@@ -60,6 +61,7 @@ import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import SmallDriverCard from "@/components/gps/SmallDriverCard.vue";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
 import {RaceResult} from "@/types/RaceResult";
+import {sessionHumanName} from "@/utils/raceSession";
 
 const visible = defineModel<boolean>();
 const props = defineProps<{
@@ -77,7 +79,7 @@ const emit = defineEmits<{
 
 const pilotosOrdenados = ref(new Array<Driver>());
 
-const cantidadPronosticados = computed(() => props.ruleSet.cantidadPilotosPronosticados(props.session));
+const cantidadPronosticados = computed(() => ruleSetPredictedPositions(props.ruleSet, props.session));
 
 const handleSimulate = () => {
   // Se emite la lista completa de piltos

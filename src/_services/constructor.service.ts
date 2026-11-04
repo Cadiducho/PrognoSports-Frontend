@@ -1,35 +1,30 @@
+import {getObject, getObjectList, postObject} from "@/_services/api";
 import axios from "axios";
-import {Constructor, IConstructor} from "@/types/Constructor";
-import {PrognoService} from "@/_services/progno.service";
+import {Constructor} from "@/types/Constructor";
 import {Season} from "@/types/Season";
 import {SeasonMembership} from "@/_services/seasonMembership";
 
-export class ConstructorService extends PrognoService<IConstructor, Constructor> {
-
-  factory(data: IConstructor): Constructor {
-    return new Constructor(data);
-  }
-
+export class ConstructorService {
   /**
    * Devuelve un constructor
    * @param constructorId el id del constructor
    */
   public async getConstructor(constructorId: string): Promise<Constructor> {
-    return this.getObjectFromAPI(`/constructors/${constructorId}`)
+    return getObject<Constructor>(`/constructors/${constructorId}`)
   }
 
   /**
    * Devuelve la lista total de constructores
    */
   public async getAllConstructors(): Promise<Array<Constructor>> {
-    return this.getObjectListFromAPI(`/constructors`)
+    return getObjectList<Constructor>(`/constructors`)
   }
 
   /**
    * Crea un constructor. Devuelve el constructor con su id generado.
    */
   public async createConstructor(data: { name: string }): Promise<Constructor> {
-    return this.postObjectToAPI(`/constructors`, data);
+    return postObject<Constructor>(`/constructors`, data);
   }
 
   public async updateConstructor(constructor: Partial<Constructor>): Promise<Array<Constructor>> {
@@ -45,7 +40,7 @@ export class ConstructorService extends PrognoService<IConstructor, Constructor>
    * @param season la temporada
    */
   public async getConstructorsInSeason(season: Season): Promise<Array<Constructor>> {
-    return this.getObjectListFromAPI(`/seasons/${season.id}/constructors`);
+    return getObjectList<Constructor>(`/seasons/${season.id}/constructors`);
   }
 
   /**
@@ -53,7 +48,7 @@ export class ConstructorService extends PrognoService<IConstructor, Constructor>
    * @param constructorId el id del constructor
    */
   public async getConstructorInSeason(seasonId: string | number, constructorId: string | number): Promise<Constructor> {
-    return this.getObjectFromAPI(`/seasons/${seasonId}/constructors/${constructorId}`)
+    return getObject<Constructor>(`/seasons/${seasonId}/constructors/${constructorId}`)
   }
 
   /**
@@ -82,10 +77,6 @@ export class ConstructorService extends PrognoService<IConstructor, Constructor>
    * Temporadas en las que participa un constructor, con sus datos en cada una (coche, nombre largo y color)
    */
   public async getSeasonMembershipsOfConstructor(constructorId: number): Promise<Array<SeasonMembership<Constructor>>> {
-    const memberships: Array<SeasonMembership<IConstructor>> = await axios.get(`/constructors/${constructorId}/seasons`);
-    return memberships.map(membership => ({
-      ...membership,
-      entry: membership.entry && this.factory(membership.entry),
-    }));
+    return getObjectList<SeasonMembership<Constructor>>(`/constructors/${constructorId}/seasons`);
   }
 }

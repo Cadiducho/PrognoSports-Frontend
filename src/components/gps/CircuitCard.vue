@@ -5,14 +5,14 @@
       <div class="w-full shrink-0 space-y-2 sm:w-1/4">
         <figure v-if="circuit.hasLogoImage">
           <img
-            :src="circuit.logoImage()"
+            :src="circuitLogoImageUrl(circuit)"
             alt="Logo image"
             class="mx-auto h-auto max-h-12 max-w-full object-contain"
           >
         </figure>
         <figure>
           <img
-            :src="variant.layoutImage(true)"
+            :src="circuitVariantLayoutImageUrl(variant, true)"
             alt="Circuit layout image"
             class="mx-auto h-auto max-h-48 max-w-full object-contain"
           >
@@ -22,10 +22,10 @@
       <main class="flex min-w-0 flex-1 flex-col">
         <p class="text-base font-semibold lg:text-xl">
           <router-link
-            :to="circuit.circuitLink()"
+            :to="circuitLink(circuit)"
             class="text-black dark:text-gray-200"
           >
-            {{ circuit.name }} {{ variant.isDefault() ? "" : ('- ' + variant.name) }}
+            {{ circuit.name }} {{ isDefaultCircuitVariant(variant) ? "" : ('- ' + variant.name) }}
           </router-link>
         </p>
         <p class="mb-3 text-sm font-normal lg:text-base">
@@ -33,7 +33,7 @@
         </p>
 
         <div class="mb-3 grid grid-cols-2 gap-2 md:grid-cols-4">
-          <p v-if="!variant.isDefault()">
+          <p v-if="!isDefaultCircuitVariant(variant)">
             <b>Variante: </b>{{ variant.name }}
           </p>
           <p>
@@ -50,7 +50,7 @@
         <div class="mt-auto">
           <PButton
             tag="router-link"
-            :to="circuit.circuitLink()"
+            :to="circuitLink(circuit)"
             color="info"
             type="soft"
           >
@@ -64,6 +64,7 @@
 
 <script setup lang="ts">
 import {computed} from "vue";
+import {circuitLink, circuitLogoImageUrl, circuitVariantLayoutImageUrl, isDefaultCircuitVariant} from "@/utils/circuit";
 import {Circuit} from "@/types/Circuit";
 import {CircuitVariant} from "@/types/CircuitVariant";
 import PCard from "@/components/lib/PCard.vue";

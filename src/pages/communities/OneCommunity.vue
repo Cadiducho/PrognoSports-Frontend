@@ -13,7 +13,7 @@
           <figure class="aspect-square w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
             <img
               class="h-full w-full object-cover"
-              :src="community.communityImage()"
+              :src="communityImageUrl(community)"
               alt="Community logo"
             >
           </figure>
@@ -193,6 +193,7 @@ import PTitle from "@/components/lib/PTitle.vue";
 import {communityService, notificationService} from "@/_services";
 
 import {Community} from "@/types/Community";
+import {communityImageUrl} from "@/utils/community";
 import {CommunityUser} from "@/types/CommunityUser";
 import dayjs from "dayjs";
 
@@ -235,7 +236,7 @@ export default defineComponent({
         const humanDateTime = dayjs.humanDateTime;
         const currentUser = authStore.loggedUser;
         const currentCommunity = communityStore.currentCommunity;
-        return { currentUser, currentCommunity, dateDiff, humanDateTime, clipboard };
+        return { currentUser, currentCommunity, dateDiff, humanDateTime, clipboard, communityImageUrl };
     },
     data() {
         return {

@@ -12,7 +12,7 @@
         class="flex flex-col items-end gap-2"
       >
         <p-button
-          v-if="currentUser.isAdmin()"
+          v-if="isUserAdmin(currentUser)"
           color="info"
           tag="router-link"
           :to="{ name: 'adminGpEditInSeason', params: {season: season.name, gp: grandPrix.id} } "
@@ -58,7 +58,7 @@
       >
         <ClouseDateMessage :session="session" />
         <h6 class="dark:text-gray-300">
-          Para esta sesión se han de pronosticar {{ ruleSet.cantidadPilotosPronosticados(session) }} pilotos
+          Para esta sesión se han de pronosticar {{ ruleSetPredictedPositions(ruleSet, session) }} pilotos
         </h6>
         <SelectTipps
           :session="session"
@@ -143,6 +143,9 @@ import {RaceSession} from "@/types/RaceSession";
 import {RuleSet} from "@/types/RuleSet";
 import {Driver} from "@/types/Driver";
 import {CommunityUser} from "@/types/CommunityUser";
+import {isUserAdmin} from "@/utils/user";
+import {ruleSetPredictedPositions} from "@/utils/ruleSet";
+import {grandPrixFirstDate, grandPrixLastDate} from "@/utils/grandPrix";
 
 defineOptions({name: "OneGrandPrix"});
 
@@ -175,7 +178,7 @@ const subtitle = computed(() => {
   if (!gp.sessions?.length) {
     return round;
   }
-  return `${round} · ${gp.firstDate().getDate()} - ${humanDayMonth(gp.lastDate())}`;
+  return `${round} · ${grandPrixFirstDate(gp).getDate()} - ${humanDayMonth(grandPrixLastDate(gp))}`;
 });
 
 /**

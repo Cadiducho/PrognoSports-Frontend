@@ -52,7 +52,7 @@
 
       <img
         v-if="variant.hasLayoutImage"
-        :src="variant.layoutImage()"
+        :src="layoutPreviewUrl ?? circuitVariantLayoutImageUrl(variant)"
         class="h-48"
         alt="Variant layout"
       >
@@ -65,20 +65,28 @@ import {CircuitVariant} from "@/types/CircuitVariant";
 import PInput from "@/components/lib/forms/PInput.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import {ref} from "vue";
+import {useObjectUrl} from "@vueuse/core";
 import UploadFileModal from "@/components/lib/UploadFileModal.vue";
+import {circuitVariantLayoutImageUrl} from "@/utils/circuit";
 
-const variant = defineModel('variant', { required: true, type: CircuitVariant })
+const variant = defineModel<CircuitVariant>('variant', { required: true })
 const emit = defineEmits<{
     removeVariant: [variant: CircuitVariant]
+    layoutSelected: [variant: CircuitVariant, file: File]
 }>();
 const removeVariant = () => {
     emit('removeVariant', variant.value);
 }
 
+// Imagen elegida por el usuario, aún sin subir: solo se previsualiza y se avisa al editor del circuito
+const layoutFile = ref<File>();
+const layoutPreviewUrl = useObjectUrl(layoutFile);
+
 const onFileChange = (e: any) => {
     let file = e.target.files[0];
     if (file) {
-        variant.value!.temporalLayoutImage = file
+        layoutFile.value = file;
+        emit('layoutSelected', variant.value, file);
     }
 }
 </script>

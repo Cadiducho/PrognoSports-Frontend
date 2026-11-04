@@ -19,11 +19,12 @@ pnpm dev:prod                    # dev server with --mode production (.env.produ
 pnpm build                       # production build -> dist/
 pnpm buildBeta                   # build with --mode beta (beta banner, .env.beta)
 pnpm eslint                      # lint src/**
+pnpm typecheck                   # vue-tsc --noEmit (Vite does not check types)
 ```
 
 Corepack does not work with pnpm 12 (its shim fails or pins an older pnpm and `devEngines` is ignored). If `pnpm` complains about the version, run `corepack disable pnpm` and use a pnpm >= 11 installed outside Corepack (see https://pnpm.io/installation).
 
-There is no test suite. ESLint currently reports pre-existing errors, so do not add new ones; check that the count does not grow. CI runs lint as a non-blocking step.
+There is no test suite. ESLint currently reports pre-existing errors, so do not add new ones; check that the count does not grow. `pnpm typecheck` also has pre-existing errors (about 80 at the time of writing); do not add new ones. CI runs lint and typecheck as non-blocking steps.
 
 `pnpm-workspace.yaml` only holds `allowBuilds` (postinstall scripts are denied unless listed, currently `esbuild`). pnpm 12 rejects unknown keys in that file.
 
@@ -40,10 +41,10 @@ Configuration uses Vite modes and `.env` files:
 
 ## Architecture
 
-- **API layer** (`src/_services`): `index.ts` configures a global axios instance. A request interceptor adds `localStorage.token` as the `Authorization` header; the response interceptor unwraps the API envelope `{success, result}` to `result` and rejects with `{message}`. Each `*.service.ts` is a class, instantiated once and exported from `index.ts` (`seasonService`, `userService`, ...). Add new endpoints there, not with ad-hoc axios calls in components.
+- **API layer** (`src/_services`): `index.ts` configures a global axios instance. A request interceptor adds `localStorage.token` as the `Authorization` header; the response interceptor unwraps the API envelope `{success, result}` to `result` and rejects with `{message}`. Each `*.service.ts` is a class, instantiated once and exported from `index.ts` (`seasonService`, `userService`, ...). Add new endpoints there, not with ad-hoc axios calls in components. `api.ts` has `getObject`, `getObjectList` and `postObject`, which take an endpoint plus the entity's `mapX` function and return the domain type.
 - **Routing** (`src/_router`): `routes.ts` groups lazy-loaded pages under three layouts (`LandingLayout`, `PrognoLayout`, `EmptyRoutedLayout`). `index.ts` registers global `beforeEach` guards from `middleware/` in a significant order: `data` (loads user and community) -> `auth` -> `verified` -> `community` -> `admin` -> `home`. Later guards rely on state set by `data`.
 - **State** (`src/store`): Pinia options-style stores (auth, community, app, theme, toast). `authStore` owns the logged-in user and token.
-- **Domain models** (`src/types`): classes/interfaces mirroring API entities. Some build asset URLs from `BASE_URL`.
+- **Domain models** (`src/types`): plain interfaces, not classes. Each entity that needs conversion has an `XDto` (the JSON as the API returns it, dates as strings), the `X` interface and a `mapX(dto)` function that builds it (dates become `Date`, nested entities go through their own mapper). Behaviour that used to be methods lives in pure functions in `src/utils/<entity>.ts` (`isUserAdmin(user)`, `grandPrixLink(gp)`, ...); use a composable (`use*`) only for logic with reactive state or lifecycle. Types must not import from `@/_services`: `BASE_URL` is in `src/config.ts`. Keep UI state (a chosen file, an edit flag) in the component, not in the model.
 - **UI**: `src/components/lib` holds the in-house `P*` primitives and form/table helpers; feature components sit in sibling folders. `src/pages/admin/**` is the CRUD back-office.
 - **Styling**: Tailwind 4 through the `@tailwindcss/vite` plugin, configured only in CSS (no `tailwind.config.*`, no PostCSS). `src/styles/app.css` imports Tailwind, the typography plugin and the class-based dark variant, and holds the custom palette in its `@theme` block. A `<style>` block in an SFC that uses `@apply` must start with `@reference "@/styles/app.css";`. Tailwind is the only styling system; write new UI with utilities. Dark mode is driven by `themeStore` (preference `light | dark | system`, persisted in `localStorage.theme`), which toggles the `dark` class and `color-scheme` on `<html>`; an inline script in `index.html` applies it before first paint. New UI must include `dark:` variants.
 - `@` aliases `src/`.

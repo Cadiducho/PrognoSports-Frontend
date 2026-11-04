@@ -59,7 +59,7 @@
         class="mt-2"
         :grid-pos="selectedPosition"
         :origin="origins.get(selectedPosition.driver.id)"
-        :origin-name="originSession?.humanName()"
+        :origin-name="originSession && sessionHumanName(originSession)"
         @close="selectedDriverId = undefined"
       />
       <p
@@ -73,7 +73,7 @@
         class="mt-4"
         :grid="sessionGrid"
         :origins="origins"
-        :origin-name="originSession?.humanName()"
+        :origin-name="originSession && sessionHumanName(originSession)"
       />
     </div>
   </div>
@@ -89,6 +89,7 @@ import GridChangesList from "@/components/gps/GridChangesList.vue";
 import {RaceSession} from "@/types/RaceSession";
 import {GrandPrix} from "@/types/GrandPrix";
 import {grandPrixService} from "@/_services";
+import {sessionHumanName} from "@/utils/raceSession";
 
 defineOptions({ name: "StartGridList" });
 

@@ -3,6 +3,7 @@ import { computed } from "vue";
 import type { GrandPrix } from "@/types/GrandPrix";
 import type { NextGrandPrixSession } from "@/composables/useNextGrandPrix";
 import { countdownParts } from "@/composables/useNextGrandPrix";
+import {sessionClosureDate, sessionHumanName} from "@/utils/raceSession";
 
 const props = defineProps<{
   grandPrix: GrandPrix;
@@ -15,7 +16,7 @@ const blocks = computed(() => {
   if (!props.closure) {
     return [];
   }
-  const { days, hours, minutes } = countdownParts(props.closure.session.closureDate(), props.now);
+  const { days, hours, minutes } = countdownParts(sessionClosureDate(props.closure.session), props.now);
   return [
     { value: String(days).padStart(2, "0"), label: "días" },
     { value: String(hours).padStart(2, "0"), label: "horas" },
@@ -49,7 +50,7 @@ const blocks = computed(() => {
           <span class="text-xs text-brand-100">{{ block.label }}</span>
         </div>
       </div>
-      <span class="text-sm text-brand-100">para el cierre de {{ closure.session.humanName() }}</span>
+      <span class="text-sm text-brand-100">para el cierre de {{ sessionHumanName(closure.session) }}</span>
     </template>
     <span
       v-else

@@ -1,7 +1,7 @@
 import type { GrandPrix } from "@/types/GrandPrix";
 import type { UserPoints } from "@/types/UserPoints";
-import { RaceSession } from "@/types/RaceSession";
 import type { Dictionary } from "@/types/Dictionary";
+import {sessionHumanNameById} from "@/utils/raceSession";
 
 /** Respuesta de `scoreService.getUserPointsByGP`: id de GP -> usuario -> puntos */
 export type PointsByGp = Dictionary<string, Dictionary<string, UserPoints>>;
@@ -13,7 +13,7 @@ export const SESSION_ORDER = [1, 3, 4, 2] as const;
 
 export const WINDOW_SIZE: Record<HomeWindow, number> = { season: Infinity, last5: 5 };
 
-export const sessionName = (id: number): string => RaceSession.findById(id)?.humanName() ?? `Sesión ${id}`;
+export const sessionName = (id: number): string => sessionHumanNameById(id) ?? `Sesión ${id}`;
 
 /** Puntos de todos los usuarios en un Gran Premio */
 export function entriesOf(pointsByGp: PointsByGp, gp: GrandPrix): UserPoints[] {

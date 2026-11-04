@@ -1,25 +1,20 @@
+import {getObject, getObjectList} from "@/_services/api";
 import axios from "axios";
-import {Circuit, ICircuit} from '@/types/Circuit';
-import {CircuitVariant, ICircuitVariant} from "@/types/CircuitVariant";
-import {PrognoService} from "@/_services/progno.service";
+import {Circuit, mapCircuit} from "@/types/Circuit";
+import {CircuitVariant, CircuitVariantDto, mapCircuitVariant} from "@/types/CircuitVariant";
 
-export class CircuitService extends PrognoService<ICircuit, Circuit> {
-
-    factory(data: ICircuit): Circuit {
-        return new Circuit(data);
-    }
-
+export class CircuitService {
     public async getCircuitList(): Promise<Array<Circuit>> {
-        return this.getObjectListFromAPI(`/circuits`);
+        return getObjectList(`/circuits`, mapCircuit);
     }
 
     public async getCircuit(circuitId: string): Promise<Circuit> {
-        return this.getObjectFromAPI(`/circuits/${circuitId}`);
+        return getObject(`/circuits/${circuitId}`, mapCircuit);
     }
 
     public async listCircuitVariant(circuit: Circuit): Promise<Array<CircuitVariant>> {
-        const circuitData = await axios.get(`/circuits/${circuit.id}/variants`) as ICircuitVariant[];
-        return circuitData.map(data => new CircuitVariant(data));
+        const circuitData = await axios.get(`/circuits/${circuit.id}/variants`) as CircuitVariantDto[];
+        return circuitData.map(mapCircuitVariant);
     }
 
     public async createCircuit(data: any): Promise<Circuit> {

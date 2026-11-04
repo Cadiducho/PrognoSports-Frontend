@@ -13,7 +13,7 @@
           class="fa fa-check text-success-600 dark:text-success-400"
           aria-hidden="true"
         />
-        <b>{{ session.humanName() }}</b>
+        <b>{{ sessionHumanName(session) }}</b>
         <span>{{ humanDateTime(session.date) }}</span>
       </li>
     </ul>
@@ -35,7 +35,7 @@
           :key="type.id"
           :value="type.id"
         >
-          {{ type.humanName() }}
+          {{ sessionHumanName(type) }}
         </option>
       </PSelect>
       <PSelect
@@ -52,7 +52,7 @@
           :key="session.id"
           :value="session.id"
         >
-          {{ session.humanName() }}
+          {{ sessionHumanName(session) }}
         </option>
       </PSelect>
       <PField label="Fecha y hora">
@@ -86,6 +86,7 @@ import PSelect from "@/components/lib/forms/PSelect.vue";
 import PField from "@/components/lib/forms/PField.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import CalendarDateTimePicker from "@/components/lib/CalendarDateTimePicker.vue";
+import {sessionHumanName} from "@/utils/raceSession";
 
 /**
  * Alta rápida de sesiones de un gran premio ya enlazado a una temporada.

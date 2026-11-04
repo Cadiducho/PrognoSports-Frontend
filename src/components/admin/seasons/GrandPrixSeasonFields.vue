@@ -84,6 +84,7 @@ import PSelect from "@/components/lib/forms/PSelect.vue";
 import PNumberInput from "@/components/lib/forms/PNumberInput.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import {GrandPrixSeasonModel} from "@/components/admin/seasons/seasonLinkModels";
+import {isDefaultCircuitVariant} from "@/utils/circuit";
 
 const model = defineModel<GrandPrixSeasonModel>({required: true});
 const props = withDefaults(defineProps<{
@@ -136,7 +137,7 @@ const selectCircuit = async (circuit: Circuit | undefined) => {
   // Variante por defecto: la única que haya, o la de Gran Premio
   const defaultVariant = circuit.variants.length === 1
     ? circuit.variants[0]
-    : circuit.variants.find(variant => variant.isDefault());
+    : circuit.variants.find(variant => isDefaultCircuitVariant(variant));
   model.value = {...model.value, circuit, variantId: defaultVariant?.id};
 };
 

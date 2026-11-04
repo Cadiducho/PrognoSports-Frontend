@@ -7,16 +7,14 @@
     "importHelpers": false,
     "moduleResolution": "bundler",
     "experimentalDecorators": true,
-    "downlevelIteration": true,
     "allowJs": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "baseUrl": ".",
     "types": ["vite/client"],
     "paths": {
       "@/*": [
-        "src/*"
+        "./src/*"
       ]
     },
     "lib": [

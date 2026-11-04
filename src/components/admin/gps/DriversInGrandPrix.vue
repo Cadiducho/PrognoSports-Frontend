@@ -89,6 +89,7 @@
 <script setup lang="ts">
 import {computed, onMounted, ref} from "vue";
 import {GrandPrix} from "@/types/GrandPrix";
+import {grandPrixHasStartedLastSession} from "@/utils/grandPrix";
 import {Dictionary} from "@/types/Dictionary";
 import {Driver} from "@/types/Driver";
 import {Constructor} from "@/types/Constructor";
@@ -115,7 +116,7 @@ const otherGPList = ref<Array<GrandPrix>>([]);
 const clonedGrandPrix = ref<GrandPrix>({} as GrandPrix);
 
 // Si ya ha empezado la última sesión, la lista de pilotos queda cerrada (el backend también lo bloquea)
-const entryListClosed = computed(() => props.grandPrix.hasStartedLastSession());
+const entryListClosed = computed(() => grandPrixHasStartedLastSession(props.grandPrix));
 
 async function loadDriversInGrandPrix(gp: GrandPrix) {
   const [driversInGrandPrix, constructors] = await Promise.all([

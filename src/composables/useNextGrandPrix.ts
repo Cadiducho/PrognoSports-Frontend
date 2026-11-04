@@ -8,6 +8,7 @@ import { errorMessage } from "@/composables/errorMessage";
 import { fetchNextGrandPrix } from "@/composables/nextGrandPrixCache";
 import { useAuthStore } from "@/store/authStore";
 import { useCommunityStore } from "@/store/communityStore";
+import {sessionClosureDate} from "@/utils/raceSession";
 
 /** `closing`: abierta y se cierra en menos de 24 horas */
 export type SessionStatus = "done" | "closing" | "pending" | "closed";
@@ -51,7 +52,7 @@ export function countdownText(target: Date, now: Date): string {
 }
 
 export function sessionStatus(session: RaceSession, done: boolean, now: Date): SessionStatus {
-  const closure = session.closureDate();
+  const closure = sessionClosureDate(session);
   if (done) {
     return "done";
   }
@@ -142,8 +143,8 @@ export function useNextGrandPrix() {
         session,
         done,
         status: sessionStatus(session, done, now.value),
-        closed: session.closureDate() <= now.value,
-        closesIn: countdownText(session.closureDate(), now.value),
+        closed: sessionClosureDate(session) <= now.value,
+        closesIn: countdownText(sessionClosureDate(session), now.value),
       };
     });
   });
