@@ -8,18 +8,27 @@ import type { GrandPrix } from "@/types/GrandPrix";
 import PChart from "@/components/lib/charts/PChart.vue";
 import HomeStatTile from "@/components/home/HomeStatTile.vue";
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   grandPrixes: readonly GrandPrix[];
   me: readonly SeriesPoint[];
   /** null si no se ha elegido a nadie con quien compararse */
   rival: { name: string; series: readonly SeriesPoint[] } | null;
-}>();
+  /** false al ver el perfil de otro usuario: el texto pasa a tercera persona */
+  own?: boolean;
+  /** Usuario de la serie principal; necesario para los textos en tercera persona */
+  username?: string;
+}>(), {
+  own: true,
+  username: undefined,
+});
+
+const name = computed(() => (props.own ? undefined : props.username));
 
 const duel = computed(() => (props.rival ? headToHead(props.me, props.rival.series) : null));
 const compared = computed(() => (duel.value ? duel.value.wins + duel.value.losses + duel.value.ties : 0));
 
 const chart = computed(() => (props.rival && duel.value
-  ? buildHomeHeadToHeadChart({ grandPrixes: props.grandPrixes, rivalName: props.rival.name, rows: duel.value.rows })
+  ? buildHomeHeadToHeadChart({ grandPrixes: props.grandPrixes, rivalName: props.rival.name, rows: duel.value.rows, meLabel: name.value })
   : null));
 
 const tiles = computed(() => {
@@ -28,15 +37,16 @@ const tiles = computed(() => {
     return [];
   }
   const diff = data.accumulatedDiff;
+  const ahead = name.value ? `${name.value} va por delante de ${props.rival.name}` : `Vas por delante de ${props.rival.name}`;
   return [
     { label: "GPs ganados", value: `${data.wins} de ${compared.value}`, hint: data.ties > 0 ? `${data.losses} perdidos · ${data.ties} empatados` : `${data.losses} perdidos` },
     {
       label: "Diferencia acumulada",
       value: diff === null ? "—" : `${formatDelta(diff)} pts`,
-      hint: diff === null ? undefined : diff > 0 ? `Vas por delante de ${props.rival.name}` : diff < 0 ? `${props.rival.name} va por delante` : "Estáis empatados",
+      hint: diff === null ? undefined : diff > 0 ? ahead : diff < 0 ? `${props.rival.name} va por delante` : name.value ? "Están empatados" : "Estáis empatados",
     },
-    { label: "Tu mayor victoria", value: data.biggestWin ? `+${data.biggestWin.value} pts` : "—", hint: data.biggestWin?.gpName },
-    { label: "Tu mayor derrota", value: data.biggestLoss ? `−${data.biggestLoss.value} pts` : "—", hint: data.biggestLoss?.gpName },
+    { label: name.value ? "Su mayor victoria" : "Tu mayor victoria", value: data.biggestWin ? `+${data.biggestWin.value} pts` : "—", hint: data.biggestWin?.gpName },
+    { label: name.value ? "Su mayor derrota" : "Tu mayor derrota", value: data.biggestLoss ? `−${data.biggestLoss.value} pts` : "—", hint: data.biggestLoss?.gpName },
   ];
 });
 </script>
@@ -52,7 +62,12 @@ const tiles = computed(() => {
     v-else-if="compared === 0"
     class="text-center text-sm text-gray-600 dark:text-gray-400"
   >
-    Tú y {{ rival.name }} todavía no habéis puntuado en los mismos Grandes Premios
+    <template v-if="name">
+      {{ name }} y {{ rival.name }} todavía no han puntuado en los mismos Grandes Premios
+    </template>
+    <template v-else>
+      Tú y {{ rival.name }} todavía no habéis puntuado en los mismos Grandes Premios
+    </template>
   </p>
   <div
     v-else-if="duel && chart"
@@ -60,7 +75,7 @@ const tiles = computed(() => {
   >
     <PChart
       :definition="chart"
-      :aria-label="`Diferencia de puntos entre ti y ${rival.name} en cada Gran Premio`"
+      :aria-label="`Diferencia de puntos entre ${name ?? 'ti'} y ${rival.name} en cada Gran Premio`"
       :height="HEAD_TO_HEAD_CHART_HEIGHT"
     />
 
@@ -88,7 +103,7 @@ const tiles = computed(() => {
           :key="session.sessionId"
           :label="session.sessionName"
           :value="`${session.wins} - ${session.losses}`"
-          :hint="session.wins === session.losses ? 'Empate' : session.wins > session.losses ? 'Ventaja para ti' : `Ventaja para ${rival.name}`"
+          :hint="session.wins === session.losses ? 'Empate' : session.wins > session.losses ? `Ventaja para ${name ?? 'ti'}` : `Ventaja para ${rival.name}`"
         />
       </ul>
     </section>

@@ -434,6 +434,46 @@ export const routes = [
         ]
     },
 
+    // Pilotos
+    {
+        path: '/drivers',
+        component: PrognoLayout,
+        meta: { title: "Pilotos" },
+        children: [
+            {
+                path: '',
+                name: 'driverlist',
+                component: () => import('@/pages/drivers/DriverList.vue'),
+            },
+            {
+                path: ':driver',
+                name: 'driverDetails',
+                component: () => import('@/pages/drivers/OneDriver.vue'),
+                meta: { title: "Detalles de piloto" }
+            },
+        ]
+    },
+
+    // Constructores
+    {
+        path: '/constructors',
+        component: PrognoLayout,
+        meta: { title: "Constructores" },
+        children: [
+            {
+                path: '',
+                name: 'constructorlist',
+                component: () => import('@/pages/constructors/ConstructorList.vue'),
+            },
+            {
+                path: ':team',
+                name: 'constructorDetails',
+                component: () => import('@/pages/constructors/OneConstructor.vue'),
+                meta: { title: "Detalles de constructor" }
+            },
+        ]
+    },
+
     // Ranking
     {
         path: '/ranking',

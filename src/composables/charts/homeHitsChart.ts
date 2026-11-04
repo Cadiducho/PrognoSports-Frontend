@@ -10,7 +10,7 @@ import { HOME_CHART_HEIGHT, HOME_COLORS, LABEL_FONT_SIZE } from "@/composables/c
 import type { CommunityPoint, SeriesPoint, SessionAverage } from "@/composables/charts/homeSeason";
 import type { GrandPrix } from "@/types/GrandPrix";
 
-const ME_LABEL = "Tú";
+const DEFAULT_ME_LABEL = "Tú";
 const COMMUNITY_LABEL = "Media";
 
 /** Alto del gráfico de porcentaje de acierto y del de medias por sesión (px) */
@@ -25,6 +25,8 @@ interface HitsRow {
 }
 
 export interface HomeHitsInput {
+  /** Etiqueta de la serie principal; por defecto "Tú" */
+  meLabel?: string;
   grandPrixes: readonly GrandPrix[];
   me: readonly SeriesPoint[];
   community: readonly CommunityPoint[];
@@ -34,7 +36,8 @@ export interface HomeHitsInput {
 const percent = (value: number) => `${Math.round(value * 10) / 10}%`.replace(".", ",");
 
 /** Porcentaje de acierto por Gran Premio: tú, la media de la comunidad y, si se elige, otro usuario */
-export function buildHomeHitsChart({ grandPrixes, me, community, compare }: HomeHitsInput) {
+export function buildHomeHitsChart({ grandPrixes, me, community, compare, meLabel }: HomeHitsInput) {
+  const ME_LABEL = truncateLabel(meLabel ?? DEFAULT_ME_LABEL, 12);
   const compareLabel = compare ? truncateLabel(compare.name, 12) : null;
 
   const series = [
@@ -144,13 +147,16 @@ interface SessionRow {
 }
 
 export interface HomeSessionsInput {
+  /** Etiqueta de la serie principal; por defecto "Tú" */
+  meLabel?: string;
   me: readonly SessionAverage[];
   community: readonly SessionAverage[];
   compare?: { name: string; averages: readonly SessionAverage[] };
 }
 
 /** Media de puntos por tipo de sesión: tú, la comunidad y, si se elige, otro usuario, en barras agrupadas */
-export function buildHomeSessionsChart({ me, community, compare }: HomeSessionsInput) {
+export function buildHomeSessionsChart({ me, community, compare, meLabel }: HomeSessionsInput) {
+  const ME_LABEL = truncateLabel(meLabel ?? DEFAULT_ME_LABEL, 12);
   const compareLabel = compare ? truncateLabel(compare.name, 12) : null;
   const toRows = (averages: readonly SessionAverage[], who: string): SessionRow[] => (
     averages.map((entry) => ({ sessionName: entry.sessionName, who, average: entry.average }))

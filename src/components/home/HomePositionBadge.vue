@@ -4,6 +4,8 @@ import type { LatestPosition } from "@/composables/charts/homeSeason";
 
 const props = defineProps<{
   position: LatestPosition | null;
+  /** false al ver el perfil de otro usuario: el texto pasa a tercera persona */
+  own?: boolean;
 }>();
 
 // La flecha va acompañada de texto, para que el cambio no dependa solo del color
@@ -13,12 +15,12 @@ const change = computed(() => {
     return null;
   }
   if (delta > 0) {
-    return { symbol: "▲", text: `Has subido ${delta} ${delta === 1 ? "puesto" : "puestos"}`, tone: "text-green-600 dark:text-green-400" };
+    return { symbol: "▲", text: `${props.own === false ? "Ha" : "Has"} subido ${delta} ${delta === 1 ? "puesto" : "puestos"}`, tone: "text-green-600 dark:text-green-400" };
   }
   if (delta < 0) {
-    return { symbol: "▼", text: `Has bajado ${-delta} ${delta === -1 ? "puesto" : "puestos"}`, tone: "text-red-600 dark:text-red-400" };
+    return { symbol: "▼", text: `${props.own === false ? "Ha" : "Has"} bajado ${-delta} ${delta === -1 ? "puesto" : "puestos"}`, tone: "text-red-600 dark:text-red-400" };
   }
-  return { symbol: "=", text: "Te mantienes en el mismo puesto", tone: "text-gray-600 dark:text-gray-400" };
+  return { symbol: "=", text: props.own === false ? "Se mantiene en el mismo puesto" : "Te mantienes en el mismo puesto", tone: "text-gray-600 dark:text-gray-400" };
 });
 </script>
 
@@ -29,7 +31,7 @@ const change = computed(() => {
       class="mb-2 flex flex-wrap items-baseline gap-x-3 text-sm text-gray-700 dark:text-gray-300"
     >
       <span>
-        Vas
+        {{ own === false ? "Va" : "Vas" }}
         <strong class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ position.standings }}º</strong>
         tras {{ position.gpCode }}
       </span>

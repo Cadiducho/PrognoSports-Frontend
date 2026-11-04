@@ -8,7 +8,11 @@ import HomeStatTile from "@/components/home/HomeStatTile.vue";
 const props = defineProps<{
   records: SeasonRecords;
   form: FormStats | null;
+  /** false al ver el perfil de otro usuario: el texto pasa a tercera persona */
+  own?: boolean;
 }>();
+
+const third = computed(() => props.own === false);
 
 const decimal = (value: number) => value.toLocaleString("es-ES", { maximumFractionDigits: 1 });
 const gps = (count: number) => `${count} ${count === 1 ? "GP" : "GPs"}`;
@@ -22,12 +26,12 @@ const moments = computed(() => {
     {
       label: "Regularidad",
       value: consistency === null ? "—" : `± ${decimal(consistency)} pts`,
-      hint: "Desviación típica de tus puntos por GP: cuanto menos, más regular",
+      hint: `Desviación típica de ${third.value ? "sus" : "tus"} puntos por GP: cuanto menos, más regular`,
     },
     {
       label: "Frente a la comunidad",
       value: averagePercentile === null ? "—" : `${averagePercentile} %`,
-      hint: "De media, a ese porcentaje de la comunidad superas en cada GP",
+      hint: `De media, a ese porcentaje de la comunidad ${third.value ? "supera" : "superas"} en cada GP`,
     },
   ];
 });
@@ -48,13 +52,16 @@ const achievements = computed(() => {
     v-if="records.played === 0"
     class="text-center text-sm text-gray-600 dark:text-gray-400"
   >
-    Aún no hay datos para calcular tus récords
+    Aún no hay datos para calcular {{ third ? "sus" : "tus" }} récords
   </p>
   <div
     v-else
     class="flex flex-col gap-5"
   >
-    <HomeFormStats :form="form" />
+    <HomeFormStats
+      :form="form"
+      :own="own"
+    />
 
     <section aria-labelledby="home-moments-title">
       <h3

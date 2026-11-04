@@ -31,22 +31,41 @@ import HomeRecords from "@/components/home/HomeRecords.vue";
 
 type AnalysisTab = "summary" | "hits" | "sessions" | "headToHead" | "records";
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   username: string;
   grandPrixes: readonly GrandPrix[];
   pointsByGp: PointsByGp;
-}>();
+  /** false al mostrar el perfil de otro usuario: textos en tercera persona y series con su nombre en lugar de "Tú" */
+  own?: boolean;
+  /** Usuario con el que se compara de entrada, si está en la clasificación */
+  initialCompare?: string;
+  showRankingButton?: boolean;
+}>(), {
+  own: true,
+  initialCompare: undefined,
+  showRankingButton: true,
+});
 
-// Home desmonta este componente al recargar los datos (cambio de comunidad), así que los filtros se reinician y el
-// usuario elegido nunca puede quedar fuera de la comunidad.
+// Home y el perfil desmontan este componente al recargar los datos (cambio de comunidad), así que los filtros se
+// reinician y el usuario elegido nunca puede quedar fuera de la comunidad.
 // Valores del select que no son un usuario: el select necesita un valor no vacío en cada opción
 const AUTO = "__auto__";
 const NOBODY = "__nobody__";
 
+// Solo los GPs con puntos: así las gráficas llenan el ancho y «últimos 5» son los últimos 5 jugados
+const played = computed(() => playedGps(props.grandPrixes, props.pointsByGp));
+const compareOptions = computed(() => rankedUsernames(played.value, props.pointsByGp).filter((name) => name !== props.username));
+
 const tab = ref<AnalysisTab>("summary");
 const requestedMode = ref<SummaryMode>("leader");
 const windowSize = ref<HomeWindow>("season");
-const compareWith = ref<string>(AUTO);
+const compareWith = ref<string>(
+  props.initialCompare && compareOptions.value.includes(props.initialCompare) ? props.initialCompare : AUTO,
+);
+
+// En el perfil de otro usuario su serie se llama por su nombre en lugar de "Tú"
+const meLabel = computed(() => (props.own ? undefined : props.username));
+const cardTitle = computed(() => (props.own ? "Tu temporada" : `Temporada de ${props.username}`));
 
 const tabOptions: { value: AnalysisTab; label: string }[] = [
   { value: "summary", label: "Resumen" },
@@ -60,11 +79,8 @@ const windowOptions: { value: HomeWindow; label: string }[] = [
   { value: "last5", label: "Últimos 5 GP" },
 ];
 
-// Solo los GPs con puntos: así las gráficas llenan el ancho y «últimos 5» son los últimos 5 jugados
-const played = computed(() => playedGps(props.grandPrixes, props.pointsByGp));
 const shown = computed(() => windowGps(played.value, windowSize.value));
 
-const compareOptions = computed(() => rankedUsernames(played.value, props.pointsByGp).filter((name) => name !== props.username));
 const automatic = computed(() => userAhead(played.value, props.pointsByGp, props.username));
 
 /** Con quién se compara: quien va justo delante (o detrás si eres el líder), el usuario elegido o nadie */
@@ -115,35 +131,40 @@ const mode = computed<SummaryMode>({
   },
 });
 
+// Sujeto de los títulos: «Tú» en la Home y en tu perfil, el nombre del usuario en el perfil de otro
+const subject = computed(() => (props.own ? "Tú" : props.username));
+const yourPoints = computed(() => (props.own ? "tus puntos" : `los puntos de ${props.username}`));
+
 const summaryTitle = computed(() => {
   switch (mode.value) {
     case "ahead":
       if (!isAutomaticRival.value) {
-        return `Tú contra ${rivalName.value}`;
+        return `${subject.value} contra ${rivalName.value}`;
       }
       return automatic.value?.relation === "behind"
-        ? `Tú contra ${rivalName.value} (justo detrás)`
-        : `Tú contra ${rivalName.value} (justo delante)`;
+        ? `${subject.value} contra ${rivalName.value} (justo detrás)`
+        : `${subject.value} contra ${rivalName.value} (justo delante)`;
     case "position":
-      return "Tu posición tras cada GP";
+      return props.own ? "Tu posición tras cada GP" : `Posición de ${props.username} tras cada GP`;
     default:
-      return "Tu diferencia con el líder";
+      return props.own ? "Tu diferencia con el líder" : `Diferencia de ${props.username} con el líder`;
   }
 });
 
 const summaryAriaLabel = computed(() => {
   switch (mode.value) {
     case "ahead":
-      return `Diferencia de puntos acumulados con ${rivalName.value}, y tus puntos por Gran Premio desglosados por sesión`;
+      return `Diferencia de puntos acumulados con ${rivalName.value}, y ${yourPoints.value} por Gran Premio desglosados por sesión`;
     case "position":
-      return "Tu posición en la clasificación tras cada Gran Premio, y tus puntos por Gran Premio desglosados por sesión";
+      return `${props.own ? "Tu posición" : `Posición de ${props.username}`} en la clasificación tras cada Gran Premio, y ${yourPoints.value} por Gran Premio desglosados por sesión`;
     default:
-      return "Diferencia de puntos acumulados con el líder y con la media, y tus puntos por Gran Premio desglosados por sesión";
+      return `Diferencia de puntos acumulados con el líder y con la media, y ${yourPoints.value} por Gran Premio desglosados por sesión`;
   }
 });
 
 const summaryChart = computed(() => buildHomeSummaryChart({
   mode: mode.value,
+  meLabel: meLabel.value,
   grandPrixes: shown.value,
   username: props.username,
   me: me.value,
@@ -154,6 +175,7 @@ const summaryChart = computed(() => buildHomeSummaryChart({
 
 // --- Aciertos y sesiones ---
 const hitsChart = computed(() => buildHomeHitsChart({
+  meLabel: meLabel.value,
   grandPrixes: shown.value,
   me: me.value,
   community: community.value,
@@ -163,6 +185,7 @@ const hitsChart = computed(() => buildHomeHitsChart({
 const mineBySession = computed(() => sessionAverages(shown.value, props.pointsByGp, props.username));
 const communityBySession = computed(() => sessionAverages(shown.value, props.pointsByGp, null));
 const sessionsChart = computed(() => buildHomeSessionsChart({
+  meLabel: meLabel.value,
   me: mineBySession.value,
   community: communityBySession.value,
   compare: rivalName.value
@@ -184,7 +207,7 @@ const showFilters = computed(() => tab.value !== "records");
 </script>
 
 <template>
-  <PCard title="Tu temporada">
+  <PCard :title="cardTitle">
     <p
       v-if="played.length === 0"
       class="text-center text-sm text-gray-600 dark:text-gray-400"
@@ -195,7 +218,7 @@ const showFilters = computed(() => tab.value !== "records");
       <PSegmentedControl
         v-model="tab"
         :options="tabOptions"
-        aria-label="Análisis de tu temporada que se muestra"
+        :aria-label="own ? 'Análisis de tu temporada que se muestra' : `Análisis de la temporada de ${username} que se muestra`"
       />
 
       <div
@@ -238,13 +261,14 @@ const showFilters = computed(() => tab.value !== "records");
             <PSegmentedControl
               v-model="mode"
               :options="modeOptions"
-              aria-label="Referencia con la que comparar tu progreso"
+              :aria-label="own ? 'Referencia con la que comparar tu progreso' : `Referencia con la que comparar el progreso de ${username}`"
             />
           </div>
           <div class="mt-3">
             <HomePositionBadge
               v-if="mode === 'position'"
               :position="position"
+              :own="own"
             />
             <PChart
               :definition="summaryChart"
@@ -256,11 +280,11 @@ const showFilters = computed(() => tab.value !== "records");
 
         <template v-else-if="tab === 'hits'">
           <h2 class="mb-1 text-xl font-semibold text-gray-900 dark:text-gray-100">
-            Tu porcentaje de acierto
+            {{ own ? "Tu porcentaje de acierto" : `Porcentaje de acierto de ${username}` }}
           </h2>
           <PChart
             :definition="hitsChart"
-            aria-label="Tu porcentaje de acierto en cada Gran Premio frente a la media de la comunidad"
+            :aria-label="`${own ? 'Tu porcentaje' : `Porcentaje de ${username}`} de acierto en cada Gran Premio frente a la media de la comunidad`"
             :height="HITS_CHART_HEIGHT"
           />
         </template>
@@ -273,7 +297,7 @@ const showFilters = computed(() => tab.value !== "records");
             v-if="strongSession"
             class="mb-2 text-sm text-gray-700 dark:text-gray-300"
           >
-            Tu punto fuerte es <strong>{{ strongSession.name }}</strong>: sacas
+            {{ own ? "Tu" : "Su" }} punto fuerte es <strong>{{ strongSession.name }}</strong>: {{ own ? "sacas" : "saca" }}
             {{ strongSession.gain.toLocaleString("es-ES") }} puntos de media más que la comunidad.
           </p>
           <PChart
@@ -285,12 +309,14 @@ const showFilters = computed(() => tab.value !== "records");
 
         <template v-else-if="tab === 'headToHead'">
           <h2 class="mb-2 text-xl font-semibold text-gray-900 dark:text-gray-100">
-            {{ rivalName ? `Tú contra ${rivalName}` : "Cara a cara" }}
+            {{ rivalName ? `${subject} contra ${rivalName}` : "Cara a cara" }}
           </h2>
           <HomeHeadToHead
             :grand-prixes="shown"
             :me="me"
             :rival="rival"
+            :own="own"
+            :username="username"
           />
         </template>
 
@@ -301,12 +327,14 @@ const showFilters = computed(() => tab.value !== "records");
           <HomeRecords
             :records="records"
             :form="form"
+            :own="own"
           />
         </template>
       </section>
     </template>
 
     <PButton
+      v-if="showRankingButton"
       class="mt-4"
       label="Ir al Ranking"
       expanded

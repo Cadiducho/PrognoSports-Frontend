@@ -30,11 +30,13 @@ import type { GrandPrix } from "@/types/GrandPrix";
 /** `leader`: tu diferencia con el líder; `ahead`: la diferencia con otro usuario; `position`: tu puesto tras cada GP */
 export type SummaryMode = "leader" | "ahead" | "position";
 
-const ME_LABEL = "Tú";
+const DEFAULT_ME_LABEL = "Tú";
 const AVERAGE_LABEL = "Media";
 
 export interface HomeSummaryInput {
   mode: SummaryMode;
+  /** Etiqueta de la serie principal; por defecto "Tú" (en el perfil de otro usuario, su nombre) */
+  meLabel?: string;
   grandPrixes: readonly GrandPrix[];
   username: string;
   me: readonly SeriesPoint[];
@@ -75,7 +77,8 @@ function positionTicks(maxPosition: number): number[] {
 
 /** Líneas del panel superior según el modo, y la referencia sobre la que se miden */
 function seriesFor(input: HomeSummaryInput): { series: LineSeries[]; zeroLabel: string | null; axisLabel: string } {
-  const { mode, me, community, rival } = input;
+  const { mode, me, community, rival, meLabel } = input;
+  const ME_LABEL = truncateLabel(meLabel ?? DEFAULT_ME_LABEL, 12);
 
   if (mode === "position") {
     return {
@@ -96,7 +99,7 @@ function seriesFor(input: HomeSummaryInput): { series: LineSeries[]; zeroLabel: 
         { label: AVERAGE_LABEL, color: HOME_COLORS.average, dash: "5 4", width: 2, values: community.map((point, index) => diff(point.averageAccumulated, me[index]?.accumulated)) },
       ],
       zeroLabel: ME_LABEL,
-      axisLabel: "Puntos respecto a ti",
+      axisLabel: meLabel ? `Puntos respecto a ${ME_LABEL}` : "Puntos respecto a ti",
     };
   }
 
