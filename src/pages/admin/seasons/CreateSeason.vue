@@ -104,7 +104,8 @@
 </template>
 
 <script setup lang="ts">
-import {competitionService, notificationService, seasonService} from "@/_services";
+import {competitionService, notificationService} from "@/_services";
+import {useCreateSeason} from "@/queries/seasons";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
 import {onMounted, reactive, ref} from "vue";
@@ -129,6 +130,8 @@ const seasonData = reactive({
 const competitions = ref<Competition[]>([]);
 const createdSeason = ref<Season>();
 const imported = ref({constructors: 0, drivers: 0});
+// Al terminar invalida la lista de temporadas, que se actualiza sola en las pantallas que la usan
+const {mutateAsync: createSeasonMutation} = useCreateSeason();
 
 onMounted(() => {
   competitionService.getCompetitionList().then((list) => {
@@ -137,7 +140,7 @@ onMounted(() => {
 });
 
 const createSeason = async () => {
-  const created = await seasonService.createSeason({
+  const created = await createSeasonMutation({
     name: seasonData.name.trim(),
     totalEvents: seasonData.totalEvents!,
     competition: seasonData.competitionId as number,

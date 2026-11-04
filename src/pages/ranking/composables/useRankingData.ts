@@ -1,5 +1,7 @@
-import { computed, onMounted, ref, type Ref } from "vue";
-import { communityService, grandPrixService, scoreService, seasonService } from "@/_services";
+import { computed, onMounted, ref, watch, type Ref } from "vue";
+import { useQuery } from "@pinia/colada";
+import { communityService, grandPrixService, scoreService } from "@/_services";
+import { seasonListQuery } from "@/queries/seasons";
 import { GrandPrix } from "@/types/GrandPrix";
 import { Season } from "@/types/Season";
 import { User } from "@/types/User";
@@ -21,8 +23,15 @@ function hitsLevel(hits: number, maxHits: number): HitsLevel {
 export function useRankingData(currentCommunity: Ref<Community>) {
   const isLoading = ref(true);
   const tableHasData = ref(false);
-  const seasonList = ref<Season[]>([]);
+  // La lista de temporadas sale de la caché de consultas; la elegida parte de la última
+  const { data: seasonData } = useQuery(seasonListQuery);
+  const seasonList = computed<Season[]>(() => seasonData.value ?? []);
   const chosenSeason = ref<Season | null>(null);
+  watch(seasonList, (list) => {
+    if (!chosenSeason.value && list.length > 0) {
+      chosenSeason.value = list[list.length - 1] ?? null;
+    }
+  }, { immediate: true });
 
   const activeTab = ref('byGp');
   const grandPrixes = ref<GrandPrix[]>([]);
@@ -229,13 +238,7 @@ export function useRankingData(currentCommunity: Ref<Community>) {
   };
 
   onMounted(() => {
-    loadRanking(currentCommunity.value.competition.currentSeason).then(() => {
-      seasonService.getSeasonList().then((seasons) => {
-        seasonList.value = [];
-        seasonList.value.push(...seasons);
-        chosenSeason.value = seasonList.value[seasonList.value.length - 1] ?? null;
-      });
-    });
+    loadRanking(currentCommunity.value.competition.currentSeason);
   });
 
   return {

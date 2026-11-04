@@ -176,11 +176,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, PropType} from 'vue'
+import {computed, defineComponent, PropType} from 'vue'
 import {Community} from "@/types/Community";
 import {Competition} from "@/types/Competition";
 import {Season} from "@/types/Season";
-import {competitionService, rulesetService, seasonService} from "@/_services";
+import {competitionService, rulesetService} from "@/_services";
+import {useQuery} from "@pinia/colada";
+import {seasonListQuery} from "@/queries/seasons";
 import {RuleSet} from "@/types/RuleSet";
 import {sessionHumanName} from "@/utils/raceSession";
 import PField from "@/components/lib/forms/PField.vue";
@@ -200,13 +202,16 @@ export default defineComponent({
         },
     },
     setup() {
-        return {sessionHumanName};
+        // La lista de temporadas sale de la caché de consultas
+        const {data: seasonData} = useQuery(seasonListQuery);
+        const seasonList = computed(() => seasonData.value ?? []);
+
+        return {sessionHumanName, seasonList};
     },
     data() {
         return {
             chosenSeason: {id: 0} as Season,
             ruleSet: {id: 0} as RuleSet,
-            seasonList: new Array<Season>(),
             competition: {id: 0} as Competition,
         }
     },
@@ -247,11 +252,6 @@ export default defineComponent({
         }
     },
     async mounted() {
-        seasonService.getSeasonList().then((seasons) => {
-            this.seasonList = [];
-            this.seasonList.push(...seasons);
-        });
-
         this.competition = await competitionService.getCompetition(this.community.competition.id);
         this.chosenSeason = this.competition.currentSeason;
 

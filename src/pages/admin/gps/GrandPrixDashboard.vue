@@ -72,13 +72,13 @@ import PButton from "@/components/lib/forms/PButton.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import PTable from "@/components/lib/table/PTable.vue";
 import PrognoModal from "@/components/lib/PrognoModal.vue";
-import {grandPrixService, notificationService, seasonService} from "@/_services";
+import {grandPrixService, notificationService} from "@/_services";
+import {useSeasonSelection} from "@/composables/useSeasonSelection";
 import {GrandPrix} from "@/types/GrandPrix";
 
 import {defineComponent} from "vue";
 import {useRouter} from "vue-router";
 
-import {Season} from "@/types/Season";
 
 export default defineComponent({
     name: "GrandPrixDashboard",
@@ -115,13 +115,13 @@ export default defineComponent({
       });
     });
 
-    return { goToView, goToEdit, filteredGps };
+    const { seasonList, chosenSeason } = useSeasonSelection();
+
+    return { goToView, goToEdit, filteredGps, seasonList, chosenSeason };
   },
     data() {
         return {
             gps: new Array<GrandPrix>(),
-            seasonList: new Array<Season>(),
-            chosenSeason: {} as Season,
 
             isDeleteGrandPrixModalActive: false,
             grandPrixToDelete: {} as GrandPrix,
@@ -137,11 +137,6 @@ export default defineComponent({
         grandPrixService.getAllGrandPrixes().then(gpsList => {
             this.gps = [];
             this.gps.push(...gpsList);
-        });
-        seasonService.getSeasonList().then((seasons) => {
-            this.seasonList = [];
-            this.seasonList.push(...seasons);
-            this.chosenSeason = this.seasonList[this.seasonList.length - 1];
         });
     },
     methods: {

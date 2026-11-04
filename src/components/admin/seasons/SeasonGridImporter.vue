@@ -167,8 +167,10 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onMounted, ref, watch} from "vue";
-import {constructorService, driversService, seasonService} from "@/_services";
+import {computed, ref, watch} from "vue";
+import {useQuery} from "@pinia/colada";
+import {constructorService, driversService} from "@/_services";
+import {seasonListQuery} from "@/queries/seasons";
 import {Season} from "@/types/Season";
 import {Driver} from "@/types/Driver";
 import {Constructor} from "@/types/Constructor";
@@ -216,10 +218,15 @@ const emit = defineEmits<{
   busy: [busy: boolean];
 }>();
 
-const seasons = ref<Season[]>([]);
+// La lista de temporadas sale de la caché de consultas
+const {data: seasonData, error: seasonsError} = useQuery(seasonListQuery);
+const seasons = computed<Season[]>(() => seasonData.value ?? []);
 const sourceSeasonId = ref<number | ''>('');
 const isLoading = ref(false);
-const loadError = ref<string>();
+const dataError = ref<string>();
+const loadError = computed(() => dataError.value ?? (seasonsError.value
+  ? errorMessage(seasonsError.value) ?? "No se han podido cargar las temporadas"
+  : undefined));
 const constructorRows = ref<ImportRow[]>([]);
 const driverRows = ref<ImportRow[]>([]);
 
@@ -234,25 +241,12 @@ const sections = computed<Array<{ key: SectionKey; title: string; rows: ImportRo
 
 const withHash = (color: string | undefined) => !color ? '' : color.startsWith('#') ? color : `#${color}`;
 
-onMounted(async () => {
-  try {
-    seasons.value = await seasonService.getSeasonList();
-  } catch (e) {
-    loadError.value = errorMessage(e) ?? "No se han podido cargar las temporadas";
-    return;
-  }
-  // Por defecto, la temporada anterior de la misma competición
-  const previous = sourceSeasons.value.find(season =>
-    season.competition?.id === props.targetSeason.competition?.id && season.id < props.targetSeason.id);
-  sourceSeasonId.value = previous?.id ?? sourceSeasons.value[0]?.id ?? '';
-});
-
 watch(sourceSeasonId, async (id) => {
   const source = seasons.value.find(season => season.id === id);
   if (!source) return;
 
   isLoading.value = true;
-  loadError.value = undefined;
+  dataError.value = undefined;
   try {
     const [sourceConstructors, sourceDrivers, targetConstructors, targetDrivers] = await Promise.all([
       constructorService.getConstructorsInSeason(source),
@@ -270,11 +264,22 @@ watch(sourceSeasonId, async (id) => {
       .sort((a, b) => (a.number ?? 0) - (b.number ?? 0))
       .map(driver => driverRow(driver, existingDrivers.has(driver.id)));
   } catch (e) {
-    loadError.value = errorMessage(e) ?? "No se han podido cargar los datos de la temporada";
+    dataError.value = errorMessage(e) ?? "No se han podido cargar los datos de la temporada";
   } finally {
     isLoading.value = false;
   }
 });
+
+// Por defecto, la temporada anterior de la misma competición. Se elige una vez, cuando llegan las temporadas (o al
+// instante si ya están en la caché); una actualización posterior de la lista no cambia la elección
+watch(sourceSeasons, (list) => {
+  if (sourceSeasonId.value !== '' || list.length === 0) {
+    return;
+  }
+  const previous = list.find(season =>
+    season.competition?.id === props.targetSeason.competition?.id && season.id < props.targetSeason.id);
+  sourceSeasonId.value = previous?.id ?? list[0]?.id ?? '';
+}, {immediate: true});
 
 const constructorRow = (constructor: Constructor, exists: boolean): ImportRow => ({
   id: constructor.id,

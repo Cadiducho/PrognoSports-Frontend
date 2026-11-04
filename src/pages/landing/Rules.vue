@@ -57,7 +57,7 @@
 <script lang="ts">
 import {Competition} from "@/types/Competition";
 import {marked} from 'marked';
-import {competitionService, seasonService} from "@/_services";
+import {competitionService} from "@/_services";
 import {defineComponent} from "vue";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
@@ -89,15 +89,10 @@ export default defineComponent({
             competition: {id: 0} as Competition,
             compiledRules: "",
             chosenSeason: {id: 0} as Season,
-            seasonList: new Array<Season>(),
         }
     },
     mounted() {
         if (this.thereIsCurrentCommunity) {
-            seasonService.getSeasonList().then((seasons) => {
-                this.seasonList = [];
-                this.seasonList.push(...seasons);
-            });
             competitionService.getCompetition(this.currentCommunity.competition.code).then(c => {
                 this.competition = c;
                 this.chosenSeason = c.currentSeason;

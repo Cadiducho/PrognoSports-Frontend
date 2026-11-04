@@ -304,7 +304,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 
-import { driversService, notificationService, seasonService } from "@/_services";
+import { driversService, notificationService } from "@/_services";
 import PCard from "@/components/lib/PCard.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
@@ -327,6 +327,7 @@ import { useAuthStore } from "@/store/authStore";
 import { Driver } from "@/types/Driver";
 import { GrandPrix } from "@/types/GrandPrix";
 import { Season } from "@/types/Season";
+import { fetchSeasonList } from "@/queries/seasons";
 import {grandPrixLink} from "@/utils/grandPrix";
 
 defineOptions({ name: "OneDriver" });
@@ -447,7 +448,7 @@ async function loadAllSeasons(): Promise<void> {
 }
 
 async function loadCareer(driverId: string): Promise<Array<CareerEntry>> {
-  const seasons = await seasonService.getSeasonList().catch(() => [] as Array<Season>);
+  const seasons = await fetchSeasonList().catch(() => [] as Array<Season>);
   const entries = await Promise.all(seasons.map(async (season): Promise<CareerEntry | undefined> => {
     const drivers = await driversService.getDriversInSeason(season).catch(() => [] as Array<Driver>);
     const found = drivers.find((d) => Number(d.id) === Number(driverId));
