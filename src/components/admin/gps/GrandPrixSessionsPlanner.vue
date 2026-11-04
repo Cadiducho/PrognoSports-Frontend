@@ -98,6 +98,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   added: [session: RaceSession];
+  /** Si se está guardando una sesión */
+  busy: [busy: boolean];
 }>();
 
 const {humanDateTime} = useDayjs();
@@ -115,6 +117,7 @@ const canAdd = computed(() => newSessionId.value !== '' && isValidDate(newSessio
 const addSession = async () => {
   if (!canAdd.value) return;
   isSaving.value = true;
+  emit('busy', true);
   try {
     const session = await sessionService.addSessionInGrandPrix(props.grandPrix, {
       session: newSessionId.value as number,
@@ -129,6 +132,7 @@ const addSession = async () => {
     notificationService.showNotification(errorMessage(e) ?? 'No se ha podido añadir la sesión', 'error');
   } finally {
     isSaving.value = false;
+    emit('busy', false);
   }
 };
 </script>

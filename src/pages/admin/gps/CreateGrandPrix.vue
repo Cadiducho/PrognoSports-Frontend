@@ -41,6 +41,7 @@
           :submit="linkToSeason"
           @linked="onLinked"
           @pending="pendingLinks = $event"
+          @busy="wizard.setWorking('links', $event)"
         >
           <template #fields="{ season, model, update }">
             <GrandPrixSeasonFields
@@ -82,6 +83,7 @@
                 :grand-prix="gpInSeason(season)"
                 :session-types="sessionTypes"
                 @added="sessionsAdded++"
+                @busy="wizard.setWorking(`sessions-${season.id}`, $event)"
               />
             </PCard>
           </div>

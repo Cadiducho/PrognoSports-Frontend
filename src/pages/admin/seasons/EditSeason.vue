@@ -36,6 +36,17 @@
         >
           Pilotos en la temporada {{ season.name }}
         </p-button>
+        <p-button
+          type="outline"
+          color="info"
+          icon="fa fa-copy"
+          size="large"
+          :to="{name: 'adminSeasonImport'}"
+          tag="router-link"
+          class="mr-2"
+        >
+          Copiar parrilla de otra temporada
+        </p-button>
       </section>
       <section class="w-full xl:w-1/3 px-2">
         <PInput

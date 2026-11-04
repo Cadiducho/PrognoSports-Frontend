@@ -39,6 +39,7 @@
       :is-valid="isGrandPrixSeasonModelValid"
       :submit="(season, model) => grandPrixService.linkGrandPrixToSeason(season.id, grandPrixSeasonPayload(grandPrix!.id, model))"
       :edit-route="(season) => ({name: 'adminGpEditInSeason', params: {season: season.id, gp: grandPrix!.id}})"
+      :unlink="(season) => grandPrixService.removeGrandPrixFromSeason(season.id, grandPrix!.id)"
     >
       <template #entry="{ entry }">
         Ronda {{ entry.round }}<template v-if="entry.circuit">

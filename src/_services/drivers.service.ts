@@ -3,7 +3,7 @@ import {GrandPrix} from "@/types/GrandPrix";
 import {Driver} from "@/types/Driver";
 import {Season} from "@/types/Season";
 import {Dictionary} from "@/types/Dictionary";
-import {SeasonMembership, loadSeasonMemberships} from "@/_services/seasonMembership";
+import {SeasonMembership} from "@/_services/seasonMembership";
 
 export interface CreateDriverData {
     firstname: string;
@@ -76,17 +76,9 @@ export class DriversService {
     }
 
     /**
-     * Temporadas en las que participa un piloto
-     */
-    public async getSeasonsOfDriver(driverId: number): Promise<Array<Season>> {
-        return await axios.get(`/drivers/${driverId}/seasons`);
-    }
-
-    /**
      * Temporadas en las que participa un piloto, con sus datos en cada una (dorsal y color)
      */
     public async getSeasonMembershipsOfDriver(driverId: number): Promise<Array<SeasonMembership<Driver>>> {
-        const seasons = await this.getSeasonsOfDriver(driverId);
-        return loadSeasonMemberships(seasons, season => this.getDriverInSeason(season.id, driverId));
+        return await axios.get(`/drivers/${driverId}/seasons`);
     }
 }

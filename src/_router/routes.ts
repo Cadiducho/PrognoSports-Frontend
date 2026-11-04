@@ -291,6 +291,12 @@ export const routes = [
                                 component: () => import('@/pages/admin/seasons/EditSeason.vue'),
                             },
                             {
+                                path: 'import',
+                                name: 'adminSeasonImport',
+                                component: () => import('@/pages/admin/seasons/ImportSeasonGrid.vue'),
+                                meta: { title: "Copiar parrilla" },
+                            },
+                            {
                               path: 'constructors',
                               component: EmptyRoutedLayout,
                               meta: { title: "Constructores" },

@@ -2,7 +2,7 @@ import axios from "axios";
 import {Constructor, IConstructor} from "@/types/Constructor";
 import {PrognoService} from "@/_services/progno.service";
 import {Season} from "@/types/Season";
-import {SeasonMembership, loadSeasonMemberships} from "@/_services/seasonMembership";
+import {SeasonMembership} from "@/_services/seasonMembership";
 
 export class ConstructorService extends PrognoService<IConstructor, Constructor> {
 
@@ -79,17 +79,13 @@ export class ConstructorService extends PrognoService<IConstructor, Constructor>
   }
 
   /**
-   * Temporadas en las que participa un constructor
-   */
-  public async getSeasonsOfConstructor(constructorId: number): Promise<Array<Season>> {
-    return await axios.get(`/constructors/${constructorId}/seasons`);
-  }
-
-  /**
    * Temporadas en las que participa un constructor, con sus datos en cada una (coche, nombre largo y color)
    */
   public async getSeasonMembershipsOfConstructor(constructorId: number): Promise<Array<SeasonMembership<Constructor>>> {
-    const seasons = await this.getSeasonsOfConstructor(constructorId);
-    return loadSeasonMemberships(seasons, season => this.getConstructorInSeason(season.id, constructorId));
+    const memberships: Array<SeasonMembership<IConstructor>> = await axios.get(`/constructors/${constructorId}/seasons`);
+    return memberships.map(membership => ({
+      ...membership,
+      entry: membership.entry && this.factory(membership.entry),
+    }));
   }
 }

@@ -199,6 +199,8 @@ const emit = defineEmits<{
   linked: [season: Season, result: unknown];
   /** Número de temporadas seleccionadas que aún no se han enlazado */
   pending: [count: number];
+  /** Si hay enlaces enviándose */
+  busy: [busy: boolean];
 }>();
 
 defineSlots<{
@@ -267,6 +269,7 @@ const isSending = computed(() => entries.value.some(entry => entry.status === 's
 const canSubmit = computed(() => !isSending.value && pendingEntries.value.length > 0 && invalidCount.value === 0);
 
 watch(() => pendingEntries.value.length, count => emit('pending', count), {immediate: true});
+watch(isSending, sending => emit('busy', sending));
 
 const submitText = computed(() => {
   const count = pendingEntries.value.length;

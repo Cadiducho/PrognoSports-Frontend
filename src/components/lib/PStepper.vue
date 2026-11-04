@@ -55,11 +55,29 @@
       </li>
     </ol>
 
-    <slot :name="`step-${model}`" />
+    <template v-if="keepMounted">
+      <template
+        v-for="(_, index) in steps"
+        :key="index"
+      >
+        <div
+          v-if="visited.has(index)"
+          v-show="index === model"
+        >
+          <slot :name="`step-${index}`" />
+        </div>
+      </template>
+    </template>
+    <slot
+      v-else
+      :name="`step-${model}`"
+    />
   </section>
 </template>
 
 <script setup lang="ts">
+import {ref, watch} from "vue";
+
 export interface StepperStep {
   label: string;
   /** Texto secundario bajo la etiqueta */
@@ -71,7 +89,19 @@ export interface StepperStep {
 }
 
 const model = defineModel<number>({ required: true });
-defineProps<{ steps: StepperStep[] }>();
+defineProps<{
+  steps: StepperStep[];
+  /**
+   * Mantiene montados los pasos ya visitados (ocultos con v-show) para que no pierdan su estado ni
+   * sus peticiones en curso al cambiar de paso. Cada paso se monta la primera vez que se visita.
+   */
+  keepMounted?: boolean;
+}>();
+
+const visited = ref(new Set<number>());
+watch(model, index => {
+  if (!visited.value.has(index)) visited.value = new Set(visited.value).add(index);
+}, {immediate: true});
 
 const circleClass = (step: StepperStep, index: number): string => {
   if (index === model.value) {

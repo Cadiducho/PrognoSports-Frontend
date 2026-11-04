@@ -58,6 +58,7 @@
           :submit="linkToSeason"
           @linked="(season) => linkedSeasons.push(season)"
           @pending="pendingLinks = $event"
+          @busy="wizard.setWorking('links', $event)"
         >
           <template #fields="{ model, update }">
             <DriverSeasonFields

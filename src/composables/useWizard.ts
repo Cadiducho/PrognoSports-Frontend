@@ -43,12 +43,19 @@ export interface Wizard {
   canGoBack: ComputedRef<boolean>;
   canAdvance: ComputedRef<boolean>;
   isBusy: Ref<boolean>;
+  /** Si algún paso tiene trabajo en curso (ver `setWorking`) */
+  isWorking: ComputedRef<boolean>;
   error: Ref<string | undefined>;
   isCompleted: (index: number) => boolean;
   next: () => Promise<boolean>;
   skip: () => void;
   back: () => void;
   goTo: (index: number) => void;
+  /**
+   * Marca trabajo en curso dentro de un paso (p. ej. enlaces que aún se están enviando). Mientras haya
+   * alguno no se puede navegar, para no dar el paso por terminado antes de que lleguen sus resultados.
+   */
+  setWorking: (key: string, working: boolean) => void;
 }
 
 /**
@@ -68,6 +75,16 @@ export function useWizard(steps: WizardStepDef[]): Wizard {
   const completed = ref(new Set<number>());
   const isBusy = ref(false);
   const error = ref<string | undefined>();
+  const workingKeys = ref(new Set<string>());
+  const isWorking = computed(() => workingKeys.value.size > 0);
+  const isBlocked = computed(() => isBusy.value || isWorking.value);
+
+  const setWorking = (key: string, working: boolean) => {
+    if (workingKeys.value.has(key) === working) return;
+    const set = new Set(workingKeys.value);
+    if (working) set.add(key); else set.delete(key);
+    workingKeys.value = set;
+  };
 
   const isCompleted = (index: number) => completed.value.has(index);
   const isLocked = (index: number) => !!steps[index].lockOnComplete && isCompleted(index);
@@ -85,14 +102,14 @@ export function useWizard(steps: WizardStepDef[]): Wizard {
   const currentStep = computed(() => steps[current.value]);
   const isFirst = computed(() => current.value === 0);
   const isLast = computed(() => current.value === steps.length - 1);
-  const canGoBack = computed(() => !isFirst.value && !isBusy.value && isReachable(current.value - 1));
-  const canAdvance = computed(() => !isBusy.value && (currentStep.value.canAdvance?.() ?? true));
+  const canGoBack = computed(() => !isFirst.value && !isBlocked.value && isReachable(current.value - 1));
+  const canAdvance = computed(() => !isBlocked.value && (currentStep.value.canAdvance?.() ?? true));
 
   const stepperSteps = computed<StepperStep[]>(() => steps.map((step, index) => ({
     label: step.label,
     description: step.description,
     completed: isCompleted(index),
-    disabled: isBusy.value || !isReachable(index),
+    disabled: isBlocked.value || !isReachable(index),
   })));
 
   const markCompleted = (index: number) => {
@@ -102,6 +119,7 @@ export function useWizard(steps: WizardStepDef[]): Wizard {
   };
 
   const goTo = (index: number) => {
+    if (isBlocked.value && index !== current.value) return;
     if (index < 0 || index >= steps.length || !isReachable(index)) return;
     error.value = undefined;
     current.value = index;
@@ -125,7 +143,7 @@ export function useWizard(steps: WizardStepDef[]): Wizard {
   };
 
   const skip = () => {
-    if (!currentStep.value.skippable || isLast.value || isBusy.value) return;
+    if (!currentStep.value.skippable || isLast.value || isBlocked.value) return;
     error.value = undefined;
     markCompleted(current.value);
     current.value++;
@@ -136,7 +154,7 @@ export function useWizard(steps: WizardStepDef[]): Wizard {
   };
 
   return {
-    steps, current, currentStep, stepperSteps, isFirst, isLast, canGoBack, canAdvance, isBusy, error,
-    isCompleted, next, skip, back, goTo,
+    steps, current, currentStep, stepperSteps, isFirst, isLast, canGoBack, canAdvance, isBusy, isWorking, error,
+    isCompleted, next, skip, back, goTo, setWorking,
   };
 }

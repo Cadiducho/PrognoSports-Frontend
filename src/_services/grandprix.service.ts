@@ -11,7 +11,7 @@ import {Dictionary} from "@/types/Dictionary";
 import {PrognoService} from "@/_services/progno.service";
 import {Circuit} from "@/types/Circuit";
 import {CircuitVariant} from "@/types/CircuitVariant";
-import {SeasonMembership, loadSeasonMemberships} from "@/_services/seasonMembership";
+import {SeasonMembership} from "@/_services/seasonMembership";
 
 export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
 
@@ -65,18 +65,21 @@ export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
     }
 
     /**
-     * Temporadas en las que se disputa un gran premio
-     */
-    public async getSeasonsOfGrandPrix(gpId: number): Promise<Array<Season>> {
-        return await axios.get(`/gps/${gpId}/seasons`);
-    }
-
-    /**
      * Temporadas en las que se disputa un gran premio, con sus datos en cada una (ronda, circuito...)
      */
     public async getSeasonMembershipsOfGrandPrix(gpId: number): Promise<Array<SeasonMembership<GrandPrix>>> {
-        const seasons = await this.getSeasonsOfGrandPrix(gpId);
-        return loadSeasonMemberships(seasons, season => this.getGrandPrixInSeason(season, gpId));
+        const memberships: Array<SeasonMembership<IGrandPrix>> = await axios.get(`/gps/${gpId}/seasons`);
+        return memberships.map(membership => ({
+            ...membership,
+            entry: membership.entry && this.factory(membership.entry),
+        }));
+    }
+
+    /**
+     * Quita un gran premio de una temporada. El backend lo rechaza si ya tiene sesiones o pilotos en ella.
+     */
+    public async removeGrandPrixFromSeason(seasonId: string | number, gpId: number): Promise<unknown> {
+        return await axios.delete(`/seasons/${seasonId}/gps/${gpId}`);
     }
 
     public async editGrandPrix(data: {id: string | number, name: string, code: string}): Promise<GrandPrix> {

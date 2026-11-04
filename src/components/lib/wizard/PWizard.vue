@@ -2,6 +2,7 @@
   <PStepper
     v-model="activeStep"
     :steps="stepperSteps"
+    keep-mounted
   >
     <template
       v-for="(_, index) in wizard.steps"
@@ -41,7 +42,7 @@
         v-if="currentStep.skippable && !isLast"
         type="ghost"
         color="info"
-        :disabled="isBusy"
+        :disabled="isBusy || isWorking"
         @click="wizard.skip()"
       >
         Saltar este paso
@@ -52,13 +53,13 @@
         @click="advance"
       >
         <i
-          v-if="isBusy"
+          v-if="isBusy || isWorking"
           class="fa fa-spinner fa-spin"
           aria-hidden="true"
         />
         {{ nextLabel }}
         <i
-          v-if="!isBusy && !isLast"
+          v-if="!isBusy && !isWorking && !isLast"
           class="fa fa-chevron-right"
           aria-hidden="true"
         />
@@ -93,7 +94,7 @@ const emit = defineEmits<{
   finish: [];
 }>();
 
-const {current, currentStep, stepperSteps, isFirst, isLast, canGoBack, canAdvance, isBusy, error} = props.wizard;
+const {current, currentStep, stepperSteps, isFirst, isLast, canGoBack, canAdvance, isBusy, isWorking, error} = props.wizard;
 
 const activeStep = computed({
   get: () => current.value,

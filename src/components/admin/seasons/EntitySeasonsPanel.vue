@@ -47,7 +47,7 @@
               No se han podido cargar sus datos en esta temporada: {{ membership.error }}
             </p>
             <div
-              v-else-if="membership.entry !== undefined"
+              v-else-if="membership.entry != null"
               class="text-sm text-gray-600 dark:text-gray-300"
             >
               <slot

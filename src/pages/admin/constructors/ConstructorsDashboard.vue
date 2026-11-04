@@ -31,16 +31,16 @@
       </template>
       <template #footer>
         <p-button
-          color="danger"
-          @click="deleteConstructor(constructorToDelete)"
-        >
-          Eliminar
-        </p-button>
-        <p-button
           type="soft"
           @click="showConfirmDeleteModal = false"
         >
           Cancelar
+        </p-button>
+        <p-button
+          color="danger"
+          @click="deleteConstructor(constructorToDelete)"
+        >
+          Eliminar
         </p-button>
       </template>
     </PrognoModal>
