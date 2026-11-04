@@ -100,8 +100,8 @@ const props = defineProps<{
   grandPrix?: GrandPrix;
 }>();
 
-const selectedDriverId = ref<string>();
-const origins = ref<Map<string, number>>(new Map());
+const selectedDriverId = ref<number>();
+const origins = ref<Map<number, number>>(new Map());
 
 const sessionGrid = computed((): Array<StartGridPosition> => props.grid);
 

@@ -11,7 +11,6 @@
             <router-link
               class="inline-flex items-center rounded-md px-2 py-1 text-base font-semibold text-gray-800 transition-colors hover:text-brand-600 dark:hover:text-brand-300 dark:text-gray-100"
               to="/"
-              @click="clickEasterEgg()"
             >
               <img
                 src="@/assets/logo_navbar.png"

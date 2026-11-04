@@ -234,7 +234,7 @@ const pilotosDisponibles = ref(new Array<Driver>());
 const originalPilotos = new Array<Driver>();
 const indexedGrid = reactive(new Map<number, number>());
 // Pilotos de la parrilla de esta sesión con anotaciones (pit lane o nota), para que nadie pronostique con la parrilla equivocada
-const gridAnnotations = reactive(new Map<string, { label: string; note?: string }>());
+const gridAnnotations = reactive(new Map<number, { label: string; note?: string }>());
 
 const filtroPiloto = ref('');
 const opcionesOrdenadoOpen = ref(false);

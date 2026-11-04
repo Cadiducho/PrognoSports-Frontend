@@ -346,7 +346,8 @@ const route = useRoute();
 const { isLoggedIn } = storeToRefs(useAuthStore());
 const { styleDorsal } = useStyles();
 
-const driver = ref<Driver>({ id: route.params.driver } as Driver);
+// El parámetro puede ser el id o "Nombre_Apellido"; el backend acepta ambos
+const driver = ref<Driver>({ id: route.params.driver } as unknown as Driver);
 const career = ref<Array<CareerEntry>>([]);
 const isLoading = ref(true);
 const thereIsDriver = ref(false);

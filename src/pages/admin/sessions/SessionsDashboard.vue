@@ -28,16 +28,16 @@
       </template>
       <template #footer>
         <p-button
-          color="danger"
-          @click="deleteSeason(sessionToDelete)"
-        >
-          Eliminar
-        </p-button>
-        <p-button
           type="soft"
           @click="showConfirmDeleteModal = false"
         >
           Cancelar
+        </p-button>
+        <p-button
+          color="danger"
+          @click="deleteSeason(sessionToDelete)"
+        >
+          Eliminar
         </p-button>
       </template>
     </PrognoModal>
@@ -52,6 +52,7 @@ import {useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
 import {notificationService, sessionService} from "@/_services";
 import {RaceSession} from "@/types/RaceSession";
+import {errorMessage} from "@/composables/errorMessage";
 import {Column} from "@/components/lib/table";
 
 const router = useRouter();
@@ -102,14 +103,13 @@ const deleteSeason = async (session?: RaceSession) => {
     if (!session) {
         return;
     }
+    showConfirmDeleteModal.value = false;
     try {
         await sessionService.deleteSession(session);
         notificationService.showNotification("Se ha eliminado correctamente la sesión `" + session.name + "`", "success");
-        sessions.value.splice(sessions.value.findIndex(s => s.id === session.id),1);
-        showConfirmDeleteModal.value = false;
-    } catch (e: any) {
-        notificationService.showNotification(e.response.data.message, "error");
-        console.error(e.response.data.message);
+        sessions.value = sessions.value.filter(s => s.id !== session.id);
+    } catch (e) {
+        notificationService.showNotification(errorMessage(e) ?? "No se ha podido eliminar la sesión", "error");
     }
 }
 </script>

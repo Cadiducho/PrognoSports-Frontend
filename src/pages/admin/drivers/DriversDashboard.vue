@@ -4,7 +4,7 @@
       <p-button
         color="primary"
         icon="fa fa-plus"
-        :to="{name: 'driverCreate'}"
+        :to="{name: 'adminDriverCreate'}"
         tag="router-link"
       >
         Nuevo Piloto
@@ -126,7 +126,7 @@ const goToView = (driver: Driver) => {
 }
 
 const goToEdit = (driver: Driver) => {
-  router.push({name: 'driverEdit', params: {driver: driver.id}});
+  router.push({name: 'adminDriverEdit', params: {driver: driver.id}});
 }
 
 const goToSeason = () => {

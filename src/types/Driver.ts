@@ -1,7 +1,7 @@
 import {Constructor} from "@/types/Constructor";
 
 export interface Driver {
-    id: string;
+    id: number;
     firstname: string;
     lastname: string;
     code: string;
