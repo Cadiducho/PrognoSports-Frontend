@@ -5,7 +5,7 @@ import { scaleLinear } from "@tanstack/charts/scales/linear";
 import { tooltip } from "@tanstack/charts/tooltip";
 import { alignX, composeViews, grid } from "@tanstack/charts/view";
 import { curveBumpX } from "d3-shape";
-import { gpBandScale } from "@/composables/charts/chartScales";
+import { gpBandScale, positionTicks } from "@/composables/charts/chartScales";
 import { truncateLabel } from "@/composables/charts/chartText";
 import { endLabelOffsets } from "@/composables/charts/endLabels";
 import { formatDelta } from "@/composables/charts/accumulatedView";
@@ -68,12 +68,6 @@ interface LineSeries {
 const diff = (a: number | null | undefined, b: number | null | undefined): number | null => (
   typeof a === "number" && typeof b === "number" ? a - b : null
 );
-
-/** Marcas del eje de posiciones con holgura: todas si hay pocas, y saltos de 2 o 5 si hay muchas */
-function positionTicks(maxPosition: number): number[] {
-  const step = maxPosition <= 10 ? 1 : maxPosition <= 20 ? 2 : 5;
-  return Array.from({ length: maxPosition }, (_, index) => index + 1).filter((value) => value === 1 || value % step === 0);
-}
 
 /** Líneas del panel superior según el modo, y la referencia sobre la que se miden */
 function seriesFor(input: HomeSummaryInput): { series: LineSeries[]; zeroLabel: string | null; axisLabel: string } {

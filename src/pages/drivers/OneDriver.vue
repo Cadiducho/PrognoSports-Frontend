@@ -179,6 +179,7 @@
               Totales en PrognoSports
             </h4>
             <StatsGrid :stats="totals" />
+            <CareerSummaryChart :seasons="careerSeasons" />
           </div>
         </template>
       </PCard>
@@ -286,6 +287,11 @@
                 </tbody>
               </table>
             </div>
+            <SeasonResultsCharts
+              v-if="gpRows.length"
+              :grand-prixes="seasonGps"
+              :series="positionSeries"
+            />
           </template>
         </template>
       </PCard>
@@ -302,7 +308,11 @@ import { driversService, notificationService, seasonService } from "@/_services"
 import PCard from "@/components/lib/PCard.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
+import CareerSummaryChart from "@/components/stats/CareerSummaryChart.vue";
+import SeasonResultsCharts from "@/components/stats/SeasonResultsCharts.vue";
 import StatsGrid from "@/components/stats/StatsGrid.vue";
+import { USER_PALETTE } from "@/composables/charts/chartScales";
+import type { CareerSeason, PositionSeries } from "@/composables/charts/resultsCharts";
 import {
   computeStats,
   filterEntries,
@@ -376,6 +386,26 @@ const gpRows = computed((): Array<GpRow> => {
   }
   return [...rows.values()].sort((a, b) => a.gp.round - b.gp.round);
 });
+
+const seasonGps = computed(() => gpRows.value.map((row) => row.gp));
+
+const positionSeries = computed((): Array<PositionSeries> => {
+  const valuesOf = (pick: (row: GpRow) => number | undefined) => new Map(gpRows.value.map((row) => [row.gp.code, pick(row) ?? null]));
+  const series: Array<PositionSeries> = [
+    { key: "race", label: "Carrera", color: USER_PALETTE[0]!, session: "RACE", values: valuesOf((row) => row.race) },
+    { key: "qualify", label: "Clasificación", color: USER_PALETTE[3]!, dash: "6 4", session: "QUALIFY", values: valuesOf((row) => row.qualify) },
+  ];
+  if (gpRows.value.some((row) => row.sprint)) {
+    series.push({ key: "sprint", label: "Sprint", color: USER_PALETTE[2]!, dash: "2 4", session: "SPRINT_RACE", values: valuesOf((row) => row.sprint) });
+  }
+  return series;
+});
+
+// Cronológico: `career` va de la temporada más reciente a la más antigua
+const careerSeasons = computed((): Array<CareerSeason> => [...career.value]
+  .reverse()
+  .filter((entry) => seasonStats.value[entry.season.id])
+  .map((entry) => ({ name: entry.season.name, stats: seasonStats.value[entry.season.id] })));
 
 async function computeSeason(season: Season): Promise<Array<SessionResults>> {
   const sessions = await loadSeasonResults(season);
