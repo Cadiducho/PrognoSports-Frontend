@@ -279,7 +279,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 
-import { constructorService, driversService, notificationService, seasonService } from "@/_services";
+import { constructorService, driversService, notificationService } from "@/_services";
 import PCard from "@/components/lib/PCard.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
@@ -303,6 +303,7 @@ import { Constructor } from "@/types/Constructor";
 import { Driver } from "@/types/Driver";
 import { GrandPrix } from "@/types/GrandPrix";
 import { Season } from "@/types/Season";
+import { fetchSeasonList } from "@/queries/seasons";
 import {grandPrixLink} from "@/utils/grandPrix";
 
 defineOptions({ name: "OneConstructor" });
@@ -427,7 +428,7 @@ async function loadAllSeasons(): Promise<void> {
 }
 
 async function loadCareer(teamId: number): Promise<Array<CareerEntry>> {
-  const seasons = await seasonService.getSeasonList().catch(() => [] as Array<Season>);
+  const seasons = await fetchSeasonList().catch(() => [] as Array<Season>);
   const entries = await Promise.all(seasons.map(async (season): Promise<CareerEntry | undefined> => {
     const teams = await constructorService.getConstructorsInSeason(season).catch(() => [] as Array<Constructor>);
     const info = teams.find((t) => Number(t.id) === teamId);

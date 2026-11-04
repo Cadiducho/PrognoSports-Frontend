@@ -157,8 +157,9 @@
 </template>
 
 <script setup lang="ts" generic="T extends object">
-import {computed, onMounted, ref, Ref, watch} from "vue";
-import {seasonService} from "@/_services";
+import {computed, ref, Ref, watch} from "vue";
+import {useQuery} from "@pinia/colada";
+import {seasonListQuery} from "@/queries/seasons";
 import {Season} from "@/types/Season";
 import {errorMessage} from "@/composables/errorMessage";
 import PCard from "@/components/lib/PCard.vue";
@@ -208,20 +209,13 @@ defineSlots<{
   done?(props: { season: Season; result: unknown }): unknown;
 }>();
 
-const isLoading = ref(true);
-const loadError = ref<string>();
-const seasons = ref<Season[]>([]);
+// La lista de temporadas sale de la caché de consultas
+const {data: seasonData, isPending: isLoading, error: seasonsError} = useQuery(seasonListQuery);
+const seasons = computed<Season[]>(() => seasonData.value ?? []);
+const loadError = computed(() => seasonsError.value
+  ? errorMessage(seasonsError.value) ?? "No se han podido cargar las temporadas"
+  : undefined);
 const entries = ref([]) as Ref<Entry[]>;
-
-onMounted(async () => {
-  try {
-    seasons.value = await seasonService.getSeasonList();
-  } catch (e) {
-    loadError.value = errorMessage(e) ?? "No se han podido cargar las temporadas";
-  } finally {
-    isLoading.value = false;
-  }
-});
 
 const groupedSeasons = computed(() => {
   const groups = new Map<string, Season[]>();
