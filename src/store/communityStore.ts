@@ -1,7 +1,6 @@
 import {defineStore} from "pinia";
 import {User} from "@/types/User";
 import {Community} from "@/types/Community";
-import {useAuthStore} from "@/store/authStore";
 import {communityService} from "@/_services";
 
 export const useCommunityStore = defineStore('community', {
@@ -21,23 +20,20 @@ export const useCommunityStore = defineStore('community', {
         }
     },
     actions: {
-        setCommunityFromUserRequest(user: User): void {
+        /** Si todavía no se ha elegido una comunidad, se parte de la que indica el usuario */
+        initFromUser(user: User): void {
             if (this.communityId === 0) {
-                this.communityId = user.currentCommunity.id;
+                this.communityId = user.currentCommunity?.id ?? 0;
             }
         },
         setCurrentCommunity(community: Community): void {
             this.community = community;
             this.communityId = community.id;
-            const authStore = useAuthStore();
-            authStore.setCurrentUserCommunity(community);
         },
         removeCurrentCommunity(): void {
             localStorage.removeItem('community');
             this.community = {id: 0} as Community;
             this.communityId = this.community.id;
-            const authStore = useAuthStore();
-            authStore.removeUserCurrentCommunity();
         },
 
         setCommunity(community: Community): void {

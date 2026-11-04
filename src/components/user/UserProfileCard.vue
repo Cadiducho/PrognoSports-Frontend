@@ -167,10 +167,11 @@ export default defineComponent({
         const dateDiff = dayjs.dateDiff;
         const humanDateTime = dayjs.humanDateTime;
         const humanDate = dayjs.humanDate;
-        const currentUser = authStore.loggedUser;
+        const currentUser = authStore.requireUser();
 
         const currentCommunity = communityStore.currentCommunity;
-        return {currentUser, currentCommunity, dateDiff, humanDateTime, humanDate, userProfileImageUrl, userRankTagStyle};
+        const refreshUser = () => authStore.loadUser(true);
+        return {currentUser, currentCommunity, dateDiff, humanDateTime, humanDate, userProfileImageUrl, userRankTagStyle, refreshUser};
     },
     data() {
         return {
@@ -195,6 +196,7 @@ export default defineComponent({
 
             userService.changeProfileImage(this.currentUser, blob).then(() => {
                 notificationService.showNotification("¡Has cambiado tu imagen de perfil!");
+                this.refreshUser().catch(() => undefined);
                 if (this.changedImageUrl) URL.revokeObjectURL(this.changedImageUrl);
                 this.changedImageUrl = URL.createObjectURL(blob);
             }).catch(() => {

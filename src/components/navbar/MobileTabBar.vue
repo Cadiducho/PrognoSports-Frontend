@@ -12,14 +12,14 @@ interface Tab {
   match: string[];
 }
 
-const authStore = useAuthStore();
+const currentUser = useAuthStore().requireUser();
 const { link: nextGpLink } = useNextGrandPrixLink();
 
 const tabs = computed<Tab[]>(() => [
   { label: "Inicio", icon: "home", to: { name: "home" }, match: ["/home"] },
   { label: "GP", icon: "flag", to: nextGpLink.value, match: ["/gps"] },
   { label: "Ranking", icon: "leaderboard", to: { name: "ranking" }, match: ["/ranking"] },
-  { label: "Perfil", icon: "person", to: { name: "user", params: { user: authStore.loggedUser.id } }, match: ["/user", "/u/"] },
+  { label: "Perfil", icon: "person", to: { name: "user", params: { user: currentUser.id } }, match: ["/user", "/u/"] },
 ]);
 </script>
 

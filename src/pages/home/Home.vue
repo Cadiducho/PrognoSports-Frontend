@@ -77,7 +77,7 @@ import { useAuthStore } from "@/store/authStore";
 
 defineOptions({ name: "Home" });
 
-const currentUser = useAuthStore().loggedUser;
+const currentUser = useAuthStore().requireUser();
 
 // Ambas cargas reaccionan al cambio de comunidad del navbar
 const { loading, season, grandPrixes, pointsByGp, currentCommunity } = useHomeSeason();

@@ -366,7 +366,7 @@ export default defineComponent({
     const humanDateTime = dayjs.humanDateTime;
     const humanDate = dayjs.humanDate;
     const formatDate = dayjs.formatDate;
-    const currentUser = authStore.loggedUser;
+    const currentUser = authStore.requireUser();
     const currentCommunity = communityStore.currentCommunity;
 
     const editedUser = reactive<Partial<User>>({...currentUser});
@@ -378,7 +378,10 @@ export default defineComponent({
       set: (value) => themeStore.setPreference(value),
     });
 
-    return {currentUser, editedUser, currentCommunity, emitter, dateDiff, humanDateTime, humanDate, formatDate, themePreference};
+    // El usuario ya no se pide en cada navegación: se recarga tras cambiar sus datos
+    const refreshUser = () => authStore.loadUser(true).catch(() => undefined);
+
+    return {currentUser, editedUser, currentCommunity, emitter, dateDiff, humanDateTime, humanDate, formatDate, themePreference, refreshUser};
   },
   data() {
     return {
@@ -429,6 +432,7 @@ export default defineComponent({
         const updatedUser = { ...this.editedUser };
         updatedUser.birthdate = this.formatDate(this.editedUser.birthdate, 'DD/MM/YYYY');
         await userService.updateUser(updatedUser);
+        await this.refreshUser();
         notificationService.showNotification("Ajustes cambiados correctamente");
 
       } catch (reason: any) {
@@ -473,6 +477,7 @@ export default defineComponent({
       };
       userService.changeEmail(this.currentUser, payload).then(() => {
         notificationService.showNotification("Email cambiado correctamente");
+        this.refreshUser();
 
         this.closeChangeMail();
       }).catch((reason) => {

@@ -34,7 +34,7 @@ export function useAuth() {
   }
 
   const logout = async () => {
-    await authStore.signOut();
+    authStore.signOut();
     router.push({name: 'login'});
     notificationService.showNotification('Has cerrado sesión correctamente');
   }

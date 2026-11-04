@@ -3,7 +3,7 @@ import { storeToRefs } from "pinia";
 import type { GrandPrix } from "@/types/GrandPrix";
 import type { Season } from "@/types/Season";
 import { grandPrixService, scoreService, seasonService } from "@/_services";
-import { errorMessage } from "@/composables/errorMessage";
+import type { ApiError } from "@/_services";
 import { useCommunityStore } from "@/store/communityStore";
 import type { PointsByGp } from "@/composables/charts/homeSeason";
 
@@ -59,7 +59,7 @@ export function useHomeSeason() {
       pointsByGp.value = points;
     } catch (error: unknown) {
       // Un usuario sin permisos sobre el ranking de la comunidad no es un error que mostrar
-      if (!errorMessage(error)?.includes("Unauthorized")) {
+      if ((error as ApiError)?.status !== 403) {
         console.error(error);
       }
       if (request === lastRequest) {

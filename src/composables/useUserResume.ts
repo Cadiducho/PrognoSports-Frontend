@@ -3,7 +3,7 @@ import { storeToRefs } from "pinia";
 import type { Season } from "@/types/Season";
 import type { UserResume } from "@/types/User";
 import { userService } from "@/_services";
-import { errorMessage } from "@/composables/errorMessage";
+import type { ApiError } from "@/_services";
 import { useAuthStore } from "@/store/authStore";
 import { useCommunityStore } from "@/store/communityStore";
 
@@ -32,13 +32,13 @@ export function useUserResume(season: Ref<Season | null>) {
 
     try {
       const community = currentCommunity.value;
-      const response = await userService.getUserResume(authStore.loggedUser, community, community.competition, season.value);
+      const response = await userService.getUserResume(authStore.requireUser(), community, community.competition, season.value);
       if (request === lastRequest) {
         resume.value = response;
       }
     } catch (error: unknown) {
       // Un usuario sin permisos sobre el ranking de la comunidad no es un error que mostrar
-      if (!errorMessage(error)?.includes("Unauthorized")) {
+      if ((error as ApiError)?.status !== 403) {
         console.error(error);
       }
     }

@@ -109,6 +109,9 @@
                 }
             },
             getCommunityList(): void {
+                if (!this.currentUser) {
+                    return;
+                }
                 communityService.getUserCommunities(this.currentUser).then(list => {
                     this.communitiesList = [];
                     list.forEach(comm => {

@@ -19,7 +19,7 @@ import HomeSeasonAnalysis from "@/components/home/HomeSeasonAnalysis.vue";
 
 const route = useRoute();
 const authStore = useAuthStore();
-const currentUser = authStore.loggedUser;
+const currentUser = authStore.requireUser();
 
 const isLoading = ref(true);
 const profile = ref<User>({ id: 0 } as User);

@@ -94,7 +94,7 @@ export function useNextGrandPrix() {
 
     try {
       const community = currentCommunity.value;
-      const user = authStore.loggedUser;
+      const user = authStore.requireUser();
       const gp = await fetchNextGrandPrix(community.competition);
       const sessions = [...(gp.sessions ?? [])].sort((a, b) => a.date.getTime() - b.date.getTime());
 

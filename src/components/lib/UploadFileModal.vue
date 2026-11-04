@@ -89,7 +89,7 @@ export default defineComponent({
     },
     setup(props, { emit }) {
         const authStore = useAuthStore();
-        const currentUser = authStore.loggedUser;
+        const currentUser = authStore.requireUser();
 
         const model = computed({
             get: () => props.modelValue,
