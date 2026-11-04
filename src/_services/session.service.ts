@@ -51,7 +51,7 @@ export class SessionService {
         return getObject(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions/${sessionId}`, mapRaceSession);
     }
 
-    public async addSessionInGrandPrix(gp: GrandPrix, data: { session: number, date: Date }): Promise<RaceSession> {
+    public async addSessionInGrandPrix(gp: Pick<GrandPrix, "id" | "competition" | "season">, data: { session: number, date: Date, defining?: number }): Promise<RaceSession> {
         return postObject(`/gps/${gp.competition.id}/${gp.season.id}/${gp.id}/sessions`, data, mapRaceSession);
     }
 

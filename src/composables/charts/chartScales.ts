@@ -33,3 +33,9 @@ export function gpBandScale(gps: readonly GrandPrix[]) {
 export function gpNameByCode(gps: readonly GrandPrix[]): Map<string, string> {
   return new Map(gps.map((gp) => [gp.code, gp.name]));
 }
+
+/** Marcas del eje de posiciones con holgura: todas si hay pocas, y saltos de 2 o 5 si hay muchas */
+export function positionTicks(maxPosition: number): number[] {
+  const step = maxPosition <= 10 ? 1 : maxPosition <= 20 ? 2 : 5;
+  return Array.from({ length: maxPosition }, (_, index) => index + 1).filter((value) => value === 1 || value % step === 0);
+}

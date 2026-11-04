@@ -3,69 +3,45 @@
     :loading="isLoading"
     :subtitle="`Temporada ${season?.name}`"
   >
-    <form>
+    <template #actions>
+      <PButton
+        tag="router-link"
+        :to="{name: 'adminGpCreate'}"
+        type="outline"
+        icon="fa fa-plus"
+      >
+        Crear gran premio nuevo
+      </PButton>
+    </template>
+
+    <form @submit.prevent="addGrandPrixToSeason">
       <p-select
-        v-model="addedGP.id"
+        v-model="gpId"
         label="Gran Premio"
         placeholder="Selecciona un gran premio"
         class="mb-3"
       >
         <option
-          v-for="gp in gpsList"
+          v-for="gp in availableGps"
           :key="gp.id"
           :value="gp.id"
         >
           {{ gp.name }}
         </option>
       </p-select>
-      <p-select
-        v-model="addedGP.circuit"
-        label="Circuito"
-        placeholder="Selecciona un circuito"
-        class="mb-3"
-      >
-        <option
-          v-for="circuit in circuitList"
-          :key="circuit.id"
-          :value="circuit"
-        >
-          {{ circuit.name }}
-        </option>
-      </p-select>
-      <p-select
-        v-if="addedGP.circuit && addedGP.circuit.variants && addedGP.circuit.variants.length > 1"
-        v-model="addedGP.variant.id"
-        label="Variante del Circuito"
-        placeholder="Selecciona una variante"
-        class="mb-3"
-      >
-        <option
-          v-for="variant in addedGP.circuit.variants"
-          :key="variant.id"
-          :value="variant.id"
-        >
-          {{ variant.name }}
-        </option>
-      </p-select>
-      <PInput
-        v-model="addedGP.laps"
-        label="Vueltas"
-        placeholder="Vueltas"
-        name="laps"
-      />
-      <PInput
-        v-model="addedGP.round"
-        label="Ronda"
-        placeholder="Ronda"
-        name="round"
+
+      <GrandPrixSeasonFields
+        v-if="!isLoading"
+        v-model="seasonData"
+        :circuits="circuitList"
+        :season="season"
       />
 
       <PButton
         class="mt-4"
-        :disabled="!isDataOk()"
-        type="solid"
+        :disabled="!isDataOk || isSaving"
+        native-type="submit"
         label="Añadir gran premio a la temporada"
-        @click="addGrandPrixToSeason()"
       />
     </form>
   </PPage>
@@ -74,83 +50,74 @@
 <script setup lang="ts">
 import {circuitService, grandPrixService, notificationService, seasonService} from "@/_services";
 
-import {onMounted, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import PButton from "@/components/lib/forms/PButton.vue";
-import PInput from "@/components/lib/forms/PInput.vue";
 import {useRoute, useRouter} from "vue-router";
 import PSelect from "@/components/lib/forms/PSelect.vue";
 import {Season} from "@/types/Season";
-import Loading from "@/components/lib/Loading.vue";
 import {GrandPrix} from "@/types/GrandPrix";
 import {Circuit} from "@/types/Circuit";
-import {CircuitVariant} from "@/types/CircuitVariant";
+import GrandPrixSeasonFields from "@/components/admin/seasons/GrandPrixSeasonFields.vue";
+import {
+  emptyGrandPrixSeasonModel,
+  GrandPrixSeasonModel,
+  grandPrixSeasonPayload,
+  isGrandPrixSeasonModelValid
+} from "@/components/admin/seasons/seasonLinkModels";
+import {errorMessage} from "@/composables/errorMessage";
 
 const router = useRouter();
 const route = useRoute();
 
 const isLoading = ref(true);
+const isSaving = ref(false);
 const season = ref({} as Season);
 const gpsList = ref([] as Array<GrandPrix>);
+const gpsInSeason = ref([] as Array<GrandPrix>);
 const circuitList = ref([] as Array<Circuit>);
-const addedGP = ref({
-  id: 0,
-  circuit: {} as Circuit,
-  variant: {} as CircuitVariant,
-  laps: 0,
-  round: 0
-})
+const gpId = ref<number | ''>('');
+const seasonData = ref<GrandPrixSeasonModel>(emptyGrandPrixSeasonModel());
+
+// Sólo los grandes premios que aún no están en la temporada
+const availableGps = computed(() =>
+  gpsList.value.filter(gp => !gpsInSeason.value.some(inSeason => inSeason.id === gp.id))
+);
 
 onMounted(async () => {
   try {
-    const [seasonResponse, gpsListResponse, circuitListResponse] = await Promise.all([
-      seasonService.getSeason(route.params.season as string),
+    season.value = await seasonService.getSeason(route.params.season as string);
+    const [allGps, inSeason, circuits] = await Promise.all([
       grandPrixService.getAllGrandPrixes(),
-      circuitService.getCircuitList()
-    ])
-
-    season.value = seasonResponse;
-    gpsList.value = gpsListResponse;
-    circuitList.value = circuitListResponse;
-
-    console.log('season', season)
-    console.log('list', gpsList)
-    console.log('circuits', circuitList)
-    isLoading.value = false;
+      grandPrixService.getGrandPrixesList(season.value),
+      circuitService.getCircuitList(),
+    ]);
+    gpsList.value = allGps;
+    gpsInSeason.value = inSeason;
+    circuitList.value = circuits;
   } catch (e) {
-
+    notificationService.showNotification(errorMessage(e) ?? "Error al cargar los datos", "error");
+  } finally {
+    isLoading.value = false;
   }
 });
 
-const needVariant = addedGP.value.circuit?.variants?.length > 1;
-const isDataOk = (): boolean => {
-  const baseConditions = addedGP.value.id && addedGP.value.circuit?.id && addedGP.value.laps > 0 && addedGP.value.round > 0;
-
-  return !!(needVariant ? baseConditions && addedGP.value.variant?.id : baseConditions);
-};
+const isDataOk = computed(() => gpId.value !== '' && isGrandPrixSeasonModelValid(seasonData.value));
 
 const addGrandPrixToSeason = async () => {
-  const seasonId = route.params.season.toString()
-  console.log('addedGP', addedGP.value)
-  console.log('season', season)
-
-  const rawData = {
-    gp: addedGP.value.id,
-    circuit: addedGP.value.circuit?.id,
-    variant: needVariant ? addedGP.value.variant?.id : addedGP.value.circuit?.variants[0]?.id,
-    laps: addedGP.value.laps,
-    round: addedGP.value.round
-  }
-
+  if (!isDataOk.value) return;
+  isSaving.value = true;
   try {
-    const result = await grandPrixService.linkGrandPrixToSeason(seasonId, rawData)
-    notificationService.showNotification("Se ha añadido correctamente el gran premio `" + result.name + "`");
+    const result = await grandPrixService.linkGrandPrixToSeason(season.value.id, grandPrixSeasonPayload(gpId.value as number, seasonData.value));
+    notificationService.showNotification("Se ha añadido correctamente el gran premio `" + (result?.name ?? '') + "`");
 
-    router.push({
+    await router.push({
       name: 'adminGpEditInSeason',
-      params: { gp: result.id }
+      params: {gp: gpId.value}
     })
-  } catch (error: any) {
-    notificationService.showNotification(error.message, "error");
+  } catch (error) {
+    notificationService.showNotification(errorMessage(error) ?? "No se ha podido añadir el gran premio", "error");
+  } finally {
+    isSaving.value = false;
   }
 }
 </script>

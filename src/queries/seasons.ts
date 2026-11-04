@@ -11,6 +11,20 @@ export const seasonListQuery = defineQueryOptions({
   query: () => seasonService.getSeasonList(),
 });
 
+/**
+ * La lista de temporadas para código que la necesita dentro de otra carga, donde no se puede usar `useQuery`.
+ * Lee y rellena la misma entrada de la caché que `seasonListQuery`: solo la pide si no está o ya no está fresca.
+ */
+export async function fetchSeasonList(): Promise<Array<Season>> {
+  const queryCache = useQueryCache();
+  const entry = queryCache.ensure(seasonListQuery);
+  const state = await queryCache.refresh(entry);
+  if (state.status === 'error') {
+    throw state.error;
+  }
+  return state.data ?? [];
+}
+
 /** Crear, editar o eliminar una temporada cambia la lista: se invalida y las pantallas que la usan la vuelven a pedir */
 function useInvalidateSeasons() {
   const queryCache = useQueryCache();

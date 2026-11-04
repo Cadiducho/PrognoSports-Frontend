@@ -2,6 +2,15 @@
   <PPage :subtitle="chosenSeason?.name ? `Temporada ${chosenSeason.name}` : undefined">
     <template #actions>
       <p-button
+        type="outline"
+        color="info"
+        icon="fa fa-copy"
+        :to="{name: 'adminSeasonImport'}"
+        tag="router-link"
+      >
+        Copiar de otra temporada
+      </p-button>
+      <p-button
         color="primary"
         icon="fa fa-plus"
         :to="{name: 'adminSeasonAddConstructor'}"

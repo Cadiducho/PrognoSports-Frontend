@@ -17,6 +17,9 @@ export class SeasonService {
         return getObjectList(`/seasons`, mapSeason);
     }
 
+    /**
+     * Crea una temporada. Devuelve la temporada con su id generado.
+     */
     public async createSeason(data: { name: string; totalEvents: number; competition: number }): Promise<Season> {
         return postObject(`/seasons`, data, mapSeason);
     }
