@@ -11,7 +11,7 @@ import {Dictionary} from "@/types/Dictionary";
 import {PrognoService} from "@/_services/progno.service";
 import {Circuit} from "@/types/Circuit";
 import {CircuitVariant} from "@/types/CircuitVariant";
-import {SeasonMembership, findSeasonMemberships, sameText} from "@/_services/seasonMembership";
+import {SeasonMembership, loadSeasonMemberships} from "@/_services/seasonMembership";
 
 export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
 
@@ -58,28 +58,25 @@ export class GrandprixService extends PrognoService<IGrandPrix, GrandPrix> {
     }
 
     /**
-     * Crea un gran premio y lo devuelve siempre con su id.
+     * Crea un gran premio. Devuelve el gran premio con su id generado.
      */
     public async createGrandPrix(data: { name: string, code: string }): Promise<GrandPrix> {
-        const created: IGrandPrix = await axios.post(`/gps`, data);
-        if (created?.id != undefined) {
-            return this.factory(created);
-        }
-
-        // TODO(Cadiducho/PrognoSports#241): quitar cuando el POST devuelva el id generado. El nombre es único.
-        const found = (await this.getAllGrandPrixes()).find(gp => sameText(gp.name, data.name));
-        if (!found) {
-            throw {message: "El gran premio se ha creado, pero no se ha podido recuperar su id"};
-        }
-        return found;
+        return this.postObjectToAPI(`/gps`, data);
     }
 
     /**
-     * Temporadas en las que se disputa un gran premio, con sus datos en cada una (ronda, circuito...).
-     * El backend no tiene endpoint para esto, así que se consulta cada temporada.
+     * Temporadas en las que se disputa un gran premio
      */
-    public async getSeasonsOfGrandPrix(gpId: number): Promise<Array<SeasonMembership<GrandPrix>>> {
-        return findSeasonMemberships(season => this.getGrandPrixesList(season), gpId);
+    public async getSeasonsOfGrandPrix(gpId: number): Promise<Array<Season>> {
+        return await axios.get(`/gps/${gpId}/seasons`);
+    }
+
+    /**
+     * Temporadas en las que se disputa un gran premio, con sus datos en cada una (ronda, circuito...)
+     */
+    public async getSeasonMembershipsOfGrandPrix(gpId: number): Promise<Array<SeasonMembership<GrandPrix>>> {
+        const seasons = await this.getSeasonsOfGrandPrix(gpId);
+        return loadSeasonMemberships(seasons, season => this.getGrandPrixInSeason(season, gpId));
     }
 
     public async editGrandPrix(data: {id: string | number, name: string, code: string}): Promise<GrandPrix> {

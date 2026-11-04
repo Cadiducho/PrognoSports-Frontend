@@ -36,7 +36,20 @@
               {{ membership.season.name }}
               <span class="text-sm font-normal text-gray-500 dark:text-gray-400">· {{ membership.season.competition?.name }}</span>
             </p>
-            <div class="text-sm text-gray-600 dark:text-gray-300">
+            <p
+              v-if="membership.error"
+              class="text-sm text-warning-700 dark:text-warning-400"
+            >
+              <i
+                class="fa fa-triangle-exclamation"
+                aria-hidden="true"
+              />
+              No se han podido cargar sus datos en esta temporada: {{ membership.error }}
+            </p>
+            <div
+              v-else-if="membership.entry !== undefined"
+              class="text-sm text-gray-600 dark:text-gray-300"
+            >
               <slot
                 name="entry"
                 :season="membership.season"
@@ -48,7 +61,7 @@
             <PButton
               v-if="editRoute"
               tag="router-link"
-              :to="editRoute(membership.season, membership.entry)"
+              :to="editRoute(membership.season)"
               type="ghost"
               color="info"
               size="small"
@@ -137,9 +150,9 @@ const props = withDefaults(defineProps<{
   isValid: (model: T, season: Season) => boolean;
   submit: (season: Season, model: T) => Promise<unknown>;
   /** Ruta para editar los datos de la entidad en esa temporada */
-  editRoute?: (season: Season, entry: E) => RouteLocationRaw;
+  editRoute?: (season: Season) => RouteLocationRaw;
   /** Quita la entidad de la temporada */
-  unlink?: (season: Season, entry: E) => Promise<unknown>;
+  unlink?: (season: Season) => Promise<unknown>;
 }>(), {
   editRoute: undefined,
   unlink: undefined,
@@ -181,7 +194,7 @@ const confirmUnlink = async () => {
   const membership = memberships.value.find(m => m.season.id === season?.id);
   if (!season || !membership || !props.unlink) return;
   try {
-    await props.unlink(season, membership.entry);
+    await props.unlink(season);
     notificationService.showNotification(`Quitado de la temporada ${season.name}`);
     await reload();
     // Reinicia el enlazador para que la temporada vuelva a estar disponible

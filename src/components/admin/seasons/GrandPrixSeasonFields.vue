@@ -113,15 +113,21 @@ const variantId = computed<number | ''>({
   set: (id) => set('variantId', id === '' ? undefined : id),
 });
 
+// Cuidado: `model.value` es la prop del padre y no cambia hasta que éste la actualiza (en el siguiente
+// render). Por eso cada cambio se emite una sola vez con el modelo completo, sin encadenar varios `set`.
 const selectCircuit = async (circuit: Circuit | undefined) => {
-  model.value = {...model.value, circuit, variantId: undefined};
-  if (!circuit) return;
+  if (!circuit) {
+    model.value = {...model.value, circuit: undefined, variantId: undefined};
+    return;
+  }
 
   if (!circuit.variants.length) {
     isLoadingVariants.value = true;
     try {
       // Se cachean en el propio circuito para el resto de tarjetas
       circuit.variants.push(...await circuitService.listCircuitVariant(circuit));
+    } catch {
+      // Sin variantes no se puede enlazar; el aviso de "sin variantes" lo explica
     } finally {
       isLoadingVariants.value = false;
     }
@@ -131,9 +137,7 @@ const selectCircuit = async (circuit: Circuit | undefined) => {
   const defaultVariant = circuit.variants.length === 1
     ? circuit.variants[0]
     : circuit.variants.find(variant => variant.isDefault());
-  if (defaultVariant && model.value.circuit?.id === circuit.id) {
-    set('variantId', defaultVariant.id);
-  }
+  model.value = {...model.value, circuit, variantId: defaultVariant?.id};
 };
 
 const isRoundTaken = computed(() => model.value.round != undefined && takenRounds.value.includes(model.value.round));

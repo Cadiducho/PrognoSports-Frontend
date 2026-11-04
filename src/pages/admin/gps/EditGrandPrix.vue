@@ -34,7 +34,7 @@
 
     <EntitySeasonsPanel
       v-if="grandPrix && circuits"
-      :load="() => grandPrixService.getSeasonsOfGrandPrix(grandPrix!.id)"
+      :load="() => grandPrixService.getSeasonMembershipsOfGrandPrix(grandPrix!.id)"
       :create-model="emptyGrandPrixSeasonModel"
       :is-valid="isGrandPrixSeasonModelValid"
       :submit="(season, model) => grandPrixService.linkGrandPrixToSeason(season.id, grandPrixSeasonPayload(grandPrix!.id, model))"

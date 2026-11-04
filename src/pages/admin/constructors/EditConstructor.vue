@@ -26,7 +26,7 @@
 
     <EntitySeasonsPanel
       v-if="constructor.id"
-      :load="() => constructorService.getSeasonsOfConstructor(constructor.id)"
+      :load="() => constructorService.getSeasonMembershipsOfConstructor(constructor.id)"
       :create-model="() => emptyConstructorSeasonModel(constructor.name)"
       :is-valid="isConstructorSeasonModelValid"
       :submit="(season, model) => constructorService.linkConstructorToSeason(season.id, constructorSeasonPayload(constructor.id, model))"

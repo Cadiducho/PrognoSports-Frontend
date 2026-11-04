@@ -2,7 +2,7 @@ import axios from "axios";
 import {Constructor, IConstructor} from "@/types/Constructor";
 import {PrognoService} from "@/_services/progno.service";
 import {Season} from "@/types/Season";
-import {SeasonMembership, findSeasonMemberships, sameText} from "@/_services/seasonMembership";
+import {SeasonMembership, loadSeasonMemberships} from "@/_services/seasonMembership";
 
 export class ConstructorService extends PrognoService<IConstructor, Constructor> {
 
@@ -26,20 +26,10 @@ export class ConstructorService extends PrognoService<IConstructor, Constructor>
   }
 
   /**
-   * Crea un constructor y lo devuelve siempre con su id.
+   * Crea un constructor. Devuelve el constructor con su id generado.
    */
   public async createConstructor(data: { name: string }): Promise<Constructor> {
-    const created: IConstructor = await axios.post(`/constructors`, data);
-    if (created?.id != undefined) {
-      return this.factory(created);
-    }
-
-    // TODO(Cadiducho/PrognoSports#241): quitar cuando el POST devuelva el id generado. El nombre es único.
-    const found = (await this.getAllConstructors()).find(constructor => sameText(constructor.name, data.name));
-    if (!found) {
-      throw {message: "El constructor se ha creado, pero no se ha podido recuperar su id"};
-    }
-    return found;
+    return this.postObjectToAPI(`/constructors`, data);
   }
 
   public async updateConstructor(constructor: Partial<Constructor>): Promise<Array<Constructor>> {
@@ -89,10 +79,17 @@ export class ConstructorService extends PrognoService<IConstructor, Constructor>
   }
 
   /**
-   * Temporadas en las que participa un constructor, con sus datos en cada una (coche, nombre largo y color).
-   * El backend no tiene endpoint para esto, así que se consulta cada temporada.
+   * Temporadas en las que participa un constructor
    */
-  public async getSeasonsOfConstructor(constructorId: number): Promise<Array<SeasonMembership<Constructor>>> {
-    return findSeasonMemberships(season => this.getConstructorsInSeason(season), constructorId);
+  public async getSeasonsOfConstructor(constructorId: number): Promise<Array<Season>> {
+    return await axios.get(`/constructors/${constructorId}/seasons`);
+  }
+
+  /**
+   * Temporadas en las que participa un constructor, con sus datos en cada una (coche, nombre largo y color)
+   */
+  public async getSeasonMembershipsOfConstructor(constructorId: number): Promise<Array<SeasonMembership<Constructor>>> {
+    const seasons = await this.getSeasonsOfConstructor(constructorId);
+    return loadSeasonMemberships(seasons, season => this.getConstructorInSeason(season.id, constructorId));
   }
 }

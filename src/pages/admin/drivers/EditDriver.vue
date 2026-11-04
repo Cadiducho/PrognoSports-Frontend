@@ -62,7 +62,7 @@
 
     <EntitySeasonsPanel
       v-if="driver"
-      :load="() => driversService.getSeasonsOfDriver(driver!.id)"
+      :load="() => driversService.getSeasonMembershipsOfDriver(driver!.id)"
       :create-model="emptyDriverSeasonModel"
       :is-valid="isDriverSeasonModelValid"
       :submit="(season, model) => driversService.linkDriverToSeason(season, driverSeasonPayload(driver!.id, model))"

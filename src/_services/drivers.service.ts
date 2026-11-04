@@ -3,7 +3,7 @@ import {GrandPrix} from "@/types/GrandPrix";
 import {Driver} from "@/types/Driver";
 import {Season} from "@/types/Season";
 import {Dictionary} from "@/types/Dictionary";
-import {SeasonMembership, findSeasonMemberships, sameText} from "@/_services/seasonMembership";
+import {SeasonMembership, loadSeasonMemberships} from "@/_services/seasonMembership";
 
 export interface CreateDriverData {
     firstname: string;
@@ -32,22 +32,10 @@ export class DriversService {
     }
 
     /**
-     * Crea un piloto y lo devuelve siempre con su id.
+     * Crea un piloto. Devuelve el piloto con su id generado.
      */
     public async createDriver(data: CreateDriverData): Promise<Driver> {
-        const created: Driver = await axios.post(`/drivers`, data);
-        if (created?.id != undefined) {
-            return created;
-        }
-
-        // TODO(Cadiducho/PrognoSports#241): quitar cuando el POST devuelva el id generado.
-        // Nombre + apellido es único en base de datos.
-        const found = (await this.getAllDrivers())
-            .find(driver => sameText(driver.firstname, data.firstname) && sameText(driver.lastname, data.lastname));
-        if (!found) {
-            throw {message: "El piloto se ha creado, pero no se ha podido recuperar su id"};
-        }
-        return found;
+        return await axios.post(`/drivers`, data);
     }
 
     public async updateDriver(driver: Pick<Driver, "id" | "firstname" | "lastname" | "code" | "nationality" | "birth">): Promise<Driver> {
@@ -56,8 +44,6 @@ export class DriversService {
             lastname: driver.lastname,
             code: driver.code,
             nationality: driver.nationality,
-            // TODO(Cadiducho/PrognoSports#241): el backend lee `nacionality` en el PUT
-            nacionality: driver.nationality,
             birth: driver.birth,
         });
     }
@@ -83,10 +69,24 @@ export class DriversService {
     }
 
     /**
-     * Temporadas en las que participa un piloto, con sus datos en cada una (dorsal y color).
-     * El backend no tiene endpoint para esto, así que se consulta cada temporada.
+     * Un piloto con sus datos en una temporada (dorsal y color)
      */
-    public async getSeasonsOfDriver(driverId: number): Promise<Array<SeasonMembership<Driver>>> {
-        return findSeasonMemberships(season => this.getDriversInSeason(season), driverId);
+    public async getDriverInSeason(seasonId: string | number, driverId: string | number): Promise<Driver> {
+        return await axios.get(`/seasons/${seasonId}/drivers/${driverId}`);
+    }
+
+    /**
+     * Temporadas en las que participa un piloto
+     */
+    public async getSeasonsOfDriver(driverId: number): Promise<Array<Season>> {
+        return await axios.get(`/drivers/${driverId}/seasons`);
+    }
+
+    /**
+     * Temporadas en las que participa un piloto, con sus datos en cada una (dorsal y color)
+     */
+    public async getSeasonMembershipsOfDriver(driverId: number): Promise<Array<SeasonMembership<Driver>>> {
+        const seasons = await this.getSeasonsOfDriver(driverId);
+        return loadSeasonMemberships(seasons, season => this.getDriverInSeason(season.id, driverId));
     }
 }
