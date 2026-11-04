@@ -1,8 +1,16 @@
-import {getObject, getObjectList} from "@/_services/api";
+import {getObject, getObjectList, postObject} from "@/_services/api";
 import axios from 'axios';
 import {Community, mapCommunity} from "@/types/Community";
-import {User} from "@/types/User";
 import {CommunityUser, CommunityUserDto, mapCommunityUser} from "@/types/CommunityUser";
+
+export interface CreateCommunityPayload {
+    name: string;
+    description: string;
+    image_url: string;
+    owner: number;
+    open: boolean;
+    default_rule_set: number;
+}
 
 export class CommunityService {
     public async getCommunityById(communityId: string | number): Promise<Community> {
@@ -13,13 +21,13 @@ export class CommunityService {
         return getObjectList("/communities", mapCommunity);
     }
 
-    public async getUserCommunities(user: User): Promise<Array<Community>> {
-        return getObjectList(`/user/${user.id}/communities`, mapCommunity);
+    public async getUserCommunities(userId: number): Promise<Array<Community>> {
+        return getObjectList(`/user/${userId}/communities`, mapCommunity);
     }
 
     public async joinCommunity(community: Community, code?: string): Promise<Community> {
         const searchParameter = (code ? `/${code}` : "");
-        return await axios.post(`/communities/${community.name}/join${searchParameter}`);
+        return postObject(`/communities/${community.name}/join${searchParameter}`, undefined, mapCommunity);
     }
 
     public async quitCommunity(community: Community): Promise<Community> {
@@ -31,7 +39,7 @@ export class CommunityService {
         return userData.map(mapCommunityUser);
     }
 
-    public async createCommunity(data: any): Promise<Community> {
-        return await axios.post(`/communities`, data)
+    public async createCommunity(data: CreateCommunityPayload): Promise<Community> {
+        return postObject(`/communities`, data, mapCommunity);
     }
 }

@@ -5,8 +5,6 @@ import {Driver} from "@/types/Driver";
 
 export type Events = {
     updatedTipps: { session: RaceSession; tipps: Array<Driver> };
-    reloadCommunitiesList: void;
-    reloadCommunitiesDropdown: void;
 };
 
 const emitter: Emitter<Events> = mitt<Events>();
