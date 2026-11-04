@@ -4,7 +4,11 @@ import type { FormStats } from "@/composables/charts/homeSeason";
 
 const props = defineProps<{
   form: FormStats | null;
+  /** false al ver el perfil de otro usuario: el texto pasa a tercera persona */
+  own?: boolean;
 }>();
+
+const possessive = () => (props.own === false ? "su" : "tu");
 
 const format = (value: number) => value.toLocaleString("es-ES");
 
@@ -14,12 +18,12 @@ const trend = computed(() => {
   }
   const delta = Math.round((props.form.recentAverage - props.form.seasonAverage) * 10) / 10;
   if (delta > 0) {
-    return { symbol: "▲", text: `+${format(delta)} sobre tu media`, tone: "text-green-600 dark:text-green-400" };
+    return { symbol: "▲", text: `+${format(delta)} sobre ${possessive()} media`, tone: "text-green-600 dark:text-green-400" };
   }
   if (delta < 0) {
-    return { symbol: "▼", text: `${format(delta).replace("-", "−")} bajo tu media`, tone: "text-red-600 dark:text-red-400" };
+    return { symbol: "▼", text: `${format(delta).replace("-", "−")} bajo ${possessive()} media`, tone: "text-red-600 dark:text-red-400" };
   }
-  return { symbol: "=", text: "igual que tu media", tone: "text-gray-600 dark:text-gray-400" };
+  return { symbol: "=", text: `igual que ${possessive()} media`, tone: "text-gray-600 dark:text-gray-400" };
 });
 </script>
 

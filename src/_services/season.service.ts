@@ -16,8 +16,11 @@ export class SeasonService {
         return await axios.get(`/seasons`)
     }
 
-    public async createSeason(data: any): Promise<Season> {
-        return await axios.post(`/seasons`, data)
+    /**
+     * Crea una temporada. Devuelve la temporada con su id generado.
+     */
+    public async createSeason(data: { name: string; totalEvents: number; competition: number }): Promise<Season> {
+        return await axios.post(`/seasons`, data);
     }
 
     public async editSeason(season: Season, data: { totalEvents: number; name: string; competition: number }): Promise<Season> {

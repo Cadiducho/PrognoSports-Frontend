@@ -1,7 +1,7 @@
 <template>
   <PPage
     :title="thereIsGrandPrix ? `${grandPrix.name} de ${grandPrix.season.name}` : undefined"
-    :subtitle="thereIsGrandPrix && grandPrix.circuit ? `${grandPrix.circuit.name}, ${grandPrix.circuit.locality} (${grandPrix.circuit.country})` : undefined"
+    :subtitle="subtitle"
     :loading="isLoadingGrandPrix"
     :not-found="!thereIsGrandPrix && `El Gran Premio ${id} no ha sido encontrado`"
     variant="plain"
@@ -9,13 +9,23 @@
     <template #actions>
       <div
         v-if="thereIsGrandPrix"
-        class="w-60"
+        class="flex flex-col items-end gap-2"
       >
-        <GrandPrixPagination
-          :is-admin-pag="false"
-          :competition="grandPrix.competition"
-          :grand-prix="grandPrix"
-        />
+        <p-button
+          v-if="isUserAdmin(currentUser)"
+          color="info"
+          tag="router-link"
+          :to="{ name: 'adminGpEditInSeason', params: {season: season.name, gp: grandPrix.id} } "
+        >
+          Administración
+        </p-button>
+        <div class="w-60">
+          <GrandPrixPagination
+            :is-admin-pag="false"
+            :competition="grandPrix.competition"
+            :grand-prix="grandPrix"
+          />
+        </div>
       </div>
     </template>
 
@@ -26,120 +36,94 @@
       No hay sesiones configuradas en este Gran Premio
     </PrognoAlert>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      <!-- Si hay parrilla de salida, recorto tamaño de los pronósticos -->
-      <div :class="startGrid.size ? 'md:col-span-2' : 'md:col-span-2 lg:col-span-3'">
-        <PCard>
-          <PTabs v-model="activeTab">
-            <template #tabs>
-              <PTabItem
-                v-for="session in grandPrix.sessions"
-                :key="session.name"
-                :name="session.name"
-                :label="sessionHumanName(session)"
-                :active-tab="activeTab"
-                :set-active-tab="(tabName: string) => activeTab = tabName"
-              />
-            </template>
-            <PTabPanel
-              v-for="session in grandPrix.sessions"
-              :key="`tipps-${session.name}`"
-              :name="session.name"
-              :active-tab="activeTab"
-            >
-              <ClouseDateMessage :session="session" />
-              <h6 class="dark:text-gray-300">
-                Para esta sesión se han de pronosticar {{ ruleSetPredictedPositions(ruleSet, session) }} pilotos
-              </h6>
-              <SelectTipps
-                :session="session"
-                :grand-prix="grandPrix"
-                :rule-set="ruleSet"
-                :drivers="drivers"
-                :start-grids="startGrid"
-              />
-            </PTabPanel>
-          </PTabs>
-        </PCard>
-      </div>
-      <div
-        v-if="startGrid.size"
-        class="md:col-span-1"
+    <CircuitCard
+      v-if="grandPrix.circuit && grandPrix.variant"
+      :circuit="grandPrix.circuit!"
+      :variant="grandPrix.variant!"
+      :laps="grandPrix.laps"
+    />
+
+    <SessionSelector
+      v-model="activeTab"
+      :sessions="grandPrix.sessions"
+    />
+
+    <PCard>
+      <PTabPanel
+        v-for="session in grandPrix.sessions"
+        :key="`tipps-${session.name}`"
+        :name="session.name"
+        :active-tab="activeTab"
+        instant
       >
-        <StartGrid :grid="startGrid" />
-      </div>
-      <!-- Si hay parrilla de salida saldrá desplazado y expandido debajo del resto de cajas de la grid -->
-      <div
-        :class="startGrid.size ? 'md:col-span-3' : 'md:col-span-1'"
-        class="lg:col-span-1"
-      >
-        <CircuitCard
-          v-if="grandPrix.circuit && grandPrix.variant"
-          :circuit="grandPrix.circuit!"
-          :variant="grandPrix.variant!"
-          :laps="grandPrix.laps"
-          :wide="startGrid.size > 0"
-        />
-
-        <PitLaneStartGrid
-          v-if="startGrid.size"
-          :grid="startGrid"
-        />
-
-        <section class="my-2 space-y-2">
-          <p-button
-            v-if="isUserAdmin(currentUser)"
-            color="info"
-            expanded
-            tag="router-link"
-            :to="{ name: 'adminGpEditInSeason', params: {season: season.name, gp: grandPrix.id} } "
-          >
-            Administración
-          </p-button>
-        </section>
-      </div>
-    </div>
-
-    <PCard class="mt-3">
-      <PTabs v-model="activeTab">
-        <template #tabs>
-          <PTabItem
-            v-for="session in grandPrix.sessions"
-            :key="session.name"
-            :name="session.name"
-            :label="sessionHumanName(session)"
-            :active-tab="activeTab"
-            :set-active-tab="(tabName: string) => activeTab = tabName"
-          />
-        </template>
-        <PTabPanel
-          v-for="session in grandPrix.sessions"
-          :key="`score-${session.name}`"
-          :name="session.name"
-          :active-tab="activeTab"
+        <ClouseDateMessage :session="session" />
+        <h6 class="dark:text-gray-300">
+          Para esta sesión se han de pronosticar {{ ruleSetPredictedPositions(ruleSet, session) }} pilotos
+        </h6>
+        <SelectTipps
+          :session="session"
+          :grand-prix="grandPrix"
+          :rule-set="ruleSet"
+          :drivers="drivers"
+          :start-grids="startGrid"
         >
-          <ClouseDateMessage :session="session" />
-          <ScoreComponents
-            :gp="grandPrix"
-            :rule-set="ruleSet"
-            :session="session"
-            :drivers="drivers"
-            :community-members="communityMembers"
-            :user-points="userPoints"
-          />
-        </PTabPanel>
-      </PTabs>
+          <template
+            v-if="startGrid.get(session)"
+            #grid
+          >
+            <StartGrid
+              :session="session"
+              :grid="startGrid.get(session)!"
+              :grand-prix="grandPrix"
+            />
+          </template>
+        </SelectTipps>
+      </PTabPanel>
+    </PCard>
+
+    <SessionSelector
+      v-model="activeTab"
+      :sessions="grandPrix.sessions"
+    />
+
+    <PCard>
+      <PTabPanel
+        v-for="session in grandPrix.sessions"
+        :key="`score-${session.name}`"
+        :name="session.name"
+        :active-tab="activeTab"
+        instant
+      >
+        <ClouseDateMessage :session="session" />
+        <ScoreComponents
+          :gp="grandPrix"
+          :rule-set="ruleSet"
+          :session="session"
+          :drivers="drivers"
+          :community-members="communityMembers"
+          :user-points="userPoints"
+        />
+      </PTabPanel>
     </PCard>
   </PPage>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import {computed, onMounted, ref} from "vue";
+import {useRoute} from "vue-router";
+import dayjs from "dayjs";
 import CircuitCard from "@/components/gps/CircuitCard.vue";
-import {ruleSetPredictedPositions} from "@/utils/ruleSet";
 import StartGrid from "@/components/gps/StartGridList.vue";
-import {Competition} from "@/types/Competition";
-import {Season} from "@/types/Season";
-import {GrandPrix} from "@/types/GrandPrix";
+import SelectTipps from "@/components/gps/SelectTipps.vue";
+import ScoreComponents from "@/components/gps/ScoreComponent.vue";
+import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
+import ClouseDateMessage from "@/components/gps/ClouseDateMessage.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
+import PrognoAlert from "@/components/lib/PrognoAlert.vue";
+import PCard from "@/components/lib/PCard.vue";
+import PTabPanel from "@/components/lib/PTabPanel.vue";
+import SessionSelector from "@/components/gps/SessionSelector.vue";
+import {useDayjs} from "@/composables/useDayjs";
 import {
   communityService,
   driversService,
@@ -148,135 +132,119 @@ import {
   rulesetService,
   scoreService
 } from "@/_services";
+import {useAuthStore} from "@/store/authStore";
+import {useCommunityStore} from "@/store/communityStore";
+import {Season} from "@/types/Season";
+import {GrandPrix} from "@/types/GrandPrix";
 import {StartGridPosition} from "@/types/StartGridPosition";
-import SelectTipps from "@/components/gps/SelectTipps.vue";
-import PitLaneStartGrid from "@/components/gps/PitLaneStartGrid.vue";
-import ScoreComponents from "@/components/gps/ScoreComponent.vue";
 import {UserPoints} from "@/types/UserPoints";
 import {Dictionary} from "@/types/Dictionary";
-import dayjs from "dayjs";
 import {RaceSession} from "@/types/RaceSession";
 import {RuleSet} from "@/types/RuleSet";
 import {Driver} from "@/types/Driver";
 import {CommunityUser} from "@/types/CommunityUser";
-
-import {defineComponent} from "vue";
-import {useCommunityStore} from "@/store/communityStore";
-import Loading from "@/components/lib/Loading.vue";
-import {useAuthStore} from "@/store/authStore";
 import {isUserAdmin} from "@/utils/user";
-import {sessionHumanName} from "@/utils/raceSession";
-import GrandPrixPagination from "@/components/gps/GrandPrixPagination.vue";
-import PButton from "@/components/lib/forms/PButton.vue";
-import PrognoAlert from "@/components/lib/PrognoAlert.vue";
-import ClouseDateMessage from "@/components/gps/ClouseDateMessage.vue";
-import PCard from "@/components/lib/PCard.vue";
-import PTabs from "@/components/lib/PTabs.vue";
-import PTabItem from "@/components/lib/PTabItem.vue";
-import PTabPanel from "@/components/lib/PTabPanel.vue";
+import {ruleSetPredictedPositions} from "@/utils/ruleSet";
+import {grandPrixFirstDate, grandPrixLastDate} from "@/utils/grandPrix";
 
-export default defineComponent({
-  name: "OneGrandPrix",
-  components: {
-    PCard,
-    ClouseDateMessage,
-    PrognoAlert,
-    PButton,
-    GrandPrixPagination,
-    ScoreComponents,
-    PitLaneStartGrid,
-    SelectTipps,
-    CircuitCard,
-    StartGrid,
-    PTabs,
-    PTabItem,
-    PTabPanel
-  },
-  setup() {
-    const authStore = useAuthStore();
-    const communityStore = useCommunityStore();
+defineOptions({name: "OneGrandPrix"});
 
-    const currentCommunity = communityStore.currentCommunity;
-    const currentUser = authStore.requireUser();
-    return {currentUser, currentCommunity, isUserAdmin, sessionHumanName, ruleSetPredictedPositions};
-  },
-  data() {
-    return {
-      competition: {code: this.$route.params.competition} as Competition,
-      season: {name: this.$route.params.season} as Season,
-      id: this.$route.params.gp as string,
+const route = useRoute();
+const currentUser = useAuthStore().loggedUser;
+const currentCommunity = useCommunityStore().currentCommunity;
 
-      grandPrix: {} as GrandPrix,
-      ruleSet: {} as RuleSet,
-      drivers: new Array<Driver>(),
-      communityMembers: new Array<CommunityUser>(),
+const season = {name: route.params.season} as Season;
+const id = route.params.gp as string;
 
-      isLoadingGrandPrix: true,
-      thereIsGrandPrix: false,
-      thereAreFinishResults: false,
-      startGrid: new Map<RaceSession, Array<StartGridPosition>>(),
-      userPoints: {} as Dictionary<number, UserPoints>,
-      activeTab: "",
-    }
-  },
-  mounted() {
-    grandPrixService.getGrandPrixInSeason(this.season, this.id).then(gp => {
-      this.grandPrix = gp;
+const grandPrix = ref<GrandPrix>({} as GrandPrix);
+const ruleSet = ref<RuleSet>({} as RuleSet);
+const drivers = ref<Array<Driver>>([]);
+const communityMembers = ref<Array<CommunityUser>>([]);
 
-      Promise.all([
-        driversService.getDriversInGrandPrix(this.grandPrix!),
-        rulesetService.getRuleSetInGrandPrix(this.currentCommunity, this.grandPrix),
-        scoreService.getPointsInGrandPrix(this.currentCommunity, this.grandPrix!),
-        communityService.getMembers(this.currentCommunity),
-        this.getStartGrids(this.grandPrix)
-      ]).then(result => {
-        this.drivers = result[0];
-        this.ruleSet = result[1];
-        const points = result[2];
-        this.communityMembers = result[3];
-        const rawStartGrids = result[4];
+const isLoadingGrandPrix = ref(true);
+const thereIsGrandPrix = ref(false);
+const startGrid = ref(new Map<RaceSession, Array<StartGridPosition>>());
+const userPoints = ref<Dictionary<number, UserPoints>>({});
+const activeTab = ref("");
 
-        this.thereIsGrandPrix = true;
-        this.thereAreFinishResults = rawStartGrids.some((gridArray) => gridArray.length > 0);
+const {humanDayMonth} = useDayjs();
 
-        points.forEach((points) => {
-          this.userPoints[points.user.id] = points;
-        });
+const subtitle = computed(() => {
+  if (!thereIsGrandPrix.value) {
+    return undefined;
+  }
+  const gp = grandPrix.value;
+  const round = `Ronda ${gp.round}`;
+  if (!gp.sessions?.length) {
+    return round;
+  }
+  return `${round} · ${grandPrixFirstDate(gp).getDate()} - ${humanDayMonth(grandPrixLastDate(gp))}`;
+});
 
-        rawStartGrids.forEach((grid, index) => {
-          const session = this.grandPrix!.sessions[index];
+/**
+ * Parrilla de cada sesión del Gran Premio, junto a su sesión: las sesiones se reordenan por fecha mientras
+ * se piden, así que emparejarlas por índice podía asignar una parrilla a otra sesión
+ */
+async function getStartGrids(gp: GrandPrix): Promise<Array<{ session: RaceSession, grid: StartGridPosition[] }>> {
+  return Promise.all(gp.sessions.map(async (session) => ({
+    session,
+    grid: await grandPrixService.getGrandPrixGrid(gp, session),
+  })));
+}
+
+onMounted(async () => {
+  try {
+    const gp = await grandPrixService.getGrandPrixInSeason(season, id);
+    grandPrix.value = gp;
+
+    const loading = Promise.all([
+      driversService.getDriversInGrandPrix(gp),
+      rulesetService.getRuleSetInGrandPrix(currentCommunity, gp),
+      scoreService.getPointsInGrandPrix(currentCommunity, gp),
+      communityService.getMembers(currentCommunity),
+      getStartGrids(gp)
+    ]).then(([driversInGp, gpRuleSet, points, members, rawStartGrids]) => {
+      drivers.value = driversInGp;
+      ruleSet.value = gpRuleSet;
+      communityMembers.value = members;
+      thereIsGrandPrix.value = true;
+
+      points.forEach((userPoint) => {
+        userPoints.value[userPoint.user.id] = userPoint;
+      });
+
+      // Cada parrilla viene emparejada con su sesión; se añaden por fecha
+      [...rawStartGrids]
+        .sort((a, b) => a.session.date.getTime() - b.session.date.getTime())
+        .forEach(({session, grid}) => {
           if (grid.length > 0) {
-            this.startGrid.set(session, grid);
+            startGrid.value.set(session, grid);
           }
         });
 
-        this.isLoadingGrandPrix = false;
-      });
-
-      // Ordeno las sesiones por fecha
-      this.grandPrix.sessions.sort((a: RaceSession, b: RaceSession) => a.date.getTime() - b.date.getTime())
-      // Colocar la tab correcta según cuál es la siguiente sesión que va a tener lugar
-      for (const ses of this.grandPrix.sessions) {
-        this.activeTab = ses.name;
-        if (dayjs().isBefore(dayjs(ses.date).add(2, 'h'))) {
-          break;
-        }
-      }
-
-    }).catch((error) => {
-      this.thereIsGrandPrix = false;
-      this.isLoadingGrandPrix = false;
-      notificationService.showNotification(error.message, 'error');
+      isLoadingGrandPrix.value = false;
     });
-  },
-  methods: {
-    async getStartGrids(grandPrix: GrandPrix): Promise<StartGridPosition[][]> {
-      const request = [];
-      for await (const session of grandPrix.sessions) {
-        request.push(grandPrixService.getGrandPrixGrid(this.grandPrix!, session));
+
+    // Ordeno las sesiones por fecha
+    gp.sessions.sort((a: RaceSession, b: RaceSession) => a.date.getTime() - b.date.getTime());
+    // Colocar la tab correcta según cuál es la siguiente sesión que va a tener lugar
+    for (const ses of gp.sessions) {
+      activeTab.value = ses.name;
+      if (dayjs().isBefore(dayjs(ses.date).add(2, 'h'))) {
+        break;
       }
-      return Promise.all(request);
-    },
+    }
+    // Si se llega con `?sesion=<nombre>` (por ejemplo desde el Inicio), esa sesión tiene prioridad
+    const requested = route.query.sesion;
+    if (typeof requested === 'string' && gp.sessions.some((ses: RaceSession) => ses.name === requested)) {
+      activeTab.value = requested;
+    }
+
+    await loading;
+  } catch (error: any) {
+    thereIsGrandPrix.value = false;
+    isLoadingGrandPrix.value = false;
+    notificationService.showNotification(error.message, 'error');
   }
 });
 </script>

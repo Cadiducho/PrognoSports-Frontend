@@ -56,13 +56,14 @@
       @handle="deleteGrandPrixFromSeason(grandPrixToDelete)"
     >
       <template #title>
-        ¿Eliminar Grand Prix de esta competición?
+        ¿Quitar el Gran Premio de la temporada?
       </template>
       <template #content>
-        ¿Estás seguro de que quieres <b>eliminar</b> el Gran Premio <span class="font-semibold">{{ grandPrixToDelete.name }} {{ grandPrixToDelete.season?.name }}</span> de esta competición? <br>Esta acción se puede deshacer.
+        Se quitará <span class="font-semibold">{{ grandPrixToDelete.name }}</span> de la temporada <span class="font-semibold">{{ chosenSeason?.name }}</span>.
+        Sólo es posible si todavía no tiene sesiones ni pilotos asignados. El Gran Premio en sí no se borra.
       </template>
       <template #saveText>
-        Eliminar Grand Prix
+        Quitar de la temporada
       </template>
     </PrognoModal>
   </PPage>
@@ -72,7 +73,8 @@
 import PTable from "@/components/lib/table/PTable.vue";
 import PButton from "@/components/lib/forms/PButton.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
-import { grandPrixService, seasonService } from "@/_services";
+import { grandPrixService, notificationService, seasonService } from "@/_services";
+import { errorMessage } from "@/composables/errorMessage";
 import { GrandPrix } from "@/types/GrandPrix";
 import { Season } from "@/types/Season";
 
@@ -136,8 +138,16 @@ const confirmDeleteGrandPrix = (gp: GrandPrix) => {
   grandPrixToDelete.value = gp;
 }
 
-const deleteGrandPrixFromSeason = (gp: GrandPrix) => {
-  console.log("deleteGrandPrixFromSeason", gp);
+const deleteGrandPrixFromSeason = async (gp: GrandPrix) => {
+  isDeleteGPModalActive.value = false;
+  const seasonId = chosenSeason.value?.id ?? season.value.id;
+  try {
+    await grandPrixService.removeGrandPrixFromSeason(seasonId, gp.id);
+    gps.value = gps.value.filter(other => other.id !== gp.id);
+    notificationService.showNotification(`Se ha quitado ${gp.name} de la temporada`);
+  } catch (e) {
+    notificationService.showNotification(errorMessage(e) ?? `No se ha podido quitar ${gp.name} de la temporada`, "error");
+  }
 }
 
 

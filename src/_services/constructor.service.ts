@@ -1,8 +1,8 @@
-import {getObject, getObjectList} from "@/_services/api";
+import {getObject, getObjectList, postObject} from "@/_services/api";
 import axios from "axios";
 import {Constructor} from "@/types/Constructor";
 import {Season} from "@/types/Season";
-import {Driver} from "@/types/Driver";
+import {SeasonMembership} from "@/_services/seasonMembership";
 
 export class ConstructorService {
   /**
@@ -20,8 +20,11 @@ export class ConstructorService {
     return getObjectList<Constructor>(`/constructors`)
   }
 
+  /**
+   * Crea un constructor. Devuelve el constructor con su id generado.
+   */
   public async createConstructor(data: { name: string }): Promise<Constructor> {
-    return await axios.post(`/constructors`, data);
+    return postObject<Constructor>(`/constructors`, data);
   }
 
   public async updateConstructor(constructor: Partial<Constructor>): Promise<Array<Constructor>> {
@@ -44,7 +47,7 @@ export class ConstructorService {
    * Devuelve un constructor en una temporada
    * @param constructorId el id del constructor
    */
-  public async getConstructorInSeason(seasonId: string, constructorId: string): Promise<Constructor> {
+  public async getConstructorInSeason(seasonId: string | number, constructorId: string | number): Promise<Constructor> {
     return getObject<Constructor>(`/seasons/${seasonId}/constructors/${constructorId}`)
   }
 
@@ -53,7 +56,7 @@ export class ConstructorService {
    * @param seasonId La temporada
    * @param data Los datos del constructor
    */
-  public async linkConstructorToSeason(seasonId: string, data: {
+  public async linkConstructorToSeason(seasonId: string | number, data: {
     car: string;
     constructorId: number;
     teamcolor: string;
@@ -66,7 +69,14 @@ export class ConstructorService {
     return await axios.put(`/seasons/${seasonId}/constructors/${constructor.id}`, constructor);
   }
 
-  public async deleteConstructorFromSeason(seasonId: string, constructor: Constructor): Promise<Array<Constructor>> {
+  public async deleteConstructorFromSeason(seasonId: string | number, constructor: Pick<Constructor, "id">): Promise<Array<Constructor>> {
     return await axios.delete(`/seasons/${seasonId}/constructors/${constructor.id}`);
+  }
+
+  /**
+   * Temporadas en las que participa un constructor, con sus datos en cada una (coche, nombre largo y color)
+   */
+  public async getSeasonMembershipsOfConstructor(constructorId: number): Promise<Array<SeasonMembership<Constructor>>> {
+    return getObjectList<SeasonMembership<Constructor>>(`/constructors/${constructorId}/seasons`);
   }
 }

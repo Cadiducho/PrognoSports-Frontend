@@ -20,7 +20,7 @@
           type="text"
           :value="formattedDateTime"
           readonly
-          class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm placeholder:text-gray-400 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3.5 pr-10 cursor-pointer shadow-xs transition-colors duration-300"
+          class="block w-full cursor-pointer rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-base leading-normal text-gray-700 shadow-xs transition-colors placeholder:text-gray-400 focus:border-brand-500 focus:outline-hidden focus:ring-1 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder:text-gray-400"
           :placeholder="placeholder"
           @click="toggleCalendar"
         >
@@ -226,7 +226,7 @@ const model = defineModel({
 const props = defineProps({
   label: {
     type: String,
-    default: 'Seleccionar fecha y hora'
+    default: ''
   },
   placeholder: {
     type: String,

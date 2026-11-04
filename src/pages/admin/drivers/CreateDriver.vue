@@ -1,215 +1,183 @@
 <template>
   <PPage>
-    <nav class="block">
-      <PButton
-        color="info"
-        to="/admin/drivers"
-        tag="router-link"
-        icon="fa fa-chevron-left"
-      >
-        Volver a Lista de pilotos
-      </PButton>
-    </nav>
-
-    <PStepper
-      v-model="activeStep"
-      :steps="[{ label: 'Datos del piloto' }, { label: 'Finalizar' }]"
-    >
+    <PWizard :wizard="wizard">
       <template #step-0>
-        <PTitle
-          tag="h2"
-          type="title"
-        >
-          Datos del piloto
-        </PTitle>
-
-        <PField label="Nombre del piloto">
+        <PFormGrid :cols="2">
           <PInput
-            v-model="createdDriver.firstname"
+            v-model="driverData.firstname"
+            label="Nombre"
+            placeholder="Fernando"
             name="firstname"
           />
-        </PField>
-
-        <PField label="Apellido del piloto">
           <PInput
-            v-model="createdDriver.lastname"
+            v-model="driverData.lastname"
+            label="Apellido"
+            placeholder="Alonso"
             name="lastname"
           />
-        </PField>
-
-        <PField label="Código del piloto">
           <PInput
-            v-model="createdDriver.code"
+            :model-value="driverData.code"
+            label="Código"
+            message="Tres letras, como en las tablas de tiempos"
+            placeholder="ALO"
             name="code"
+            :max-lenght="3"
+            @update:model-value="driverData.code = String($event ?? '').toUpperCase()"
           />
-        </PField>
-
-        <PField label="Nacionalidad del piloto">
           <PInput
-            v-model="createdDriver.nationality"
+            v-model="driverData.nationality"
+            label="Nacionalidad"
+            placeholder="Española"
             name="nationality"
           />
-        </PField>
-
-        <PField label="Fecha de nacimiento">
-          <CalendarDateTimePicker
-            v-model="createdDriver.birth"
-            placeholder="Click para escoger..."
-            :show-time="false"
-          />
-        </PField>
-
-        <PDivider />
+          <PField label="Fecha de nacimiento">
+            <CalendarDateTimePicker
+              v-model="driverData.birth"
+              placeholder="Click para escoger..."
+              :show-time="false"
+              :start-date="new Date(2000, 0, 1)"
+            />
+          </PField>
+        </PFormGrid>
+        <PrognoAlert
+          variant="info"
+          class="mt-4"
+        >
+          Al pulsar «Crear piloto» se guarda en el servidor. Después podrás enlazarlo a una o varias temporadas.
+        </PrognoAlert>
       </template>
 
       <template #step-1>
-        <PTitle
-          tag="h2"
-          type="title"
+        <p class="mb-4 text-gray-600 dark:text-gray-300">
+          Elige las temporadas en las que corre <b>{{ fullName }}</b> e indica su dorsal y color en cada una.
+        </p>
+        <SeasonLinker
+          :linked-season-ids="linkedSeasons.map(season => season.id)"
+          :create-model="emptyDriverSeasonModel"
+          :is-valid="isDriverSeasonModelValid"
+          :submit="linkToSeason"
+          @linked="(season) => linkedSeasons.push(season)"
+          @pending="pendingLinks = $event"
+          @busy="wizard.setWorking('links', $event)"
         >
-          Finalizar
-        </PTitle>
-
-        <AlertInvalidData
-          :object="createdDriver.id"
-          message="No has introducido ID para este piloto"
-        />
-        <AlertInvalidData
-          :object="createdDriver.firstname"
-          message="No has introducido nombre para este piloto"
-        />
-        <AlertInvalidData
-          :object="createdDriver.lastname"
-          message="No has introducido apellido para este piloto"
-        />
-        <AlertInvalidData
-          :object="createdDriver.code"
-          message="No has introducido código para este piloto"
-        />
-        <AlertInvalidData
-          :object="createdDriver.nationality"
-          message="No has introducido nacionalidad para este piloto"
-        />
-
-        <PrognoAlert variant="warning">
-          Revisa los datos, se va a crear el siguiente piloto
+          <template #fields="{ model, update }">
+            <DriverSeasonFields
+              :model-value="model"
+              @update:model-value="update"
+            />
+          </template>
+        </SeasonLinker>
+        <PrognoAlert
+          v-if="pendingLinks > 0"
+          variant="warning"
+          class="mt-4"
+        >
+          Hay temporadas seleccionadas sin enlazar. Si continúas, no se guardarán.
         </PrognoAlert>
-
-        <PProse>
-          <p>
-            <b>ID del piloto: </b>{{ createdDriver.id }}
-          </p>
-          <p>
-            <b>Nombre del piloto: </b>{{ createdDriver.firstname }} {{ createdDriver.lastname }}
-          </p>
-          <p>
-            <b>Código del piloto: </b>{{ createdDriver.code }}
-          </p>
-          <p>
-            <b>Nacionalidad del piloto: </b>{{ createdDriver.nationality }}
-          </p>
-          <p>
-            <b>Fecha de nacimiento: </b>{{ humanDate(createdDriver.birth) }}
-          </p>
-        </PProse>
-
-        <PDivider />
-        <PButton
-          :disabled="!isDataOk()"
-          label="Crear piloto"
-          color="primary"
-          @click="registerDriver()"
-        />
       </template>
-    </PStepper>
+
+      <template #step-2>
+        <WizardSummary
+          :title="`${fullName} creado`"
+          :seasons="linkedSeasons"
+          :season-link="(season) => ({name: 'adminDriversInSeason', params: {season: season.id}})"
+        >
+          <PButton
+            v-if="createdDriver"
+            tag="router-link"
+            :to="{name: 'adminDriverEdit', params: {driver: createdDriver.id}}"
+            icon="fa fa-pen"
+          >
+            Ir a la ficha del piloto
+          </PButton>
+          <PButton
+            tag="router-link"
+            :to="{name: 'adminDrivers'}"
+            type="outline"
+            color="info"
+          >
+            Volver a la lista de pilotos
+          </PButton>
+        </WizardSummary>
+      </template>
+    </PWizard>
   </PPage>
 </template>
 
-<script lang="ts">
-import PTitle from "@/components/lib/PTitle.vue";
+<script setup lang="ts">
+import {computed, reactive, ref} from "vue";
 import {driversService, notificationService} from "@/_services";
-import AlertInvalidData from "@/components/lib/AlertInvalidData.vue";
 import {Driver} from "@/types/Driver";
-
-import {defineComponent} from "vue";
-import {useAuthStore} from "@/store/authStore";
-import {useDayjs} from "@/composables/useDayjs";
-import PButton from "@/components/lib/forms/PButton.vue";
-import PField from "@/components/lib/forms/PField.vue";
+import {Season} from "@/types/Season";
+import {useWizard} from "@/composables/useWizard";
+import {isFilled, isValidDate} from "@/utils/adminValidators";
+import {
+  DriverSeasonModel,
+  driverSeasonPayload,
+  emptyDriverSeasonModel,
+  isDriverSeasonModelValid
+} from "@/components/admin/seasons/seasonLinkModels";
+import PWizard from "@/components/lib/wizard/PWizard.vue";
+import WizardSummary from "@/components/lib/wizard/WizardSummary.vue";
+import SeasonLinker from "@/components/admin/seasons/SeasonLinker.vue";
+import DriverSeasonFields from "@/components/admin/seasons/DriverSeasonFields.vue";
 import PInput from "@/components/lib/forms/PInput.vue";
+import PField from "@/components/lib/forms/PField.vue";
+import PFormGrid from "@/components/lib/forms/PFormGrid.vue";
+import PButton from "@/components/lib/forms/PButton.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import CalendarDateTimePicker from "@/components/lib/CalendarDateTimePicker.vue";
-import PStepper from "@/components/lib/PStepper.vue";
-import PProse from "@/components/lib/PProse.vue";
-import PDivider from "@/components/lib/PDivider.vue";
 
-export default defineComponent({
-    name: "CreateDriver",
-    components: {
-    PProse,
-    PDivider,
-      CalendarDateTimePicker,
-      PStepper,
-      PrognoAlert,
-      PInput,
-      PField,
-      PButton,
-      AlertInvalidData,
-      PTitle,
-    },
-    setup() {
-        const dayjs = useDayjs();
-        const authStore = useAuthStore();
-
-        const humanDate = dayjs.humanDate;
-        const currentUser = authStore.requireUser();
-        return { currentUser, humanDate };
-    },
-    data() {
-        return {
-            activeStep: 0,
-            createdDriver: {
-                id: undefined!,
-                firstname: undefined!,
-                lastname: undefined!,
-                code: undefined!,
-                nationality: undefined!,
-                birth: undefined!,
-
-                color: "",
-                number: 0,
-                team: undefined!
-            } as Driver
-        }
-    },
-    methods: {
-        isDataOk(): boolean {
-            return !(this.createdDriver.id == undefined && this.createdDriver.firstname == undefined && this.createdDriver.lastname == undefined
-                && this.createdDriver.code == undefined && this.createdDriver.nationality == undefined && this.createdDriver.birth == undefined)
-        },
-        registerDriver(): void {
-            let rawDriver = {
-                id: this.createdDriver.id,
-                firstname: this.createdDriver.firstname,
-                lastname: this.createdDriver.lastname,
-                code: this.createdDriver.code,
-                nationality: this.createdDriver.nationality,
-                birth: this.createdDriver.birth,
-            }
-
-            driversService.createDriver(rawDriver).then((result) => {
-                notificationService.showNotification("Se ha registrado correctamente el piloto `" + result.firstname + " " + result.lastname + "`", "success");
-
-                this.$router.push({
-                    name: 'viewDriver',
-                    params: {
-                        id: result.id
-                    }
-                })
-            }).catch((error) => {
-                notificationService.showNotification(error.message, "error");
-            });
-        }
-    }
+const driverData = reactive({
+  firstname: '',
+  lastname: '',
+  code: '',
+  nationality: '',
+  birth: null as Date | null,
 });
+const createdDriver = ref<Driver>();
+const linkedSeasons = ref<Season[]>([]);
+const pendingLinks = ref(0);
+
+const fullName = computed(() => `${driverData.firstname} ${driverData.lastname}`.trim());
+
+const isDriverDataValid = computed(() =>
+  isFilled(driverData.firstname)
+  && isFilled(driverData.lastname)
+  && /^[A-Z]{3}$/.test(driverData.code)
+  && isFilled(driverData.nationality)
+  && isValidDate(driverData.birth)
+);
+
+const createDriver = async () => {
+  createdDriver.value = await driversService.createDriver({
+    firstname: driverData.firstname.trim(),
+    lastname: driverData.lastname.trim(),
+    code: driverData.code,
+    nationality: driverData.nationality.trim(),
+    birth: driverData.birth!,
+  });
+  notificationService.showNotification(`Se ha creado el piloto ${fullName.value}`);
+};
+
+const linkToSeason = (season: Season, model: DriverSeasonModel) =>
+  driversService.linkDriverToSeason(season, driverSeasonPayload(createdDriver.value!.id, model));
+
+const wizard = useWizard([
+  {
+    label: 'Datos del piloto',
+    canAdvance: () => isDriverDataValid.value,
+    onLeave: createDriver,
+    lockOnComplete: true,
+    nextLabel: 'Crear piloto',
+  },
+  {
+    label: 'Temporadas',
+    description: 'Dorsal y color',
+    nextLabel: 'Terminar',
+  },
+  {
+    label: 'Resumen',
+  },
+]);
 </script>

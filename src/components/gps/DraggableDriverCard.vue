@@ -27,6 +27,17 @@
       >
         No disponible
       </PTag>
+      <PTag
+        v-if="gridTag"
+        variant="rounded"
+        size="small"
+        appearance="soft"
+        :color="gridTag.label === 'Pit lane' ? 'info' : gridTag.label === 'Nota' ? 'neutral' : 'warning'"
+        class="align-middle ml-2"
+        :title="gridTag.note"
+      >
+        {{ gridTag.label }}
+      </PTag>
     </span>
   </div>
 </template>
@@ -42,6 +53,8 @@ defineProps<{
   showPosition?: boolean;
   driver: Driver;
   unavailable?: boolean;
+  /** Anotación del piloto en la parrilla de la sesión: sale desde pit lane o tiene una nota */
+  gridTag?: { label: string; note?: string };
 }>();
 
 const authStore = useAuthStore();

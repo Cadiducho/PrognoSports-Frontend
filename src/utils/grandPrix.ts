@@ -1,4 +1,4 @@
-import type {RouteLocationRaw} from "vue-router";
+import type {RouteLocationNamedRaw} from "vue-router";
 import {BASE_URL} from "@/config";
 import type {GrandPrix} from "@/types/GrandPrix";
 
@@ -14,7 +14,7 @@ export function grandPrixLastDate(gp: Pick<GrandPrix, 'sessions'>): Date {
   return new Date(Math.max(...gp.sessions.map(ses => ses.date.getTime())));
 }
 
-export function grandPrixLink(gp: Pick<GrandPrix, 'id' | 'competition' | 'season'>): RouteLocationRaw {
+export function grandPrixLink(gp: Pick<GrandPrix, 'id' | 'competition' | 'season'>): RouteLocationNamedRaw {
   return {
     name: "gpdetails",
     params: {
