@@ -18,13 +18,28 @@ import { TagColor, TagSize } from '@/types/components'
 const props = defineProps<{
   color?: TagColor
   size?: TagSize,
-  variant?: 'rounded' | 'default'
+  variant?: 'rounded' | 'default',
+  /** `soft`: fondo suave con texto oscuro, de mayor contraste que el sólido (que usa texto blanco) */
+  appearance?: 'solid' | 'soft'
 }>()
 
 const color = computed(() => props.color || 'neutral')
 const size = computed(() => props.size || 'medium')
 
+const softClasses: Record<TagColor, Array<string>> = {
+  warning: ['bg-warning-100 text-warning-900', 'dark:bg-warning-900/40 dark:text-warning-100'],
+  info: ['bg-info-100 text-info-900', 'dark:bg-info-900/40 dark:text-info-100'],
+  error: ['bg-error-100 text-error-900', 'dark:bg-error-900/40 dark:text-error-100'],
+  success: ['bg-success-100 text-success-900', 'dark:bg-success-900/40 dark:text-success-100'],
+  pink: ['bg-pink-100 text-pink-900', 'dark:bg-pink-900/40 dark:text-pink-100'],
+  primary: ['bg-brand-100 text-brand-900', 'dark:bg-brand-900/40 dark:text-brand-100'],
+  neutral: ['bg-gray-100 text-gray-800', 'dark:bg-gray-800 dark:text-gray-100'],
+}
+
 const colorClasses = computed(() => {
+  if (props.appearance === 'soft') {
+    return softClasses[color.value]
+  }
   switch (color.value) {
     case 'warning':
       return [

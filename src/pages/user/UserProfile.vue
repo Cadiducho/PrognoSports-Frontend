@@ -14,7 +14,8 @@ import UserProfileCard from "@/components/user/UserProfileCard.vue";
 import UserLevelResume from "@/components/user/UserLevelResume.vue";
 import ProfileHighlights from "@/components/user/ProfileHighlights.vue";
 import ProfileCommunities from "@/components/user/ProfileCommunities.vue";
-import HomeSeasonCharts from "@/components/home/HomeSeasonCharts.vue";
+import Loading from "@/components/lib/Loading.vue";
+import HomeSeasonAnalysis from "@/components/home/HomeSeasonAnalysis.vue";
 
 const route = useRoute();
 const authStore = useAuthStore();
@@ -104,28 +105,30 @@ const initialCompare = computed(() => (isOwnProfile.value ? undefined : currentU
         Temporada en {{ season.currentCommunity.value.name }}
       </PTitle>
 
+      <Loading v-if="season.loading.value" />
       <ProfileHighlights
-        v-if="highlights"
+        v-else-if="highlights"
         :highlights="highlights"
-        class="mb-4"
       />
       <p
-        v-else-if="!season.loading.value"
+        v-else
         class="mb-2 text-sm text-gray-600 dark:text-gray-400"
       >
         {{ isOwnProfile ? "Aún no tienes" : `${profile.username} no tiene` }} puntos en esta comunidad esta temporada.
       </p>
-
-      <HomeSeasonCharts
-        v-if="highlights || season.loading.value"
-        :key="profile.id"
-        :user="profile"
-        :season="season"
-        :own="isOwnProfile"
-        :initial-compare="initialCompare"
-        :show-ranking-button="false"
-      />
     </PCard>
+
+    <!-- Mismo análisis que la Home. Se monta tras cada carga para que sus filtros se reinicien con la comunidad -->
+    <HomeSeasonAnalysis
+      v-if="season.currentCommunity.value.id !== 0 && !season.loading.value && highlights"
+      :key="profile.id"
+      :username="profile.username"
+      :grand-prixes="season.grandPrixes.value"
+      :points-by-gp="season.pointsByGp.value"
+      :own="isOwnProfile"
+      :initial-compare="initialCompare"
+      :show-ranking-button="false"
+    />
 
     <PCard v-if="profile.id !== 0">
       <ProfileCommunities :user="profile" />

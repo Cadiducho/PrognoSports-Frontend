@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-8">
+  <ul class="grid grid-cols-2 gap-2 sm:grid-cols-4 xl:grid-cols-8">
     <StatTile
       label="Grandes Premios"
       :value="stats.gps"
@@ -32,7 +32,7 @@
       label="Posición media"
       :value="formatAverage(stats.averageFinish)"
     />
-  </div>
+  </ul>
 </template>
 
 <script setup lang="ts">

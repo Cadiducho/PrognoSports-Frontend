@@ -1,112 +1,146 @@
 <template>
   <div>
-    <PCard
-      v-if="grid !== undefined"
-    >
-      <nav class="flex flex-col">
-        <PTitle type="subtitle">
-          Parrilla de Salida
-        </PTitle>
-
-        <PField
-          v-if="chosenSession && availableSessions.length > 1"
-          label="Sesión"
-        >
-          <PSelect
-            v-model="chosenSession"
-            placeholder="Selecciona la sesión"
-            @change="changeGridSession()"
-          >
-            <option
-              v-for="session in availableSessions"
-              :key="session.id"
-              :value="session"
-            >
-              {{ session.humanName() }}
-            </option>
-          </PSelect>
-        </PField>
-      </nav>
-
+    <div>
       <div class="grid grid-cols-2 gap-3">
-        <div>
-          <div
+        <div class="flex flex-col gap-3">
+          <StartGridCard
             v-for="pos in parrillaIzquierda"
             :key="pos.driver.id + '-' + pos.position"
-            class="mb-4"
-          >
-            <StartGridCard :grid-pos="pos" />
-          </div>
+            :grid-pos="pos"
+            selectable
+            :selected="selectedDriverId === pos.driver.id"
+            @select="selectedDriverId = pos.driver.id"
+          />
         </div>
 
-        <div>
-          <div
+        <div class="flex flex-col gap-3 pt-7">
+          <StartGridCard
             v-for="pos in parrillaDerecha"
             :key="pos.driver.id + '-' + pos.position"
-            class="mt-4"
-          >
-            <StartGridCard :grid-pos="pos" />
-          </div>
+            :grid-pos="pos"
+            selectable
+            :selected="selectedDriverId === pos.driver.id"
+            @select="selectedDriverId = pos.driver.id"
+          />
         </div>
       </div>
-    </PCard>
+
+      <section
+        v-if="pitLane.length"
+        class="mt-4"
+      >
+        <div class="mb-3 flex items-center gap-2">
+          <span
+            class="w-4 border-t-2 border-info-300 dark:border-info-700"
+            aria-hidden="true"
+          />
+          <h3 class="text-xs font-bold uppercase tracking-wide text-info-700 dark:text-info-300">
+            Desde pit lane
+          </h3>
+          <span
+            class="flex-1 border-t-2 border-info-100 dark:border-info-900"
+            aria-hidden="true"
+          />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <StartGridCard
+            v-for="pos in pitLane"
+            :key="pos.driver.id + '-pit'"
+            :grid-pos="pos"
+            selectable
+            :selected="selectedDriverId === pos.driver.id"
+            @select="selectedDriverId = pos.driver.id"
+          />
+        </div>
+      </section>
+
+      <GridDriverDetail
+        v-if="selectedPosition"
+        class="mt-2"
+        :grid-pos="selectedPosition"
+        :origin="origins.get(selectedPosition.driver.id)"
+        :origin-name="originSession?.humanName()"
+        @close="selectedDriverId = undefined"
+      />
+      <p
+        v-else
+        class="mt-2 text-center text-xs text-gray-500 dark:text-gray-400"
+      >
+        Pulsa un piloto para ver el detalle de su salida
+      </p>
+
+      <GridChangesList
+        class="mt-4"
+        :grid="sessionGrid"
+        :origins="origins"
+        :origin-name="originSession?.humanName()"
+      />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, ref, watch } from "vue";
 
 import {StartGridPosition} from "@/types/StartGridPosition";
 import StartGridCard from "@/components/gps/StartGridCard.vue";
+import GridDriverDetail from "@/components/gps/GridDriverDetail.vue";
+import GridChangesList from "@/components/gps/GridChangesList.vue";
 import {RaceSession} from "@/types/RaceSession";
-
-import useEmitter from "@/composables/useEmitter";
-import dayjs from "dayjs";
-import PTitle from "@/components/lib/PTitle.vue";
-import PField from "@/components/lib/forms/PField.vue";
-import PSelect from "@/components/lib/forms/PSelect.vue";
-import PCard from "@/components/lib/PCard.vue";
+import {GrandPrix} from "@/types/GrandPrix";
+import {grandPrixService} from "@/_services";
 
 defineOptions({ name: "StartGridList" });
 
 const props = defineProps<{
-  grid: Map<RaceSession, Array<StartGridPosition>>;
+  /** Sesión a la que pertenece la parrilla (la gobierna el selector de sesiones de la página) */
+  session: RaceSession;
+  grid: Array<StartGridPosition>;
+  /** Con el Gran Premio se muestra la posición que tenía cada piloto en la sesión que define la parrilla */
+  grandPrix?: GrandPrix;
 }>();
 
-const emitter = useEmitter();
-const chosenSession = ref<RaceSession | undefined>(undefined);
-const availableSessions = ref<Array<RaceSession>>([]);
+const selectedDriverId = ref<string>();
+const origins = ref<Map<string, number>>(new Map());
+
+const sessionGrid = computed((): Array<StartGridPosition> => props.grid);
 
 const parrillaIzquierda = computed((): Array<StartGridPosition> => {
-  if (!chosenSession.value) {
-    return [];
-  }
-  return props.grid.get(chosenSession.value)?.filter((gridPos) => gridPos.position % 2 !== 0 && !gridPos.isFromPit) ?? [];
+  return sessionGrid.value.filter((gridPos) => gridPos.position % 2 !== 0 && !gridPos.isFromPit);
 });
 
 const parrillaDerecha = computed((): Array<StartGridPosition> => {
-  if (!chosenSession.value) {
-    return [];
-  }
-  return props.grid.get(chosenSession.value)?.filter((gridPos) => gridPos.position % 2 === 0 && !gridPos.isFromPit) ?? [];
+  return sessionGrid.value.filter((gridPos) => gridPos.position % 2 === 0 && !gridPos.isFromPit);
 });
 
-function changeGridSession(): void {
-  if (chosenSession.value) {
-    emitter.emit("changeGridSession", chosenSession.value);
+const pitLane = computed((): Array<StartGridPosition> => {
+  return sessionGrid.value.filter((gridPos) => gridPos.isFromPit);
+});
+
+const selectedPosition = computed(() => sessionGrid.value.find((gridPos) => gridPos.driver.id === selectedDriverId.value));
+
+// La sesión cuyos resultados definen la parrilla elegida
+const originSession = computed(() => {
+  return props.grandPrix?.sessions.find((session) => session.defineGridOf?.some((defined) => defined.id === props.session.id));
+});
+
+async function loadOrigins() {
+  origins.value = new Map();
+  if (!props.grandPrix || !originSession.value) {
+    return;
+  }
+  try {
+    const results = await grandPrixService.getResults(props.grandPrix, originSession.value);
+    origins.value = new Map(results.map((result) => [result.driver.id, result.position]));
+  } catch {
+    // Sin la posición de origen solo se muestra la de salida
   }
 }
 
-onMounted(() => {
-  availableSessions.value = Array.from(props.grid.keys());
-  chosenSession.value = availableSessions.value[0];
+watch(() => props.session, () => {
+  selectedDriverId.value = undefined;
+  loadOrigins();
+}, { immediate: true });
 
-  const sessionOfToday = availableSessions.value.find((ses) => dayjs(ses.date).isToday());
-  if (sessionOfToday) {
-    chosenSession.value = sessionOfToday;
-  }
-});
-
-defineExpose({ chosenSession, availableSessions, parrillaIzquierda, parrillaDerecha, changeGridSession });
+defineExpose({ parrillaIzquierda, parrillaDerecha, pitLane });
 </script>
-
