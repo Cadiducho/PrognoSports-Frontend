@@ -155,6 +155,7 @@
               Totales en PrognoSports
             </h4>
             <StatsGrid :stats="totals" />
+            <CareerSummaryChart :seasons="careerSeasons" />
           </div>
         </template>
       </PCard>
@@ -261,6 +262,11 @@
                 </tbody>
               </table>
             </div>
+            <SeasonResultsCharts
+              v-if="gpRows.length"
+              :grand-prixes="seasonGps"
+              :series="positionSeries"
+            />
           </template>
         </template>
       </PCard>
@@ -277,7 +283,11 @@ import { constructorService, driversService, notificationService, seasonService 
 import PCard from "@/components/lib/PCard.vue";
 import PrognoAlert from "@/components/lib/PrognoAlert.vue";
 import PSelect from "@/components/lib/forms/PSelect.vue";
+import CareerSummaryChart from "@/components/stats/CareerSummaryChart.vue";
+import SeasonResultsCharts from "@/components/stats/SeasonResultsCharts.vue";
 import StatsGrid from "@/components/stats/StatsGrid.vue";
+import { USER_PALETTE } from "@/composables/charts/chartScales";
+import type { CareerSeason, PositionSeries } from "@/composables/charts/resultsCharts";
 import {
   computeStats,
   filterEntries,
@@ -350,6 +360,30 @@ const gpRows = computed((): Array<GpRow> => {
   }
   return [...rows.values()].sort((a, b) => a.gp.round - b.gp.round);
 });
+
+const seasonGps = computed(() => gpRows.value.map((row) => row.gp));
+
+/** Por cada piloto del equipo, su línea de carrera (sólida) y de clasificación (discontinua) en el mismo color */
+const positionSeries = computed((): Array<PositionSeries> => {
+  const codes = [...new Set(gpRows.value.flatMap((row) => [...row.race, ...row.qualify].map((r) => r.code)))];
+  const valuesOf = (code: string, pick: (row: GpRow) => Array<DriverPosition>) => new Map(gpRows.value.map((row) => [
+    row.gp.code,
+    pick(row).find((r) => r.code === code)?.position ?? null,
+  ]));
+  return codes.flatMap((code, index): Array<PositionSeries> => {
+    const color = USER_PALETTE[index % USER_PALETTE.length]!;
+    return [
+      { key: `${code}-race`, label: `${code} · Carrera`, color, session: "RACE", values: valuesOf(code, (row) => row.race) },
+      { key: `${code}-qualify`, label: `${code} · Clasificación`, color, dash: "6 4", session: "QUALIFY", values: valuesOf(code, (row) => row.qualify) },
+    ];
+  });
+});
+
+// Cronológico: `career` va de la temporada más reciente a la más antigua
+const careerSeasons = computed((): Array<CareerSeason> => [...career.value]
+  .reverse()
+  .filter((entry) => seasonStats.value[entry.season.id])
+  .map((entry) => ({ name: entry.season.name, stats: seasonStats.value[entry.season.id] })));
 
 function isTeamResult(result: { driver: Driver }): boolean {
   return Number(result.driver.team?.id) === Number(team.value.id);
