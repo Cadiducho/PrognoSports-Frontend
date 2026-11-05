@@ -199,7 +199,7 @@ import {communityImageUrl} from "@/utils/community";
 import {CommunityUser} from "@/types/CommunityUser";
 import dayjs from "dayjs";
 
-import {computed, defineComponent} from "vue";
+import {computed, defineComponent, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
@@ -242,7 +242,16 @@ export default defineComponent({
 
         // La comunidad y sus miembros salen de la caché de consultas: se actualizan solos al unirse o salir de ella
         const route = useRoute();
-        const { data: communityData, isPending: isLoading } = useQuery(() => communityQuery({ userId: currentUser.id, idOrName: route.params.community as string }));
+        // Al salir de la página la ruta cambia antes de desmontarla: solo se sigue el parámetro mientras sea esta ruta,
+        // para no pedir la comunidad de la ruta siguiente (o "undefined")
+        const routeCommunity = () => route.name === 'communitiesDetails' ? route.params.community as string : undefined;
+        const communityParam = ref<string>(routeCommunity() ?? '');
+        watch(routeCommunity, (value) => {
+            if (value) {
+                communityParam.value = value;
+            }
+        });
+        const { data: communityData, isPending: isLoading } = useQuery(() => communityQuery({ userId: currentUser.id, idOrName: communityParam.value }));
         const { data: membersData } = useQuery(() => communityMembersQuery({ userId: currentUser.id, communityId: communityData.value?.id ?? 0 }));
 
         const community = computed(() => communityData.value ?? ({} as Community));

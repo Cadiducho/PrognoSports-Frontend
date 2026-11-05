@@ -3,6 +3,7 @@ import {communityService} from "@/_services";
 import type {CreateCommunityPayload} from "@/_services/community.service";
 import type {Community} from "@/types/Community";
 import type {CommunityUser} from "@/types/CommunityUser";
+import {fetchEntryData} from "@/queries/fetchEntry";
 
 /**
  * Raíz de las claves de las comunidades. Invalidarla refresca cualquier consulta de comunidades que esté en uso.
@@ -45,12 +46,7 @@ export const communityMembersQuery = defineQueryOptions(({userId, communityId}: 
  */
 export async function fetchCommunityMembers(userId: number, communityId: number): Promise<Array<CommunityUser>> {
   const queryCache = useQueryCache();
-  const entry = queryCache.ensure(communityMembersQuery({userId, communityId}));
-  const state = await queryCache.refresh(entry);
-  if (state.status === 'error') {
-    throw state.error;
-  }
-  return state.data ?? [];
+  return fetchEntryData(queryCache, queryCache.ensure(communityMembersQuery({userId, communityId})));
 }
 
 /** Las comunidades a las que pertenece el usuario */
