@@ -63,10 +63,14 @@ export const userCommunitiesQuery = defineQueryOptions((userId: number) => ({
 /**
  * Cualquier cambio en las comunidades (crear, unirse, salir) puede alterar las listas, que son las que están en
  * pantalla: se invalidan todas, y las que se estén usando se vuelven a pedir.
+ * No devuelve la promesa: Pinia Colada espera a onSettled, y la mutación no debe esperar a esos refrescos ni darse por
+ * fallida si alguno falla (cada consulta ya muestra su propio error).
  */
 export function useInvalidateCommunities() {
   const queryCache = useQueryCache();
-  return () => queryCache.invalidateQueries({key: COMMUNITIES_KEY});
+  return (): void => {
+    queryCache.invalidateQueries({key: COMMUNITIES_KEY}).catch(() => undefined);
+  };
 }
 
 export function useJoinCommunity() {

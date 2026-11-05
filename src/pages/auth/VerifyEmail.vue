@@ -101,14 +101,19 @@ const verifyAccount = async () => {
 
     isVerifiying.value = true;
     await authService.verifyEmail(verificationCode.value);
-    // El usuario ya no se pide en cada navegación: hay que recargarlo para que el guard de verificación lo deje pasar
-    await authStore.loadUser(true);
-    if (redirectTo) {
-      await router.push(redirectTo as string);
-    } else {
-      await router.push({name: "home"});
-    }
     notificationService.showNotification("Tu cuenta ha sido verificada correctamente");
+
+    const target = redirectTo ? (redirectTo as string) : {name: "home"};
+    try {
+      // El usuario ya no se pide en cada navegación: hay que recargarlo para que el guard de verificación lo deje pasar
+      await authStore.loadUser(true);
+    } catch (e) {
+      // La cuenta ya está verificada. Si no se ha podido recargar el usuario, se recarga la página entera en el destino
+      console.error(e);
+      window.location.assign(router.resolve(target).href);
+      return;
+    }
+    await router.push(target);
   } catch (e) {
     console.error(e);
     notificationService.showNotification("Ha ocurrido un error al verificar tu cuenta", "error");
