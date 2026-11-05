@@ -143,10 +143,13 @@ onMounted(() => {
 });
 
 const removeVariant = (variant: CircuitVariant) => {
-    const index = circuit.value?.variants.findIndex(cv => cv.id === variant.id);
-    if (index) {
+    const index = circuit.value?.variants.findIndex(cv => cv.id === variant.id) ?? -1;
+    if (index >= 0) {
         circuit.value?.variants.splice(index, 1);
     }
+    // createNewVariant puede reutilizar este id, así que no deben quedar restos de la variante borrada
+    variantLayoutFiles.delete(variant.id);
+    newVariantIds.delete(variant.id);
 }
 const createNewVariant = () => {
     let newVariantId = 0;
