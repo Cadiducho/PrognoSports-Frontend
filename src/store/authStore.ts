@@ -120,8 +120,9 @@ export const useAuthStore = defineStore('auth', {
         },
         async login(payload: { username: string, password: string }): Promise<string> {
             const {username, password} = payload;
+            let token: string;
             try {
-                const token = await authService.login(username, password);
+                token = await authService.login(username, password);
                 this.setToken(token);
                 this.changeMailState(""); // Ya no guardar el mail state tras el login correcto
             } catch (error) {
