@@ -30,8 +30,14 @@ export const useCommunityStore = defineStore('community', {
             this.community = community;
             this.communityId = community.id;
         },
-        removeCurrentCommunity(): void {
-            localStorage.removeItem('community');
+        /**
+         * Olvida la comunidad actual.
+         * @param clearStorage Borrarla también de localStorage, que comparten todas las pestañas
+         */
+        removeCurrentCommunity(clearStorage: boolean = true): void {
+            if (clearStorage) {
+                localStorage.removeItem('community');
+            }
             this.community = {id: 0} as Community;
             this.communityId = this.community.id;
         },

@@ -1,6 +1,7 @@
 import {defineQueryOptions, useMutation, useQueryCache} from "@pinia/colada";
 import {seasonService} from "@/_services";
 import type {Season} from "@/types/Season";
+import {fetchEntryData} from "@/queries/fetchEntry";
 
 /** Raíz de las claves de las temporadas. Invalidarla refresca cualquier consulta de temporadas que esté en uso. */
 export const SEASONS_KEY = ['seasons'] as const;
@@ -17,18 +18,19 @@ export const seasonListQuery = defineQueryOptions({
  */
 export async function fetchSeasonList(): Promise<Array<Season>> {
   const queryCache = useQueryCache();
-  const entry = queryCache.ensure(seasonListQuery);
-  const state = await queryCache.refresh(entry);
-  if (state.status === 'error') {
-    throw state.error;
-  }
-  return state.data ?? [];
+  return fetchEntryData(queryCache, queryCache.ensure(seasonListQuery));
 }
 
-/** Crear, editar o eliminar una temporada cambia la lista: se invalida y las pantallas que la usan la vuelven a pedir */
+/**
+ * Crear, editar o eliminar una temporada cambia la lista: se invalida y las pantallas que la usan la vuelven a pedir.
+ * No devuelve la promesa: Pinia Colada espera a onSettled, y la mutación no debe esperar a ese refresco ni darse por
+ * fallida si falla.
+ */
 function useInvalidateSeasons() {
   const queryCache = useQueryCache();
-  return () => queryCache.invalidateQueries({key: SEASONS_KEY});
+  return (): void => {
+    queryCache.invalidateQueries({key: SEASONS_KEY}).catch(() => undefined);
+  };
 }
 
 export function useCreateSeason() {

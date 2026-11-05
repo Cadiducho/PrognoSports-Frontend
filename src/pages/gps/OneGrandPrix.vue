@@ -125,13 +125,13 @@ import PTabPanel from "@/components/lib/PTabPanel.vue";
 import SessionSelector from "@/components/gps/SessionSelector.vue";
 import {useDayjs} from "@/composables/useDayjs";
 import {
-  communityService,
   driversService,
   grandPrixService,
   notificationService,
   rulesetService,
   scoreService
 } from "@/_services";
+import {fetchCommunityMembers} from "@/queries/communities";
 import {useAuthStore} from "@/store/authStore";
 import {useCommunityStore} from "@/store/communityStore";
 import {Season} from "@/types/Season";
@@ -201,7 +201,7 @@ onMounted(async () => {
       driversService.getDriversInGrandPrix(gp),
       rulesetService.getRuleSetInGrandPrix(currentCommunity, gp),
       scoreService.getPointsInGrandPrix(currentCommunity, gp),
-      communityService.getMembers(currentCommunity),
+      fetchCommunityMembers(currentUser.id, currentCommunity.id),
       getStartGrids(gp)
     ]).then(([driversInGp, gpRuleSet, points, members, rawStartGrids]) => {
       drivers.value = driversInGp;

@@ -3,7 +3,7 @@
     <nav class="block flex justify-between">
       <PField label="Temporada">
         <PSelect
-          v-if="chosenSeason"
+          v-if="chosenSeason.id"
           v-model="chosenSeason"
           placeholder="Selecciona la temporada"
           @change="changeSeason"
@@ -201,7 +201,7 @@ const checkRowClass = (row: TableEntry, _index: number) => {
 };
 
 const changeSeason = async () => {
-  if (!chosenSeason.value) {
+  if (!chosenSeason.value.id) {
     return;
   }
   await loadRanking(chosenSeason.value);

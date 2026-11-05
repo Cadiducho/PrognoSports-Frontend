@@ -2,6 +2,8 @@ import {defineQueryOptions, useMutation, useQueryCache} from "@pinia/colada";
 import {communityService} from "@/_services";
 import type {CreateCommunityPayload} from "@/_services/community.service";
 import type {Community} from "@/types/Community";
+import type {CommunityUser} from "@/types/CommunityUser";
+import {fetchEntryData} from "@/queries/fetchEntry";
 
 /**
  * Raíz de las claves de las comunidades. Invalidarla refresca cualquier consulta de comunidades que esté en uso.
@@ -17,6 +19,36 @@ export const allCommunitiesQuery = defineQueryOptions((userId: number) => ({
   enabled: userId > 0,
 }));
 
+/**
+ * Una comunidad por su id o su nombre. Lleva el id del usuario en la clave porque indica si es miembro (`user_is_member`).
+ */
+export const communityQuery = defineQueryOptions(({userId, idOrName}: { userId: number, idOrName: string | number }) => ({
+  key: [...COMMUNITIES_KEY, 'detail', userId, String(idOrName)],
+  query: () => communityService.getCommunityById(idOrName),
+  enabled: userId > 0,
+}));
+
+/**
+ * Los miembros de una comunidad. También depende del usuario: lo que puede hacer con cada miembro
+ * (`can_kick_users`...) es relativo a quien consulta. Unirse o salir de una comunidad lo invalida, ya que cuelga de la
+ * misma raíz de claves.
+ */
+export const communityMembersQuery = defineQueryOptions(({userId, communityId}: { userId: number, communityId: number }) => ({
+  key: [...COMMUNITIES_KEY, 'members', userId, communityId],
+  query: () => communityService.getMembers(communityId),
+  enabled: userId > 0 && communityId > 0,
+}));
+
+/**
+ * Los miembros de una comunidad, para código que los pide dentro de otras cargas (`Promise.all`) y no puede usar
+ * `useQuery`. Comparte la entrada de la caché con `communityMembersQuery`: devuelve lo que haya si está fresco, y si no
+ * lo pide. Rechaza si la petición falla.
+ */
+export async function fetchCommunityMembers(userId: number, communityId: number): Promise<Array<CommunityUser>> {
+  const queryCache = useQueryCache();
+  return fetchEntryData(queryCache, queryCache.ensure(communityMembersQuery({userId, communityId})));
+}
+
 /** Las comunidades a las que pertenece el usuario */
 export const userCommunitiesQuery = defineQueryOptions((userId: number) => ({
   key: [...COMMUNITIES_KEY, 'user', userId],
@@ -27,10 +59,14 @@ export const userCommunitiesQuery = defineQueryOptions((userId: number) => ({
 /**
  * Cualquier cambio en las comunidades (crear, unirse, salir) puede alterar las listas, que son las que están en
  * pantalla: se invalidan todas, y las que se estén usando se vuelven a pedir.
+ * No devuelve la promesa: Pinia Colada espera a onSettled, y la mutación no debe esperar a esos refrescos ni darse por
+ * fallida si alguno falla (cada consulta ya muestra su propio error).
  */
-function useInvalidateCommunities() {
+export function useInvalidateCommunities() {
   const queryCache = useQueryCache();
-  return () => queryCache.invalidateQueries({key: COMMUNITIES_KEY});
+  return (): void => {
+    queryCache.invalidateQueries({key: COMMUNITIES_KEY}).catch(() => undefined);
+  };
 }
 
 export function useJoinCommunity() {

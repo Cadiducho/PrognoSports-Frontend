@@ -1,7 +1,8 @@
-import { computed, onMounted, ref, watch, type Ref } from "vue";
-import { useQuery } from "@pinia/colada";
-import { communityService, grandPrixService, scoreService } from "@/_services";
-import { seasonListQuery } from "@/queries/seasons";
+import { computed, onMounted, ref, type Ref } from "vue";
+import { grandPrixService, scoreService } from "@/_services";
+import { fetchCommunityMembers } from "@/queries/communities";
+import { useSeasonSelection } from "@/composables/useSeasonSelection";
+import { useAuthStore } from "@/store/authStore";
 import { GrandPrix } from "@/types/GrandPrix";
 import { Season } from "@/types/Season";
 import { User } from "@/types/User";
@@ -21,17 +22,11 @@ function hitsLevel(hits: number, maxHits: number): HitsLevel {
 }
 
 export function useRankingData(currentCommunity: Ref<Community>) {
+  const currentUser = useAuthStore().requireUser();
   const isLoading = ref(true);
   const tableHasData = ref(false);
   // La lista de temporadas sale de la caché de consultas; la elegida parte de la última
-  const { data: seasonData } = useQuery(seasonListQuery);
-  const seasonList = computed<Season[]>(() => seasonData.value ?? []);
-  const chosenSeason = ref<Season | null>(null);
-  watch(seasonList, (list) => {
-    if (!chosenSeason.value && list.length > 0) {
-      chosenSeason.value = list[list.length - 1] ?? null;
-    }
-  }, { immediate: true });
+  const { seasonList, chosenSeason } = useSeasonSelection();
 
   const activeTab = ref('byGp');
   const grandPrixes = ref<GrandPrix[]>([]);
@@ -101,7 +96,7 @@ export function useRankingData(currentCommunity: Ref<Community>) {
 
     return Promise.all([
       grandPrixService.getGrandPrixesList(season),
-      communityService.getMembers(currentCommunity.value),
+      fetchCommunityMembers(currentUser.id, currentCommunity.value.id),
       scoreService.getUserPointsByGP(currentCommunity.value, season),
       scoreService.getTotalUserPoints(currentCommunity.value, season),
     ]).then(([gpList, members, grandPrixPoints, totalPointsByUser]) => {

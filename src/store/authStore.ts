@@ -4,8 +4,10 @@ import {authService, userService} from "@/_services";
 import type {ApiError} from "@/_services";
 import {useCommunityStore} from "@/store/communityStore";
 
-// Petición del usuario en curso. Si varias navegaciones o componentes lo piden a la vez, comparten la misma petición
+// Petición del usuario en curso y el token con el que se hizo. Si varias navegaciones o componentes lo piden a la vez
+// con el mismo token, comparten la misma petición
 let loadingUser: Promise<User | null> | null = null;
+let loadingUserToken: string | null = null;
 
 export const useAuthStore = defineStore('auth', {
 
@@ -42,12 +44,21 @@ export const useAuthStore = defineStore('auth', {
             this.token = token;
             localStorage.setItem('token', token);
         },
-        /** Olvida el token y el usuario */
-        clearSession(): void {
+        /**
+         * Olvida el token y el usuario.
+         * localStorage se comparte entre pestañas: si guarda otro token, es una sesión iniciada en otra pestaña y no se borra.
+         * @return Si se ha borrado la sesión guardada en localStorage
+         */
+        clearSession(): boolean {
+            const storedToken = localStorage.getItem('token');
+            const ownsStorage = storedToken === null || storedToken === this.token;
             this.user = null;
             this.userLoadedAt = 0;
             this.token = null;
-            localStorage.removeItem('token');
+            if (ownsStorage) {
+                localStorage.removeItem('token');
+            }
+            return ownsStorage;
         },
         /**
          * Guarda el usuario cargado. Si es el mismo usuario se actualiza el objeto actual en lugar de sustituirlo,
@@ -80,9 +91,9 @@ export const useAuthStore = defineStore('auth', {
                 return Promise.resolve(this.user);
             }
 
-            if (!loadingUser) {
+            if (!loadingUser || loadingUserToken !== this.token) {
                 const token = this.token;
-                loadingUser = userService.getMe().then(user => {
+                const request: Promise<User | null> = userService.getMe().then(user => {
                     // Si mientras tanto se cerró la sesión, no se vuelve a guardar el usuario
                     if (this.token !== token) {
                         return null;
@@ -90,34 +101,52 @@ export const useAuthStore = defineStore('auth', {
                     this.setUser(user);
                     return user;
                 }).catch((error: ApiError) => {
-                    // /user/me no recibe credenciales: un 401 es siempre un token caducado o rechazado
-                    if (error?.status === 401) {
+                    // /user/me no recibe credenciales: un 401 es siempre un token caducado o rechazado. Si mientras tanto
+                    // se cambió de token (por ejemplo, un nuevo login), el rechazo del antiguo no cierra la sesión nueva.
+                    if (error?.status === 401 && this.token === token) {
                         this.signOut();
                     }
                     throw error;
                 }).finally(() => {
-                    loadingUser = null;
+                    if (loadingUser === request) {
+                        loadingUser = null;
+                        loadingUserToken = null;
+                    }
                 });
+                loadingUser = request;
+                loadingUserToken = token;
             }
             return loadingUser;
         },
         async login(payload: { username: string, password: string }): Promise<string> {
             const {username, password} = payload;
+            let token: string;
             try {
-                const token = await authService.login(username, password);
+                token = await authService.login(username, password);
                 this.setToken(token);
                 this.changeMailState(""); // Ya no guardar el mail state tras el login correcto
-                await this.loadUser(true);
-                return token;
             } catch (error) {
                 this.clearSession();
                 throw error;
             }
+
+            try {
+                await this.loadUser(true);
+            } catch (error) {
+                // Si el servidor rechaza el token, loadUser ya ha cerrado la sesión y el login falla.
+                // Cualquier otro fallo (red, 5xx) no invalida el token: el guard de datos lo reintenta al navegar.
+                if ((error as ApiError)?.status === 401) {
+                    throw error;
+                }
+                console.error(error);
+            }
+            return token;
         },
         /** Cierra la sesión: olvida el token, el usuario y la comunidad actual */
         signOut(): void {
-            this.clearSession();
-            useCommunityStore().removeCurrentCommunity();
+            // Si localStorage guarda la sesión de otra pestaña, su comunidad tampoco se borra
+            const ownsStorage = this.clearSession();
+            useCommunityStore().removeCurrentCommunity(ownsStorage);
         },
         register(payload: { username: string, email: string, password: string }): Promise<any> {
             const {username, email, password} = payload;
